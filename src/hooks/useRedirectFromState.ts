@@ -34,7 +34,7 @@ export const useRedirectFromState = () => {
           window.history.replaceState(
             {},
             document.title,
-            window.location.pathname
+            window.location.pathname,
           )
           // Redirect to the decoded URL
           void navigate(decodedUrl)
