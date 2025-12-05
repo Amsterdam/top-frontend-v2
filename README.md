@@ -20,11 +20,9 @@ Using the acceptance backend is easiest:
 npm start
 ```
 
-
 ## Deploying
 
 The `main` branch is automatically deployed to [acceptance](https://acc.top.amsterdam.nl/).
 
 Tag any branch, but preferably main, with a tag like `v1.0.0` to deploy that specific commit
 to [production](https://top.amsterdam.nl/).
-

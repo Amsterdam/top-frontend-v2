@@ -16,6 +16,6 @@ export const oidcConfig = {
     token_endpoint:
       "https://login.microsoftonline.com/72fca1b1-2c2e-4376-a445-294d80196804/oauth2/v2.0/token",
     end_session_endpoint:
-      "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
-  }
+      "https://login.microsoftonline.com/common/oauth2/v2.0/logout",
+  },
 }

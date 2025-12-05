@@ -10,5 +10,5 @@ const runtime = window.env ?? {}
 
 export const env: RuntimeEnv = {
   ...import.meta.env,
-  ...runtime
+  ...runtime,
 }

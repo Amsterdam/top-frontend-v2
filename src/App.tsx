@@ -1,14 +1,14 @@
 import { useAuth, hasAuthParams } from "react-oidc-context"
-import { PageHeader, Paragraph } from "@amsterdam/design-system-react";
-import { env } from "./config/env";
-import { useEffect, useRef } from "react";
+import { PageHeader, Paragraph } from "@amsterdam/design-system-react"
+import { env } from "./config/env"
+import { useEffect, useRef } from "react"
 
 function App() {
   const auth = useAuth()
   const hasTriedSignin = useRef(false)
 
   // automatically sign-in
-useEffect(() => {
+  useEffect(() => {
     if (
       !hasAuthParams() &&
       !auth.isAuthenticated &&
@@ -20,7 +20,7 @@ useEffect(() => {
       const fullPathWithQuery = currentUrl.pathname + currentUrl.search
 
       void auth.signinRedirect({
-        url_state: fullPathWithQuery
+        url_state: fullPathWithQuery,
       })
 
       hasTriedSignin.current = true
@@ -37,9 +37,7 @@ useEffect(() => {
 
   return (
     <>
-      <PageHeader
-         brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`}
-      />
+      <PageHeader brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`} />
       <Paragraph>
         De oorsprong van Lorem Ipsum gaat terug tot de 16e eeuw, toen een
         onbekende drukker een galerij van type specimen boeken samenstelde voor
@@ -50,7 +48,7 @@ useEffect(() => {
         van de pagina of het document waarin het wordt gebruikt.
       </Paragraph>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
