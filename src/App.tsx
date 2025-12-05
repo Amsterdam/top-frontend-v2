@@ -1,7 +1,8 @@
-import { useAuth, hasAuthParams } from "react-oidc-context"
-import { PageHeader, Paragraph } from "@amsterdam/design-system-react"
-import { env } from "./config/env"
 import { useEffect, useRef } from "react"
+import { useAuth, hasAuthParams } from "react-oidc-context"
+import { Paragraph } from "@amsterdam/design-system-react"
+import { RouterProvider } from "react-router"
+import { router } from "@/router"
 
 function App() {
   const auth = useAuth()
@@ -35,20 +36,7 @@ function App() {
     return <Paragraph>Logging in failed. Please try again.</Paragraph>
   }
 
-  return (
-    <>
-      <PageHeader brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`} />
-      <Paragraph>
-        De oorsprong van Lorem Ipsum gaat terug tot de 16e eeuw, toen een
-        onbekende drukker een galerij van type specimen boeken samenstelde voor
-        de overleving van het lettertype en deze verzameling Lorem Ipsum
-        passages gebruikte als voorbeeld. In de loop der tijd is het Lorem Ipsum
-        gebruikt als een standaard tekst in de grafische en webontwerpindustrie,
-        omdat het een neutrale tekst is die geen afleiding geeft van de inhoud
-        van de pagina of het document waarin het wordt gebruikt.
-      </Paragraph>
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

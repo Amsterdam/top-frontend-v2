@@ -34,7 +34,11 @@ describe("useRedirectFromState", () => {
 
     renderHook(() => useRedirectFromState())
 
-    expect(window.history.replaceState).toHaveBeenCalledWith({}, document.title, "/")
+    expect(window.history.replaceState).toHaveBeenCalledWith(
+      {},
+      document.title,
+      "/",
+    )
     expect(mockNavigate).toHaveBeenCalledWith(originalUrl)
   })
 
