@@ -24,8 +24,14 @@ export default function Looplijst() {
         je vandaag in je looplijst?
       </Paragraph>
       <Column gap="large" alignHorizontal="start">
-        {themes?.map((theme) => (
-          <Button key={theme.id} variant="secondary" icon={ChevronForwardIcon}>
+        {themes?.map((theme, index) => (
+          <Button
+            key={theme.id}
+            variant="secondary"
+            icon={ChevronForwardIcon}
+            className={styles["fade-slide-in"]}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
             {theme.name}
           </Button>
         ))}

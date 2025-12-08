@@ -6,7 +6,7 @@ import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import styles from "./DefaultLayout.module.css"
 import { useAuth } from "react-oidc-context"
 
-export const DefaultLayout: React.FC = () => {
+export function DefaultLayout() {
   useRedirectFromState()
   const auth = useAuth()
   return (
