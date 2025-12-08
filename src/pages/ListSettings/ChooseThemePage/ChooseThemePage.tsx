@@ -5,14 +5,16 @@ import {
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
+import { useNavigate } from "react-router"
 import { useThemes } from "@/api/hooks"
 import { Greeting } from "@/components"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import styles from "./Looplijst.module.css"
+import styles from "./ChooseThemePage.module.css"
 
-export default function Looplijst() {
+export default function ChooseThemePage() {
   const { data: themesData } = useThemes()
   const currentUser = useCurrentUser()
+  const navigate = useNavigate()
   const themes = themesData?.results || []
 
   return (
@@ -31,6 +33,7 @@ export default function Looplijst() {
             icon={ChevronForwardIcon}
             className="fade-slide-in-bottom"
             style={{ animationDelay: `${index * 0.1}s` }}
+            onClick={() => navigate(`/lijst/nieuw/${theme.id}`)}
           >
             {theme.name}
           </Button>

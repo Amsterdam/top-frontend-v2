@@ -9,4 +9,4 @@ type ThemeResponse = {
   results: Theme[]
 }
 
-export const useThemes = () => useApi<ThemeResponse>("themes")
+export const useThemeSettings = (themeId?: string) => useApi<ThemeResponse>(`team-settings/${themeId}`)

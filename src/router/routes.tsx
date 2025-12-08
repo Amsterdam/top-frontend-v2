@@ -1,6 +1,8 @@
 import { DefaultLayout } from "@/components"
-import Home from "@/pages/Looplijst/Looplijst"
+import ChooseThemePage from "@/pages/ListSettings/ChooseThemePage/ChooseThemePage"
+import CreateListPage from "@/pages/ListSettings/CreateListPage/CreateListPage"
 import NotFound from "@/pages/NotFound/NotFound"
+import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
 
 export const routes = [
   {
@@ -8,9 +10,29 @@ export const routes = [
     element: <DefaultLayout />,
     errorElement: <NotFound />,
     children: [
+      { path: "cases/:id", element: <UnderConstruction /> },
+      { path: "kies-looplijst", element: <UnderConstruction /> },
+      { path: "lijst", element: <UnderConstruction /> },
+      { path: "lijst/:itineraryId", element: <UnderConstruction /> },
+      { path: "lijst/:itineraryId/suggesties", element: <UnderConstruction /> },
+      { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
+      { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },
+      { path: "lijst-instellingen", element: <ChooseThemePage /> },
+      { path: "team-settings", element: <UnderConstruction /> },
+      { path: "team-settings/:themeId", element: <UnderConstruction /> },
       {
-        path: "looplijst",
-        element: <Home />,
+        path: "team-settings/:themeId/:daySettingsId",
+        element: <UnderConstruction />,
+      },
+      {
+        path: "team-settings/:themeId/nieuw",
+        element: <UnderConstruction />,
+      },
+      { path: "zoeken", element: <UnderConstruction /> },
+      { path: "visit/:itineraryId/:caseId", element: <UnderConstruction /> },
+      {
+        path: "visit/:itineraryId/:caseId/:id",
+        element: <UnderConstruction />,
       },
     ],
   },
