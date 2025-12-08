@@ -5,20 +5,3 @@
   background-size: contain;
   min-height: calc(100vh - 175px);
 }
-
-.fade-slide-in {
-  opacity: 0;
-  transform: translateY(100px);
-  animation: fadeSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes fadeSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(100px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

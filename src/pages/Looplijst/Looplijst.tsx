@@ -19,7 +19,7 @@ export default function Looplijst() {
     <div className={styles.illustration}>
       <Heading level={1}>Genereer looplijst</Heading>
       <Heading level={2}>Kies een team</Heading>
-      <Paragraph style={{ margin: "16px 0" }}>
+      <Paragraph style={{ margin: "16px 0" }} className="tracking-in-expand-text">
         <Greeting /> <strong>{currentUser?.first_name}</strong>, welke zaken wil
         je vandaag in je looplijst?
       </Paragraph>
@@ -29,7 +29,7 @@ export default function Looplijst() {
             key={theme.id}
             variant="secondary"
             icon={ChevronForwardIcon}
-            className={styles["fade-slide-in"]}
+            className="fade-slide-in-bottom"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             {theme.name}
