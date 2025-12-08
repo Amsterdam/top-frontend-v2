@@ -26,3 +26,9 @@ The `main` branch is automatically deployed to [acceptance](https://acc.top.amst
 
 Tag any branch, but preferably main, with a tag like `v1.0.0` to deploy that specific commit
 to [production](https://top.amsterdam.nl/).
+
+# Directory tree structure
+
+```typescript
+tree -I "node_modules|.next|.git" -L 6 > directory-tree.txt
+```
