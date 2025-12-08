@@ -1,0 +1,7 @@
+.illustration {
+  max-width: 30em;
+  flex: auto;
+  background: url("/images/background.webp") no-repeat bottom;
+  background-size: contain;
+  min-height: calc(100vh - 175px);
+}

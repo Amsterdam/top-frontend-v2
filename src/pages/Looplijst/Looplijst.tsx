@@ -8,6 +8,7 @@ import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
 import { useThemes } from "@/api/hooks"
 import { Greeting } from "@/components"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
+import styles from "./Looplijst.module.css"
 
 export default function Looplijst() {
   const { data: themesData } = useThemes()
@@ -15,7 +16,7 @@ export default function Looplijst() {
   const themes = themesData?.results || []
 
   return (
-    <>
+    <div className={styles.illustration}>
       <Heading level={1}>Genereer looplijst</Heading>
       <Heading level={2}>Kies een team</Heading>
       <Paragraph style={{ margin: "16px 0" }}>
@@ -29,6 +30,6 @@ export default function Looplijst() {
           </Button>
         ))}
       </Column>
-    </>
+    </div>
   )
 }
