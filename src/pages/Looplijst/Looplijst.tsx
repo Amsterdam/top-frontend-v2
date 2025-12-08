@@ -2,23 +2,20 @@ import {
   Button,
   Column,
   Heading,
-  PageHeader,
   Paragraph,
 } from "@amsterdam/design-system-react"
-import { env } from "@/config/env"
+import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
 import { useThemes } from "@/api/hooks"
 import { Greeting } from "@/components"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
 
-export default function Home() {
+export default function Looplijst() {
   const { data: themesData } = useThemes()
   const currentUser = useCurrentUser()
   const themes = themesData?.results || []
 
   return (
     <>
-      <PageHeader brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`} />
       <Heading level={1}>Genereer looplijst</Heading>
       <Heading level={2}>Kies een team</Heading>
       <Paragraph style={{ margin: "16px 0" }}>
