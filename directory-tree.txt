@@ -1,0 +1,63 @@
+.
+├── directory-prompt.txt
+├── directory-tree.txt
+├── eslint.config.js
+├── index.html
+├── LICENSE
+├── package.json
+├── package-lock.json
+├── public
+│   └── favicon -> ../node_modules/@amsterdam/design-system-assets/favicon
+├── README.md
+├── src
+│   ├── api
+│   │   ├── ApiCacheProvider.tsx
+│   │   ├── hooks
+│   │   │   ├── index.ts
+│   │   │   └── themes.ts
+│   │   ├── types.ts
+│   │   ├── useApiCache.ts
+│   │   ├── useApi.ts
+│   │   └── utils
+│   │       ├── makeApiUrl.ts
+│   │       ├── slashSandwich.ts
+│   │       ├── stringifyQueryParams.ts
+│   │       └── __tests__
+│   │           ├── slashSandwich.test.ts
+│   │           └── stringifyQueryParams.test.ts
+│   ├── App.tsx
+│   ├── components
+│   │   ├── Greeting
+│   │   │   ├── Greeting.tsx
+│   │   │   └── __tests__
+│   │   │       └── Greeting.test.tsx
+│   │   └── index.ts
+│   ├── config
+│   │   ├── env.ts
+│   │   └── oidc.ts
+│   ├── hooks
+│   │   ├── index.ts
+│   │   ├── __tests__
+│   │   │   ├── useCurrentUser.test.ts
+│   │   │   ├── useRedirectFromState.test.ts
+│   │   │   └── useTokenPayload.test.ts
+│   │   ├── useCurrentUser.ts
+│   │   ├── useRedirectFromState.ts
+│   │   └── useTokenPayload.ts
+│   ├── index.css
+│   ├── main.tsx
+│   ├── pages
+│   │   ├── Home
+│   │   │   └── Home.tsx
+│   │   └── NotFound
+│   │       └── NotFound.tsx
+│   └── router
+│       ├── index.tsx
+│       └── routes.tsx
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── vitest.config.ts
+
+18 directories, 43 files

@@ -3,6 +3,7 @@ import { useAuth, hasAuthParams } from "react-oidc-context"
 import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
 import { router } from "@/router"
+import { ApiCacheProvider } from "@/api/ApiCacheProvider"
 
 function App() {
   const auth = useAuth()
@@ -36,7 +37,11 @@ function App() {
     return <Paragraph>Logging in failed. Please try again.</Paragraph>
   }
 
-  return <RouterProvider router={router} />
+  return (
+    <ApiCacheProvider>
+      <RouterProvider router={router} />
+    </ApiCacheProvider>
+  )
 }
 
 export default App
