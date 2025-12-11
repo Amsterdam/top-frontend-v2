@@ -1,4 +1,4 @@
-export const Greeting = () => {
+export function Greeting() {
   const greetings = ["Goedenacht", "Goedemorgen", "Goedemiddag", "Goedenavond"]
   const today = new Date()
   const hours = today.getHours()

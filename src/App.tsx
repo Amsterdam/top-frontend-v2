@@ -4,6 +4,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
 import { router } from "@/router"
 import { ApiCacheProvider } from "@/api/ApiCacheProvider"
+import { Spinner } from "@/components"
 
 function App() {
   const auth = useAuth()
@@ -30,7 +31,7 @@ function App() {
   }, [auth])
 
   if (auth.isLoading) {
-    return <Paragraph>Loading...</Paragraph>
+    return <Spinner fullPage />
   }
 
   if (!auth.isAuthenticated) {
