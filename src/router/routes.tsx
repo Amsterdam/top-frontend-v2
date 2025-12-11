@@ -1,13 +1,17 @@
-import Home from "@/pages/Home/Home"
+import { DefaultLayout } from "@/components"
+import Home from "@/pages/Looplijst/Looplijst"
 import NotFound from "@/pages/NotFound/NotFound"
 
 export const routes = [
   {
     path: "/",
-    element: <Home />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
+    element: <DefaultLayout />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        path: "looplijst",
+        element: <Home />,
+      },
+    ],
   },
 ]

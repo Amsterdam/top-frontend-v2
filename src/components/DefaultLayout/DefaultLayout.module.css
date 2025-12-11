@@ -1,0 +1,9 @@
+.main {
+  padding: var(--ams-page-header-padding-inline);
+}
+
+@media screen and (min-width: 72.5rem) {
+  .main {
+    padding-inline: var(--ams-page-header-wide-padding-inline);
+  }
+}
