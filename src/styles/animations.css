@@ -45,3 +45,29 @@
     opacity: 1;
   }
 }
+
+.animate-wobble-every-5s {
+  animation: wobble-every-5s 5s infinite ease-in-out;
+}
+
+@keyframes wobble-every-5s {
+  0%,
+  85% {
+    transform: rotate(0deg);
+  }
+  88% {
+    transform: rotate(-10deg);
+  }
+  91% {
+    transform: rotate(10deg);
+  }
+  94% {
+    transform: rotate(-8deg);
+  }
+  97% {
+    transform: rotate(8deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}

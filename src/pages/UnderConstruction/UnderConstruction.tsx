@@ -16,7 +16,7 @@ export default function NotFound() {
         <Icon
           svg={ConstructionIcon}
           style={{ fontSize: "48px" }}
-          className="mb-2"
+          className="mb-2 animate-wobble-every-5s"
         />
         <Heading level={1} className="mb-3">
           Pagina in aanbouw
