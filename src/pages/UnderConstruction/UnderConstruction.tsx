@@ -1,8 +1,4 @@
-import {
-  Heading,
-  Paragraph,
-  Button,
-} from "@amsterdam/design-system-react"
+import { Heading, Paragraph, Button } from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
 
 export default function NotFound() {

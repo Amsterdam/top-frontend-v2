@@ -4,7 +4,7 @@ import { useUsers } from "@/api/hooks"
 
 export const useCurrentUser = () => {
   const decodedToken = useTokenPayload()
-  const { data } = useUsers()
+  const [data] = useUsers()
 
   return useMemo(
     () =>

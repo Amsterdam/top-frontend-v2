@@ -1,4 +1,5 @@
 import { useApi } from "../useApi"
+import { makeApiUrl } from "@/api/utils/makeApiUrl"
 
 type User = {
   id: string
@@ -15,4 +16,11 @@ type UserResponse = {
   results: User[]
 }
 
-export const useUsers = () => useApi<UserResponse>("users")
+export const useUsers = () => {
+  console.log("Using useUsers hook", makeApiUrl("users"))
+  return useApi<UserResponse>({
+    url: makeApiUrl("users"),
+    lazy: false,
+    isProtected: true,
+  })
+}
