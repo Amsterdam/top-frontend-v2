@@ -16,7 +16,11 @@ export default function NotFound() {
     <>
       <PageHeader brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`} />
       <div style={{ padding: "2rem", textAlign: "center" }}>
-        <Icon svg={FaceSadIcon} style={{ fontSize: "48px" }} className="mb-2 animate-wobble-every-5s" />
+        <Icon
+          svg={FaceSadIcon}
+          style={{ fontSize: "48px" }}
+          className="mb-2 animate-wobble-every-5s"
+        />
         <Heading level={1} className="mb-3">
           404 - Pagina niet gevonden
         </Heading>
