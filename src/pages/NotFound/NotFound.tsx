@@ -5,6 +5,8 @@ import {
   Button,
 } from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
+import { Icon } from "@amsterdam/design-system-react"
+import { FaceSadIcon } from "@amsterdam/design-system-react-icons"
 import { env } from "@/config/env"
 
 export default function NotFound() {
@@ -14,8 +16,11 @@ export default function NotFound() {
     <>
       <PageHeader brandName={`Toezicht op pad ${env.VITE_ENVIRONMENT_SHORT}`} />
       <div style={{ padding: "2rem", textAlign: "center" }}>
-        <Heading level={1}>404 - Pagina niet gevonden</Heading>
-        <Paragraph>
+        <Icon svg={FaceSadIcon} style={{ fontSize: "48px" }} className="mb-2" />
+        <Heading level={1} className="mb-3">
+          404 - Pagina niet gevonden
+        </Heading>
+        <Paragraph className="mb-5">
           De pagina die je probeert te bereiken bestaat niet of is verplaatst.
         </Paragraph>
         <Button type="button" onClick={() => navigate("/")}>
