@@ -2,20 +2,20 @@ import { useApi } from "../useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import stringifyQueryParams from "../utils/stringifyQueryParams"
 
-type Theme = {
+type Itinerary = {
   id: string
   name: string
 }
 
-type ThemeResponse = {
-  results: Theme[]
+type ItineraryResponse = {
+  itineraries: Itinerary[]
 }
 
 export const useItineraries = () => {
   const today = new Date()
   const created_at = today.toISOString().split("T")[0]
   const queryString = stringifyQueryParams({ created_at })
-  return useApi<ThemeResponse>({
+  return useApi<ItineraryResponse>({
     url: makeApiUrl("itineraries", queryString),
     lazy: false,
     isProtected: true,
