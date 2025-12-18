@@ -13,4 +13,5 @@ export const useThemes = () =>
 export const useTheme = (id: string) =>
   useApi<Theme>({
     url: makeApiUrl("themes", id),
+    lazy: id === undefined,
   })
