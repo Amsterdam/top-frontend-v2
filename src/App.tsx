@@ -4,7 +4,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
 import { router } from "@/router"
 import { ApiCacheProvider } from "@/api/ApiCacheProvider"
-import { Spinner } from "@/components"
+import { AdamRotatingSpinner } from "@/components"
 
 function App() {
   const auth = useAuth()
@@ -31,7 +31,7 @@ function App() {
   }, [auth])
 
   if (auth.isLoading) {
-    return <Spinner fullPage />
+    return <AdamRotatingSpinner />
   }
 
   if (!auth.isAuthenticated) {
