@@ -6,12 +6,12 @@
   "scripts": {
     "start": "vite",
     "acc": "env-cmd -f .env.acceptance vite",
-    "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "format": "prettier --write .",
+    "lint": "eslint .",
     "test": "vitest",
-    "preview": "vite preview"
+    "generate:api-schema:local": "openapi-typescript http://localhost:8000/api/v1/schema/ -o ./src/__generated__/apiSchema.d.ts",
+    "generate:api-schema:acc": "openapi-typescript https://acc.api.top.amsterdam.nl/api/v1/schema/ -o ./src/__generated__/apiSchema.d.ts"
   },
   "dependencies": {
     "@amsterdam/design-system-assets": "^1.1.0",
@@ -42,6 +42,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "jsdom": "^27.2.0",
+    "openapi-typescript": "^7.10.1",
     "prettier": "3.7.4",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",

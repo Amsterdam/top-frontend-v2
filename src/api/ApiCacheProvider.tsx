@@ -1,6 +1,6 @@
 import { createContext, useState, type ReactNode } from "react"
 
-import { type CacheStore } from "./types"
+import { type CacheStore } from "@/types/cache"
 
 const ApiCacheContext = createContext<CacheStore | null>(null)
 

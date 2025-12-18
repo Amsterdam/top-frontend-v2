@@ -36,8 +36,8 @@ type Config = {
 
 export const useApi = <Schema, Payload = Partial<Schema>>({
   url,
-  isProtected,
-  lazy,
+  isProtected = true,
+  lazy = false,
   keepUsingInvalidCache,
   handleError,
 }: Config) => {
