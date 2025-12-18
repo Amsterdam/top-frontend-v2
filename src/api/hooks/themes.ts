@@ -1,25 +1,17 @@
 import { useApi } from "../useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 
-type Theme = {
-  id: string
-  name: string
-}
+type ThemeResponse = components["schemas"]["PaginatedTeamSettingsThemeList"]
 
-type ThemeResponse = {
-  results: Theme[]
-}
+type Theme = components["schemas"]["TeamSettingsTheme"]
 
 export const useThemes = () =>
   useApi<ThemeResponse>({
     url: makeApiUrl("themes"),
-    lazy: false,
-    isProtected: true,
   })
 
 export const useTheme = (id: string) =>
   useApi<Theme>({
     url: makeApiUrl("themes", id),
-    lazy: false,
-    isProtected: true,
+    lazy: id === undefined,
   })

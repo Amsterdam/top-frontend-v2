@@ -2,13 +2,8 @@ import { useApi } from "../useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import stringifyQueryParams from "../utils/stringifyQueryParams"
 
-type Itinerary = {
-  id: string
-  name: string
-}
-
 type ItineraryResponse = {
-  itineraries: Itinerary[]
+  itineraries: components["schemas"]["Itinerary"][]
 }
 
 export const useItineraries = () => {
@@ -17,7 +12,5 @@ export const useItineraries = () => {
   const queryString = stringifyQueryParams({ created_at })
   return useApi<ItineraryResponse>({
     url: makeApiUrl("itineraries", queryString),
-    lazy: false,
-    isProtected: true,
   })
 }
