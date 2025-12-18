@@ -12,7 +12,5 @@ export const useItineraries = () => {
   const queryString = stringifyQueryParams({ created_at })
   return useApi<ItineraryResponse>({
     url: makeApiUrl("itineraries", queryString),
-    lazy: false,
-    isProtected: true,
   })
 }

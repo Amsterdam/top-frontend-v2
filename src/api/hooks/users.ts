@@ -6,6 +6,4 @@ type UserResponse = components["schemas"]["PaginatedUserList"]
 export const useUsers = () =>
   useApi<UserResponse>({
     url: makeApiUrl("users"),
-    lazy: false,
-    isProtected: true,
   })

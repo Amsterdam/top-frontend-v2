@@ -7,5 +7,4 @@ export const useTeamSettings = (teamId?: string) =>
   useApi<ThemeResponse>({
     url: makeApiUrl("team-settings", teamId),
     lazy: teamId === undefined,
-    isProtected: true,
   })
