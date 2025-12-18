@@ -5,21 +5,13 @@ import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import styles from "./DefaultLayout.module.css"
 import { useAuth } from "react-oidc-context"
-import { useItineraries } from "@/api/hooks"
 import { useRedirectItinerary } from "@/hooks"
-import { useEffect } from "react"
 
 export function DefaultLayout() {
   useRedirectFromState()
   const auth = useAuth()
-  const [data] = useItineraries()
-  const { redirectItinerary } = useRedirectItinerary()
 
-  useEffect(() => {
-    if (data?.itineraries) {
-      redirectItinerary(data.itineraries)
-    }
-  }, [data, redirectItinerary])
+  useRedirectItinerary()
 
   return (
     <>

@@ -1,28 +1,28 @@
-import { useNavigate } from "react-router"
+import { useItineraries } from "@/api/hooks"
+import { useEffect } from "react"
+import { useNavigate, useParams } from "react-router"
 
 export const useRedirectItinerary = () => {
   const navigate = useNavigate()
+  const { itineraryId } = useParams()
+  const [data] = useItineraries()
 
-  const redirectItinerary = (
-    itineraries?: Record<string, string>[],
-    itineraryId?: string,
-  ) => {
-    if (!itineraries) {
+  useEffect(() => {
+    const itineraries = data?.itineraries
+    if (!itineraries || itineraryId) {
       return
     }
 
     if (itineraries.length === 0) {
       navigate("/lijst-instellingen")
+      return
     }
 
     if (itineraries.length === 1) {
-      navigate(`/lijst/${itineraries[0].id.toString()}`)
+      navigate(`/lijst/${itineraries[0].id}`)
+      return
     }
 
-    if (itineraries.length > 1 && !itineraryId) {
-      navigate("/kies-looplijst")
-    }
-  }
-
-  return { redirectItinerary }
+    navigate("/kies-looplijst")
+  }, [data, itineraryId, navigate])
 }
