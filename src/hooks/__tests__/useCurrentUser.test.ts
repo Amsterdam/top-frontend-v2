@@ -13,14 +13,14 @@ describe("useCurrentUser", () => {
     }))
 
     vi.doMock("@/api/hooks", () => ({
-      useUsers: () => ({
-        data: {
+      useUsers: () => [
+        {
           results: [
             { id: "1", username: "john", name: "John Doe" },
             { id: "2", username: "jane", name: "Jane Doe" },
           ],
         },
-      }),
+      ],
     }))
 
     const { useCurrentUser } = await import("@/hooks/useCurrentUser")
@@ -44,14 +44,14 @@ describe("useCurrentUser", () => {
     }))
 
     vi.doMock("@/api/hooks", () => ({
-      useUsers: () => ({
-        data: {
+      useUsers: () => [
+        {
           results: [
             { id: "1", username: "john", name: "John Doe" },
             { id: "2", username: "jane", name: "Jane Doe" },
           ],
         },
-      }),
+      ],
     }))
 
     const { useCurrentUser } = await import("@/hooks/useCurrentUser")

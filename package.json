@@ -19,10 +19,11 @@
     "@amsterdam/design-system-react": "^2.2.0",
     "@amsterdam/design-system-react-icons": "^1.1.1",
     "@amsterdam/design-system-tokens": "^2.2.0",
+    "@amsterdam/ee-ads-rhf-lib": "file:amsterdam-ee-ads-rhf-lib-0.0.0.tgz",
     "env-cmd": "^11.0.0",
     "jwt-decode": "^4.0.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-oidc-context": "^3.3.0",
     "react-router": "^7.10.1"
   },

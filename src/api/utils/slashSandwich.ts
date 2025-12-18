@@ -10,15 +10,29 @@ export const slashSandwich = (
   parts: Array<string | number | undefined>,
   { leadingSlash = true, trailingSlash = true } = {},
 ): string => {
-  let sandwich = stripDoubleSlashes(
-    `/${parts.filter((_) => _ !== null || _ !== undefined).join("/")}/`,
-  )
+  // filter null/undefined
+  const filteredParts = parts.filter((p) => p !== null && p !== undefined)
+
+  // check of het laatste segment een query string is
+  const lastPart = filteredParts[filteredParts.length - 1]
+  const isQueryString = typeof lastPart === "string" && lastPart.startsWith("?")
+
+  // join alle pathdelen behalve query string
+  const pathParts = isQueryString ? filteredParts.slice(0, -1) : filteredParts
+  let sandwich = stripDoubleSlashes(`/${pathParts.join("/")}/`)
+
   if (!leadingSlash || sandwich.match(/^\/https?:\/\//)) {
     sandwich = stripLeadingSlash(sandwich)
   }
   if (!trailingSlash) {
     sandwich = stripTrailingSlash(sandwich)
   }
+
+  // voeg query string erachter als die bestaat
+  if (isQueryString) {
+    sandwich += lastPart
+  }
+
   return sandwich
 }
 

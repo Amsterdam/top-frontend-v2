@@ -1,95 +1,178 @@
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import useRequest, { type HttpMethod } from "./useRequest"
 import { useApiCache } from "./useApiCache"
-import { useAuth } from "react-oidc-context"
-import { makeApiUrl } from "./utils/makeApiUrl"
-import stringifyQueryParams from "./utils/stringifyQueryParams"
 
-type Method = "GET" | "POST" | "PATCH" | "DELETE"
-
-interface RequestOptions<TPayload> {
-  payload?: TPayload
-  params?: Record<string, string | number | string[] | undefined>
-  pathParams?: Array<string | number | undefined>
+type GetOptions = {
+  method: "GET"
 }
 
-export const useApi = <TResponse, TPayload = unknown>(
-  path: string,
-  autoFetch = true,
-) => {
+type MutateOptions = {
+  method: "POST" | "PUT" | "PATCH" | "DELETE"
+  skipCacheClear?: boolean
+  useResponseAsCache?: boolean
+}
+
+type Options = GetOptions | MutateOptions
+
+const isGetOptions = (options: Options): options is GetOptions =>
+  options.method === "GET"
+
+const isMutateOptions = (options: Options): options is MutateOptions =>
+  ["POST", "PUT", "PATCH", "DELETE"].includes(options.method)
+
+type CacheItem<T> = {
+  value?: T
+  valid: boolean
+  errors: unknown[]
+}
+
+type Config = {
+  url: string
+  isProtected?: boolean
+  lazy?: boolean
+  keepUsingInvalidCache?: boolean
+  handleError?: (error: unknown) => void
+}
+
+export const useApi = <Schema, Payload = Partial<Schema>>({
+  url,
+  isProtected,
+  lazy,
+  keepUsingInvalidCache,
+  handleError,
+}: Config) => {
+  const request = useRequest()
   const cache = useApiCache()
-  const { user } = useAuth()
-  const token = user?.access_token
+  const [isBusy, setIsBusy] = useState(false)
+  const isFetchingRef = useRef(false)
+  const cacheItem = cache.get(url) as CacheItem<Schema> | undefined
 
-  const [data, setData] = useState<TResponse | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<unknown>(null)
-
-  const fetchStartedRef = useRef(false)
-
-  const buildUrl = useCallback(
-    (options?: RequestOptions<TPayload>) => {
-      const fullPath = makeApiUrl(path, ...(options?.pathParams || []))
-      if (!options?.params) return fullPath
-      return `${fullPath}${stringifyQueryParams(options.params)}`
+  const setCacheItem = useCallback(
+    (value: Schema) => {
+      cache.set(url, {
+        value,
+        valid: true,
+        errors: [],
+      })
     },
-    [path],
+    [cache, url],
   )
 
-  const request = useCallback(
-    async (method: Method, options: RequestOptions<TPayload> = {}) => {
-      const url = buildUrl(options)
+  const addErrorToCache = useCallback(
+    (error: unknown) => {
+      cache.set(url, {
+        value: cacheItem?.value,
+        valid: false,
+        errors: [...(cacheItem?.errors ?? []), error],
+      })
+    },
+    [cache, cacheItem, url],
+  )
 
-      if (method === "GET" && cache.has(url)) {
-        const cached = cache.get(url) as TResponse
-        setData(cached)
-        return cached
-      }
-
+  const execRequest = useCallback(
+    async (options: Options, payload?: Payload) => {
+      if (isFetchingRef.current) return
       try {
-        setLoading(true)
-        setError(null)
+        isFetchingRef.current = true
+        setIsBusy(true)
 
-        const headers: Record<string, string> = {
-          "Content-Type": "application/json",
+        if (isMutateOptions(options) && !options.skipCacheClear) {
+          cache.delete(url)
         }
 
-        if (token) headers["Authorization"] = `Bearer ${token}`
+        const response = await request<Schema>(
+          options.method as HttpMethod,
+          url,
+          payload,
+          { protected: isProtected },
+        )
 
-        const response = await fetch(url, {
-          method,
-          headers,
-          body:
-            method === "GET" || method === "DELETE"
-              ? undefined
-              : JSON.stringify(options.payload),
-        })
-
-        if (!response.ok) throw new Error("Request failed")
-
-        const result = (await response.json()) as TResponse
-
-        if (method === "GET") {
-          cache.set(url, result)
-          setData(result)
+        if (
+          isGetOptions(options) ||
+          (isMutateOptions(options) && options.useResponseAsCache)
+        ) {
+          setCacheItem(response)
         }
 
-        return result
-      } catch (err) {
-        setError(err)
-        throw err
+        return response
+      } catch (error) {
+        addErrorToCache(error)
+        if (handleError) {
+          handleError(error)
+        } else {
+          throw error
+        }
       } finally {
-        setLoading(false)
+        isFetchingRef.current = false
+        setIsBusy(false)
       }
     },
-    [buildUrl, cache, token],
+    [
+      request,
+      url,
+      cache,
+      isProtected,
+      setCacheItem,
+      addErrorToCache,
+      handleError,
+    ],
+  )
+
+  const execGet = useCallback(
+    () => execRequest({ method: "GET" }),
+    [execRequest],
+  )
+
+  const execPost = useCallback(
+    (payload?: Payload, options?: Omit<MutateOptions, "method">) =>
+      execRequest({ method: "POST", ...options }, payload),
+    [execRequest],
+  )
+
+  const execPut = useCallback(
+    (payload?: Payload, options?: Omit<MutateOptions, "method">) =>
+      execRequest({ method: "PUT", ...options }, payload),
+    [execRequest],
+  )
+
+  const execPatch = useCallback(
+    (payload?: Payload, options?: Omit<MutateOptions, "method">) =>
+      execRequest({ method: "PATCH", ...options }, payload),
+    [execRequest],
+  )
+
+  const execDelete = useCallback(
+    (options?: Omit<MutateOptions, "method">) =>
+      execRequest({ method: "DELETE", ...options }),
+    [execRequest],
   )
 
   useEffect(() => {
-    if (autoFetch && !fetchStartedRef.current) {
-      fetchStartedRef.current = true
-      request("GET").catch(() => null)
+    if ((!cacheItem || !cacheItem.valid) && !lazy) {
+      void execGet()
     }
-  }, [autoFetch, request])
+  }, [cacheItem, lazy, execGet])
 
-  return { data, loading, error, request }
+  const data =
+    cacheItem && (cacheItem.valid || keepUsingInvalidCache)
+      ? cacheItem.value
+      : undefined
+
+  const errors = cacheItem?.errors ?? []
+
+  return [
+    data,
+    {
+      isBusy,
+      hasErrors: errors.length > 0,
+      execGet,
+      execPost,
+      execPut,
+      execPatch,
+      execDelete,
+    },
+    errors,
+  ] as const
 }
+
+export default useApi

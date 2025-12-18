@@ -1,0 +1,4 @@
+/* This file is used to override the default design system styles */
+.ams-grid {
+  padding-inline: 0px; /* Remove default padding from design system grid */
+}
