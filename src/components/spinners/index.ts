@@ -1,2 +1,3 @@
 export * from "./WritingLoader/WritingLoader"
-export * from "./AdamRotatingSpinner/AdamRotatingSpinner"
+export * from "./AmsterdamCrossSpinner/AmsterdamCrossSpinner"
+export * from "./AmsterdamTicTacToeLoader/AmsterdamTicTacToeLoader"

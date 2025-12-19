@@ -1,7 +1,7 @@
 import React from "react"
-import styles from "./AdamRotatingSpinner.module.css"
+import styles from "./AmsterdamCrossSpinner.module.css"
 
-export const AdamRotatingSpinner: React.FC = () => {
+export const AmsterdamCrossSpinner: React.FC = () => {
   return (
     <div className={styles.fullPageContainer}>
       <div className={styles.svgContainer}>
@@ -23,4 +23,4 @@ export const AdamRotatingSpinner: React.FC = () => {
   )
 }
 
-export default AdamRotatingSpinner
+export default AmsterdamCrossSpinner

@@ -4,7 +4,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
 import { router } from "@/router"
 import { ApiCacheProvider } from "@/api/ApiCacheProvider"
-import { AdamRotatingSpinner } from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 
 function App() {
   const auth = useAuth()
@@ -31,7 +31,7 @@ function App() {
   }, [auth])
 
   if (auth.isLoading) {
-    return <AdamRotatingSpinner />
+    return <AmsterdamCrossSpinner />
   }
 
   if (!auth.isAuthenticated) {
