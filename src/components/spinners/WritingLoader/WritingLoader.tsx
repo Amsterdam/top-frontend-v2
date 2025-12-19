@@ -1,7 +1,7 @@
 import { Column, Paragraph } from "@amsterdam/design-system-react"
-import styles from "./Spinner.module.css"
+import styles from "./WritingLoader.module.css"
 
-export function Spinner({ fullPage = false }: { fullPage?: boolean }) {
+export function WritingLoader({ fullPage = false }: { fullPage?: boolean }) {
   if (fullPage) {
     return (
       <div className={styles.fullPageContainer}>
