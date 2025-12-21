@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router"
 
 export const useRedirectItinerary = () => {
   const navigate = useNavigate()
-  const { itineraryId } = useParams()
+  const { itineraryId, themeId } = useParams()
   const [data] = useItineraries()
 
   useEffect(() => {
@@ -13,16 +13,18 @@ export const useRedirectItinerary = () => {
       return
     }
 
-    if (itineraries.length === 0) {
-      navigate("/lijst-instellingen")
-      return
-    }
-
     if (itineraries.length === 1) {
       navigate(`/lijst/${itineraries[0].id}`)
       return
     }
 
-    navigate("/kies-looplijst")
-  }, [data, itineraryId, navigate])
+    if (itineraries.length > 1) {
+      navigate("/kies-looplijst")
+    }
+
+    if (themeId) {
+      return
+    }
+    navigate("/lijst-instellingen")
+  }, [data, itineraryId, navigate, themeId])
 }

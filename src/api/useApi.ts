@@ -96,6 +96,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
 
         return response
       } catch (error) {
+        console.error("API request error:", error)
         addErrorToCache(error)
         if (handleError) {
           handleError(error)
@@ -148,7 +149,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
   )
 
   useEffect(() => {
-    if ((!cacheItem || !cacheItem.valid) && !lazy) {
+    if (!cacheItem && !lazy) {
       void execGet()
     }
   }, [cacheItem, lazy, execGet])
