@@ -27,7 +27,7 @@ export const AmsterdamTicTacToeLoader: React.FC<
 > = ({
   duration = "8s",
   showGrid = true,
-  theme = "auto",
+  theme = "light",
   className = "fullPageContainer",
   size = 140,
 }) => {

@@ -8,7 +8,7 @@ describe("mapToOptions", () => {
       { id: "2", fullName: "Bob" },
     ]
 
-    const result = mapToOptions(users, "id", "fullName", false)
+    const result = mapToOptions("id", "fullName", users, false)
 
     expect(result).toEqual([
       { value: "1", label: "Alice" },
@@ -19,13 +19,13 @@ describe("mapToOptions", () => {
   it("forceert value en label naar strings", () => {
     const items = [{ id: 10, name: 20 }]
 
-    const result = mapToOptions(items, "id", "name", false)
+    const result = mapToOptions("id", "name", items, false)
 
     expect(result).toEqual([{ value: "10", label: "20" }])
   })
 
   it("returned een lege array wanneer input leeg is en includeEmpty false is", () => {
-    const result = mapToOptions([], "id", "name", false)
+    const result = mapToOptions("id", "name", [], false)
     expect(result).toEqual([])
   })
 })
