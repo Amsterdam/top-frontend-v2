@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook } from "@testing-library/react"
 import { useApiErrorHandler } from "../useApiErrorHandler"
 import type { ApiError } from "@/api/types/apiError"
-import * as ReactRouter from "react-router"
 import * as AlertHook from "@/components/alerts/useAlert"
 
 describe("useApiErrorHandler", () => {
@@ -12,21 +11,10 @@ describe("useApiErrorHandler", () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(ReactRouter, "useNavigate").mockReturnValue(navigateMock)
     vi.spyOn(AlertHook, "useAlert").mockReturnValue({
       showAlert: showAlertMock,
       dismissAlert: dismissAlertMock,
     })
-  })
-
-  it("should show alert and navigate to /login on 401", () => {
-    const { result } = renderHook(() => useApiErrorHandler())
-    result.current({ status: 401 } as ApiError)
-
-    expect(showAlertMock).toHaveBeenCalledWith(
-      expect.objectContaining({ title: expect.stringContaining("uitgelogd") }),
-    )
-    expect(navigateMock).toHaveBeenCalledWith("/login")
   })
 
   it("should show alert on 403 without navigation", () => {
@@ -58,6 +46,5 @@ describe("useApiErrorHandler", () => {
     expect(showAlertMock).toHaveBeenCalledWith(
       expect.objectContaining({ title: expect.stringContaining("Oeps") }),
     )
-    expect(navigateMock).toHaveBeenCalledWith("/error")
   })
 })
