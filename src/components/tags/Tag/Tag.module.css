@@ -4,6 +4,7 @@
 
   display: inline-flex;
   font-family: var(--ams-badge-font-family);
+  font-weight: 500;
   border-radius: 4px;
   padding-inline: 8px;
   gap: 4px;

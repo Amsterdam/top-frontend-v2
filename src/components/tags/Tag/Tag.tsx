@@ -18,6 +18,9 @@ const TAG_COLORS = {
   yellow: "#ffe600",
 } as const
 
+// Colors that require dark text for better readability
+const darkTextColors: TagColor[] = ["yellow", "lime"]
+
 type TagColor = keyof typeof TAG_COLORS
 
 type TagProps = {
@@ -31,6 +34,9 @@ export function Tag({ name, color = "blue", icon }: TagProps) {
 
   const style: React.CSSProperties = {
     "--tag-color": TAG_COLORS[color],
+    color: darkTextColors.includes(color)
+      ? "var(--ams-color-text)"
+      : TAG_COLORS[color],
   } as React.CSSProperties
 
   return (
