@@ -4,7 +4,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
 import { router } from "@/router"
 import { ApiCacheProvider } from "@/api/ApiCacheProvider"
-import { AmsterdamCrossSpinner } from "@/components"
+import { AlertProvider, AmsterdamCrossSpinner } from "@/components"
 
 function App() {
   const auth = useAuth()
@@ -39,9 +39,11 @@ function App() {
   }
 
   return (
-    <ApiCacheProvider>
-      <RouterProvider router={router} />
-    </ApiCacheProvider>
+    <AlertProvider>
+      <ApiCacheProvider>
+        <RouterProvider router={router} />
+      </ApiCacheProvider>
+    </AlertProvider>
   )
 }
 

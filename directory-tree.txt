@@ -1,4 +1,5 @@
 .
+├── amsterdam-ee-ads-rhf-lib-0.0.0.tgz
 ├── directory-prompt.txt
 ├── directory-tree.txt
 ├── eslint.config.js
@@ -7,34 +8,67 @@
 ├── package.json
 ├── package-lock.json
 ├── public
-│   └── favicon -> ../node_modules/@amsterdam/design-system-assets/favicon
+│   ├── favicon -> ../node_modules/@amsterdam/design-system-assets/favicon
+│   └── images
+│       └── background.webp
 ├── README.md
 ├── src
 │   ├── api
 │   │   ├── ApiCacheProvider.tsx
 │   │   ├── hooks
 │   │   │   ├── index.ts
-│   │   │   └── themes.ts
-│   │   ├── types.ts
+│   │   │   ├── itineraries.ts
+│   │   │   ├── teamSettings.ts
+│   │   │   ├── themes.ts
+│   │   │   └── users.ts
+│   │   ├── types
+│   │   │   └── apiError.ts
 │   │   ├── useApiCache.ts
 │   │   ├── useApi.ts
+│   │   ├── useRequest.ts
 │   │   └── utils
 │   │       ├── makeApiUrl.ts
 │   │       ├── slashSandwich.ts
 │   │       ├── stringifyQueryParams.ts
-│   │       └── __tests__
-│   │           ├── slashSandwich.test.ts
-│   │           └── stringifyQueryParams.test.ts
+│   │       ├── __tests__
+│   │       │   ├── slashSandwich.test.ts
+│   │       │   └── stringifyQueryParams.test.ts
+│   │       └── useApiErrorHandler.ts
 │   ├── App.tsx
 │   ├── components
+│   │   ├── alerts
+│   │   │   ├── AlertContext.ts
+│   │   │   ├── AlertProvider.tsx
+│   │   │   ├── types.ts
+│   │   │   └── useAlert.ts
+│   │   ├── DefaultLayout
+│   │   │   ├── DefaultLayout.module.css
+│   │   │   └── DefaultLayout.tsx
 │   │   ├── Greeting
 │   │   │   ├── Greeting.tsx
 │   │   │   └── __tests__
 │   │   │       └── Greeting.test.tsx
-│   │   └── index.ts
+│   │   ├── index.ts
+│   │   └── spinners
+│   │       ├── AmsterdamCrossSpinner
+│   │       │   ├── AmsterdamCrossSpinner.module.css
+│   │       │   └── AmsterdamCrossSpinner.tsx
+│   │       ├── AmsterdamTicTacToeLoader
+│   │       │   └── AmsterdamTicTacToeLoader.tsx
+│   │       ├── index.ts
+│   │       └── WritingLoader
+│   │           ├── WritingLoader.module.css
+│   │           └── WritingLoader.tsx
 │   ├── config
 │   │   ├── env.ts
 │   │   └── oidc.ts
+│   ├── forms
+│   │   └── utils
+│   │       ├── mapToOptions.ts
+│   │       └── __tests__
+│   │           └── mapToOptions.test.ts
+│   ├── __generated__
+│   │   └── apiSchema.d.ts
 │   ├── hooks
 │   │   ├── index.ts
 │   │   ├── __tests__
@@ -43,21 +77,35 @@
 │   │   │   └── useTokenPayload.test.ts
 │   │   ├── useCurrentUser.ts
 │   │   ├── useRedirectFromState.ts
+│   │   ├── useRedirectItinerary.ts
 │   │   └── useTokenPayload.ts
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
-│   │   ├── Home
-│   │   │   └── Home.tsx
-│   │   └── NotFound
-│   │       └── NotFound.tsx
-│   └── router
-│       ├── index.tsx
-│       └── routes.tsx
+│   │   ├── ListSettings
+│   │   │   ├── ChooseThemePage
+│   │   │   │   ├── ChooseThemePage.module.css
+│   │   │   │   └── ChooseThemePage.tsx
+│   │   │   └── CreateListPage
+│   │   │       └── CreateListPage.tsx
+│   │   ├── NotFound
+│   │   │   └── NotFound.tsx
+│   │   └── UnderConstruction
+│   │       └── UnderConstruction.tsx
+│   ├── router
+│   │   ├── index.tsx
+│   │   └── routes.tsx
+│   ├── styles
+│   │   ├── animations.css
+│   │   ├── design-system-overrides.css
+│   │   └── spacing.css
+│   └── types
+│       ├── api.d.ts
+│       └── cache.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
 ├── vite.config.ts
 └── vitest.config.ts
 
-18 directories, 43 files
+35 directories, 74 files

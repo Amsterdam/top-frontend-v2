@@ -19,8 +19,8 @@ type CreateItineraryPayload = {
 }
 
 type CreateItineraryResponse = {
+  id: string
   message: string
-  itinerary_id: string
 }
 
 export const useItineraries = () => {
