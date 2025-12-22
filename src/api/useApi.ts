@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import useRequest, { type HttpMethod } from "./useRequest"
 import { useApiCache } from "./useApiCache"
+import { useApiErrorHandler } from "@/api/utils/useApiErrorHandler"
+import type { ApiError } from "@/api/types/apiError"
 
 type GetOptions = {
   method: "GET"
@@ -31,7 +33,7 @@ type Config = {
   isProtected?: boolean
   lazy?: boolean
   keepUsingInvalidCache?: boolean
-  handleError?: (error: unknown) => void
+  handleError?: (error: ApiError) => boolean
 }
 
 export const useApi = <Schema, Payload = Partial<Schema>>({
@@ -46,6 +48,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
   const [isBusy, setIsBusy] = useState(false)
   const isFetchingRef = useRef(false)
   const cacheItem = cache.get(url) as CacheItem<Schema> | undefined
+  const handleGlobalError = useApiErrorHandler()
 
   const setCacheItem = useCallback(
     (value: Schema) => {
@@ -96,13 +99,26 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
 
         return response
       } catch (error) {
-        console.error("API request error:", error)
-        addErrorToCache(error)
-        if (handleError) {
-          handleError(error)
-        } else {
-          throw error
+        // Probeer status code uit de error message te halen
+        const errorMessage = (error as Error).message || ""
+        const statusMatch = errorMessage.match(/status (\d+)/)
+        const status = statusMatch ? parseInt(statusMatch[1], 10) : 500
+
+        const apiError: ApiError = {
+          status,
+          message: errorMessage || "Er is een onverwachte fout opgetreden.",
+          cause: error,
         }
+
+        addErrorToCache(apiError)
+
+        const handledLocally = handleError?.(apiError) === true
+
+        if (!handledLocally) {
+          handleGlobalError(apiError)
+        }
+
+        return
       } finally {
         isFetchingRef.current = false
         setIsBusy(false)
@@ -111,11 +127,12 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
     [
       request,
       url,
-      cache,
       isProtected,
+      cache,
       setCacheItem,
       addErrorToCache,
       handleError,
+      handleGlobalError,
     ],
   )
 

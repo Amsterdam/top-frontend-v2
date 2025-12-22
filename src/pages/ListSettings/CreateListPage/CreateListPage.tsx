@@ -88,8 +88,8 @@ export default function CreateListPage() {
       start_case: values.startAddress ?? {},
     })
 
-    if (response?.itinerary_id) {
-      navigate(`/lijst/${response.itinerary_id}`)
+    if (response?.id) {
+      navigate(`/lijst/${response.id}`)
     }
   }
 
