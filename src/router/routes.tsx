@@ -3,6 +3,7 @@ import ChooseThemePage from "@/pages/ListSettings/ChooseThemePage/ChooseThemePag
 import CreateListPage from "@/pages/ListSettings/CreateListPage/CreateListPage"
 import NotFound from "@/pages/NotFound/NotFound"
 import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
+import ListPage from "@/pages/ListPage/ListPage"
 
 export const routes = [
   {
@@ -13,7 +14,7 @@ export const routes = [
       { path: "cases/:id", element: <UnderConstruction /> },
       { path: "kies-looplijst", element: <UnderConstruction /> },
       { path: "lijst", element: <UnderConstruction /> },
-      { path: "lijst/:itineraryId", element: <UnderConstruction /> },
+      { path: "lijst/:itineraryId", element: <ListPage /> },
       { path: "lijst/:itineraryId/suggesties", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },

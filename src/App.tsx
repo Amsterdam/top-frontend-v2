@@ -2,9 +2,13 @@ import { useEffect, useRef } from "react"
 import { useAuth, hasAuthParams } from "react-oidc-context"
 import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
+import dayjs from "dayjs"
 import { router } from "@/router"
 import { ApiCacheProvider } from "@/api/ApiCacheProvider"
 import { AlertProvider, AmsterdamCrossSpinner } from "@/components"
+import "dayjs/locale/nl"
+
+dayjs.locale("nl")
 
 function App() {
   const auth = useAuth()
