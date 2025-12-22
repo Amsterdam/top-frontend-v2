@@ -1,5 +1,4 @@
 import {
-  Badge,
   Button,
   Column,
   Heading,
@@ -8,8 +7,8 @@ import {
 } from "@amsterdam/design-system-react"
 import styles from "./ListItem.module.css"
 import { cleanAddress } from "./utils"
-import { PriorityBadge } from "@/components"
 import { TrashBinIcon } from "@amsterdam/design-system-react-icons"
+import { Tag, StatusTag, PriorityTag, Note } from "@/components"
 
 type ExtendedCaseData = {
   address: {
@@ -62,14 +61,14 @@ export function ListItem({ item }: { item: Item }) {
         </Column>
       </Row>
       <Row>
-        {statusName && <Badge color="purple" label={statusName} />}
-        <PriorityBadge priority={priority} />
+        <StatusTag statusName={statusName} />
+        <PriorityTag priority={priority} />
 
         {caseData?.tags?.map((tag) => (
-          <Badge key={tag.id} color="orange" label={tag.name} />
+          <Tag key={tag.id} color="green" name={tag.name} />
         ))}
       </Row>
-      <Paragraph>{notes}</Paragraph>
+      <Note note={notes} />
     </Column>
   )
 }

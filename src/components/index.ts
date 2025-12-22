@@ -1,5 +1,6 @@
 export * from "./alerts/AlertProvider"
 export * from "./DefaultLayout/DefaultLayout"
 export * from "./Greeting/Greeting"
-export * from "./PriorityBadge/PriorityBadge"
+export * from "./Note/Note"
+export * from "./tags"
 export * from "./spinners"
