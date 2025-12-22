@@ -1,22 +1,11 @@
-import { useNavigate } from "react-router"
 import { useAlert } from "@/components/alerts/useAlert"
 import type { ApiError } from "@/api/types/apiError"
 
 export const useApiErrorHandler = () => {
-  const navigate = useNavigate()
   const { showAlert } = useAlert()
 
   return (error: ApiError) => {
     switch (error.status) {
-      case 401:
-        showAlert({
-          title: "Je bent uitgelogd 🔒",
-          description: "Log opnieuw in om verder te gaan.",
-          severity: "error",
-        })
-        navigate("/login")
-        return
-
       case 403:
         showAlert({
           title: "Toegang gewijgerd 🚫",
@@ -42,7 +31,6 @@ export const useApiErrorHandler = () => {
             "Er is een onverwachte fout opgetreden. Probeer het later opnieuw of neem contact met ons op.",
           severity: "error",
         })
-        navigate("/error")
     }
   }
 }
