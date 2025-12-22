@@ -1,0 +1,18 @@
+.tag {
+  --tag-color: #000;
+  --tag-bg-strength: 10%;
+
+  display: inline-flex;
+  font-family: var(--ams-badge-font-family);
+  border-radius: 4px;
+  padding-inline: 8px;
+  gap: 4px;
+
+  border: 1px solid var(--tag-color);
+  color: var(--tag-color);
+  background-color: color-mix(
+    in srgb,
+    var(--tag-color) var(--tag-bg-strength),
+    white
+  );
+}

@@ -70,7 +70,7 @@ export default function ChooseThemePage() {
         </Button>
       </Row>
 
-      <Column gap="small">
+      <Column>
         {itinerary?.items.map((item, index) => (
           <div
             className="animate-fade-slide-in-bottom"
