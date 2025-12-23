@@ -12,6 +12,7 @@ type MutateOptions = {
   method: "POST" | "PUT" | "PATCH" | "DELETE"
   skipCacheClear?: boolean
   useResponseAsCache?: boolean
+  clearCacheKeys?: string[]
 }
 
 type Options = GetOptions | MutateOptions
@@ -79,8 +80,20 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
         isFetchingRef.current = true
         setIsBusy(true)
 
-        if (isMutateOptions(options) && !options.skipCacheClear) {
-          cache.delete(url)
+        if (isMutateOptions(options)) {
+          if (!options.skipCacheClear) {
+            cache.delete(url)
+          }
+
+          if (options.clearCacheKeys?.length) {
+            options.clearCacheKeys.forEach((keyFragment) => {
+              Array.from(cache.keys()).forEach((cacheKey) => {
+                if (cacheKey.includes(keyFragment)) {
+                  cache.delete(cacheKey)
+                }
+              })
+            })
+          }
         }
 
         const response = await request<Schema>(
