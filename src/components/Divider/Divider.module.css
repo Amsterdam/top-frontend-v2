@@ -1,4 +1,4 @@
-.bottomBorder {
+.divider {
   border-bottom: 1px solid var(--ams-color-separator);
-  padding-bottom: 12px;
+  margin: 12px 0px;
 }

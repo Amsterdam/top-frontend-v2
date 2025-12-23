@@ -112,16 +112,15 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
 
         return response
       } catch (error) {
-        // Probeer status code uit de error message te halen
-        const errorMessage = (error as Error).message || ""
-        const statusMatch = errorMessage.match(/status (\d+)/)
-        const status = statusMatch ? parseInt(statusMatch[1], 10) : 500
-
-        const apiError: ApiError = {
-          status,
-          message: errorMessage || "Er is een onverwachte fout opgetreden.",
-          cause: error,
-        }
+        const apiError: ApiError = (error as ApiError)?.status
+          ? (error as ApiError)
+          : {
+              status: 500,
+              message:
+                (error as Error).message ||
+                "Er is een onverwachte fout opgetreden.",
+              cause: error,
+            }
 
         addErrorToCache(apiError)
 
@@ -131,7 +130,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
           handleGlobalError(apiError)
         }
 
-        return
+        throw apiError
       } finally {
         isFetchingRef.current = false
         setIsBusy(false)

@@ -3,11 +3,18 @@ import { Alert, Paragraph } from "@amsterdam/design-system-react"
 import { AlertContext } from "./AlertContext"
 import type { AlertMessage } from "./types"
 
+const TIME_TOAST_DISMISS = 5000 // 5 seconden
+
 export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
   const [alerts, setAlerts] = useState<AlertMessage[]>([])
 
   const showAlert = useCallback((alert: Omit<AlertMessage, "id">) => {
-    setAlerts((current) => [...current, { ...alert, id: crypto.randomUUID() }])
+    const id = crypto.randomUUID()
+    setAlerts((current) => [...current, { ...alert, id }])
+
+    setTimeout(() => {
+      setAlerts((current) => current.filter((a) => a.id !== id))
+    }, TIME_TOAST_DISMISS)
   }, [])
 
   const dismissAlert = useCallback((id: string) => {

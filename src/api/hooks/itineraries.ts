@@ -38,3 +38,10 @@ export const useCreateItinerary = () => {
     lazy: true,
   })
 }
+
+export const useDeleteItinerary = (itineraryId: string) => {
+  return useApi<CreateItineraryResponse, CreateItineraryPayload>({
+    url: makeApiUrl("itineraries", itineraryId),
+    lazy: true,
+  })
+}

@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import {
   Button,
   Column,
@@ -7,7 +8,6 @@ import {
   Row,
 } from "@amsterdam/design-system-react"
 import {
-  TrashBinIcon,
   ClipboardIcon,
   PersonsIcon,
   PlusIcon,
@@ -17,15 +17,12 @@ import dayjs from "dayjs"
 import { useItineraryFromList } from "@/hooks"
 import { ListItem } from "./ListItem/ListItem"
 import type { Item } from "./ListItem/ListItem"
-import { AmsterdamCrossSpinner, GoogleMapsButton } from "@/components"
-import styles from "./ListPage.module.css"
-import { useMemo } from "react"
+import { AmsterdamCrossSpinner, GoogleMapsButton, Divider } from "@/components"
+import DeleteItineraryButton from "./components/DeleteItineraryButton/DeleteItineraryButton"
 
-export default function ChooseThemePage() {
+export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const [itinerary, { isBusy }] = useItineraryFromList(itineraryId)
-
-  console.log(" itinerary", itinerary)
 
   const addresses = useMemo(() => {
     return (itinerary?.items?.map((item) => item.case.data.address) ??
@@ -37,7 +34,7 @@ export default function ChooseThemePage() {
   }
   return (
     <>
-      <div className={`animate-scale-in-center ${styles.mainCard}`}>
+      <div className="animate-scale-in-center">
         <Row align="between">
           <Column>
             <Heading
@@ -58,12 +55,7 @@ export default function ChooseThemePage() {
                 title="Wijzig teamleden"
                 size="heading-1"
               />
-              <IconButton
-                svg={TrashBinIcon}
-                label="Verwijder looplijst"
-                title="Verwijder looplijst"
-                size="heading-1"
-              />
+              <DeleteItineraryButton itineraryId={itineraryId!} />
             </Row>
           </Column>
         </Row>
@@ -75,12 +67,13 @@ export default function ChooseThemePage() {
               .join(", ")}
           </Paragraph>
         </Column>
-        <Row align="between" className={`mt-3 mb-3 ${styles.bottomBorder}`}>
+        <Row align="between" className="mt-3">
           <GoogleMapsButton addresses={addresses} />
           <Button variant="secondary" iconBefore icon={PlusIcon}>
             Voeg zaak toe
           </Button>
         </Row>
+        <Divider />
       </div>
 
       <Column>
