@@ -35,7 +35,6 @@ export type Item = components["schemas"]["ItineraryItem"] & {
 }
 
 export function ListItem({ item }: { item: Item }) {
-  console.log("ListItem item:", item)
   const caseData = item.case?.data
   const address = caseData?.address
   const workflows = caseData?.workflows

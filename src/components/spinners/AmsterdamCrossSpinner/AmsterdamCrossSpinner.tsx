@@ -1,7 +1,6 @@
-import React from "react"
 import styles from "./AmsterdamCrossSpinner.module.css"
 
-export const AmsterdamCrossSpinner: React.FC = () => {
+export function AmsterdamCrossSpinner() {
   return (
     <div className={styles.fullPageContainer}>
       <div className={styles.svgContainer}>
