@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  background: rgba(255, 255, 255, 0.7); /* optioneel dimmen */
+  /* background: rgba(255, 255, 255, 0.7);  */
 }
 
 .svgContainer {
@@ -18,8 +18,8 @@
 }
 
 .cross {
-  width: 5rem;
-  height: 5rem;
+  width: 2rem;
+  height: 2rem;
   transform-origin: center;
   animation: rotate 3s ease infinite;
   fill: #ec0000;

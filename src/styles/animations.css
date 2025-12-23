@@ -1,5 +1,22 @@
 /* Animation classes follow the convention: animate-[effect]-[direction] */
 
+.animate-scale-in-center {
+  animation: scale-in-center 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes scale-in-center {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .animate-fade-slide-in-bottom {
   opacity: 0;
   transform: translateY(100px);
@@ -21,18 +38,6 @@
   animation: tracking-in-expand 1s cubic-bezier(0.215, 0.61, 0.355, 1) both;
 }
 
-@-webkit-keyframes tracking-in-expand {
-  0% {
-    letter-spacing: -0.5em;
-    opacity: 0;
-  }
-  40% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 1;
-  }
-}
 @keyframes tracking-in-expand {
   0% {
     letter-spacing: -0.5em;

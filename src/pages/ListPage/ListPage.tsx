@@ -10,65 +10,78 @@ import {
   TrashBinIcon,
   ClipboardIcon,
   PersonsIcon,
-  MapMarkerOnMapIcon,
+  PlusIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
 import dayjs from "dayjs"
 import { useItineraryFromList } from "@/hooks"
 import { ListItem } from "./ListItem/ListItem"
 import type { Item } from "./ListItem/ListItem"
-
-// import styles from "./ChooseThemePage.module.css"
+import { AmsterdamCrossSpinner, GoogleMapsButton } from "@/components"
+import styles from "./ListPage.module.css"
+import { useMemo } from "react"
 
 export default function ChooseThemePage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const itinerary = useItineraryFromList(itineraryId)
-  console.log("itinerary data:", itinerary)
+  const [itinerary, { isBusy }] = useItineraryFromList(itineraryId)
 
+  console.log(" itinerary", itinerary)
+
+  const addresses = useMemo(() => {
+    return (itinerary?.items?.map((item) => item.case.data.address) ??
+      []) as Address[]
+  }, [itinerary])
+
+  if (isBusy) {
+    return <AmsterdamCrossSpinner />
+  }
   return (
     <>
-      <Row align="between">
+      <div className={`animate-scale-in-center ${styles.mainCard}`}>
+        <Row align="between">
+          <Column>
+            <Heading
+              level={2}
+            >{`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
+          </Column>
+          <Column>
+            <Row wrap align="end">
+              <IconButton
+                svg={ClipboardIcon}
+                label="Kopieer naar klembord"
+                title="Kopieer naar klembord"
+                size="heading-1"
+              />
+              <IconButton
+                svg={PersonsIcon}
+                label="Wijzig teamleden"
+                title="Wijzig teamleden"
+                size="heading-1"
+              />
+              <IconButton
+                svg={TrashBinIcon}
+                label="Verwijder looplijst"
+                title="Verwijder looplijst"
+                size="heading-1"
+              />
+            </Row>
+          </Column>
+        </Row>
         <Column>
-          <Heading
-            level={2}
-          >{`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
+          <Heading level={3}>Kamerverhuur – Standaard</Heading>
+          <Paragraph>
+            {itinerary?.team_members
+              .map((member) => member.user.full_name)
+              .join(", ")}
+          </Paragraph>
         </Column>
-        <Column>
-          <Row wrap align="end">
-            <IconButton
-              svg={ClipboardIcon}
-              label="Kopieer naar klembord"
-              title="Kopieer naar klembord"
-              size="heading-1"
-            />
-            <IconButton
-              svg={PersonsIcon}
-              label="Wijzig teamleden"
-              title="Wijzig teamleden"
-              size="heading-1"
-            />
-            <IconButton
-              svg={TrashBinIcon}
-              label="Verwijder looplijst"
-              title="Verwijder looplijst"
-              size="heading-1"
-            />
-          </Row>
-        </Column>
-      </Row>
-      <Column>
-        <Heading level={3}>Kamerverhuur – Standaard</Heading>
-        <Paragraph>
-          {itinerary?.team_members
-            .map((member) => member.user.full_name)
-            .join(", ")}
-        </Paragraph>
-      </Column>
-      <Row className="mt-3 mb-3">
-        <Button variant="secondary" iconBefore icon={MapMarkerOnMapIcon}>
-          Bekijk op Google Maps
-        </Button>
-      </Row>
+        <Row align="between" className={`mt-3 mb-3 ${styles.bottomBorder}`}>
+          <GoogleMapsButton addresses={addresses} />
+          <Button variant="secondary" iconBefore icon={PlusIcon}>
+            Voeg zaak toe
+          </Button>
+        </Row>
+      </div>
 
       <Column>
         {itinerary?.items.map((item, index) => (

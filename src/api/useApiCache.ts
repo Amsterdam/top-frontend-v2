@@ -1,6 +1,5 @@
 import { useContext } from "react"
 import { ApiCacheContext } from "./ApiCacheProvider"
-import { type CacheStore } from "@/types/cache"
 
 export const useApiCache = (): CacheStore => {
   const ctx = useContext(ApiCacheContext)
