@@ -8,7 +8,6 @@ import {
   Row,
 } from "@amsterdam/design-system-react"
 import {
-  TrashBinIcon,
   ClipboardIcon,
   PersonsIcon,
   PlusIcon,
@@ -54,12 +53,6 @@ export default function ListPage() {
                 svg={PersonsIcon}
                 label="Wijzig teamleden"
                 title="Wijzig teamleden"
-                size="heading-1"
-              />
-              <IconButton
-                svg={TrashBinIcon}
-                label="Verwijder looplijst"
-                title="Verwijder looplijst"
                 size="heading-1"
               />
               <DeleteItineraryButton itineraryId={itineraryId!} />
