@@ -14,7 +14,7 @@ export const useDialog = (id: string): DialogHandlers => {
 
   const closeDialog: VoidFunction = () => {
     const dialogElement = document.getElementById(
-      id
+      id,
     ) as HTMLDialogElement | null
     dialogElement?.close()
   }
