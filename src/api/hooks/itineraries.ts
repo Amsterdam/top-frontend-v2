@@ -35,5 +35,6 @@ export const useItineraries = () => {
 export const useCreateItinerary = () => {
   return useApi<CreateItineraryResponse, CreateItineraryPayload>({
     url: makeApiUrl("itineraries"),
+    lazy: true,
   })
 }

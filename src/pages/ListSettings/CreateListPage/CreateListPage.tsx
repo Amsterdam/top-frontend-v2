@@ -78,7 +78,7 @@ export default function CreateListPage() {
 
   const onSubmit = async (values: FormValues) => {
     const createdAt = new Date().toISOString().split("T")[0]
-    const response = await execPost({
+    const payload = {
       created_at: createdAt,
       team_members: values.teamMembers.map((id) => ({
         user: { id },
@@ -86,6 +86,9 @@ export default function CreateListPage() {
       day_settings_id: Number(values.daySettingsId),
       target_length: values.numAddresses,
       start_case: values.startAddress ?? {},
+    }
+    const response = await execPost(payload, {
+      clearCacheKeys: ["/itineraries"],
     })
 
     if (response?.id) {
