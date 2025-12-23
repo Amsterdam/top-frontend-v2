@@ -1,3 +1,4 @@
+export * from "./useDialog"
 export * from "./useItineraryFromList"
 export * from "./useRedirectFromState"
 export * from "./useRedirectItinerary"

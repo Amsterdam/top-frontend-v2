@@ -1,4 +1,5 @@
 export * from "./alerts/AlertProvider"
+export * from "./ConfirmDialog/ConfirmDialog"
 export * from "./DefaultLayout/DefaultLayout"
 export * from "./Divider/Divider"
 export * from "./GoogleMapsButton/GoogleMapsButton"
