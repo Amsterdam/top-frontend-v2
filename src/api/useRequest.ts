@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { useAuth } from "react-oidc-context"
+import type { ApiError } from "@/api/types/apiError"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
@@ -36,11 +37,23 @@ export const useRequest = () => {
         body: data ? JSON.stringify(data) : undefined,
       })
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`)
+      const text = await response.text()
+      let json: unknown
+      try {
+        json = text ? JSON.parse(text) : null
+      } catch {
+        json = text
       }
 
-      return (await response.json()) as Schema
+      if (!response.ok) {
+        throw {
+          status: response.status,
+          message: typeof json === "string" ? json : response.statusText,
+          cause: json,
+        } as ApiError
+      }
+
+      return json as Schema
     },
     [token],
   )
