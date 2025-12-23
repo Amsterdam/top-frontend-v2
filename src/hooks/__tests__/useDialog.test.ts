@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { useDialog } from "../useDialog"
 import { Dialog } from "@amsterdam/design-system-react"
+import { useDialog } from "../useDialog"
 
 vi.mock("@amsterdam/design-system-react", () => ({
   Dialog: {
