@@ -9,7 +9,7 @@ import {
 } from "@amsterdam/ee-ads-rhf-lib"
 import { useForm, useWatch } from "react-hook-form"
 import {
-  useCreateItinerary,
+  useItinerary,
   useTeamSettingsOptions,
   useTheme,
   useUsers,
@@ -37,7 +37,7 @@ export default function CreateListPage() {
 
   const weekday = (new Date().getDay() + 6) % 7
   const [teamSettingsDayOptionsData] = useTeamSettingsOptions(themeId, weekday)
-  const [, { execPost, isBusy }] = useCreateItinerary()
+  const [, { execPost, isBusy }] = useItinerary()
 
   const form = useForm<FormValues>({
     mode: "onChange",

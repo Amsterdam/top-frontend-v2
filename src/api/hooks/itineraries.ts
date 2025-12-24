@@ -1,10 +1,7 @@
-import { useApi } from "../useApi"
+import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
-import stringifyQueryParams from "../utils/stringifyQueryParams"
 
-type ItineraryResponse = {
-  itineraries: components["schemas"]["Itinerary"][]
-}
+type Itinerary = components["schemas"]["Itinerary"]
 
 type CreateItineraryPayload = {
   created_at: string
@@ -18,30 +15,15 @@ type CreateItineraryPayload = {
   start_case: Record<string, unknown>
 }
 
-type CreateItineraryResponse = {
-  id: string
-  message: string
-}
-
-export const useItineraries = () => {
-  const today = new Date()
-  const created_at = today.toISOString().split("T")[0]
-  const queryString = stringifyQueryParams({ created_at })
-  return useApi<ItineraryResponse>({
-    url: makeApiUrl("itineraries", queryString),
+export const useItinerariesSummary = () => {
+  return useApi<Itinerary[]>({
+    url: makeApiUrl("itineraries", "summary"),
   })
 }
 
-export const useCreateItinerary = () => {
-  return useApi<CreateItineraryResponse, CreateItineraryPayload>({
-    url: makeApiUrl("itineraries"),
-    lazy: true,
-  })
-}
-
-export const useDeleteItinerary = (itineraryId: string) => {
-  return useApi<CreateItineraryResponse, CreateItineraryPayload>({
+export const useItinerary = (itineraryId?: string) => {
+  return useApi<Itinerary, CreateItineraryPayload>({
     url: makeApiUrl("itineraries", itineraryId),
-    lazy: true,
+    lazy: itineraryId === undefined,
   })
 }
