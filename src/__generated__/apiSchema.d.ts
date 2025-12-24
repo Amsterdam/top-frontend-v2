@@ -267,7 +267,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** @description CRUD for itineraries and teams */
+        get: operations["itineraries_retrieve"];
         put?: never;
         post?: never;
         /** @description CRUD for itineraries and teams */
@@ -308,6 +309,23 @@ export interface paths {
         get: operations["itineraries_team_retrieve"];
         /** @description CRUD for itineraries and teams */
         put: operations["itineraries_team_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/itineraries/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD for itineraries and teams */
+        get: operations["itineraries_summary_retrieve"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -765,7 +783,6 @@ export interface components {
         DaySettings: {
             readonly id: number;
             name: string;
-            week_day?: (components["schemas"]["WeekDayEnum"] | components["schemas"]["NullEnum"]) | null;
             week_days?: number[] | null;
             /** Format: date */
             opening_date?: string;
@@ -842,6 +859,11 @@ export interface components {
             tags?: number[] | null;
             housing_corporations?: number[] | null;
         };
+        ItinerarySummary: {
+            readonly id: number;
+            readonly team_members: string;
+            readonly theme: string;
+        };
         ItineraryTeamMember: {
             readonly id: number;
             readonly user: components["schemas"]["User"];
@@ -858,7 +880,6 @@ export interface components {
         NewDaySettings: {
             readonly id: number;
             name: string;
-            week_day?: (components["schemas"]["WeekDayEnum"] | components["schemas"]["NullEnum"]) | null;
             week_days?: number[] | null;
             /** Format: date */
             opening_date?: string;
@@ -891,8 +912,6 @@ export interface components {
             itinerary_item: number;
             readonly author: components["schemas"]["User"];
         };
-        /** @enum {unknown} */
-        NullEnum: null;
         OIDCAuthenticate: {
             code: string;
         };
@@ -1020,6 +1039,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Itinerary"][];
         };
+        PaginatedItinerarySummaryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ItinerarySummary"][];
+        };
         PaginatedObservationList: {
             /** @example 123 */
             count: number;
@@ -1113,7 +1147,6 @@ export interface components {
         PatchedDaySettings: {
             readonly id?: number;
             name?: string;
-            week_day?: (components["schemas"]["WeekDayEnum"] | components["schemas"]["NullEnum"]) | null;
             week_days?: number[] | null;
             /** Format: date */
             opening_date?: string;
@@ -1291,17 +1324,6 @@ export interface components {
             readonly id: number;
             readonly user: components["schemas"]["User"];
         };
-        /**
-         * @description * `0` - zondag
-         *     * `1` - maandag
-         *     * `2` - dinsdag
-         *     * `3` - woensdag
-         *     * `4` - donderdag
-         *     * `5` - vrijdag
-         *     * `6` - zaterdag
-         * @enum {integer}
-         */
-        WeekDayEnum: 0 | 1 | 2 | 3 | 4 | 5 | 6;
     };
     responses: never;
     parameters: never;
@@ -1773,6 +1795,28 @@ export interface operations {
             };
         };
     };
+    itineraries_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this itinerary. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Itinerary"];
+                };
+            };
+        };
+    };
     itineraries_destroy: {
         parameters: {
             query?: never;
@@ -1867,6 +1911,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Itinerary"];
+                };
+            };
+        };
+    };
+    itineraries_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Summary list of all itineraries for today for the logged-in user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedItinerarySummaryList"];
                 };
             };
         };
@@ -2742,7 +2806,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                /** @description Day of the week (0=Sunday, 6=Saturday) */
+                /** @description Day of the week (0=Monday, 6=Sunday) */
                 day: number;
                 /** @description A unique integer value identifying this team settings. */
                 id: number;

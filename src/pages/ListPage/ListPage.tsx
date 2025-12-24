@@ -14,15 +14,15 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
 import dayjs from "dayjs"
-import { useItineraryFromList } from "@/hooks"
 import { ListItem } from "./ListItem/ListItem"
 import type { Item } from "./ListItem/ListItem"
 import { AmsterdamCrossSpinner, GoogleMapsButton, Divider } from "@/components"
 import DeleteItineraryButton from "./components/DeleteItineraryButton/DeleteItineraryButton"
+import { useItinerary } from "@/api/hooks"
 
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [itinerary, { isBusy }] = useItineraryFromList(itineraryId)
+  const [itinerary, { isBusy }] = useItinerary(itineraryId)
 
   const addresses = useMemo(() => {
     return (itinerary?.items?.map((item) => item.case.data.address) ??

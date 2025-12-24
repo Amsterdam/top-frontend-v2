@@ -1,4 +1,4 @@
-import { useApi } from "../useApi"
+import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 
 type UserResponse = components["schemas"]["PaginatedUserList"]

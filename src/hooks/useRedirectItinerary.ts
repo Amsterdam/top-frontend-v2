@@ -1,14 +1,13 @@
-import { useItineraries } from "@/api/hooks"
+import { useItinerariesSummary } from "@/api/hooks"
 import { useEffect } from "react"
 import { useNavigate, useParams } from "react-router"
 
 export const useRedirectItinerary = () => {
   const navigate = useNavigate()
   const { itineraryId, themeId } = useParams()
-  const [data] = useItineraries()
+  const [itineraries] = useItinerariesSummary()
 
   useEffect(() => {
-    const itineraries = data?.itineraries
     if (!itineraries || itineraryId) {
       return
     }
@@ -26,5 +25,5 @@ export const useRedirectItinerary = () => {
       return
     }
     navigate("/lijst-instellingen")
-  }, [data, itineraryId, navigate, themeId])
+  }, [itineraries, itineraryId, navigate, themeId])
 }
