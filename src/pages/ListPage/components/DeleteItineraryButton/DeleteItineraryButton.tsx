@@ -18,13 +18,16 @@ export function DeleteItineraryButton({
   const { openDialog } = useDialog(dialogId)
 
   const deleteItinerary = async () => {
-    execDelete().then(() => {
+    execDelete({
+      clearCacheKeys: ["/itineraries/summary"],
+      skipCacheClear: true, // Prevent cache clearing /iternaries/itineraryId because ListPage is fetching it again after deletion. TODO: refactor to avoid this hack
+    }).then(() => {
       showAlert({
         title: "Looplijst verwijderd",
         description: "De looplijst is succesvol verwijderd.",
         severity: "success",
       })
-      navigate("/")
+      navigate("/lijst-instellingen")
     })
   }
 
