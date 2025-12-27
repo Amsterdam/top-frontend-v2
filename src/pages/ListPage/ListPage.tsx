@@ -29,7 +29,7 @@ export default function ListPage() {
       []) as Address[]
   }, [itinerary])
 
-  if (isBusy) {
+  if (isBusy || !itinerary) {
     return <AmsterdamCrossSpinner />
   }
   return (

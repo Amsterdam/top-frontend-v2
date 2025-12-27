@@ -24,6 +24,6 @@ export const useItinerariesSummary = () => {
 export const useItinerary = (itineraryId?: string) => {
   return useApi<Itinerary, CreateItineraryPayload>({
     url: makeApiUrl("itineraries", itineraryId),
-    lazy: itineraryId === undefined,
+    lazy: !itineraryId,
   })
 }

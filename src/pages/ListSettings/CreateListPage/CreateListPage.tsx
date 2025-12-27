@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Button, Grid, Heading, Row } from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser } from "@/hooks"
-import { AmsterdamTicTacToeLoader } from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 
 type FormValues = {
   teamMembers: string[]
@@ -37,7 +37,8 @@ export default function CreateListPage() {
 
   const weekday = (new Date().getDay() + 6) % 7
   const [teamSettingsDayOptionsData] = useTeamSettingsOptions(themeId, weekday)
-  const [, { execPost, isBusy }] = useItinerary()
+  const [, { execPost }] = useItinerary()
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<FormValues>({
     mode: "onChange",
@@ -77,6 +78,7 @@ export default function CreateListPage() {
   )
 
   const onSubmit = async (values: FormValues) => {
+    setIsLoading(true)
     const createdAt = new Date().toISOString().split("T")[0]
     const payload = {
       created_at: createdAt,
@@ -87,18 +89,23 @@ export default function CreateListPage() {
       target_length: values.numAddresses,
       start_case: values.startAddress ?? {},
     }
-    const response = await execPost(payload, {
+    execPost(payload, {
       clearCacheKeys: ["/itineraries"],
     })
-
-    if (response?.id) {
-      navigate(`/lijst/${response.id}`)
-    }
+      .then((response) => {
+        navigate(`/lijst/${response?.id}`)
+      })
+      .finally(() => {
+        // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 350)
+      })
   }
 
   const { formState } = form
 
-  if (isBusy) return <AmsterdamTicTacToeLoader />
+  if (isLoading) return <AmsterdamCrossSpinner />
 
   return (
     <>
