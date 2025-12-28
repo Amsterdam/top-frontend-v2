@@ -7,17 +7,13 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import {
-  ClipboardIcon,
-  PersonsIcon,
-  PlusIcon,
-} from "@amsterdam/design-system-react-icons"
+import { PersonsIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
 import dayjs from "dayjs"
 import { ListItem } from "./ListItem/ListItem"
 import type { Item } from "./ListItem/ListItem"
 import { AmsterdamCrossSpinner, GoogleMapsButton, Divider } from "@/components"
-import DeleteItineraryButton from "./components/DeleteItineraryButton/DeleteItineraryButton"
+import { CopyToClipboardButton, DeleteItineraryButton } from "./components"
 import { useItinerary } from "@/api/hooks"
 
 export default function ListPage() {
@@ -43,12 +39,7 @@ export default function ListPage() {
           </Column>
           <Column>
             <Row wrap align="end">
-              <IconButton
-                svg={ClipboardIcon}
-                label="Kopieer naar klembord"
-                title="Kopieer naar klembord"
-                size="heading-1"
-              />
+              <CopyToClipboardButton itinerary={itinerary} />
               <IconButton
                 svg={PersonsIcon}
                 label="Wijzig teamleden"
