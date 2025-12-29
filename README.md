@@ -30,5 +30,5 @@ to [production](https://top.amsterdam.nl/).
 # Directory tree structure
 
 ```typescript
-tree -I "node_modules|.next|.git" -L 6 > directory-tree.txt
+tree -I "node_modules|.next|.git" -L 10 > directory-tree.txt
 ```

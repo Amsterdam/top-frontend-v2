@@ -19,6 +19,7 @@
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
 │   │   │   ├── teamSettings.ts
+│   │   │   ├── __tests__
 │   │   │   ├── themes.ts
 │   │   │   └── users.ts
 │   │   ├── types
@@ -31,8 +32,10 @@
 │   │       ├── slashSandwich.ts
 │   │       ├── stringifyQueryParams.ts
 │   │       ├── __tests__
+│   │       │   ├── makeApiUrl.test.ts
 │   │       │   ├── slashSandwich.test.ts
-│   │       │   └── stringifyQueryParams.test.ts
+│   │       │   ├── stringifyQueryParams.test.ts
+│   │       │   └── useApiErrorHandler.test.tsx
 │   │       └── useApiErrorHandler.ts
 │   ├── App.tsx
 │   ├── components
@@ -41,24 +44,42 @@
 │   │   │   ├── AlertProvider.tsx
 │   │   │   ├── types.ts
 │   │   │   └── useAlert.ts
+│   │   ├── ConfirmDialog
+│   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
 │   │   │   ├── DefaultLayout.module.css
 │   │   │   └── DefaultLayout.tsx
+│   │   ├── Divider
+│   │   │   ├── Divider.module.css
+│   │   │   └── Divider.tsx
+│   │   ├── GoogleMapsButton
+│   │   │   └── GoogleMapsButton.tsx
 │   │   ├── Greeting
 │   │   │   ├── Greeting.tsx
 │   │   │   └── __tests__
 │   │   │       └── Greeting.test.tsx
 │   │   ├── index.ts
-│   │   └── spinners
-│   │       ├── AmsterdamCrossSpinner
-│   │       │   ├── AmsterdamCrossSpinner.module.css
-│   │       │   └── AmsterdamCrossSpinner.tsx
-│   │       ├── AmsterdamTicTacToeLoader
-│   │       │   └── AmsterdamTicTacToeLoader.tsx
+│   │   ├── Note
+│   │   │   └── Note.tsx
+│   │   ├── spinners
+│   │   │   ├── AmsterdamCrossSpinner
+│   │   │   │   ├── AmsterdamCrossSpinner.module.css
+│   │   │   │   └── AmsterdamCrossSpinner.tsx
+│   │   │   ├── AmsterdamTicTacToeLoader
+│   │   │   │   └── AmsterdamTicTacToeLoader.tsx
+│   │   │   ├── index.ts
+│   │   │   └── WritingLoader
+│   │   │       ├── WritingLoader.module.css
+│   │   │       └── WritingLoader.tsx
+│   │   └── tags
 │   │       ├── index.ts
-│   │       └── WritingLoader
-│   │           ├── WritingLoader.module.css
-│   │           └── WritingLoader.tsx
+│   │       ├── PriorityTag
+│   │       │   └── PriorityTag.tsx
+│   │       ├── StatusTag
+│   │       │   └── StatusTag.tsx
+│   │       └── Tag
+│   │           ├── Tag.module.css
+│   │           └── Tag.tsx
 │   ├── config
 │   │   ├── env.ts
 │   │   └── oidc.ts
@@ -73,15 +94,32 @@
 │   │   ├── index.ts
 │   │   ├── __tests__
 │   │   │   ├── useCurrentUser.test.ts
+│   │   │   ├── useDialog.test.ts
 │   │   │   ├── useRedirectFromState.test.ts
 │   │   │   └── useTokenPayload.test.ts
 │   │   ├── useCurrentUser.ts
+│   │   ├── useDialog.ts
 │   │   ├── useRedirectFromState.ts
 │   │   ├── useRedirectItinerary.ts
 │   │   └── useTokenPayload.ts
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
+│   │   ├── ChangeTeamPage
+│   │   │   └── ChangeTeamPage.tsx
+│   │   ├── ListPage
+│   │   │   ├── components
+│   │   │   │   ├── CopyToClipboardButton
+│   │   │   │   │   ├── CopyToClipboardButton.tsx
+│   │   │   │   │   └── itineraryToClipboardText.ts
+│   │   │   │   ├── DeleteItineraryButton
+│   │   │   │   │   └── DeleteItineraryButton.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── ListItem
+│   │   │   │   ├── ListItem.module.css
+│   │   │   │   ├── ListItem.tsx
+│   │   │   │   └── utils.ts
+│   │   │   └── ListPage.tsx
 │   │   ├── ListSettings
 │   │   │   ├── ChooseThemePage
 │   │   │   │   ├── ChooseThemePage.module.css
@@ -100,12 +138,14 @@
 │   │   ├── design-system-overrides.css
 │   │   └── spacing.css
 │   └── types
+│       ├── address.d.ts
 │       ├── api.d.ts
-│       └── cache.ts
+│       ├── cache.d.ts
+│       └── case.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
 ├── vite.config.ts
 └── vitest.config.ts
 
-35 directories, 74 files
+50 directories, 99 files
