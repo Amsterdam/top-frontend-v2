@@ -3,20 +3,15 @@ import { Button, Grid, Heading, Row } from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
 import {
   FormProvider,
-  SelectControl,
   TextInputControl,
   RadioControl,
 } from "@amsterdam/ee-ads-rhf-lib"
 import { useForm, useWatch } from "react-hook-form"
-import {
-  useItinerary,
-  useTeamSettingsOptions,
-  useTheme,
-  useUsers,
-} from "@/api/hooks"
+import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
-import { useCurrentUser } from "@/hooks"
+import { useCurrentUser, useUserOptions } from "@/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
+import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 
 type FormValues = {
   teamMembers: string[]
@@ -25,15 +20,13 @@ type FormValues = {
   startAddress?: Record<string, unknown>
 }
 
-const TEAM_LABELS = ["Toezichthouder 1", "Toezichthouder 2", "Handhaver"]
-
 export default function CreateListPage() {
   const { themeId } = useParams<{ themeId: string }>()
   const navigate = useNavigate()
 
   const [theme] = useTheme(themeId!)
-  const [usersData] = useUsers()
   const currentUser = useCurrentUser()
+  const userOptions = useUserOptions()
 
   const weekday = (new Date().getDay() + 6) % 7
   const [teamSettingsDayOptionsData] = useTeamSettingsOptions(themeId, weekday)
@@ -57,18 +50,10 @@ export default function CreateListPage() {
     // Set the current user as the first team member once it has been loaded.
     // Default values are only applied on initial mount, so async data
     // must be set explicitly after the form is initialized.
-    if (currentUser?.id && !teamMembers[0]) {
+    if (currentUser?.id && !teamMembers?.[0]) {
       form.setValue("teamMembers.0", currentUser.id)
     }
   }, [currentUser?.id, teamMembers, form])
-
-  const users = usersData ? usersData.results : []
-  const userOptions = mapToOptions("id", "full_name", users)
-
-  const filteredUserOptions = (excludeIds: (string | undefined)[]) =>
-    userOptions.filter(
-      (option) => !excludeIds.includes(option.value) || option.value === "",
-    )
 
   const teamSettingsDayOptions = mapToOptions(
     "id",
@@ -115,20 +100,10 @@ export default function CreateListPage() {
       <FormProvider form={form} onSubmit={onSubmit}>
         <Grid paddingBottom="x-large" paddingTop="x-large">
           <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
-            {TEAM_LABELS.map((label, index) => (
-              <SelectControl<FormValues>
-                key={label}
-                label={label}
-                name={`teamMembers.${index}`}
-                options={filteredUserOptions(
-                  teamMembers?.filter((_, i) => i !== index),
-                )}
-                registerOptions={{
-                  required: `${label} is verplicht`,
-                }}
-                className="ams-mb-xl"
-              />
-            ))}
+            <TeamMembersFields
+              teamMembers={teamMembers}
+              userOptions={userOptions}
+            />
 
             <RadioControl<FormValues>
               label="Wat voor looplijst wil je maken?"
