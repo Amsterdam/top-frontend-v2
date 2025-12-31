@@ -20,10 +20,11 @@
 .animate-fade-slide-in-bottom {
   opacity: 0;
   transform: translateY(100px);
-  animation: fadeSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: fade-slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    forwards;
 }
 
-@keyframes fadeSlideIn {
+@keyframes fade-slide-in-bottom {
   0% {
     opacity: 0;
     transform: translateY(100px);
@@ -31,6 +32,21 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 

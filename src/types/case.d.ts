@@ -1,11 +1,13 @@
 type Case = {
   id: number
   address: Address
-  workflows
-  reason: {
-    name: string
-  }
-  project: {
-    name: string
-  }
+  workflows: {
+    state: { name: string | null }
+  }[]
+  schedules?: {
+    priority?: { weight: number }
+  }[]
+  reason?: components["schemas"]["CaseReason"]
+  project?: components["schemas"]["CaseProject"]
+  tags?: components["schemas"]["CaseTag"][]
 }

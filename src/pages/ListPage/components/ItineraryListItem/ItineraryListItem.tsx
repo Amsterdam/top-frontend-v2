@@ -5,36 +5,11 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import styles from "./ListItem.module.css"
 import { cleanAddress } from "./utils"
 import { TrashBinIcon } from "@amsterdam/design-system-react-icons"
 import { Tag, StatusTag, PriorityTag, Note } from "@/components"
 
-type ExtendedCaseData = {
-  address: {
-    full_address: string
-    postal_code: string
-  }
-  workflows: {
-    state: { name: string | null }
-  }[]
-  schedules?: {
-    priority?: { weight: number }
-  }[]
-  reason?: components["schemas"]["CaseReason"]
-  project?: components["schemas"]["CaseProject"]
-  tags?: components["schemas"]["CaseTag"][]
-}
-
-type ExtendedCase = components["schemas"]["ItineraryItem"]["case"] & {
-  data?: ExtendedCaseData
-}
-
-export type Item = components["schemas"]["ItineraryItem"] & {
-  case?: ExtendedCase
-}
-
-export function ListItem({ item }: { item: Item }) {
+export function ItineraryListItem({ item }: { item: ItineraryItem }) {
   const caseData = item.case?.data
   const address = caseData?.address
   const workflows = caseData?.workflows
@@ -46,7 +21,7 @@ export function ListItem({ item }: { item: Item }) {
   const notes = item?.visits[0]?.personal_notes
 
   return (
-    <Column className={styles.card} gap="small">
+    <Column style={{ padding: "16px" }} gap="small">
       <Row align="between">
         <Column gap="x-small" alignHorizontal="start">
           <Heading level={3}>{cleanAddress(address?.full_address)}</Heading>
@@ -72,4 +47,4 @@ export function ListItem({ item }: { item: Item }) {
   )
 }
 
-export default ListItem
+export default ItineraryListItem

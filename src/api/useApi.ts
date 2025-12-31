@@ -29,7 +29,7 @@ type CacheItem<T> = {
   errors: unknown[]
 }
 
-type Config = {
+type ApiConfig = {
   url: string
   isProtected?: boolean
   lazy?: boolean
@@ -43,7 +43,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
   lazy = false,
   keepUsingInvalidCache,
   handleError,
-}: Config) => {
+}: ApiConfig) => {
   const request = useRequest()
   const cache = useApiCache()
   const [isBusy, setIsBusy] = useState(false)
@@ -71,6 +71,25 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
       })
     },
     [cache, cacheItem, url],
+  )
+
+  const updateCache = useCallback(
+    (updater: (item: Schema | undefined) => void) => {
+      const current = cache.get(url) as CacheItem<Schema> | undefined
+      if (!current) return
+
+      const newValue = current.value
+        ? structuredClone(current.value)
+        : undefined
+      updater(newValue)
+
+      cache.set(url, {
+        value: newValue,
+        valid: true,
+        errors: current.errors ?? [],
+      })
+    },
+    [cache, url],
   )
 
   const execRequest = useCallback(
@@ -200,6 +219,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
       execPut,
       execPatch,
       execDelete,
+      updateCache,
     },
     errors,
   ] as const

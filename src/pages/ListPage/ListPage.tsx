@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import dayjs from "dayjs"
 import {
   Button,
   Column,
@@ -9,12 +10,13 @@ import {
 } from "@amsterdam/design-system-react"
 import { PersonsIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
-import dayjs from "dayjs"
-import { ListItem } from "./ListItem/ListItem"
-import type { Item } from "./ListItem/ListItem"
 import { AmsterdamCrossSpinner, GoogleMapsButton, Divider } from "@/components"
-import { CopyToClipboardButton, DeleteItineraryButton } from "./components"
 import { useItinerary } from "@/api/hooks"
+import {
+  CopyToClipboardButton,
+  DeleteItineraryButton,
+  SortableItineraryItemList,
+} from "./components"
 
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
@@ -22,9 +24,9 @@ export default function ListPage() {
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
-    return (itinerary?.items?.map((item) => item.case.data.address) ??
+    return (itinerary?.items?.map((item) => item?.case?.data?.address) ??
       []) as Address[]
-  }, [itinerary])
+  }, [itinerary?.items])
 
   if (isBusy || !itinerary) {
     return <AmsterdamCrossSpinner />
@@ -73,17 +75,7 @@ export default function ListPage() {
         <Divider />
       </div>
 
-      <Column>
-        {itinerary?.items.map((item, index) => (
-          <div
-            className="animate-fade-slide-in-bottom"
-            style={{ animationDelay: `${index * 0.1}s` }}
-            key={item.id}
-          >
-            <ListItem key={item.id} item={item as Item} />
-          </div>
-        ))}
-      </Column>
+      <SortableItineraryItemList itineraryId={itineraryId!} />
     </>
   )
 }

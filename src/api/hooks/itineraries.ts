@@ -1,7 +1,11 @@
 import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 
-type Itinerary = components["schemas"]["Itinerary"]
+type Options = {
+  isProtected?: boolean
+  lazy?: boolean
+  keepUsingInvalidCache?: boolean
+}
 
 type TeamMember = {
   user: {
@@ -34,5 +38,15 @@ export const useItineraryChangeTeamMembers = (itineraryId?: string) => {
   return useApi<{ team_members: TeamMember[] }>({
     url: makeApiUrl("itineraries", itineraryId, "team"),
     lazy: true,
+  })
+}
+
+export const useItineraryItem = (
+  itineraryItemId?: string | number,
+  options?: Options,
+) => {
+  return useApi<ItineraryItem>({
+    ...options,
+    url: makeApiUrl("itinerary-items", itineraryItemId),
   })
 }

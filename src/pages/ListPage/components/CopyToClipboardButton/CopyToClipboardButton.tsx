@@ -6,15 +6,13 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import itineraryToClipboardText from "./itineraryToClipboardText"
 
-type Itinerary = components["schemas"]["Itinerary"]
-
 export function CopyToClipboardButton({ itinerary }: { itinerary: Itinerary }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
     try {
       const text = itinerary.items
-        .map((item) => itineraryToClipboardText(item.case.data as Case))
+        .map((item) => itineraryToClipboardText(item?.case?.data))
         .join("\n")
       await navigator.clipboard.writeText(text)
       setCopied(true)
