@@ -23,7 +23,7 @@ type FormValues = {
 export default function ChangeTeamPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
-  const [itinerary, { isBusy, execGet }] = useItinerary(itineraryId, true)
+  const [itinerary, { isBusy, execGet }] = useItinerary(itineraryId, { lazy: true })
   const [, { execPut, isBusy: isUpdating }] =
     useItineraryChangeTeamMembers(itineraryId)
   const currentUser = useCurrentUser()
