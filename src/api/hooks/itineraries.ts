@@ -27,10 +27,10 @@ export const useItinerariesSummary = () => {
   })
 }
 
-export const useItinerary = (itineraryId?: string, lazy?: boolean) => {
+export const useItinerary = (itineraryId?: string, options?: Options) => {
   return useApi<Itinerary, CreateItineraryPayload>({
     url: makeApiUrl("itineraries", itineraryId),
-    lazy: lazy ?? !itineraryId,
+    lazy: options?.lazy ?? !itineraryId,
   })
 }
 
