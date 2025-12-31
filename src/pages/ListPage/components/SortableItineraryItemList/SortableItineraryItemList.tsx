@@ -84,7 +84,7 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
     >
       <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
         {sortedItems.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} animationDelay={index * 0.1}>
+          <SortableItem key={item.id} id={item.id} animationDelay={index * 0.2}>
             <ItineraryListItem item={item} />
           </SortableItem>
         ))}
