@@ -10,11 +10,12 @@ import { TrashBinIcon } from "@amsterdam/design-system-react-icons"
 import { Tag, StatusTag, PriorityTag, Note } from "@/components"
 
 export function ItineraryListItem({ item }: { item: ItineraryItem }) {
-  const caseData = item.case?.data
+  const caseData = item.case
   const address = caseData?.address
   const workflows = caseData?.workflows
   const statusName =
-    workflows && workflows.length > 0 ? workflows[0]?.state.name : undefined
+    workflows && workflows.length > 0 ? workflows[0] : undefined
+
   const schedules = caseData?.schedules
   const priority =
     schedules && schedules.length > 0 ? schedules[0]?.priority : undefined

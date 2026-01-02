@@ -1,9 +1,7 @@
 type Case = {
   id: number
   address: Address
-  workflows: {
-    state: { name: string | null }
-  }[]
+  workflows: string[]
   schedules?: {
     priority?: { weight: number }
   }[]
