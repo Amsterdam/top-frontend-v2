@@ -5,9 +5,7 @@ type CaseFromApi = ItineraryItemFromApi["case"]
 type ItineraryItem = Omit<ItineraryItemFromApi, "case"> & {
   id: number
   position: number
-  case?: {
-    data: Case
-  }
+  case: Case
 }
 
 type Itinerary = Omit<ItineraryFromApi, "items"> & {

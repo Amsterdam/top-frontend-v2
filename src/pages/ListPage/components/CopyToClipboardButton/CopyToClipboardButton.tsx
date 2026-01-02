@@ -12,7 +12,7 @@ export function CopyToClipboardButton({ itinerary }: { itinerary: Itinerary }) {
   const handleCopy = async () => {
     try {
       const text = itinerary.items
-        .map((item) => itineraryToClipboardText(item?.case?.data))
+        .map((item) => itineraryToClipboardText(item?.case))
         .join("\n")
       await navigator.clipboard.writeText(text)
       setCopied(true)

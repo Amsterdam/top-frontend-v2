@@ -24,7 +24,7 @@ export default function ListPage() {
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
-    return (itinerary?.items?.map((item) => item?.case?.data?.address) ??
+    return (itinerary?.items?.map((item) => item?.case?.address) ??
       []) as Address[]
   }, [itinerary?.items])
 
