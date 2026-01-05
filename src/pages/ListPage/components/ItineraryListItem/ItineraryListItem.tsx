@@ -5,35 +5,51 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import { cleanAddress } from "./utils"
-import { TrashBinIcon } from "@amsterdam/design-system-react-icons"
+import { formatAddress, getWorkflowName } from "./utils"
+import { PlusIcon, TrashBinIcon } from "@amsterdam/design-system-react-icons"
 import { Tag, StatusTag, PriorityTag, Note } from "@/components"
 
-export function ItineraryListItem({ item }: { item: ItineraryItem }) {
+type Props = {
+  item: ItineraryItem
+  type?: "default" | "addAddress"
+}
+
+export function ItineraryListItem({ item, type = "default" }: Props) {
   const caseData = item.case
   const address = caseData?.address
-  const workflows = caseData?.workflows
-  const statusName =
-    workflows && workflows.length > 0 ? workflows[0] : undefined
+
+  const statusName = getWorkflowName(caseData?.workflows?.[0])
 
   const schedules = caseData?.schedules
   const priority =
     schedules && schedules.length > 0 ? schedules[0]?.priority : undefined
-  const notes = item?.visits[0]?.personal_notes
+  const firstVisit = item?.visits?.length ? item.visits[0] : null
+  const notes = firstVisit?.personal_notes
 
   return (
     <Column style={{ padding: "16px" }} gap="small">
       <Row align="between">
         <Column gap="x-small" alignHorizontal="start">
-          <Heading level={3}>{cleanAddress(address?.full_address)}</Heading>
+          <Heading level={3}>{formatAddress(address)}</Heading>
           <Paragraph>{address?.postal_code}</Paragraph>
           <Paragraph>{caseData?.reason?.name}</Paragraph>
           <Paragraph>{caseData?.project?.name}</Paragraph>
         </Column>
-        <Column alignHorizontal="end">
-          <Button>Bezoek</Button>
-          <Button icon={TrashBinIcon} variant="secondary" />
-        </Column>
+        {type === "default" && (
+          <Column alignHorizontal="end">
+            <Button>Bezoek</Button>
+            <Button icon={TrashBinIcon} variant="secondary" />
+          </Column>
+        )}
+        {type === "addAddress" && (
+          <Column>
+            <Button
+              icon={PlusIcon}
+              variant="secondary"
+              title="Adres toevoegen aan looplijst"
+            />
+          </Column>
+        )}
       </Row>
       <Row>
         <StatusTag statusName={statusName} />

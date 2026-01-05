@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react"
-import { Button, Grid, Heading, Row } from "@amsterdam/design-system-react"
+import {
+  Button,
+  Grid,
+  Heading,
+  Label,
+  Row,
+  Column,
+} from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
 import {
   FormProvider,
@@ -10,7 +17,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
-import { AmsterdamCrossSpinner } from "@/components"
+import { AmsterdamCrossSpinner, ReactRouterLink } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 
 type FormValues = {
@@ -134,7 +141,11 @@ export default function CreateListPage() {
               className="ams-mb-xl"
             />
 
-            <Row gap="x-large">
+            <Column className="ams-mb-xl">
+              <Label optional>Startadres</Label>
+              <ReactRouterLink to="zoeken">Kies een startadres</ReactRouterLink>
+            </Column>
+            <Row gap="x-large" className="mt-6">
               <Button type="submit" disabled={!formState.isValid}>
                 Genereer looplijst
               </Button>

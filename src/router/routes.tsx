@@ -5,6 +5,7 @@ import NotFound from "@/pages/NotFound/NotFound"
 import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
 import ListPage from "@/pages/ListPage/ListPage"
 import ChangeTeamPage from "@/pages/ChangeTeamPage/ChangeTeamPage"
+import SearchAddressPage from "@/pages/SearchAddressPage/SearchAddressPage"
 
 export const routes = [
   {
@@ -20,6 +21,7 @@ export const routes = [
       { path: "lijst/:itineraryId/suggesties", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },
+      { path: "lijst/nieuw/:themeId/zoeken", element: <SearchAddressPage /> },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
       { path: "team-settings", element: <UnderConstruction /> },
       { path: "team-settings/:themeId", element: <UnderConstruction /> },
