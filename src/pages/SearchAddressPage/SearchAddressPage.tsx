@@ -1,167 +1,112 @@
-import { useEffect, useState } from "react"
-import {
-  Button,
-  Grid,
-  Heading,
-  Row,
-  Icon,
-} from "@amsterdam/design-system-react"
-import {
-  HouseIcon,
-  SearchIcon,
-  UndoIcon,
-} from "@amsterdam/design-system-react-icons"
-import { useNavigate, useParams } from "react-router"
-import { FormProvider, TextInputControl } from "@amsterdam/ee-ads-rhf-lib"
-import { useForm } from "react-hook-form"
-import { useAddressSearch } from "@/api/hooks"
-import { AmsterdamCrossSpinnerOverlay, Divider } from "@/components"
+import { useEffect, useMemo, useState } from "react"
+import { Heading, Paragraph, SearchField } from "@amsterdam/design-system-react"
+import { SearchIcon } from "@amsterdam/design-system-react-icons"
+import { useParams } from "react-router"
+import debounce from "lodash.debounce"
+import { useCasesSearch, useTheme } from "@/api/hooks"
+import { Divider, PageGrid, PageHeading } from "@/components"
 import { ItineraryListItem } from "../ListPage/components"
 
-type FormValues = {
-  streetName: string
-  postalCode: string
-  streetNumber: number | ""
-}
+const DELAY = 750
+const MIN_CHARS = 3
+
+const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 
 export function SearchAddressPage() {
   const { themeId } = useParams<{ themeId: string }>()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useState<FormValues | null>(null)
-
-  const [data, { execGet, isBusy }] = useAddressSearch(
-    searchParams?.streetNumber || 0,
-    searchParams?.postalCode,
-    searchParams?.streetName,
-    undefined,
-    themeId,
-    { lazy: true },
-  )
-
-  const form = useForm<FormValues>({
-    mode: "onChange",
-    defaultValues: {
-      streetName: "",
-      postalCode: "",
-      streetNumber: "",
-    },
+  const [theme] = useTheme(themeId)
+  const [debouncedSearchString, setDebouncedSearchString] = useState<string>("")
+  const [inputValue, setInputValue] = useState("")
+  const [cases, { execGet, isBusy }] = useCasesSearch(inputValue, theme?.name, {
+    lazy: true,
   })
 
-  const onSubmit = (values: FormValues) => {
-    setSearchParams(values)
+  // Memoize the debounced function to prevent recreation on every render
+  const debouncedSetValue = useMemo(
+    () => debounce((value: string) => setDebouncedSearchString(value), DELAY),
+    [],
+  )
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value
+    setInputValue(value)
+    debouncedSetValue(value)
+    if (!value) {
+      execGet()
+    }
   }
 
   useEffect(() => {
-    if (!searchParams) return
-    execGet()
+    if (isValidSearchString(debouncedSearchString)) {
+      execGet()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  }, [debouncedSearchString])
 
-  const { formState } = form
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    execGet()
+  }
+
+  const noResults = !isBusy && inputValue && cases && cases.length === 0
+  const isValid = isValidSearchString(debouncedSearchString)
+
+  let statusMessage: string | null = null
+
+  if (isBusy) {
+    statusMessage = "Zoeken naar adressen..."
+  } else if (!isValid) {
+    statusMessage = `Voer minimaal ${MIN_CHARS} tekens in om te zoeken.`
+  } else if (noResults) {
+    statusMessage = "Geen adressen gevonden."
+  }
 
   return (
-    <>
-      <Row alignVertical="center" gap="small" className="mb-3">
-        <Icon svg={HouseIcon} size="heading-1" />
-        <Heading level={1}>Startadres</Heading>
-      </Row>
+    <PageGrid>
+      <PageHeading
+        label="Startadres zoeken"
+        icon={SearchIcon}
+        backLinkLabel="Terug"
+      />
 
-      <Heading level={2}>Bij welk adres wil je beginnen?</Heading>
+      <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
+        <SearchField.Input
+          placeholder="Zoek een adres op basis van postcode en huisnummer of straatnaam."
+          name="search-box"
+          onChange={onChange}
+          value={inputValue}
+        />
+        <SearchField.Button />
+      </SearchField>
 
-      <FormProvider form={form} onSubmit={onSubmit}>
-        <Grid paddingBottom="x-large" paddingTop="x-large">
-          <Grid.Cell span={{ narrow: 4, medium: 6, wide: 5 }}>
-            <AmsterdamCrossSpinnerOverlay loading={isBusy}>
-              <TextInputControl<FormValues>
-                label="Straatnaam"
-                name="streetName"
-                inputMode="text"
-                className="ams-mb-xl"
-              />
+      <>
+        <Heading level={3}>Adressen ({cases?.length || 0})</Heading>
+        <Divider />
 
-              <TextInputControl<FormValues>
-                label="Postcode"
-                name="postalCode"
-                inputMode="text"
-                size={10}
-                registerOptions={{
-                  validate: (value) =>
-                    !value ||
-                    /^[1-9][0-9]{3}\s?[A-Za-z]{2}$/.test(String(value)) ||
-                    "Gebruik een geldige postcode zoals 1234 AB",
-                }}
-                className="ams-mb-xl"
-              />
-              <TextInputControl<FormValues>
-                label="Huisnummer"
-                name="streetNumber"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                size={5}
-                registerOptions={{
-                  required: "Het huisnummer is verplicht",
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: "Het huisnummer mag alleen cijfers bevatten",
-                  },
-                  min: {
-                    value: 1,
-                    message: "Minimaal 1 adres",
-                  },
-                }}
-                className="ams-mb-xl"
-              />
+        {statusMessage && (
+          <Paragraph style={{ fontStyle: "italic" }}>{statusMessage}</Paragraph>
+        )}
 
-              <Row gap="large" wrap className="ams-mb-xl">
-                <Button
-                  type="submit"
-                  disabled={!formState.isValid || isBusy}
-                  iconBefore
-                  icon={SearchIcon}
-                >
-                  Zoeken
-                </Button>
-
-                <Button
-                  variant="secondary"
-                  onClick={() => form.reset()}
-                  iconBefore
-                  icon={UndoIcon}
-                >
-                  Wis formulier
-                </Button>
-
-                <Button variant="tertiary" onClick={() => navigate(-1)}>
-                  Annuleer
-                </Button>
-              </Row>
-            </AmsterdamCrossSpinnerOverlay>
-          </Grid.Cell>
-        </Grid>
-      </FormProvider>
-
-      <Heading level={3}>Beschikbare zaken ({data?.cases.length || 0})</Heading>
-      <Divider />
-
-      {!isBusy &&
-        data?.cases.map((caseData, index) => (
-          <div
-            key={caseData.id}
-            className="animate-slide-in-left"
-            style={{
-              animationDelay: `${index * 0.1}s`,
-              borderBottom: "1px solid var(--ams-color-separator)",
-              marginBottom: 2,
-            }}
-          >
-            <ItineraryListItem
+        {!isBusy &&
+          cases?.map((caseData, index) => (
+            <div
               key={caseData.id}
-              item={{ case: caseData } as ItineraryItem}
-              type="addAddress"
-            />
-          </div>
-        ))}
-    </>
+              className="animate-slide-in-left"
+              style={{
+                animationDelay: `${index * 0.1}s`,
+                borderBottom: "1px solid var(--ams-color-separator)",
+                marginBottom: 2,
+              }}
+            >
+              <ItineraryListItem
+                key={caseData.id}
+                item={{ case: caseData } as ItineraryItem}
+                type="addAddress"
+              />
+            </div>
+          ))}
+      </>
+    </PageGrid>
   )
 }
 

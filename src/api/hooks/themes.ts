@@ -10,7 +10,7 @@ export const useThemes = () =>
     url: makeApiUrl("themes"),
   })
 
-export const useTheme = (id: string) =>
+export const useTheme = (id?: string) =>
   useApi<Theme>({
     url: makeApiUrl("themes", id),
     lazy: id === undefined,

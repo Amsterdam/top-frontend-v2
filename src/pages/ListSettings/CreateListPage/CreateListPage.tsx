@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import {
   Button,
   Grid,
-  Heading,
   Label,
   Row,
   Column,
@@ -17,8 +16,13 @@ import { useForm, useWatch } from "react-hook-form"
 import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
-import { AmsterdamCrossSpinner, ReactRouterLink } from "@/components"
+import {
+  AmsterdamCrossSpinner,
+  PageHeading,
+  ReactRouterLink,
+} from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
+import { FootprintsIcon } from "@/icons/FootprintsIcon"
 
 type FormValues = {
   teamMembers: string[]
@@ -101,11 +105,13 @@ export default function CreateListPage() {
 
   return (
     <>
-      <Heading level={1}>Genereer looplijst</Heading>
-      <Heading level={2}>{theme?.name}</Heading>
+      <PageHeading
+        icon={FootprintsIcon}
+        label={`Genereer looplijst (${theme?.name})`}
+      />
 
       <FormProvider form={form} onSubmit={onSubmit}>
-        <Grid paddingBottom="x-large" paddingTop="x-large">
+        <Grid paddingBottom="x-large" paddingTop="large">
           <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
             <TeamMembersFields
               teamMembers={teamMembers}
@@ -119,7 +125,7 @@ export default function CreateListPage() {
               registerOptions={{
                 required: "Daginstelling is verplicht",
               }}
-              className="ams-mb-xl"
+              className="ams-mb-l"
             />
 
             <TextInputControl<FormValues>
@@ -138,10 +144,10 @@ export default function CreateListPage() {
                   message: "Maximaal 20 adressen",
                 },
               }}
-              className="ams-mb-xl"
+              className="ams-mb-l"
             />
 
-            <Column className="ams-mb-xl">
+            <Column>
               <Label optional>Startadres</Label>
               <ReactRouterLink to="zoeken">Kies een startadres</ReactRouterLink>
             </Column>
@@ -153,7 +159,7 @@ export default function CreateListPage() {
                 variant="tertiary"
                 onClick={() => navigate("/lijst-instellingen")}
               >
-                Terug
+                Annuleer
               </Button>
             </Row>
           </Grid.Cell>
