@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react"
 import { Heading, Paragraph, SearchField } from "@amsterdam/design-system-react"
 import { SearchIcon } from "@amsterdam/design-system-react-icons"
-import { useParams } from "react-router"
+import { useLocation, useNavigate, useParams } from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch, useTheme } from "@/api/hooks"
 import { Divider, PageGrid, PageHeading } from "@/components"
-import { ItineraryListItem } from "../ListPage/components"
+import { ItineraryListItem } from "@/components"
 
 const DELAY = 750
 const MIN_CHARS = 3
@@ -20,6 +20,9 @@ export function SearchAddressPage() {
   const [cases, { execGet, isBusy }] = useCasesSearch(inputValue, theme?.name, {
     lazy: true,
   })
+  const navigate = useNavigate()
+  const location = useLocation()
+  const currentFormValues = location.state?.formValues
 
   // Memoize the debounced function to prevent recreation on every render
   const debouncedSetValue = useMemo(
@@ -48,6 +51,15 @@ export function SearchAddressPage() {
     execGet()
   }
 
+  const onSelectCase = (caseData: Case) => {
+    navigate(`/lijst/nieuw/${themeId}`, {
+      replace: true,
+      state: {
+        formValues: { ...currentFormValues, startCase: caseData },
+      },
+    })
+  }
+
   const noResults = !isBusy && inputValue && cases && cases.length === 0
   const isValid = isValidSearchString(debouncedSearchString)
 
@@ -67,6 +79,10 @@ export function SearchAddressPage() {
         label="Startadres zoeken"
         icon={SearchIcon}
         backLinkLabel="Terug"
+        backLinkUrl={`/lijst/nieuw/${themeId}`}
+        backLinkState={{
+          formValues: { ...currentFormValues },
+        }}
       />
 
       <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
@@ -101,7 +117,8 @@ export function SearchAddressPage() {
               <ItineraryListItem
                 key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
-                type="addAddress"
+                type="addStartAddress"
+                onClickAddStartAddress={onSelectCase}
               />
             </div>
           ))}

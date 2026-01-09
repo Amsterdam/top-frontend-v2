@@ -5,24 +5,26 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import { formatAddress, getWorkflowName } from "./utils"
+import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { PlusIcon, TrashBinIcon } from "@amsterdam/design-system-react-icons"
 import { Tag, StatusTag, PriorityTag, Note } from "@/components"
 
 type Props = {
   item: ItineraryItem
-  type?: "default" | "addAddress"
+  type?: "default" | "addStartAddress"
+  onClickAddStartAddress?: (caseData: Case) => void
 }
 
-export function ItineraryListItem({ item, type = "default" }: Props) {
+export function ItineraryListItem({
+  item,
+  type = "default",
+  onClickAddStartAddress,
+}: Props) {
   const caseData = item.case
   const address = caseData?.address
 
-  const statusName = getWorkflowName(caseData?.workflows?.[0])
-
-  const schedules = caseData?.schedules
-  const priority =
-    schedules && schedules.length > 0 ? schedules[0]?.priority : undefined
+  const statusName = getWorkflowName(caseData?.workflows)
+  const priority = getSchedulePriority(caseData?.schedules)
   const firstVisit = item?.visits?.length ? item.visits[0] : null
   const notes = firstVisit?.personal_notes
 
@@ -41,12 +43,13 @@ export function ItineraryListItem({ item, type = "default" }: Props) {
             <Button icon={TrashBinIcon} variant="secondary" />
           </Column>
         )}
-        {type === "addAddress" && (
+        {type === "addStartAddress" && (
           <Column>
             <Button
               icon={PlusIcon}
               variant="secondary"
               title="Adres toevoegen aan looplijst"
+              onClick={() => onClickAddStartAddress?.(caseData!)}
             />
           </Column>
         )}
@@ -56,7 +59,7 @@ export function ItineraryListItem({ item, type = "default" }: Props) {
         <PriorityTag priority={priority} />
 
         {caseData?.tags?.map((tag) => (
-          <Tag key={tag.id} color="green" name={tag.name} />
+          <Tag key={`${caseData.id}-${tag.id}`} color="green" name={tag.name} />
         ))}
       </Row>
       <Note note={notes} />

@@ -6,7 +6,7 @@ import {
   Row,
   Column,
 } from "@amsterdam/design-system-react"
-import { useNavigate, useParams } from "react-router"
+import { useLocation, useNavigate, useParams } from "react-router"
 import {
   FormProvider,
   TextInputControl,
@@ -20,6 +20,7 @@ import {
   AmsterdamCrossSpinner,
   PageHeading,
   ReactRouterLink,
+  SmallCaseCard,
 } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 import { FootprintsIcon } from "@/icons/FootprintsIcon"
@@ -28,12 +29,13 @@ type FormValues = {
   teamMembers: string[]
   daySettingsId: string
   numAddresses: number
-  startAddress?: Record<string, unknown>
+  startCase?: Case
 }
 
 export default function CreateListPage() {
   const { themeId } = useParams<{ themeId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [theme] = useTheme(themeId!)
   const currentUser = useCurrentUser()
@@ -57,6 +59,18 @@ export default function CreateListPage() {
     name: "teamMembers",
   })
 
+  // Watch numAddresses to pass it to the search page in the state.
+  // Otherwise TextinputControl is not passing the updated value on navigation.
+  const numAddresses = useWatch({
+    control: form.control,
+    name: "numAddresses",
+  })
+
+  const startCase = useWatch({
+    control: form.control,
+    name: "startCase",
+  })
+
   useEffect(() => {
     // Set the current user as the first team member once it has been loaded.
     // Default values are only applied on initial mount, so async data
@@ -65,6 +79,21 @@ export default function CreateListPage() {
       form.setValue("teamMembers.0", currentUser.id)
     }
   }, [currentUser?.id, teamMembers, form])
+
+  useEffect(() => {
+    // Set form values from location state if available
+    const formValues = location.state?.formValues
+
+    if (formValues) {
+      // Reset het formulier met alle bestaande values
+      form.reset(formValues)
+
+      // Indien startAddress aanwezig, zet het als startAddress
+      if (formValues.startAddress) {
+        form.setValue("startCase", formValues.startCase)
+      }
+    }
+  }, [location.state, form])
 
   const teamSettingsDayOptions = mapToOptions(
     "id",
@@ -83,7 +112,7 @@ export default function CreateListPage() {
       })),
       day_settings_id: Number(values.daySettingsId),
       target_length: values.numAddresses,
-      start_case: values.startAddress ?? {},
+      start_case: values.startCase ? { id: values.startCase.id } : {},
     }
     execPost(payload, {
       clearCacheKeys: ["/itineraries"],
@@ -134,6 +163,7 @@ export default function CreateListPage() {
               inputMode="numeric"
               size={2}
               registerOptions={{
+                valueAsNumber: true,
                 required: "Aantal adressen is verplicht",
                 min: {
                   value: 1,
@@ -149,10 +179,32 @@ export default function CreateListPage() {
 
             <Column>
               <Label optional>Startadres</Label>
-              <ReactRouterLink to="zoeken">Kies een startadres</ReactRouterLink>
+              {startCase ? (
+                <SmallCaseCard
+                  caseData={startCase}
+                  onRemove={() => form.setValue("startCase", undefined)}
+                />
+              ) : (
+                <ReactRouterLink
+                  to="zoeken"
+                  state={{
+                    formValues: {
+                      ...form.getValues(),
+                      numAddresses,
+                    },
+                  }}
+                >
+                  Kies een startadres
+                </ReactRouterLink>
+              )}
             </Column>
             <Row gap="x-large" className="mt-6">
-              <Button type="submit" disabled={!formState.isValid}>
+              <Button
+                type="submit"
+                disabled={!formState.isValid}
+                icon={FootprintsIcon}
+                iconBefore
+              >
                 Genereer looplijst
               </Button>
               <Button

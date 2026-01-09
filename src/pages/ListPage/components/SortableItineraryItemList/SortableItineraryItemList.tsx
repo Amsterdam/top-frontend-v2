@@ -15,7 +15,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { useItinerary, useItineraryItem } from "@/api/hooks"
 import { calculateNewPosition, itemsPositionSorter } from "./utils"
 import { SortableItem } from "./SortableItem"
-import ItineraryListItem from "../ItineraryListItem/ItineraryListItem"
+import { ItineraryListItem } from "@/components"
 
 type Props = {
   itineraryId: string

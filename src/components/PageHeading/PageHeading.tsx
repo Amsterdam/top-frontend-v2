@@ -12,6 +12,7 @@ type Props = {
   border?: boolean
   backLinkUrl?: string
   backLinkLabel?: string
+  backLinkState?: unknown
 }
 
 type Size =
@@ -29,6 +30,7 @@ export const PageHeading: React.FC<Props> = ({
   border = false,
   backLinkUrl,
   backLinkLabel,
+  backLinkState,
 }) => {
   const size: Size = `level-${level}`
   const navigate = useNavigate()
@@ -41,7 +43,14 @@ export const PageHeading: React.FC<Props> = ({
             href={backLinkUrl ?? ""}
             onClick={(e) => {
               e.preventDefault()
-              navigate(backLinkUrl ?? (-1 as To))
+              if (backLinkState && backLinkUrl) {
+                // backLinkUrl is required when passing state. -1 is not passing the state.
+                navigate(backLinkUrl, {
+                  state: backLinkState,
+                })
+              } else {
+                navigate(backLinkUrl ?? (-1 as To))
+              }
             }}
             icon={ChevronBackwardIcon}
           >

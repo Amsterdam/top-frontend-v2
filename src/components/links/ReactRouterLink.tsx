@@ -1,12 +1,14 @@
 import { Link, Paragraph } from "@amsterdam/design-system-react"
-import { useHref, useLinkClickHandler } from "react-router"
+import { useHref, useLinkClickHandler, type To } from "react-router"
 
-export function ReactRouterLink({
-  to,
-  ...restProps
-}: { to: string } & React.ComponentProps<typeof Link>) {
+type Props = {
+  to: To
+  state?: Record<string, unknown> // hier geef je de formValues of andere data door
+} & React.ComponentProps<typeof Link>
+
+export function ReactRouterLink({ to, state, ...restProps }: Props) {
   const href = useHref(to)
-  const handleClick = useLinkClickHandler(to)
+  const handleClick = useLinkClickHandler(to, { state })
 
   return (
     <Paragraph>
