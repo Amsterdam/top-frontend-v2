@@ -39,7 +39,7 @@ export function TeamMembersFields({
           heading="Teamlid ontbreekt"
           headingLevel={2}
           severity="warning"
-          className="ams-mb-xl"
+          className="ams-mb-l"
         >
           <Paragraph>
             Let op: je staat niet langer als teamlid ingesteld. Na het opslaan
@@ -58,7 +58,7 @@ export function TeamMembersFields({
           registerOptions={{
             required: `${label} is verplicht`,
           }}
-          className="ams-mb-xl"
+          className="ams-mb-l"
         />
       ))}
     </>
