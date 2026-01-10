@@ -7,7 +7,7 @@ import {
 } from "@amsterdam/design-system-react"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { PlusIcon, TrashBinIcon } from "@amsterdam/design-system-react-icons"
-import { Tag, StatusTag, PriorityTag, Note } from "@/components"
+import { StatusTag, PriorityTag, Note, Tag } from "@/components"
 
 type Props = {
   item: ItineraryItem
@@ -57,7 +57,6 @@ export function ItineraryListItem({
       <Row>
         <StatusTag statusName={statusName} />
         <PriorityTag priority={priority} />
-
         {caseData?.tags?.map((tag) => (
           <Tag key={`${caseData.id}-${tag.id}`} color="green" name={tag.name} />
         ))}
