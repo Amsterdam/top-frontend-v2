@@ -29,7 +29,7 @@ export function ItineraryListItem({
   const notes = firstVisit?.personal_notes
 
   return (
-    <Column style={{ padding: "16px" }} gap="small">
+    <Column style={{ padding: "16px 0" }} gap="small">
       <Row align="between">
         <Column gap="x-small" alignHorizontal="start">
           <Heading level={3}>{formatAddress(address)}</Heading>

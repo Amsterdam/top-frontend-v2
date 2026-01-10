@@ -1,44 +1,78 @@
 import { Outlet } from "react-router"
-import { PageHeader } from "@amsterdam/design-system-react"
+import { LinkList, Page, PageHeader } from "@amsterdam/design-system-react"
 import { LogOutIcon, SearchIcon } from "@amsterdam/design-system-react-icons"
+import { useAuth } from "react-oidc-context"
+
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
-import styles from "./DefaultLayout.module.css"
-import { useAuth } from "react-oidc-context"
 import { useRedirectItinerary } from "@/hooks"
+
+import styles from "./DefaultLayout.module.css"
+
+type HeaderAction = {
+  key: string
+  label: string
+  icon: React.ComponentType
+  onClick?: (e: React.MouseEvent) => void
+}
 
 export function DefaultLayout() {
   useRedirectFromState()
-  const auth = useAuth()
-
   useRedirectItinerary()
 
+  const auth = useAuth()
+
+  const headerActions: HeaderAction[] = [
+    {
+      key: "zoeken",
+      label: "Zoeken",
+      icon: SearchIcon,
+    },
+    {
+      key: "uitloggen",
+      label: "Uitloggen",
+      icon: LogOutIcon,
+      onClick: (e) => {
+        e.preventDefault()
+        auth.signoutRedirect()
+      },
+    },
+  ]
+
   return (
-    <>
+    <Page>
       <PageHeader
         brandName={`${env.VITE_APP_TITLE} ${env.VITE_ENVIRONMENT_SHORT}`}
-        menuItems={[
-          <PageHeader.MenuLink key="zoeken" fixed href="#" icon={SearchIcon}>
-            Zoeken
-          </PageHeader.MenuLink>,
+        menuItems={headerActions.map((action) => (
           <PageHeader.MenuLink
-            key="uitloggen"
-            fixed
+            key={action.key}
             href="#"
-            icon={LogOutIcon}
-            onClick={(e) => {
-              e.preventDefault()
-              auth.signoutRedirect()
-            }}
+            icon={action.icon}
+            onClick={action.onClick}
           >
-            Uitloggen
-          </PageHeader.MenuLink>,
-        ]}
-      />
+            {action.label}
+          </PageHeader.MenuLink>
+        ))}
+        noMenuButtonOnWideWindow
+      >
+        <LinkList>
+          {headerActions.map((action) => (
+            <LinkList.Link
+              key={action.key}
+              href="#"
+              icon={action.icon}
+              onClick={action.onClick}
+            >
+              {action.label}
+            </LinkList.Link>
+          ))}
+        </LinkList>
+      </PageHeader>
+
       <main id="main" className={styles.main}>
         <Outlet />
       </main>
-    </>
+    </Page>
   )
 }
 
