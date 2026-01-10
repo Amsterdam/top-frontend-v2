@@ -80,6 +80,25 @@ export default function CreateListPage() {
     }
   }, [currentUser?.id, teamMembers, form])
 
+  const teamSettingsDayOptions = mapToOptions(
+    "id",
+    "name",
+    teamSettingsDayOptionsData,
+    false,
+  )
+
+  useEffect(() => {
+    if (
+      teamSettingsDayOptionsData &&
+      teamSettingsDayOptionsData.length > 0 &&
+      !form.getValues("daySettingsId")
+    ) {
+      form.setValue("daySettingsId", String(teamSettingsDayOptionsData[0].id), {
+        shouldValidate: true,
+      })
+    }
+  }, [teamSettingsDayOptionsData, form])
+
   useEffect(() => {
     // Set form values from location state if available
     const formValues = location.state?.formValues
@@ -94,13 +113,6 @@ export default function CreateListPage() {
       }
     }
   }, [location.state, form])
-
-  const teamSettingsDayOptions = mapToOptions(
-    "id",
-    "name",
-    teamSettingsDayOptionsData,
-    false,
-  )
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true)
