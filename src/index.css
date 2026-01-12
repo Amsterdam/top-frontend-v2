@@ -5,3 +5,13 @@
 @import "./styles/animations.css";
 @import "./styles/design-system-overrides.css";
 @import "./styles/spacing.css";
+
+/* * {
+  outline: 1px solid red;
+} */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}

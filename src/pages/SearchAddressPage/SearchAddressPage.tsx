@@ -51,7 +51,7 @@ export function SearchAddressPage() {
     execGet()
   }
 
-  const onSelectCase = (caseData: Case) => {
+  const onAddCase = (caseData: Case) => {
     navigate(`/lijst/nieuw/${themeId}`, {
       replace: true,
       state: {
@@ -118,7 +118,7 @@ export function SearchAddressPage() {
                 key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
                 type="addStartAddress"
-                onClickAddStartAddress={onSelectCase}
+                onAdd={onAddCase}
               />
             </div>
           ))}

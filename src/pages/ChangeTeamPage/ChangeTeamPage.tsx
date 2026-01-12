@@ -23,7 +23,9 @@ type FormValues = {
 export default function ChangeTeamPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
-  const [itinerary, { isBusy, execGet }] = useItinerary(itineraryId, true)
+  const [itinerary, { isBusy, execGet }] = useItinerary(itineraryId, {
+    lazy: true,
+  })
   const [, { execPut, isBusy: isUpdating }] =
     useItineraryChangeTeamMembers(itineraryId)
   const currentUser = useCurrentUser()
@@ -113,7 +115,7 @@ export default function ChangeTeamPage() {
                   Opslaan
                 </Button>
                 <Button variant="tertiary" onClick={() => navigate(-1)}>
-                  Terug
+                  Annuleer
                 </Button>
               </Row>
             </Grid.Cell>

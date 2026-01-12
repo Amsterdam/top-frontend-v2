@@ -5,7 +5,7 @@ export function StatusTag({ statusName }: { statusName?: string | null }) {
   return (
     <Tag
       name={statusName}
-      color={statusName === "Hercontrole" ? "blueDark" : "azure"}
+      color={statusName === "Hercontrole" ? "magenta" : "azure"}
       icon={statusName === "Hercontrole" ? HistoryIcon : HouseIcon}
     />
   )

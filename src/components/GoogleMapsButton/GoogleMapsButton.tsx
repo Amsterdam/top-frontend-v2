@@ -26,7 +26,7 @@ export function GoogleMapsButton({ addresses }: { addresses: Address[] }) {
       disabled={addresses.length === 0}
       onClick={handleClick}
     >
-      Bekijk op Google Maps
+      Google Maps
     </Button>
   )
 }

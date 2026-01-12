@@ -1,14 +1,19 @@
-.main {
-  padding: var(--ams-page-header-padding-inline);
-}
-
-@media screen and (max-width: 992px) {
+/* Mobile / tablet */
+@media (max-width: 992px) {
   .main {
-    padding: var(--ams-space-s);
+    padding-inline: var(--ams-space-l);
   }
 }
 
-@media screen and (min-width: 72.5rem) {
+/* Standard for medium screens (992px - 72.5rem) */
+@media (min-width: 992px) and (max-width: 72.5rem) {
+  .main {
+    padding-inline: var(--ams-page-header-padding-inline);
+  }
+}
+
+/* Extra wide screens */
+@media (min-width: 72.5rem) {
   .main {
     padding-inline: var(--ams-page-header-wide-padding-inline);
   }

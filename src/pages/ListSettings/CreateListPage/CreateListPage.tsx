@@ -132,6 +132,9 @@ export default function CreateListPage() {
       .then((response) => {
         navigate(`/lijst/${response?.id}`)
       })
+      .catch(() => {
+        console.log("Error creating itinerary")
+      })
       .finally(() => {
         // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
         setTimeout(() => {

@@ -68,7 +68,12 @@ export default function ListPage() {
         </Column>
         <Row align="between" wrap className="mt-3">
           <GoogleMapsButton addresses={addresses} />
-          <Button variant="secondary" iconBefore icon={PlusIcon}>
+          <Button
+            variant="secondary"
+            iconBefore
+            icon={PlusIcon}
+            onClick={() => navigate("suggesties")}
+          >
             Voeg zaak toe
           </Button>
         </Row>
