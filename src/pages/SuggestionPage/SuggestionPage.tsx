@@ -8,6 +8,7 @@ import {
 import {
   AmsterdamCrossSpinner,
   Divider,
+  AnimatedItineraryListItem,
   ItineraryListItem,
   PageHeading,
 } from "@/components"
@@ -44,8 +45,6 @@ export default function SuggestionPage() {
           position: cache.items.length + 1,
         })
       })
-    } catch (error) {
-      console.error("Error adding case to itinerary:", error)
     } finally {
       setLoadingIds((prev) => prev.filter((id) => id !== caseData.id))
     }
@@ -79,23 +78,14 @@ export default function SuggestionPage() {
         const isAdded = itinerary?.items.some((i) => i.case.id === caseData.id)
         const isLoading = loadingIds.includes(caseData.id)
         return (
-          <div
-            key={caseData.id}
-            className="animate-slide-in-left"
-            style={{
-              animationDelay: `${index * 0.1}s`,
-              borderBottom: "1px solid var(--ams-color-separator)",
-              marginBottom: 2,
-            }}
-          >
+          <AnimatedItineraryListItem key={caseData.id} index={index}>
             <ItineraryListItem
-              key={caseData.id}
               item={{ case: caseData } as ItineraryItem}
               type="addSuggestedCase"
               onAdd={() => onAddCase(caseData)}
               status={isAdded ? "added" : isLoading ? "loading" : "idle"}
             />
-          </div>
+          </AnimatedItineraryListItem>
         )
       })}
     </>

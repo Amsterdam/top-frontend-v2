@@ -4,7 +4,12 @@ import { SearchIcon } from "@amsterdam/design-system-react-icons"
 import { useLocation, useNavigate, useParams } from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch, useTheme } from "@/api/hooks"
-import { Divider, PageGrid, PageHeading } from "@/components"
+import {
+  AnimatedItineraryListItem,
+  Divider,
+  PageGrid,
+  PageHeading,
+} from "@/components"
 import { ItineraryListItem } from "@/components"
 
 const DELAY = 750
@@ -105,22 +110,14 @@ export function SearchAddressPage() {
 
         {!isBusy &&
           cases?.map((caseData, index) => (
-            <div
-              key={caseData.id}
-              className="animate-slide-in-left"
-              style={{
-                animationDelay: `${index * 0.1}s`,
-                borderBottom: "1px solid var(--ams-color-separator)",
-                marginBottom: 2,
-              }}
-            >
+            <AnimatedItineraryListItem key={caseData.id} index={index}>
               <ItineraryListItem
                 key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
                 type="addStartAddress"
                 onAdd={onAddCase}
               />
-            </div>
+            </AnimatedItineraryListItem>
           ))}
       </>
     </PageGrid>

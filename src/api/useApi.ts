@@ -146,7 +146,6 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
         const handledLocally = handleError?.(apiError) === true
 
         if (!handledLocally) {
-          console.log("API Error:", apiError)
           handleGlobalError(apiError)
         }
 
