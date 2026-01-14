@@ -4,7 +4,12 @@ import { SearchIcon } from "@amsterdam/design-system-react-icons"
 import { useLocation, useNavigate, useParams } from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch, useTheme } from "@/api/hooks"
-import { Divider, PageGrid, PageHeading } from "@/components"
+import {
+  AnimatedItineraryListItem,
+  Divider,
+  PageGrid,
+  PageHeading,
+} from "@/components"
 import { ItineraryListItem } from "@/components"
 
 const DELAY = 750
@@ -34,9 +39,6 @@ export function SearchAddressPage() {
     const value = e.currentTarget.value
     setInputValue(value)
     debouncedSetValue(value)
-    if (!value) {
-      execGet()
-    }
   }
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function SearchAddressPage() {
     execGet()
   }
 
-  const onSelectCase = (caseData: Case) => {
+  const onAddCase = (caseData: Case) => {
     navigate(`/lijst/nieuw/${themeId}`, {
       replace: true,
       state: {
@@ -60,8 +62,8 @@ export function SearchAddressPage() {
     })
   }
 
-  const noResults = !isBusy && inputValue && cases && cases.length === 0
   const isValid = isValidSearchString(debouncedSearchString)
+  const noResults = !isBusy && isValid && cases && cases.length === 0
 
   let statusMessage: string | null = null
 
@@ -71,6 +73,8 @@ export function SearchAddressPage() {
     statusMessage = `Voer minimaal ${MIN_CHARS} tekens in om te zoeken.`
   } else if (noResults) {
     statusMessage = "Geen adressen gevonden."
+  } else {
+    statusMessage = null
   }
 
   return (
@@ -100,27 +104,21 @@ export function SearchAddressPage() {
         <Divider />
 
         {statusMessage && (
-          <Paragraph style={{ fontStyle: "italic" }}>{statusMessage}</Paragraph>
+          <Paragraph style={{ fontStyle: "italic", marginTop: "1rem" }}>
+            {statusMessage}
+          </Paragraph>
         )}
 
         {!isBusy &&
           cases?.map((caseData, index) => (
-            <div
-              key={caseData.id}
-              className="animate-slide-in-left"
-              style={{
-                animationDelay: `${index * 0.1}s`,
-                borderBottom: "1px solid var(--ams-color-separator)",
-                marginBottom: 2,
-              }}
-            >
+            <AnimatedItineraryListItem key={caseData.id} index={index}>
               <ItineraryListItem
                 key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
                 type="addStartAddress"
-                onClickAddStartAddress={onSelectCase}
+                onAdd={onAddCase}
               />
-            </div>
+            </AnimatedItineraryListItem>
           ))}
       </>
     </PageGrid>

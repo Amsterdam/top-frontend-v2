@@ -2,23 +2,31 @@ import {
   Button,
   Column,
   Heading,
+  Icon,
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
+import {
+  CheckMarkIcon,
+  PlusIcon,
+  SettingsIcon,
+  TrashBinIcon,
+} from "@amsterdam/design-system-react-icons"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
-import { PlusIcon, TrashBinIcon } from "@amsterdam/design-system-react-icons"
-import { StatusTag, PriorityTag, Note, Tag } from "@/components"
+import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 
 type Props = {
   item: ItineraryItem
-  type?: "default" | "addStartAddress"
-  onClickAddStartAddress?: (caseData: Case) => void
+  type?: "default" | "addStartAddress" | "addSuggestedCase"
+  onAdd?: (caseData: Case) => void
+  status?: "idle" | "loading" | "added" | "error"
 }
 
 export function ItineraryListItem({
   item,
   type = "default",
-  onClickAddStartAddress,
+  onAdd,
+  status,
 }: Props) {
   const caseData = item.case
   const address = caseData?.address
@@ -44,13 +52,42 @@ export function ItineraryListItem({
           </Column>
         )}
         {type === "addStartAddress" && (
-          <Column>
+          <Column alignHorizontal="end">
             <Button
               icon={PlusIcon}
+              iconBefore
               variant="secondary"
               title="Adres toevoegen aan looplijst"
-              onClick={() => onClickAddStartAddress?.(caseData!)}
-            />
+              onClick={() => onAdd?.(caseData!)}
+            >
+              Toevoegen
+            </Button>
+          </Column>
+        )}
+        {type === "addSuggestedCase" && (
+          <Column alignHorizontal="end" align="between">
+            {status === "added" ? (
+              <Row
+                align="center"
+                gap="x-small"
+                style={{ color: "var(--ams-color-feedback-success)" }}
+              >
+                <Icon svg={CheckMarkIcon} />
+                <Paragraph style={{ color: "inherit" }}>Toegevoegd</Paragraph>
+              </Row>
+            ) : (
+              <Button
+                icon={status === "loading" ? SettingsIcon : PlusIcon}
+                iconBefore
+                variant="secondary"
+                title="Zaak toevoegen aan looplijst"
+                onClick={() => status === "idle" && onAdd?.(caseData!)}
+                disabled={status === "loading"}
+              >
+                {status === "loading" ? "Toevoegen..." : "Toevoegen"}
+              </Button>
+            )}
+            <Distance distance={caseData?.distance} />
           </Column>
         )}
       </Row>

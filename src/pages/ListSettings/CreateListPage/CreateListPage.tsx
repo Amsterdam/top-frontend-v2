@@ -166,7 +166,9 @@ export default function CreateListPage() {
               registerOptions={{
                 required: "Daginstelling is verplicht",
               }}
-              className="ams-mb-l"
+              wrapperProps={{
+                className: "ams-mb-l",
+              }}
             />
 
             <TextInputControl<FormValues>

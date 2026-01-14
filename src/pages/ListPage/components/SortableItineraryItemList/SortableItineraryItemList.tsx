@@ -23,7 +23,7 @@ type Props = {
 
 export function SortableItineraryItemList({ itineraryId }: Props) {
   const [draggableId, setIsDragging] = useState<UniqueIdentifier>()
-  const [itinerary, { updateCache }] = useItinerary(itineraryId, true)
+  const [itinerary, { updateCache }] = useItinerary(itineraryId, { lazy: true })
   const [, { execPatch }] = useItineraryItem(draggableId, { lazy: true })
 
   const sortedItems = useMemo(() => {
