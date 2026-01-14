@@ -39,9 +39,6 @@ export function SearchAddressPage() {
     const value = e.currentTarget.value
     setInputValue(value)
     debouncedSetValue(value)
-    if (!value) {
-      execGet()
-    }
   }
 
   useEffect(() => {
@@ -65,8 +62,8 @@ export function SearchAddressPage() {
     })
   }
 
-  const noResults = !isBusy && inputValue && cases && cases.length === 0
   const isValid = isValidSearchString(debouncedSearchString)
+  const noResults = !isBusy && isValid && cases && cases.length === 0
 
   let statusMessage: string | null = null
 
@@ -76,6 +73,8 @@ export function SearchAddressPage() {
     statusMessage = `Voer minimaal ${MIN_CHARS} tekens in om te zoeken.`
   } else if (noResults) {
     statusMessage = "Geen adressen gevonden."
+  } else {
+    statusMessage = null
   }
 
   return (
@@ -105,7 +104,9 @@ export function SearchAddressPage() {
         <Divider />
 
         {statusMessage && (
-          <Paragraph style={{ fontStyle: "italic" }}>{statusMessage}</Paragraph>
+          <Paragraph style={{ fontStyle: "italic", marginTop: "1rem" }}>
+            {statusMessage}
+          </Paragraph>
         )}
 
         {!isBusy &&

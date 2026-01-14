@@ -66,7 +66,7 @@ export default function SuggestionPage() {
       <Divider />
 
       {cases.length === 0 && (
-        <div style={{ marginTop: 16 }}>
+        <div style={{ marginTop: "1rem" }}>
           <Paragraph style={{ fontStyle: "italic", display: "inline" }}>
             Geen suggesties beschikbaar.
           </Paragraph>
