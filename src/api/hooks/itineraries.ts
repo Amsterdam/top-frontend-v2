@@ -6,7 +6,7 @@ type SuggestionsResponse = {
   cases: Case[]
 }
 
-type TeamMember = {
+type TeamMemberPayload = {
   user: {
     id: string
   }
@@ -14,7 +14,7 @@ type TeamMember = {
 
 type CreateItineraryPayload = {
   created_at: string
-  team_members: TeamMember[]
+  team_members: TeamMemberPayload[]
   day_settings_id: number
   target_length: number
   start_case: Record<string, unknown>
@@ -50,7 +50,10 @@ export const useItinerarySuggestions = (
 }
 
 export const useItineraryChangeTeamMembers = (itineraryId?: string) => {
-  return useApi<{ team_members: TeamMember[] }>({
+  return useApi<
+    { team_members: components["schemas"]["ItineraryTeamMember"][] },
+    { team_members: TeamMemberPayload[] }
+  >({
     url: makeApiUrl("itineraries", itineraryId, "team"),
     lazy: true,
   })

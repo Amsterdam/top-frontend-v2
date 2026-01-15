@@ -23,9 +23,12 @@ type FormValues = {
 export default function ChangeTeamPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
-  const [itinerary, { isBusy, execGet }] = useItinerary(itineraryId, {
-    lazy: true,
-  })
+  const [itinerary, { isBusy, execGet, updateCache }] = useItinerary(
+    itineraryId,
+    {
+      lazy: true,
+    },
+  )
   const [, { execPut, isBusy: isUpdating }] =
     useItineraryChangeTeamMembers(itineraryId)
   const currentUser = useCurrentUser()
@@ -51,9 +54,6 @@ export default function ChangeTeamPage() {
   })
 
   useEffect(() => {
-    // Set the current user as the first team member once it has been loaded.
-    // Default values are only applied on initial mount, so async data
-    // must be set explicitly after the form is initialized.
     if (itinerary) {
       form.setValue(
         "teamMembers",
@@ -68,16 +68,31 @@ export default function ChangeTeamPage() {
         user: { id },
       })),
     }
+    // Check if current user is in team members
+    // If not, clear itineraries cache to prevent access issues
+    const isCurrentUserInTeam =
+      !!currentUser?.id && values.teamMembers.includes(currentUser.id)
+
+    const clearCacheKeys: string[] = isCurrentUserInTeam ? [] : ["/itineraries"]
+
     execPut(payload, {
-      clearCacheKeys: ["/itineraries"],
-    }).then(() => {
-      navigate(`/lijst/${itineraryId}`)
+      clearCacheKeys,
+    }).then((resp) => {
+      updateCache((cache) => {
+        if (!cache || !resp?.team_members) return
+        cache.team_members = resp.team_members
+      })
+      if (isCurrentUserInTeam) {
+        navigate(`/lijst/${itineraryId}`)
+      } else {
+        navigate("/")
+      }
     })
   }
 
   const { formState } = form
 
-  if (isBusy || !itinerary || isUpdating) {
+  if (isBusy || !itinerary) {
     return <AmsterdamCrossSpinner />
   }
 
@@ -111,8 +126,11 @@ export default function ChangeTeamPage() {
               />
 
               <Row gap="x-large">
-                <Button type="submit" disabled={!formState.isValid}>
-                  Opslaan
+                <Button
+                  type="submit"
+                  disabled={!formState.isValid || isUpdating}
+                >
+                  {isUpdating ? "Opslaan…" : "Opslaan"}
                 </Button>
                 <Button variant="tertiary" onClick={() => navigate(-1)}>
                   Annuleer
