@@ -1,5 +1,6 @@
 export type ApiError = {
   status?: number
   message: string
-  cause?: unknown
+  title?: string
+  severity?: "error" | "warning" | "info"
 }

@@ -138,7 +138,7 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
               message:
                 (error as Error).message ||
                 "Er is een onverwachte fout opgetreden.",
-              cause: error,
+              ...(typeof error === "object" && error !== null ? error : {}),
             }
 
         addErrorToCache(apiError)

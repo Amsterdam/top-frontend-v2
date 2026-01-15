@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import { AlertContext } from "./AlertContext"
+export * from "./types"
 
 export const useAlert = () => {
   const context = useContext(AlertContext)

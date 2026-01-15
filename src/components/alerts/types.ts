@@ -1,4 +1,4 @@
-type Severity = "error" | "success" | "warning"
+export type Severity = "error" | "success" | "warning"
 
 export type AlertMessage = {
   id: string
