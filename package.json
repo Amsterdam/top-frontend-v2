@@ -14,11 +14,11 @@
     "generate:api-schema:acc": "openapi-typescript https://acc.api.top.amsterdam.nl/api/v1/schema/ -o ./src/__generated__/apiSchema.d.ts"
   },
   "dependencies": {
-    "@amsterdam/design-system-assets": "^1.1.0",
-    "@amsterdam/design-system-css": "^2.2.0",
-    "@amsterdam/design-system-react": "^2.2.0",
-    "@amsterdam/design-system-react-icons": "^1.1.1",
-    "@amsterdam/design-system-tokens": "^2.2.0",
+    "@amsterdam/design-system-assets": "^2.0.0",
+    "@amsterdam/design-system-css": "^3.0.0",
+    "@amsterdam/design-system-react": "^3.0.0",
+    "@amsterdam/design-system-react-icons": "^2.0.0",
+    "@amsterdam/design-system-tokens": "^3.0.0",
     "@amsterdam/ee-ads-rhf-lib": "file:amsterdam-ee-ads-rhf-lib-0.0.0.tgz",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
