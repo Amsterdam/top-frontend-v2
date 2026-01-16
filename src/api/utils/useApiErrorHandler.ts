@@ -4,7 +4,7 @@ import type { ApiError } from "@/api/types/apiError"
 const severityMap: Record<string, Severity> = {
   error: "error",
   success: "success",
-  warning: "warning"
+  warning: "warning",
 }
 
 export function mapToSeverity(input: string): Severity | undefined {
@@ -14,7 +14,7 @@ export function mapToSeverity(input: string): Severity | undefined {
 export const useApiErrorHandler = () => {
   const { showAlert } = useAlert()
 
-    return (error: ApiError) => {
+  return (error: ApiError) => {
     const severity = mapToSeverity(error.severity ?? "error")
     switch (error.status) {
       case 403:
@@ -30,7 +30,8 @@ export const useApiErrorHandler = () => {
         showAlert({
           title: error.title ?? "Niet gevonden 🔍",
           description:
-            error?.message ?? "Deze pagina of gegevens bestaan (niet meer). Misschien is het verplaatst of verwijderd?",
+            error?.message ??
+            "Deze pagina of gegevens bestaan (niet meer). Misschien is het verplaatst of verwijderd?",
           severity,
         })
         return
