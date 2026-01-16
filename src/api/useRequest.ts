@@ -49,7 +49,7 @@ export const useRequest = () => {
         throw {
           status: response.status,
           message: typeof json === "string" ? json : response.statusText,
-          cause: json,
+          ...(typeof json === "object" && json !== null ? json : {}),
         } as ApiError
       }
 
