@@ -1,11 +1,6 @@
 import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
-
-type Options = {
-  isProtected?: boolean
-  lazy?: boolean
-  keepUsingInvalidCache?: boolean
-}
+import type { ApiOptions } from "@/api/types/apiOptions"
 
 type TeamMember = {
   user: {
@@ -43,7 +38,7 @@ export const useItineraryChangeTeamMembers = (itineraryId?: string) => {
 
 export const useItineraryItem = (
   itineraryItemId?: string | number,
-  options?: Options,
+  options?: ApiOptions,
 ) => {
   return useApi<ItineraryItem>({
     ...options,

@@ -37,7 +37,7 @@ export function SortableItem({
     return () => clearTimeout(timer)
   }, [animationDelay])
 
-  const scale = isDragging ? 1.015 : 1
+  const scale = isDragging ? 1.025 : 1
   const translateY = transform?.y ?? 0
   const translateX = transform?.x ?? 0
 
@@ -51,6 +51,7 @@ export function SortableItem({
     outline: 0,
     backgroundColor: "#fff",
     borderRadius: isDragging ? 4 : 0,
+    padding: isDragging ? "0px 16px" : 0,
     marginBottom: 2, // small gap to prevent bottom border from disappearing
     borderBottom: "1px solid var(--ams-color-separator)",
     borderTop: isDragging ? "1px solid var(--ams-color-separator)" : undefined,

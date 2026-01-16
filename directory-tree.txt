@@ -16,6 +16,7 @@
 │   ├── api
 │   │   ├── ApiCacheProvider.tsx
 │   │   ├── hooks
+│   │   │   ├── cases.ts
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
 │   │   │   ├── teamSettings.ts
@@ -23,7 +24,8 @@
 │   │   │   ├── themes.ts
 │   │   │   └── users.ts
 │   │   ├── types
-│   │   │   └── apiError.ts
+│   │   │   ├── apiError.ts
+│   │   │   └── apiOptions.ts
 │   │   ├── useApiCache.ts
 │   │   ├── useApi.ts
 │   │   ├── useRequest.ts
@@ -59,8 +61,22 @@
 │   │   │   └── __tests__
 │   │   │       └── Greeting.test.tsx
 │   │   ├── index.ts
+│   │   ├── ItineraryListItem
+│   │   │   └── ItineraryListItem.tsx
+│   │   ├── links
+│   │   │   ├── IconLink.tsx
+│   │   │   ├── index.ts
+│   │   │   └── ReactRouterLink.tsx
 │   │   ├── Note
 │   │   │   └── Note.tsx
+│   │   ├── PageGrid
+│   │   │   └── PageGrid.tsx
+│   │   ├── PageHeading
+│   │   │   ├── PageHeading.module.css
+│   │   │   └── PageHeading.tsx
+│   │   ├── SmallCaseCard
+│   │   │   ├── SmallCaseCard.module.css
+│   │   │   └── SmallCaseCard.tsx
 │   │   ├── spinners
 │   │   │   ├── AmsterdamCrossSpinner
 │   │   │   │   ├── AmsterdamCrossSpinner.module.css
@@ -84,6 +100,8 @@
 │   │   ├── env.ts
 │   │   └── oidc.ts
 │   ├── forms
+│   │   ├── components
+│   │   │   └── TeamMembersFields.tsx
 │   │   └── utils
 │   │       ├── mapToOptions.ts
 │   │       └── __tests__
@@ -101,7 +119,11 @@
 │   │   ├── useDialog.ts
 │   │   ├── useRedirectFromState.ts
 │   │   ├── useRedirectItinerary.ts
-│   │   └── useTokenPayload.ts
+│   │   ├── useTokenPayload.ts
+│   │   └── useUserOptions.ts
+│   ├── icons
+│   │   ├── FootprintsIcon.tsx
+│   │   └── index.ts
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
@@ -114,11 +136,11 @@
 │   │   │   │   │   └── itineraryToClipboardText.ts
 │   │   │   │   ├── DeleteItineraryButton
 │   │   │   │   │   └── DeleteItineraryButton.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── ListItem
-│   │   │   │   ├── ListItem.module.css
-│   │   │   │   ├── ListItem.tsx
-│   │   │   │   └── utils.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── SortableItineraryItemList
+│   │   │   │       ├── SortableItem.tsx
+│   │   │   │       ├── SortableItineraryItemList.tsx
+│   │   │   │       └── utils.ts
 │   │   │   └── ListPage.tsx
 │   │   ├── ListSettings
 │   │   │   ├── ChooseThemePage
@@ -128,11 +150,18 @@
 │   │   │       └── CreateListPage.tsx
 │   │   ├── NotFound
 │   │   │   └── NotFound.tsx
+│   │   ├── SearchAddressPage
+│   │   │   └── SearchAddressPage.tsx
 │   │   └── UnderConstruction
 │   │       └── UnderConstruction.tsx
 │   ├── router
 │   │   ├── index.tsx
 │   │   └── routes.tsx
+│   ├── shared
+│   │   ├── formatAddress.ts
+│   │   ├── getSchedulePriority.ts
+│   │   ├── getWorkflowName.ts
+│   │   └── index.ts
 │   ├── styles
 │   │   ├── animations.css
 │   │   ├── design-system-overrides.css
@@ -141,11 +170,12 @@
 │       ├── address.d.ts
 │       ├── api.d.ts
 │       ├── cache.d.ts
-│       └── case.d.ts
+│       ├── case.d.ts
+│       └── Itinerary.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
 ├── vite.config.ts
 └── vitest.config.ts
 
-50 directories, 99 files
+59 directories, 120 files

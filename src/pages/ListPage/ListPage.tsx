@@ -66,7 +66,7 @@ export default function ListPage() {
               .join(", ")}
           </Paragraph>
         </Column>
-        <Row align="between" className="mt-3">
+        <Row align="between" wrap className="mt-3">
           <GoogleMapsButton addresses={addresses} />
           <Button variant="secondary" iconBefore icon={PlusIcon}>
             Voeg zaak toe
