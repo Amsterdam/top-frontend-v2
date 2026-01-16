@@ -1,3 +1,7 @@
+.main {
+  padding-top: var(--ams-space-m);
+}
+
 /* Mobile / tablet */
 @media (max-width: 992px) {
   .main {
@@ -17,4 +21,17 @@
   .main {
     padding-inline: var(--ams-page-header-wide-padding-inline);
   }
+}
+
+.PageHeader {
+  position: relative;
+  background-color: var(--ams-color-background);
+  z-index: 403;
+}
+
+.MainMenuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 402;
+  background-color: rgba(0, 0, 0, 0.5);
 }
