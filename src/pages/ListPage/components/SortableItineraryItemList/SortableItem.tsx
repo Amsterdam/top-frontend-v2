@@ -8,8 +8,7 @@ export function SortableItem({
 }: {
   id: number
   children: React.ReactNode
-
-  animationDelay?: number
+  animationDelay?: number // in seconds
 }) {
   const {
     attributes,
@@ -27,7 +26,7 @@ export function SortableItem({
   })
 
   useEffect(() => {
-    const duration = 300 // duration of the animation in ms
+    const duration = 1000 // duration of the animation in ms
     const timer = setTimeout(
       () => {
         updateAnimate(false)

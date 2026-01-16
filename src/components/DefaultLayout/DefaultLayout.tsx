@@ -6,6 +6,7 @@ import { useAuth } from "react-oidc-context"
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import { useRedirectItinerary } from "@/hooks"
+import { usePageHeaderOverlay } from "./usePageHeaderOverlay"
 
 import styles from "./DefaultLayout.module.css"
 
@@ -19,8 +20,8 @@ type HeaderAction = {
 export function DefaultLayout() {
   useRedirectFromState()
   useRedirectItinerary()
-
   const auth = useAuth()
+  const { menuOpen, closeMenu } = usePageHeaderOverlay()
 
   const headerActions: HeaderAction[] = [
     {
@@ -54,12 +55,13 @@ export function DefaultLayout() {
           </PageHeader.MenuLink>
         ))}
         noMenuButtonOnWideWindow
+        className={styles.PageHeader}
       >
         <LinkList>
           {headerActions.map((action) => (
             <LinkList.Link
               key={action.key}
-              href="#"
+              href="/zoeken"
               icon={action.icon}
               onClick={action.onClick}
             >
@@ -68,6 +70,12 @@ export function DefaultLayout() {
           ))}
         </LinkList>
       </PageHeader>
+      {menuOpen && (
+        <div
+          className={`${styles.MainMenuOverlay} animate-fade-in`}
+          onClick={closeMenu}
+        />
+      )}
 
       <main id="main" className={styles.main}>
         <Outlet />
