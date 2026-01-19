@@ -10,10 +10,10 @@ import {
   CheckMarkIcon,
   PlusIcon,
   SettingsIcon,
-  TrashBinIcon,
 } from "@amsterdam/design-system-react-icons"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
+import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
 
 type Props = {
   item: ItineraryItem
@@ -48,7 +48,7 @@ export function ItineraryListItem({
         {type === "default" && (
           <Column alignHorizontal="end">
             <Button>Bezoek</Button>
-            <Button icon={TrashBinIcon} variant="secondary" />
+            <DeleteItineraryItemButton itineraryItemId={item.id.toString()} />
           </Column>
         )}
         {type === "addStartAddress" && (
