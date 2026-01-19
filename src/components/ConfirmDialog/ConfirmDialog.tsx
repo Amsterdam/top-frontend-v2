@@ -46,7 +46,7 @@ export function ConfirmDialog({
             {onOkText ?? "Doorgaan"}
           </Button>
           <Button onClick={Dialog.close} variant="secondary">
-            Annuleer
+            Annuleren
           </Button>
         </ActionGroup>
       }

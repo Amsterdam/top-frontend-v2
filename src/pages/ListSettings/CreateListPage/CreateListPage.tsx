@@ -3,8 +3,8 @@ import {
   Button,
   Grid,
   Label,
-  Row,
   Column,
+  ActionGroup,
 } from "@amsterdam/design-system-react"
 import { useLocation, useNavigate, useParams } from "react-router"
 import {
@@ -191,7 +191,7 @@ export default function CreateListPage() {
               className="ams-mb-l"
             />
 
-            <Column>
+            <Column className="ams-mb-xl">
               <Label optional>Startadres</Label>
               {startCase ? (
                 <SmallCaseCard
@@ -212,7 +212,7 @@ export default function CreateListPage() {
                 </ReactRouterLink>
               )}
             </Column>
-            <Row gap="x-large" className="mt-6">
+            <ActionGroup>
               <Button
                 type="submit"
                 disabled={!formState.isValid}
@@ -222,12 +222,12 @@ export default function CreateListPage() {
                 Genereer looplijst
               </Button>
               <Button
-                variant="tertiary"
+                variant="secondary"
                 onClick={() => navigate("/lijst-instellingen")}
               >
-                Annuleer
+                Annuleren
               </Button>
-            </Row>
+            </ActionGroup>
           </Grid.Cell>
         </Grid>
       </FormProvider>
