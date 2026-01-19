@@ -1,11 +1,11 @@
 import { useEffect } from "react"
 import {
+  ActionGroup,
   Button,
   Column,
   Grid,
   Heading,
   Paragraph,
-  Row,
 } from "@amsterdam/design-system-react"
 import { useForm, useWatch } from "react-hook-form"
 import { useNavigate, useParams } from "react-router"
@@ -125,17 +125,17 @@ export default function ChangeTeamPage() {
                 currentUserId={currentUser?.id}
               />
 
-              <Row gap="x-large">
+              <ActionGroup className="mt-3">
                 <Button
                   type="submit"
                   disabled={!formState.isValid || isUpdating}
                 >
                   {isUpdating ? "Opslaan…" : "Opslaan"}
                 </Button>
-                <Button variant="tertiary" onClick={() => navigate(-1)}>
-                  Annuleer
+                <Button variant="secondary" onClick={() => navigate(-1)}>
+                  Annuleren
                 </Button>
-              </Row>
+              </ActionGroup>
             </Grid.Cell>
           </Grid>
         </FormProvider>
