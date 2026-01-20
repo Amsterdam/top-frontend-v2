@@ -2,7 +2,7 @@ import { useItinerary } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { IconButton } from "@amsterdam/design-system-react"
-import { TrashBinIcon } from "@amsterdam/design-system-react-icons"
+import { DeleteIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import { useDialog } from "@/hooks/useDialog"
 
@@ -34,7 +34,7 @@ export function DeleteItineraryButton({
   return (
     <>
       <IconButton
-        svg={TrashBinIcon}
+        svg={DeleteIcon}
         label="Verwijder looplijst"
         title="Verwijder looplijst"
         size="heading-1"
@@ -43,7 +43,9 @@ export function DeleteItineraryButton({
       <ConfirmDialog
         id={dialogId}
         title="Looplijst verwijderen"
-        content={<span>Weet u zeker dat u de looplijst wilt verwijderen?</span>}
+        content={
+          <span>Weet je zeker dat je de looplijst wilt verwijderen?</span>
+        }
         onOk={deleteItinerary}
         onOkText="Verwijderen"
         loading={isBusy}
