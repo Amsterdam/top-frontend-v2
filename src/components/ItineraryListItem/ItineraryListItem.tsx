@@ -48,7 +48,7 @@ export function ItineraryListItem({
         {type === "default" && (
           <Column alignHorizontal="end">
             <Button>Bezoek</Button>
-            <DeleteItineraryItemButton itineraryItemId={item.id.toString()} />
+            <DeleteItineraryItemButton itineraryItemId={item.id} />
           </Column>
         )}
         {type === "addStartAddress" && (

@@ -50,11 +50,11 @@ export function ConfirmDialog({
           </Button>
         </ActionGroup>
       }
-      heading={title ?? "Weet u zeker?"}
+      heading={title ?? "Weet je het zeker?"}
     >
       <Paragraph style={{ marginBottom: 12 }}>
         {content ??
-          "Weet u zeker dat u door wilt gaan met het uitvoeren van deze actie?"}
+          "Weet je zeker dat je door wilt gaan met het uitvoeren van deze actie?"}
       </Paragraph>
     </Dialog>
   )
