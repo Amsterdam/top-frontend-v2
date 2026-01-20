@@ -11,7 +11,7 @@ COPY . $DIR/
 RUN ls -la $DIR
 
 # build dirs
-RUN mkdir -p $DIR/builds/application
+RUN mkdir -p $DIR/builds/application/config
 
 WORKDIR $DIR
 COPY package*.json $DIR/
