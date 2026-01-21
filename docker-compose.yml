@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  frontend:
+    build: .
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-salmagundi/top-frontend}:${VERSION:-latest}
+    ports:
+      - "3000:7000"
+    environment:
+      - VITE_API_URL=https://acc.api.top.amsterdam.nl/api/v1/
+      - VITE_ENVIRONMENT_SHORT=DEV/ACC
+
