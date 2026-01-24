@@ -11,10 +11,10 @@ import {
   PlusIcon,
   SettingsIcon,
 } from "@amsterdam/design-system-react-icons"
+import { useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
-import { useNavigate, useParams } from "react-router"
 
 type Props = {
   item: ItineraryItem
