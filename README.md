@@ -32,3 +32,14 @@ to [production](https://top.amsterdam.nl/).
 ```typescript
 tree -I "node_modules|.next|.git" -L 10 > directory-tree.txt
 ```
+ 
+# Install local ee-ads-rhf package
+
+1. Go to the ee-ads-rhf repo.
+2. Run `npm run build`
+3. Copy paste the .tgz file to this repo.
+4. Install:
+
+```typescript
+npm install ./amsterdam-ee-ads-rhf-lib-0.0.0.tgz
+```

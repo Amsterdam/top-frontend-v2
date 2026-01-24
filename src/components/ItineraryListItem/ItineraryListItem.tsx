@@ -14,6 +14,7 @@ import {
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
+import { useNavigate, useParams } from "react-router"
 
 type Props = {
   item: ItineraryItem
@@ -28,6 +29,8 @@ export function ItineraryListItem({
   onAdd,
   status,
 }: Props) {
+  const { itineraryId } = useParams<{ itineraryId: string }>()
+  const navigate = useNavigate()
   const caseData = item.case
   const address = caseData?.address
 
@@ -47,7 +50,11 @@ export function ItineraryListItem({
         </Column>
         {type === "default" && (
           <Column alignHorizontal="end">
-            <Button>Bezoek</Button>
+            <Button
+              onClick={() => navigate(`/bezoek/${itineraryId}/${caseData?.id}`)}
+            >
+              Bezoek
+            </Button>
             <DeleteItineraryItemButton itineraryItemId={item.id} />
           </Column>
         )}
