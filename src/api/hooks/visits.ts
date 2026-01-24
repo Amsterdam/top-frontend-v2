@@ -8,7 +8,7 @@ export const useVisits = (options?: ApiOptions) =>
     url: makeApiUrl("visits"),
   })
 
-export const useVisit = (id?: string, options?: ApiOptions) =>
+export const useVisit = (id?: string | number, options?: ApiOptions) =>
   useApi<Visit, VisitPayload>({
     ...options,
     url: makeApiUrl(`visits/${id}`),

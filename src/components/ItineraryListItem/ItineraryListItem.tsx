@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
+import CompleteVisitButton from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
 import { getMostRecentVisit, getVisitState } from "./helpers/visit"
 
 type Props = {
@@ -77,6 +78,7 @@ export function ItineraryListItem({
                 >
                   Afronden
                 </Button>
+                <CompleteVisitButton visitId={mostRecentVisit?.id} itineraryItemId={item.id}/>
                 <Row>
                   <Button
                     icon={PencilIcon}
