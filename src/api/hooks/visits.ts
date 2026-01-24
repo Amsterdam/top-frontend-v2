@@ -7,3 +7,10 @@ export const useVisits = (options?: ApiOptions) =>
     ...options,
     url: makeApiUrl("visits"),
   })
+
+export const useVisit = (id?: string, options?: ApiOptions) =>
+  useApi<Visit, VisitPayload>({
+    ...options,
+    url: makeApiUrl(`visits/${id}`),
+    lazy: options?.lazy ?? !id,
+  })

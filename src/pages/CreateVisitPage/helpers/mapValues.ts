@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import type { FormValuesVisit } from "./FormValuesVisit"
+import type { FormValuesVisit } from "../FormValuesVisit"
 
 const nullify = (target: Record<string, unknown>, keys: string[]) => {
   for (const key of keys) {
@@ -44,13 +44,18 @@ export function mapValues(values: FormValuesVisit): VisitPayload {
       "can_next_visit_go_ahead_description_yes",
       "can_next_visit_go_ahead_description_no",
     ])
-  } else {
+  }
+  if (values.suggest_next_visit === "daytime") {
     mappedValues.suggest_next_visit_description = null
   }
 
   if (values.can_next_visit_go_ahead === "yes") {
+    mappedValues.can_next_visit_go_ahead_description =
+      values.can_next_visit_go_ahead_description_yes
     mappedValues.can_next_visit_go_ahead_description_no = null
   } else {
+    mappedValues.can_next_visit_go_ahead_description =
+      values.can_next_visit_go_ahead_description_no
     mappedValues.can_next_visit_go_ahead_description_yes = null
   }
 

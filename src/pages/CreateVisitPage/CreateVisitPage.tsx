@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Grid, Heading, StandaloneLink } from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf-lib"
@@ -7,7 +7,7 @@ import {
   ChevronBackwardIcon,
   HouseIcon,
 } from "@amsterdam/design-system-react-icons"
-import { useItinerary, useVisits } from "@/api/hooks"
+import { useItinerary, useVisit, useVisits } from "@/api/hooks"
 import { formatAddress } from "@/shared"
 import { AmsterdamCrossSpinner, Divider, PageHeading } from "@/components"
 import { type FormValuesVisit } from "./FormValuesVisit"
@@ -16,17 +16,20 @@ import StepObservations from "./StepObservation/StepObservations"
 import StepNextVisitSuggestion from "./StepNextVisitSuggestion/StepNextVisitSuggestion"
 import StepCanNextVisitGoAhead from "./StepCanNextVisitGoAhead/StepCanNextVisitGoAhead"
 import StepNotesAndDescription from "./StepNotesAndDescription/StepNotesAndDescription"
-import { mapValues } from "./mapValues"
+import { mapValues } from "./helpers/mapValues"
+import { mapVisitToFormValues } from "./helpers/mapVisitToFormValues"
 import { useCurrentUser } from "@/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 
 export default function CreateVisitPage() {
-  const { itineraryId, caseId } = useParams<{
+  const { itineraryId, caseId, id } = useParams<{
     itineraryId: string
     caseId: string
+    id?: string
   }>()
   const [isLoading, setIsLoading] = useState(false)
   const [, { execPost }] = useVisits({ lazy: true })
+  const [visit, { execPut }] = useVisit(id)
   const [itinerary] = useItinerary(itineraryId)
   const currentUser = useCurrentUser()
   const [currentStep, setCurrentStep] = useState(0)
@@ -54,8 +57,16 @@ export default function CreateVisitPage() {
     },
   })
 
+  useEffect(() => {
+    if (!visit) return
+
+    form.reset(mapVisitToFormValues({ visit }))
+  }, [visit, form])
+
   const onSubmit = async (values: FormValuesVisit) => {
     if (!currentUser?.id || !caseId || !itineraryItem?.id) return
+
+    const execRequest = id ? execPut : execPost
 
     setIsLoading(true)
 
@@ -66,7 +77,7 @@ export default function CreateVisitPage() {
     }
     const payload = mapValues({ ...values, ...initialValues })
 
-    execPost(payload, {
+    execRequest(payload, {
       clearCacheKeys: [`/itineraries/${itineraryId}`],
     })
       .then(() => {

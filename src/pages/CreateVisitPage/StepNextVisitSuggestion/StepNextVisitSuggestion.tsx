@@ -38,7 +38,7 @@ export const StepNextVisitSuggestion = ({ onPrevStep, onNextStep }: Props) => {
 
   const disabled =
     !suggestNextVisit ||
-    (suggestNextVisit === "unknown" && !suggestNextVisitDescription)
+    (suggestNextVisit !== "daytime" && !suggestNextVisitDescription)
 
   return (
     <>
@@ -58,14 +58,18 @@ export const StepNextVisitSuggestion = ({ onPrevStep, onNextStep }: Props) => {
       <TextAreaControl<FormValuesVisit>
         label="Toelichting"
         name="suggest_next_visit_description"
-        placeholder="Geef hier een toelichting waarom het vervolgbezoek niet door kan gaan."
+        placeholder="Geef hier een toelichting waarom het vervolgbezoek niet overdag kan plaatsvinden of waarom het niet langer uitgezet hoeft te worden."
         wrapperProps={{
           className: "ams-mb-l",
         }}
         registerOptions={{
           required: "Deze vraag is verplicht",
         }}
-        shouldShow={(watch) => watch("suggest_next_visit") == "unknown"}
+        shouldShow={(watch) =>
+          watch("suggest_next_visit") === "unknown" ||
+          watch("suggest_next_visit") === "evening" ||
+          watch("suggest_next_visit") === "weekend"
+        }
         rows={5}
       />
 

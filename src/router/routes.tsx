@@ -42,7 +42,7 @@ export const routes = [
       { path: "bezoek/:itineraryId/:caseId", element: <CreateVisitPage /> }, // CREATE
       {
         path: "bezoek/:itineraryId/:caseId/:id", // EDIT
-        element: <UnderConstruction />,
+        element: <CreateVisitPage />,
       },
     ],
   },

@@ -10,11 +10,13 @@ import {
   CheckMarkIcon,
   PlusIcon,
   SettingsIcon,
+  PencilIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
+import { getMostRecentVisit, getVisitState } from "./helpers/visit"
 
 type Props = {
   item: ItineraryItem
@@ -36,8 +38,10 @@ export function ItineraryListItem({
 
   const statusName = getWorkflowName(caseData?.workflows)
   const priority = getSchedulePriority(caseData?.schedules)
-  const firstVisit = item?.visits?.length ? item.visits[0] : null
-  const notes = firstVisit?.personal_notes
+
+  const visitState = getVisitState(item)
+  const mostRecentVisit = getMostRecentVisit(item)
+  const notes = mostRecentVisit?.personal_notes
 
   return (
     <Column style={{ padding: "16px 0" }} gap="small">
@@ -50,12 +54,51 @@ export function ItineraryListItem({
         </Column>
         {type === "default" && (
           <Column alignHorizontal="end">
-            <Button
-              onClick={() => navigate(`/bezoek/${itineraryId}/${caseData?.id}`)}
-            >
-              Bezoek
-            </Button>
-            <DeleteItineraryItemButton itineraryItemId={item.id} />
+            {visitState === "pendingVisit" && (
+              <>
+                <Button
+                  onClick={() =>
+                    navigate(`/bezoek/${itineraryId}/${caseData?.id}`)
+                  }
+                >
+                  Bezoek
+                </Button>
+                <DeleteItineraryItemButton itineraryItemId={item.id} />
+              </>
+            )}
+            {visitState === "visitInProgress" && (
+              <>
+                <Button
+                  icon={CheckMarkIcon}
+                  iconBefore
+                  onClick={() => {
+                    console.log(" AFRONDEN")
+                  }}
+                >
+                  Afronden
+                </Button>
+                <Row>
+                  <Button
+                    icon={PencilIcon}
+                    iconBefore
+                    title="Bezoek bewerken"
+                    variant="secondary"
+                    onClick={() =>
+                      navigate(
+                        `/bezoek/${itineraryId}/${caseData?.id}/${mostRecentVisit?.id}`,
+                      )
+                    }
+                  />
+
+                  <DeleteItineraryItemButton itineraryItemId={item.id} />
+                </Row>
+              </>
+            )}
+            {visitState === "visitCompleted" && (
+              <Paragraph style={{ color: "var(--ams-color-feedback-success)" }}>
+                Bezoek voltooid
+              </Paragraph>
+            )}
           </Column>
         )}
         {type === "addStartAddress" && (
