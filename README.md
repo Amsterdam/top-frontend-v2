@@ -32,7 +32,7 @@ to [production](https://top.amsterdam.nl/).
 ```typescript
 tree -I "node_modules|.next|.git" -L 10 > directory-tree.txt
 ```
- 
+
 # Install local ee-ads-rhf package
 
 1. Go to the ee-ads-rhf repo.

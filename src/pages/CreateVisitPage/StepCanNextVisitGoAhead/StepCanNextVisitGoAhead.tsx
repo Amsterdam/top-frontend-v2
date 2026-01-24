@@ -84,12 +84,7 @@ export const StepCanNextVisitGoAhead = ({ onPrevStep }: Props) => {
         >
           Vorige vraag
         </Button>
-        <Button
-          type="submit"
-          disabled={disabled}
-          icon={SaveIcon}
-          iconBefore
-        >
+        <Button type="submit" disabled={disabled} icon={SaveIcon} iconBefore>
           Opslaan
         </Button>
       </ActionGroup>

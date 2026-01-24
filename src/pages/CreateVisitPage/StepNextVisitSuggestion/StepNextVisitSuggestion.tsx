@@ -79,12 +79,7 @@ export const StepNextVisitSuggestion = ({ onPrevStep, onNextStep }: Props) => {
           Vorige vraag
         </Button>
         {suggestNextVisit === "unknown" ? (
-          <Button
-            icon={SaveIcon}
-            iconBefore
-            disabled={disabled}
-            type="submit"
-          >
+          <Button icon={SaveIcon} iconBefore disabled={disabled} type="submit">
             Opslaan
           </Button>
         ) : (

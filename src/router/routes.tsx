@@ -19,7 +19,10 @@ export const routes = [
       { path: "kies-looplijst", element: <UnderConstruction /> },
       { path: "lijst", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId", element: <ListPage /> },
-      { path: "lijst/:itineraryId/wijzig-team", element: <UpdateTeamMemberPage /> },
+      {
+        path: "lijst/:itineraryId/wijzig-team",
+        element: <UpdateTeamMemberPage />,
+      },
       { path: "lijst/:itineraryId/suggesties", element: <SuggestionPage /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },

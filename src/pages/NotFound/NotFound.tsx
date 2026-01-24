@@ -27,9 +27,7 @@ export default function NotFound() {
         <Paragraph className="mb-5">
           De pagina die je probeert te bereiken bestaat niet of is verplaatst.
         </Paragraph>
-        <Button onClick={() => navigate("/")}>
-          Terug naar home
-        </Button>
+        <Button onClick={() => navigate("/")}>Terug naar home</Button>
       </div>
     </>
   )
