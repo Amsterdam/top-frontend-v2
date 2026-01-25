@@ -55,7 +55,9 @@ export function mapValues(values: FormValuesVisit): VisitPayload {
     mappedValues.can_next_visit_go_ahead_description_no = null
   } else {
     mappedValues.can_next_visit_go_ahead_description =
-      values.can_next_visit_go_ahead_description_no
+      values.can_next_visit_go_ahead_description_no === ""
+        ? null
+        : values.can_next_visit_go_ahead_description_no
     mappedValues.can_next_visit_go_ahead_description_yes = null
   }
 
