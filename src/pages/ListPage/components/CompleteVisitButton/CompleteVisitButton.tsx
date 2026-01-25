@@ -49,7 +49,7 @@ export function CompleteVisitButton({
   return (
     <>
       <Button icon={CheckMarkIcon} iconBefore onClick={openDialog}>
-        Afronden 2
+        Afronden
       </Button>
       <ConfirmDialog
         id={dialogId}

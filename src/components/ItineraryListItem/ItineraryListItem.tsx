@@ -69,15 +69,6 @@ export function ItineraryListItem({
             )}
             {visitState === "visitInProgress" && (
               <>
-                <Button
-                  icon={CheckMarkIcon}
-                  iconBefore
-                  onClick={() => {
-                    console.log(" AFRONDEN")
-                  }}
-                >
-                  Afronden
-                </Button>
                 <CompleteVisitButton visitId={mostRecentVisit?.id} itineraryItemId={item.id}/>
                 <Row>
                   <Button
