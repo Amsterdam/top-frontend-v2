@@ -143,7 +143,6 @@ export default function CreateVisitPage() {
         href="#"
         icon={ChevronBackwardIcon}
         onClick={() => navigate(`/lijst/${itineraryId}`)}
-        className="mt-4"
       >
         Terug naar looplijst
       </StandaloneLink>

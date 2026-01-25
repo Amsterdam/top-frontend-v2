@@ -116,7 +116,7 @@ export default function UpdateTeamMemberPage() {
         </Column>
         <Divider />
         <FormProvider form={form} onSubmit={onSubmit}>
-          <Grid paddingBottom="x-large" paddingTop="large">
+          <Grid paddingBottom="x-large">
             <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
               <TeamMembersFields
                 teamMembers={teamMembers}

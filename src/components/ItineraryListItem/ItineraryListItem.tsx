@@ -18,6 +18,7 @@ import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
 import CompleteVisitButton from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
 import { getMostRecentVisit, getVisitState } from "./helpers/visit"
+import { VisitWrapper } from "./VisitWrapper/VisitWrapper"
 
 type Props = {
   item: ItineraryItem
@@ -45,7 +46,7 @@ export function ItineraryListItem({
   const notes = mostRecentVisit?.personal_notes
 
   return (
-    <Column style={{ padding: "16px 0" }} gap="small">
+    <VisitWrapper type={type} visitState={visitState}>
       <Row align="between">
         <Column gap="x-small" alignHorizontal="start">
           <Heading level={3}>{formatAddress(address)}</Heading>
@@ -69,7 +70,10 @@ export function ItineraryListItem({
             )}
             {visitState === "visitInProgress" && (
               <>
-                <CompleteVisitButton visitId={mostRecentVisit?.id} itineraryItemId={item.id}/>
+                <CompleteVisitButton
+                  visitId={mostRecentVisit?.id}
+                  itineraryItemId={item.id}
+                />
                 <Row>
                   <Button
                     icon={PencilIcon}
@@ -86,11 +90,6 @@ export function ItineraryListItem({
                   <DeleteItineraryItemButton itineraryItemId={item.id} />
                 </Row>
               </>
-            )}
-            {visitState === "visitCompleted" && (
-              <Paragraph style={{ color: "var(--ams-color-feedback-success)" }}>
-                Bezoek voltooid
-              </Paragraph>
             )}
           </Column>
         )}
@@ -134,7 +133,7 @@ export function ItineraryListItem({
           </Column>
         )}
       </Row>
-      <Row>
+      <Row wrap className="mt-1">
         <StatusTag statusName={statusName} />
         <PriorityTag priority={priority} />
         {caseData?.tags?.map((tag) => (
@@ -142,7 +141,7 @@ export function ItineraryListItem({
         ))}
       </Row>
       <Note note={notes} />
-    </Column>
+    </VisitWrapper>
   )
 }
 
