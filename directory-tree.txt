@@ -2,9 +2,14 @@
 ├── amsterdam-ee-ads-rhf-lib-0.0.0.tgz
 ├── directory-prompt.txt
 ├── directory-tree.txt
+├── docker-compose.yml
+├── Dockerfile
+├── entrypoint.sh
 ├── eslint.config.js
 ├── index.html
 ├── LICENSE
+├── Makefile
+├── nginx.conf
 ├── package.json
 ├── package-lock.json
 ├── public
@@ -22,7 +27,8 @@
 │   │   │   ├── teamSettings.ts
 │   │   │   ├── __tests__
 │   │   │   ├── themes.ts
-│   │   │   └── users.ts
+│   │   │   ├── users.ts
+│   │   │   └── visits.ts
 │   │   ├── types
 │   │   │   ├── apiError.ts
 │   │   │   └── apiOptions.ts
@@ -50,10 +56,16 @@
 │   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
 │   │   │   ├── DefaultLayout.module.css
-│   │   │   └── DefaultLayout.tsx
+│   │   │   ├── DefaultLayout.tsx
+│   │   │   └── usePageHeaderOverlay.ts
+│   │   ├── Distance
+│   │   │   └── Distance.tsx
 │   │   ├── Divider
 │   │   │   ├── Divider.module.css
 │   │   │   └── Divider.tsx
+│   │   ├── EllipsisActionMenu
+│   │   │   ├── EllipsisActionMenu.module.css
+│   │   │   └── EllipsisActionMenu.tsx
 │   │   ├── GoogleMapsButton
 │   │   │   └── GoogleMapsButton.tsx
 │   │   ├── Greeting
@@ -62,7 +74,14 @@
 │   │   │       └── Greeting.test.tsx
 │   │   ├── index.ts
 │   │   ├── ItineraryListItem
-│   │   │   └── ItineraryListItem.tsx
+│   │   │   ├── AnimatedItineraryListItem.tsx
+│   │   │   ├── helpers
+│   │   │   │   └── visit.ts
+│   │   │   ├── index.ts
+│   │   │   ├── ItineraryListItem.tsx
+│   │   │   └── VisitWrapper
+│   │   │       ├── VisitWrapper.module.css
+│   │   │       └── VisitWrapper.tsx
 │   │   ├── links
 │   │   │   ├── IconLink.tsx
 │   │   │   ├── index.ts
@@ -127,33 +146,54 @@
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
-│   │   ├── ChangeTeamPage
-│   │   │   └── ChangeTeamPage.tsx
+│   │   ├── ChooseThemePage
+│   │   │   ├── ChooseThemePage.module.css
+│   │   │   └── ChooseThemePage.tsx
+│   │   ├── CreateListPage
+│   │   │   └── CreateListPage.tsx
+│   │   ├── CreateVisitPage
+│   │   │   ├── CreateVisitPage.tsx
+│   │   │   ├── FormValuesVisit.ts
+│   │   │   ├── helpers
+│   │   │   │   ├── mapValues.ts
+│   │   │   │   └── mapVisitToFormValues.ts
+│   │   │   ├── StepCanNextVisitGoAhead
+│   │   │   │   └── StepCanNextVisitGoAhead.tsx
+│   │   │   ├── StepNextVisitSuggestion
+│   │   │   │   └── StepNextVisitSuggestion.tsx
+│   │   │   ├── StepNotesAndDescription
+│   │   │   │   └── StepNotesAndDescription.tsx
+│   │   │   ├── StepObservation
+│   │   │   │   └── StepObservations.tsx
+│   │   │   └── StepSituation
+│   │   │       └── StepSituation.tsx
 │   │   ├── ListPage
 │   │   │   ├── components
+│   │   │   │   ├── CompleteVisitButton
+│   │   │   │   │   └── CompleteVisitButton.tsx
 │   │   │   │   ├── CopyToClipboardButton
 │   │   │   │   │   ├── CopyToClipboardButton.tsx
 │   │   │   │   │   └── itineraryToClipboardText.ts
 │   │   │   │   ├── DeleteItineraryButton
 │   │   │   │   │   └── DeleteItineraryButton.tsx
+│   │   │   │   ├── DeleteItineraryItemButton
+│   │   │   │   │   └── DeleteItineraryItemButton.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   └── SortableItineraryItemList
 │   │   │   │       ├── SortableItem.tsx
 │   │   │   │       ├── SortableItineraryItemList.tsx
 │   │   │   │       └── utils.ts
 │   │   │   └── ListPage.tsx
-│   │   ├── ListSettings
-│   │   │   ├── ChooseThemePage
-│   │   │   │   ├── ChooseThemePage.module.css
-│   │   │   │   └── ChooseThemePage.tsx
-│   │   │   └── CreateListPage
-│   │   │       └── CreateListPage.tsx
 │   │   ├── NotFound
 │   │   │   └── NotFound.tsx
 │   │   ├── SearchAddressPage
 │   │   │   └── SearchAddressPage.tsx
-│   │   └── UnderConstruction
-│   │       └── UnderConstruction.tsx
+│   │   ├── SuggestionPage
+│   │   │   └── SuggestionPage.tsx
+│   │   ├── UnderConstruction
+│   │   │   └── UnderConstruction.tsx
+│   │   └── UpdateTeamMemberPage
+│   │       └── UpdateTeamMemberPage.tsx
 │   ├── router
 │   │   ├── index.tsx
 │   │   └── routes.tsx
@@ -171,11 +211,12 @@
 │       ├── api.d.ts
 │       ├── cache.d.ts
 │       ├── case.d.ts
-│       └── Itinerary.d.ts
+│       ├── Itinerary.d.ts
+│       └── Visit.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
 ├── vite.config.ts
 └── vitest.config.ts
 
-59 directories, 120 files
+72 directories, 148 files

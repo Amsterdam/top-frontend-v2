@@ -1,0 +1,15 @@
+.noteContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.noteText {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2; /* number of lines before truncation */
+  line-clamp: 2;
+  width: 100%;
+}

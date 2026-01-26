@@ -81,7 +81,7 @@ export default function SuggestionPage() {
           <AnimatedItineraryListItem key={caseData.id} index={index}>
             <ItineraryListItem
               item={{ case: caseData } as ItineraryItem}
-              type="addSuggestedCase"
+              variant="addSuggestedCase"
               onAdd={() => onAddCase(caseData)}
               status={isAdded ? "added" : isLoading ? "loading" : "idle"}
             />

@@ -14,7 +14,12 @@ export function mapVisitToFormValues({ visit }: Params): FormValuesVisit {
     observations: visit.observations ?? [],
     suggest_next_visit: visit.suggest_next_visit ?? "",
     suggest_next_visit_description: visit.suggest_next_visit_description ?? "",
-    can_next_visit_go_ahead: visit.can_next_visit_go_ahead ? "yes" : "no",
+    can_next_visit_go_ahead:
+      visit.can_next_visit_go_ahead == null
+        ? ""
+        : visit.can_next_visit_go_ahead
+          ? "yes"
+          : "no",
     can_next_visit_go_ahead_description_yes: visit?.can_next_visit_go_ahead
       ? (visit.can_next_visit_go_ahead_description ?? "")
       : "",
