@@ -115,7 +115,7 @@ export function SearchAddressPage() {
               <ItineraryListItem
                 key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
-                type="addStartAddress"
+                variant="addStartAddress"
                 onAdd={onAddCase}
               />
             </AnimatedItineraryListItem>

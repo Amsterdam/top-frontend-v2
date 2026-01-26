@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 services:
   frontend:
@@ -9,4 +9,3 @@ services:
     environment:
       - VITE_API_URL=https://acc.api.top.amsterdam.nl/api/v1/
       - VITE_ENVIRONMENT_SHORT=DEV/ACC
-
