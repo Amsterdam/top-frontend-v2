@@ -120,7 +120,7 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
               </Button>
             ))}
           </div>,
-          document.body
+          document.body,
         )}
     </>
   )
