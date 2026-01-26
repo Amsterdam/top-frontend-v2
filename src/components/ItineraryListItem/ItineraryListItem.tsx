@@ -57,7 +57,7 @@ export function ItineraryListItem({
         <StatusTag statusName={statusName} />
         <PriorityTag priority={priority} />
         {caseData?.tags?.map((tag) => (
-          <Tag key={`${caseData.id}-${tag.id}`} color="green" name={tag.name} />
+          <Tag key={`${caseData.id}-${tag.id}`} color="greyDark" name={tag.name} />
         ))}
       </Row>
       <Note note={notes} />
