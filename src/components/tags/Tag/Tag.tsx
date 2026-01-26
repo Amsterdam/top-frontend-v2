@@ -19,9 +19,9 @@ const TAG_COLORS = {
 } as const
 
 // Colors that require dark text for better readability
-const darkTextColors: TagColor[] = ["yellow", "lime"]
+const darkTextColors: TagColor[] = ["yellow", "lime", "grey", "greyDark"]
 
-type TagColor = keyof typeof TAG_COLORS
+export type TagColor = keyof typeof TAG_COLORS
 
 type TagProps = {
   name?: string | null
