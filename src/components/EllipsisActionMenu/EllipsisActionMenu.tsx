@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import {
   Button,
   IconButton,
@@ -20,7 +21,9 @@ type EllipsisActionMenuProps = {
 export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+
   const [open, setOpen] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
 
   function toggle() {
     setOpen((prev) => !prev)
@@ -30,7 +33,20 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
     setOpen(false)
   }
 
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) return
+
+    const rect = buttonRef.current.getBoundingClientRect()
+
+    setPosition({
+      top: rect.bottom + 4,
+      left: rect.right,
+    })
+  }, [open])
+
   useEffect(() => {
+    if (!open) return
+
     function handleClickOutside(event: MouseEvent) {
       if (
         menuRef.current &&
@@ -48,19 +64,23 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
       }
     }
 
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside)
-      document.addEventListener("keydown", handleKey)
+    function handleScroll() {
+      close()
     }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleKey)
+    window.addEventListener("scroll", handleScroll, true)
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
       document.removeEventListener("keydown", handleKey)
+      window.removeEventListener("scroll", handleScroll, true)
     }
   }, [open])
 
   return (
-    <div className={styles.wrapper}>
+    <>
       <IconButton
         ref={buttonRef}
         svg={EllipsisIcon}
@@ -72,26 +92,36 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
         onClick={toggle}
       />
 
-      {open && (
-        <div ref={menuRef} role="menu" className={styles.menu}>
-          {actions.map((action) => (
-            <Button
-              key={action.label}
-              role="menuitem"
-              className={styles.menuItem}
-              onClick={() => {
-                action.onClick()
-                close()
-              }}
-              variant="tertiary"
-              icon={action.icon}
-              iconBefore
-            >
-              {action.label}
-            </Button>
-          ))}
-        </div>
-      )}
-    </div>
+      {open &&
+        createPortal(
+          <div
+            ref={menuRef}
+            role="menu"
+            className={styles.menu}
+            style={{
+              top: position.top,
+              left: position.left,
+            }}
+          >
+            {actions.map((action) => (
+              <Button
+                key={action.label}
+                role="menuitem"
+                className={styles.menuItem}
+                onClick={() => {
+                  action.onClick()
+                  close()
+                }}
+                variant="tertiary"
+                icon={action.icon}
+                iconBefore
+              >
+                {action.label}
+              </Button>
+            ))}
+          </div>,
+          document.body
+        )}
+    </>
   )
 }

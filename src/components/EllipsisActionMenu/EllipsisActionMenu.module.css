@@ -4,10 +4,8 @@
 }
 
 .menu {
-  position: absolute;
-  top: 100%;
-  margin-top: 4px;
-  right: 0;
+  position: fixed;
+  transform: translateX(-100%);
   background: var(--ams-color-background);
   border-radius: 4px;
   box-shadow:
@@ -15,7 +13,7 @@
     0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
   padding: 4px 0;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .menuItem {
