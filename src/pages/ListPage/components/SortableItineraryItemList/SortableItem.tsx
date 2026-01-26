@@ -49,15 +49,7 @@ export function SortableItem({
     touchAction: "manipulation",
     outline: 0,
     backgroundColor: "#fff",
-    borderRadius: isDragging ? 4 : 0,
-    padding: isDragging ? "0px 16px" : 0,
-    marginBottom: 2, // small gap to prevent bottom border from disappearing
-    borderBottom: "1px solid var(--ams-color-separator)",
-    borderTop: isDragging ? "1px solid var(--ams-color-separator)" : undefined,
-    borderLeft: isDragging ? "1px solid var(--ams-color-separator)" : undefined,
-    borderRight: isDragging
-      ? "1px solid var(--ams-color-separator)"
-      : undefined,
+    borderRadius: 6,
     boxShadow: isDragging
       ? `rgba(0, 0, 0, 0.14) 0px 8px 10px 1px,
          rgba(0, 0, 0, 0.12) 0px 3px 14px 2px,

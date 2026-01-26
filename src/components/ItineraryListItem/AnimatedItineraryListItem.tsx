@@ -12,7 +12,7 @@ export function AnimatedItineraryListItem({
       className="animate-slide-in-fwd-bottom"
       style={{
         animationDelay: `${index * 0.1}s`,
-        borderBottom: "1px solid var(--ams-color-separator)",
+        // borderBottom: "1px solid var(--ams-color-separator)",
       }}
     >
       {children}

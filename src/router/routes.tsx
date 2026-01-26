@@ -1,12 +1,13 @@
 import { DefaultLayout } from "@/components"
-import ChooseThemePage from "@/pages/ListSettings/ChooseThemePage/ChooseThemePage"
-import CreateListPage from "@/pages/ListSettings/CreateListPage/CreateListPage"
+import ChooseThemePage from "@/pages/ChooseThemePage/ChooseThemePage"
+import CreateListPage from "@/pages/CreateListPage/CreateListPage"
 import NotFound from "@/pages/NotFound/NotFound"
 import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
 import ListPage from "@/pages/ListPage/ListPage"
-import ChangeTeamPage from "@/pages/ChangeTeamPage/ChangeTeamPage"
+import UpdateTeamMemberPage from "@/pages/UpdateTeamMemberPage/UpdateTeamMemberPage"
 import SearchAddressPage from "@/pages/SearchAddressPage/SearchAddressPage"
 import SuggestionPage from "@/pages/SuggestionPage/SuggestionPage"
+import CreateVisitPage from "@/pages/CreateVisitPage/CreateVisitPage"
 
 export const routes = [
   {
@@ -18,7 +19,10 @@ export const routes = [
       { path: "kies-looplijst", element: <UnderConstruction /> },
       { path: "lijst", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId", element: <ListPage /> },
-      { path: "lijst/:itineraryId/wijzig-team", element: <ChangeTeamPage /> },
+      {
+        path: "lijst/:itineraryId/wijzig-team",
+        element: <UpdateTeamMemberPage />,
+      },
       { path: "lijst/:itineraryId/suggesties", element: <SuggestionPage /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },
@@ -35,10 +39,10 @@ export const routes = [
         element: <UnderConstruction />,
       },
       { path: "zoeken", element: <UnderConstruction /> },
-      { path: "visit/:itineraryId/:caseId", element: <UnderConstruction /> },
+      { path: "bezoek/:itineraryId/:caseId", element: <CreateVisitPage /> }, // CREATE
       {
-        path: "visit/:itineraryId/:caseId/:id",
-        element: <UnderConstruction />,
+        path: "bezoek/:itineraryId/:caseId/:id", // EDIT
+        element: <CreateVisitPage />,
       },
     ],
   },

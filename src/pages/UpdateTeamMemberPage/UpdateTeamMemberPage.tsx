@@ -20,7 +20,7 @@ type FormValues = {
   teamMembers: string[]
 }
 
-export default function ChangeTeamPage() {
+export default function UpdateTeamMemberPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
   const [itinerary, { isBusy, execGet, updateCache }] = useItinerary(
@@ -116,7 +116,7 @@ export default function ChangeTeamPage() {
         </Column>
         <Divider />
         <FormProvider form={form} onSubmit={onSubmit}>
-          <Grid paddingBottom="x-large" paddingTop="large">
+          <Grid paddingBottom="x-large">
             <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
               <TeamMembersFields
                 teamMembers={teamMembers}

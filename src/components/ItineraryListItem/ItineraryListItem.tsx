@@ -10,10 +10,15 @@ import {
   CheckMarkIcon,
   PlusIcon,
   SettingsIcon,
+  PencilIcon,
 } from "@amsterdam/design-system-react-icons"
+import { useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag, Distance } from "@/components"
 import DeleteItineraryItemButton from "@/pages/ListPage/components/DeleteItineraryItemButton/DeleteItineraryItemButton"
+import CompleteVisitButton from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
+import { getMostRecentVisit, getVisitState } from "./helpers/visit"
+import { VisitWrapper } from "./VisitWrapper/VisitWrapper"
 
 type Props = {
   item: ItineraryItem
@@ -28,16 +33,20 @@ export function ItineraryListItem({
   onAdd,
   status,
 }: Props) {
+  const { itineraryId } = useParams<{ itineraryId: string }>()
+  const navigate = useNavigate()
   const caseData = item.case
   const address = caseData?.address
 
   const statusName = getWorkflowName(caseData?.workflows)
   const priority = getSchedulePriority(caseData?.schedules)
-  const firstVisit = item?.visits?.length ? item.visits[0] : null
-  const notes = firstVisit?.personal_notes
+
+  const visitState = getVisitState(item)
+  const mostRecentVisit = getMostRecentVisit(item)
+  const notes = mostRecentVisit?.personal_notes
 
   return (
-    <Column style={{ padding: "16px 0" }} gap="small">
+    <VisitWrapper type={type} visitState={visitState}>
       <Row align="between">
         <Column gap="x-small" alignHorizontal="start">
           <Heading level={3}>{formatAddress(address)}</Heading>
@@ -47,8 +56,41 @@ export function ItineraryListItem({
         </Column>
         {type === "default" && (
           <Column alignHorizontal="end">
-            <Button>Bezoek</Button>
-            <DeleteItineraryItemButton itineraryItemId={item.id} />
+            {visitState === "pendingVisit" && (
+              <>
+                <Button
+                  onClick={() =>
+                    navigate(`/bezoek/${itineraryId}/${caseData?.id}`)
+                  }
+                >
+                  Bezoek
+                </Button>
+                <DeleteItineraryItemButton itineraryItemId={item.id} />
+              </>
+            )}
+            {visitState === "visitInProgress" && (
+              <>
+                <CompleteVisitButton
+                  visitId={mostRecentVisit?.id}
+                  itineraryItemId={item.id}
+                />
+                <Row>
+                  <Button
+                    icon={PencilIcon}
+                    iconBefore
+                    title="Bezoek bewerken"
+                    variant="secondary"
+                    onClick={() =>
+                      navigate(
+                        `/bezoek/${itineraryId}/${caseData?.id}/${mostRecentVisit?.id}`,
+                      )
+                    }
+                  />
+
+                  <DeleteItineraryItemButton itineraryItemId={item.id} />
+                </Row>
+              </>
+            )}
           </Column>
         )}
         {type === "addStartAddress" && (
@@ -91,7 +133,7 @@ export function ItineraryListItem({
           </Column>
         )}
       </Row>
-      <Row>
+      <Row wrap className="mt-1">
         <StatusTag statusName={statusName} />
         <PriorityTag priority={priority} />
         {caseData?.tags?.map((tag) => (
@@ -99,7 +141,7 @@ export function ItineraryListItem({
         ))}
       </Row>
       <Note note={notes} />
-    </Column>
+    </VisitWrapper>
   )
 }
 

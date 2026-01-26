@@ -1,0 +1,38 @@
+.Card {
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  border: 1px solid rgba(38, 85, 115, 0.15);
+  margin-bottom: 16px;
+}
+
+.ContentCardDefault {
+  padding: 12px;
+}
+
+.ContentedCard {
+  padding: 8px 12px 12px 12px;
+}
+
+.StateCard {
+  border-left: 4px solid var(--state-color);
+}
+
+.StateRow {
+  align-items: center;
+  padding: 8px 12px;
+
+  background-color: color-mix(in srgb, var(--state-color) 10%, white);
+}
+
+.StateIcon {
+  color: var(--state-color);
+}
+
+/* specifieke states */
+.InProgress {
+  --state-color: #ff9100;
+}
+
+.Completed {
+  --state-color: #00a03c;
+}

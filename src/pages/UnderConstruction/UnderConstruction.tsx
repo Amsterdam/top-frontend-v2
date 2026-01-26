@@ -24,9 +24,7 @@ export default function NotFound() {
         <Paragraph className="mb-5">
           De pagina die je probeert te bereiken, moet nog worden gebouwd.
         </Paragraph>
-        <Button type="button" onClick={() => navigate("/")}>
-          Terug naar home
-        </Button>
+        <Button onClick={() => navigate("/")}>Terug naar home</Button>
       </div>
     </>
   )
