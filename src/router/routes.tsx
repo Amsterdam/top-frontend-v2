@@ -41,7 +41,7 @@ export const routes = [
       { path: "zoeken", element: <UnderConstruction /> },
       { path: "bezoek/:itineraryId/:caseId", element: <CreateVisitPage /> }, // CREATE
       {
-        path: "bezoek/:itineraryId/:caseId/:id", // EDIT
+        path: "bezoek/:itineraryId/:caseId/:visitId", // EDIT
         element: <CreateVisitPage />,
       },
     ],

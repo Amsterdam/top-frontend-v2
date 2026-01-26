@@ -22,15 +22,15 @@ import { useCurrentUser } from "@/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 
 export default function CreateVisitPage() {
-  const { itineraryId, caseId, id } = useParams<{
+  const { itineraryId, caseId, visitId } = useParams<{
     itineraryId: string
     caseId: string
-    id?: string
+    visitId?: string
   }>()
   const [isLoading, setIsLoading] = useState(false)
   const [, { execPost }] = useVisits({ lazy: true })
-  const [visit, { execPut }] = useVisit(id)
-  const [itinerary] = useItinerary(itineraryId)
+  const [visit, { execPut, execGet }] = useVisit(visitId, { lazy: true })
+  const [itinerary] = useItinerary(itineraryId, { lazy: true })
   const currentUser = useCurrentUser()
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
@@ -39,6 +39,22 @@ export default function CreateVisitPage() {
   const itineraryItem = itinerary?.items.find(
     (item) => item?.case.id === Number(caseId),
   )
+
+  useEffect(() => {
+    // Navigation is taking time. Prevent automatic refetch after creating or updating a visit
+    if (!visit && !isLoading && visitId) {
+      execGet()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visit, visitId, isLoading])
+
+  useEffect(() => {
+    // Navigation is taking time. Prevent automatic refetch after creating or updating a visit
+    if (!itinerary && !isLoading && itineraryId) {
+      execGet()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itinerary, itineraryId, isLoading])
 
   const form = useForm<FormValuesVisit>({
     mode: "onChange",
@@ -66,7 +82,7 @@ export default function CreateVisitPage() {
   const onSubmit = async (values: FormValuesVisit) => {
     if (!currentUser?.id || !caseId || !itineraryItem?.id) return
 
-    const execRequest = id ? execPut : execPost
+    const execRequest = visitId ? execPut : execPost
 
     setIsLoading(true)
 
@@ -81,13 +97,13 @@ export default function CreateVisitPage() {
       clearCacheKeys: [`/itineraries/${itineraryId}`],
     })
       .then(() => {
+        navigate(`/lijst/${itineraryId}`)
         showAlert({
           title: "Bezoek succesvol verwerkt!",
           description:
             "Het bezoek is verwerkt en opgeslagen. Je wordt nu teruggestuurd naar de looplijst.",
           severity: "success",
         })
-        navigate(`/lijst/${itineraryId}`)
       })
       .finally(() => {
         // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
