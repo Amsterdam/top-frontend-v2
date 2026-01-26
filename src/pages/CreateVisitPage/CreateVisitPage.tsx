@@ -18,7 +18,7 @@ import StepCanNextVisitGoAhead from "./StepCanNextVisitGoAhead/StepCanNextVisitG
 import StepNotesAndDescription from "./StepNotesAndDescription/StepNotesAndDescription"
 import { mapValues } from "./helpers/mapValues"
 import { mapVisitToFormValues } from "./helpers/mapVisitToFormValues"
-import { useCurrentUser } from "@/hooks"
+import { useCurrentUser, useMoveItineraryItemToBottom } from "@/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 
 export default function CreateVisitPage() {
@@ -38,6 +38,10 @@ export default function CreateVisitPage() {
 
   const itineraryItem = itinerary?.items.find(
     (item) => item?.case.id === Number(caseId),
+  )
+  const { moveItineraryItemToBottom } = useMoveItineraryItemToBottom(
+    itineraryId,
+    itineraryItem?.id,
   )
 
   useEffect(() => {
@@ -96,7 +100,8 @@ export default function CreateVisitPage() {
     execRequest(payload, {
       clearCacheKeys: [`/itineraries/${itineraryId}`],
     })
-      .then(() => {
+      .then(async () => {
+        await moveItineraryItemToBottom()
         navigate(`/lijst/${itineraryId}`)
         showAlert({
           title: "Bezoek succesvol verwerkt!",
