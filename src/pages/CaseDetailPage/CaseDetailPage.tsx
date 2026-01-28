@@ -10,7 +10,8 @@ import { Card, StatusTag } from "@/components"
 
 import { formatAddress } from "@/shared/formatAddress"
 import { getWorkflowName } from "@/shared"
-import CaseInfo from "./CaseInfo/CaseInfo"
+import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
+import ResidenceCard from "./ResidenceCard/ResidenceCard"
 
 const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -38,10 +39,10 @@ export default function CaseDetailPage() {
           </Card>
         </Grid.Cell>
         <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <CaseInfo data={data} />
+          <CaseInfoCard data={data} />
         </Grid.Cell>
         <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Bag info">Bag info</Card>
+          <ResidenceCard data={data} />
         </Grid.Cell>
         <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
           <Card title="Ingeschreven personen">Ingeschreven personen</Card>

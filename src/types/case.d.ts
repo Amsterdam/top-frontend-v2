@@ -6,6 +6,8 @@ type Workflow =
       }
     }
 
+type Value = string | number | boolean | null | JSX.Element
+
 type Case = {
   id: number
   address: Address
@@ -18,4 +20,5 @@ type Case = {
   tags?: components["schemas"]["CaseTag"][]
   subjects?: components["schemas"]["CaseSubject"][]
   distance?: number
+  bag_data?: Record<string, Value>
 }
