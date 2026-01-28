@@ -8,7 +8,7 @@ type Address = {
   full_address: string
   bag_id: string
   district: District
-  housing_corporation: string | null
+  housing_corporation: number | null
   lat: number
   lng: number
   number: number
