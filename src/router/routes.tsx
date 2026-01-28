@@ -8,6 +8,7 @@ import UpdateTeamMemberPage from "@/pages/UpdateTeamMemberPage/UpdateTeamMemberP
 import SearchAddressPage from "@/pages/SearchAddressPage/SearchAddressPage"
 import SuggestionPage from "@/pages/SuggestionPage/SuggestionPage"
 import CreateVisitPage from "@/pages/CreateVisitPage/CreateVisitPage"
+import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
 
 export const routes = [
   {
@@ -15,7 +16,7 @@ export const routes = [
     element: <DefaultLayout />,
     errorElement: <NotFound />,
     children: [
-      { path: "cases/:id", element: <UnderConstruction /> },
+      { path: "zaken/:caseId", element: <CaseDetailPage /> },
       { path: "kies-looplijst", element: <UnderConstruction /> },
       { path: "lijst", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId", element: <ListPage /> },

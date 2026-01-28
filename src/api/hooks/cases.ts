@@ -20,3 +20,11 @@ export const useCasesSearch = (
     url: makeApiUrl("search-v2", queryString),
   })
 }
+
+export const useCase = (caseId?: string | undefined, options?: ApiOptions) => {
+  return useApi<Case>({
+    ...options,
+    url: makeApiUrl(`cases/${caseId}/`),
+    lazy: options?.lazy ?? !caseId,
+  })
+}
