@@ -15,7 +15,7 @@ type Props = {
   data: Case | undefined
 }
 
-export default function CaseInfo({ data }: Props) {
+export default function CaseInfoCard({ data }: Props) {
   const housingCorporationName = useCorporationName(
     data?.address?.housing_corporation,
   )

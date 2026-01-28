@@ -1,0 +1,3 @@
+.breakWordAnywhere {
+  overflow-wrap: anywhere; /* breekt de string waar nodig */
+}
