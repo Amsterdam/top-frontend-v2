@@ -21,6 +21,7 @@ export function DefaultVariant({ item }: Props) {
 
   return (
     <Column alignHorizontal="end">
+      {dialog}
       {visitState === VisitState.Pending && (
         <>
           <Button
@@ -63,7 +64,6 @@ export function DefaultVariant({ item }: Props) {
                 },
               ]}
             />
-            {dialog}
           </Row>
         </>
       )}

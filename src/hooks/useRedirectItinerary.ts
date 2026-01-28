@@ -4,10 +4,18 @@ import { useNavigate, useParams } from "react-router"
 
 export const useRedirectItinerary = () => {
   const navigate = useNavigate()
-  const { itineraryId, themeId } = useParams()
+  const { itineraryId, themeId, caseId } = useParams()
   const [itineraries] = useItinerariesSummary()
 
   useEffect(() => {
+    // If ID's are present, do not redirect
+    if (themeId) {
+      return
+    }
+    if (caseId) {
+      return
+    }
+
     if (!itineraries || itineraryId) {
       return
     }
@@ -21,9 +29,6 @@ export const useRedirectItinerary = () => {
       navigate("/kies-looplijst")
     }
 
-    if (themeId) {
-      return
-    }
     navigate("/lijst-instellingen")
-  }, [itineraries, itineraryId, navigate, themeId])
+  }, [itineraries, itineraryId, navigate, themeId, caseId])
 }
