@@ -1,0 +1,16 @@
+.Card {
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  border: 1px solid rgba(38, 85, 115, 0.15);
+  padding: 12px 0;
+  overflow: hidden;
+}
+
+.CardTitle,
+.CardContent {
+  padding: 0 12px;
+}
+
+.Icon svg {
+  color: var(--ams-color-highlight-azure);
+}

@@ -16,5 +16,6 @@ type Case = {
   reason?: components["schemas"]["CaseReason"]
   project?: components["schemas"]["CaseProject"]
   tags?: components["schemas"]["CaseTag"][]
+  subjects?: components["schemas"]["CaseSubject"][]
   distance?: number
 }
