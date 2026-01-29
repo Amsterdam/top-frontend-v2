@@ -1,4 +1,4 @@
-import { Link, Row } from "@amsterdam/design-system-react"
+import { Link, Paragraph, Row } from "@amsterdam/design-system-react"
 import { Card, Description } from "@/components"
 
 type Props = {
@@ -70,9 +70,11 @@ export default function ResidenceCard({ data }: Props) {
       <Description termsWidth="wide" data={dataFields} />
       {woningUrl && (
         <Row align="center" className="mt-3">
-          <Link href={woningUrl} target="_blank" rel="noopener noreferrer">
-            Bekijk op Data en informatie
-          </Link>
+          <Paragraph>
+            <Link href={woningUrl} target="_blank" rel="noopener noreferrer">
+              Bekijk op Data en informatie
+            </Link>
+          </Paragraph>
         </Row>
       )}
     </Card>
