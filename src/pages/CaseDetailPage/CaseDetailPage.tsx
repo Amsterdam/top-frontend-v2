@@ -22,44 +22,42 @@ const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
 export default function CaseDetailPage() {
   const { caseId } = useParams<{ caseId: string }>()
   const [data] = useCase(caseId)
-  console.log("Data:", data)
   const statusName = getWorkflowName(data?.workflows)
+  console.log("Data:", data)
   return (
-    <div>
-      <Grid paddingBottom="x-large">
-        <Grid.Cell span="all">
-          <Card>
-            <Row alignVertical="center" gap="large">
-              <Heading level={2}>{formatAddress(data?.address)}</Heading>
-              <StatusTag statusName={statusName} />
-              {/* <Paragraph style={{ fontSize: "var(--ams-heading-3-font-size)" }}>
+    <Grid paddingBottom="x-large">
+      <Grid.Cell span="all">
+        <Card>
+          <Row alignVertical="center" gap="large">
+            <Heading level={2}>{formatAddress(data?.address)}</Heading>
+            <StatusTag statusName={statusName} />
+            {/* <Paragraph style={{ fontSize: "var(--ams-heading-3-font-size)" }}>
                 - {statusName}
               </Paragraph> */}
-            </Row>
-          </Card>
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <CaseInfoCard data={data} />
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <ResidenceCard data={data} />
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Ingeschreven personen">Ingeschreven personen</Card>
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Vergunningen">Vergunningen</Card>
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Vakantieverhuur">Vakantieverhuur</Card>
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Zaakhistorie">Zaakhistorie</Card>
-        </Grid.Cell>
-        <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-          <Card title="Logboek">Logboek</Card>
-        </Grid.Cell>
-      </Grid>
-    </div>
+          </Row>
+        </Card>
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <CaseInfoCard data={data} />
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <ResidenceCard data={data} />
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <Card title="Ingeschreven personen">Ingeschreven personen</Card>
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <Card title="Vergunningen">Vergunningen</Card>
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <Card title="Vakantieverhuur">Vakantieverhuur</Card>
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <Card title="Zaakhistorie">Zaakhistorie</Card>
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <Card title="Logboek">Logboek</Card>
+      </Grid.Cell>
+    </Grid>
   )
 }

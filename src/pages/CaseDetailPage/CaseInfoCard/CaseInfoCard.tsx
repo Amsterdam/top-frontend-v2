@@ -86,6 +86,7 @@ export default function CaseInfoCard({ data }: Props) {
           title="Bekijk op Google Maps"
           addresses={[data?.address] as Address[]}
           variant="tertiary"
+          as="link"
         />
       </Row>
     </Card>

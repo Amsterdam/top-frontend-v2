@@ -1,23 +1,30 @@
-import { Button, type ButtonProps } from "@amsterdam/design-system-react"
+import {
+  Button,
+  Link,
+  Paragraph,
+  type ButtonProps,
+} from "@amsterdam/design-system-react"
 import { MapMarkerOnMapIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
   addresses?: Address[]
   variant?: ButtonProps["variant"]
   title?: string
+  as?: "button" | "link"
 }
 
 export function GoogleMapsButton({
   addresses,
   variant = "secondary",
   title = "Google Maps",
+  as = "button",
 }: Props) {
   const buildMapsUrl = () => {
     const uniqueAddresses = Array.from(
-      new Set(addresses?.map((a) => `${a.full_address}, Amsterdam`)),
+      new Set(addresses?.map((a) => `${a?.full_address}, Amsterdam`)),
     )
 
-    if (uniqueAddresses.length === 0) {
+    if (!uniqueAddresses.length) {
       return ""
     }
 
@@ -33,8 +40,25 @@ export function GoogleMapsButton({
     return `https://www.google.nl/maps/dir/${path}`
   }
 
+  const url = buildMapsUrl()
+  const disabled = !addresses || addresses.length === 0
+
+  if (as === "link") {
+    return (
+      <Paragraph>
+        <Link
+          href={url || undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled={disabled}
+        >
+          {title}
+        </Link>
+      </Paragraph>
+    )
+  }
+
   const handleClick = () => {
-    const url = buildMapsUrl()
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer")
     }
@@ -45,7 +69,7 @@ export function GoogleMapsButton({
       variant={variant}
       iconBefore
       icon={MapMarkerOnMapIcon}
-      disabled={!addresses || addresses.length === 0}
+      disabled={disabled}
       onClick={handleClick}
     >
       {title}
