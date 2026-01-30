@@ -9,11 +9,12 @@ export type DescriptionItem = {
 type Props = {
   data: DescriptionItem[]
   termsWidth?: "narrow" | "medium" | "wide"
+  className?: string
 }
 
-export function Description({ data, termsWidth }: Props) {
+export function Description({ data, termsWidth, className }: Props) {
   return (
-    <DescriptionList termsWidth={termsWidth}>
+    <DescriptionList termsWidth={termsWidth} className={className}>
       {data.map((item, index) => {
         if (item.value === null || item.value === undefined) {
           return null

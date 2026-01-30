@@ -1,5 +1,10 @@
 import { useMemo, useState } from "react"
-import { ProgressList, Button, Row } from "@amsterdam/design-system-react"
+import {
+  ProgressList,
+  Button,
+  Row,
+  Heading,
+} from "@amsterdam/design-system-react"
 import { MinusIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { Description, type DescriptionItem } from "@/components"
 import { renderValue } from "./utils/renderValue"
@@ -92,12 +97,12 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                 heading={title}
                 status={groupIndex === 0 ? "current" : "completed"}
               >
-                <Description data={descriptionData} termsWidth="narrow" />
+                <Description data={descriptionData} termsWidth="narrow" className="mb-3"/>
               </ProgressList.Step>
             )
           }
 
-          // Groep meerdere events achter elkaar → Step + Substeps
+          // Group multiple consecutive events → Step + Substeps
           return (
             <ProgressList.Step
               key={firstEvent.id}
@@ -107,9 +112,20 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
               {group.map((event) => {
                 const descriptionData = buildDescriptionData(event, config)
 
+                // Use "Datum" as substep heading and remove it from description data
+                const dateIndex = descriptionData.findIndex(
+                  (item) => item.label === "Datum",
+                )
+                let dateValue: string | undefined
+                if (dateIndex >= 0) {
+                  dateValue = descriptionData[dateIndex].value as string
+                  descriptionData.splice(dateIndex, 1) // remove it from the descriptionData
+                }
+
                 return (
                   <ProgressList.Substep key={event.id} status="completed">
-                    <Description data={descriptionData} termsWidth="narrow" />
+                    {dateValue && <Heading level={3} className="mb-3">{dateValue}</Heading>}
+                    <Description data={descriptionData} termsWidth="narrow" className="mb-3"/>
                   </ProgressList.Substep>
                 )
               })}
