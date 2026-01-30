@@ -1,7 +1,7 @@
+import { Fragment, type ReactNode } from "react"
 import { DescriptionList } from "@amsterdam/design-system-react"
-import type { ReactNode } from "react"
 
-type DescriptionItem = {
+export type DescriptionItem = {
   label: ReactNode
   value: ReactNode | null | undefined
 }
@@ -12,7 +12,6 @@ type Props = {
 }
 
 export function Description({ data, termsWidth }: Props) {
-  console.log({ data })
   return (
     <DescriptionList termsWidth={termsWidth}>
       {data.map((item, index) => {
@@ -20,14 +19,14 @@ export function Description({ data, termsWidth }: Props) {
           return null
         }
         return (
-          <>
+          <Fragment key={`fragment-${index}`}>
             <DescriptionList.Term key={`term-${index}`}>
               {item.label}
             </DescriptionList.Term>
             <DescriptionList.Description key={`description-${index}`}>
               {item.value}
             </DescriptionList.Description>
-          </>
+          </Fragment>
         )
       })}
     </DescriptionList>

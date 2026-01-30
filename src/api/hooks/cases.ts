@@ -21,10 +21,18 @@ export const useCasesSearch = (
   })
 }
 
-export const useCase = (caseId?: string | undefined, options?: ApiOptions) => {
+export const useCase = (caseId?: number, options?: ApiOptions) => {
   return useApi<Case>({
     ...options,
-    url: makeApiUrl(`cases/${caseId}/`),
+    url: makeApiUrl("cases", caseId),
+    lazy: options?.lazy ?? !caseId,
+  })
+}
+
+export const useCaseEvents = (caseId?: number, options?: ApiOptions) => {
+  return useApi<CaseEvent[]>({
+    ...options,
+    url: makeApiUrl("cases", caseId, "events"),
     lazy: options?.lazy ?? !caseId,
   })
 }

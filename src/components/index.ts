@@ -1,5 +1,6 @@
 export * from "./alerts/AlertProvider"
 export * from "./Card/Card"
+export * from "./CaseEventTimeline/CaseEventTimeline"
 export * from "./ConfirmDialog/ConfirmDialog"
 export * from "./DefaultLayout/DefaultLayout"
 export * from "./Description/Description"
