@@ -42,10 +42,14 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
   const [showAll, setShowAll] = useState(true)
 
   // Sort events by ID descending
-  const events = useMemo(() => data?.sort((a, b) => b.id - a.id) || [], [data])
+  const events = useMemo(
+    () => (data ? [...data].sort((a, b) => b.id - a.id) : []),
+    [data],
+  )
+
   const visibleEvents = showAll ? events : events.slice(0, 1)
 
-  // Group only **consecutive events** of the same TYPE
+  // Group consecutive events with the same type, except GENERIC_TASK
   const groupedEvents = useMemo(() => {
     const groups: CaseEvent[][] = []
     let currentGroup: CaseEvent[] = []
@@ -118,25 +122,22 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                 {group.map((event) => {
                   const descriptionData = buildDescriptionData(event, config)
 
-                  const dateIndex = descriptionData.findIndex(
+                  const dateItem = descriptionData.find(
                     (item) => item.label === "Datum",
                   )
-
-                  let dateValue
-                  if (dateIndex >= 0) {
-                    dateValue = descriptionData[dateIndex].value as string
-                    descriptionData.splice(dateIndex, 1)
-                  }
+                  const rest = descriptionData.filter(
+                    (item) => item.label !== "Datum",
+                  )
 
                   return (
                     <ProgressList.Substep key={event.id} status="completed">
-                      {dateValue && (
+                      {dateItem && (
                         <Heading level={3} className="mb-3">
-                          {dateValue}
+                          {dateItem.value}
                         </Heading>
                       )}
                       <Description
-                        data={descriptionData}
+                        data={rest}
                         termsWidth="narrow"
                         className="mb-3"
                       />
