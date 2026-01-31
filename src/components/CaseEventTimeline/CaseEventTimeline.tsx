@@ -25,7 +25,7 @@ function buildDescriptionData(
     })
     .filter(Boolean) as DescriptionItem[]
 
-  // ✅ VISIT: datum bovenaan toevoegen
+  // Add "Datum" field for VISIT events
   if (event.type === "VISIT") {
     const startTime = event.event_values.start_time
     const dateValue = renderValue(startTime)
@@ -41,11 +41,11 @@ function buildDescriptionData(
 export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
   const [showAll, setShowAll] = useState(true)
 
-  // Sorteer events op ID aflopend
+  // Sort events by ID descending
   const events = useMemo(() => data?.sort((a, b) => b.id - a.id) || [], [data])
   const visibleEvents = showAll ? events : events.slice(0, 1)
 
-  // Groepeer alleen **aaneengesloten events** van hetzelfde TYPE
+  // Group only **consecutive events** of the same TYPE
   const groupedEvents = useMemo(() => {
     const groups: CaseEvent[][] = []
     let currentGroup: CaseEvent[] = []
@@ -59,10 +59,10 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
       const prevEvent = currentGroup[currentGroup.length - 1]
 
       if (event.type === prevEvent.type && event.type !== "GENERIC_TASK") {
-        // Aaneengesloten en niet GENERIC_TASK → voeg toe aan groep
+        // Add consecutive and not GENERIC_TASK → add to group
         currentGroup.push(event)
       } else {
-        // TYPE veranderd of GENERIC_TASK → push huidige groep en start nieuwe
+        // TYPE changed or GENERIC_TASK → push current group and start new group
         groups.push(currentGroup)
         currentGroup = [event]
       }
@@ -86,7 +86,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
               ? config.title(firstEvent)
               : config.title
 
-          // Als groep maar 1 event bevat of type is GENERIC_TASK → alleen Step
+          //  If group contains only 1 event or type is GENERIC_TASK → only Step
           if (group.length === 1 || firstEvent.type === "GENERIC_TASK") {
             const event = firstEvent
             const descriptionData = buildDescriptionData(event, config)
@@ -97,7 +97,11 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                 heading={title}
                 status={groupIndex === 0 ? "current" : "completed"}
               >
-                <Description data={descriptionData} termsWidth="narrow" className="mb-3"/>
+                <Description
+                  data={descriptionData}
+                  termsWidth="narrow"
+                  className="mb-3"
+                />
               </ProgressList.Step>
             )
           }
@@ -108,27 +112,38 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
               key={firstEvent.id}
               heading={title}
               status={groupIndex === 0 ? "current" : "completed"}
+              hasSubsteps
             >
-              {group.map((event) => {
-                const descriptionData = buildDescriptionData(event, config)
+              <ProgressList.Substeps>
+                {group.map((event) => {
+                  const descriptionData = buildDescriptionData(event, config)
 
-                // Use "Datum" as substep heading and remove it from description data
-                const dateIndex = descriptionData.findIndex(
-                  (item) => item.label === "Datum",
-                )
-                let dateValue: string | undefined
-                if (dateIndex >= 0) {
-                  dateValue = descriptionData[dateIndex].value as string
-                  descriptionData.splice(dateIndex, 1) // remove it from the descriptionData
-                }
+                  const dateIndex = descriptionData.findIndex(
+                    (item) => item.label === "Datum",
+                  )
 
-                return (
-                  <ProgressList.Substep key={event.id} status="completed">
-                    {dateValue && <Heading level={3} className="mb-3">{dateValue}</Heading>}
-                    <Description data={descriptionData} termsWidth="narrow" className="mb-3"/>
-                  </ProgressList.Substep>
-                )
-              })}
+                  let dateValue
+                  if (dateIndex >= 0) {
+                    dateValue = descriptionData[dateIndex].value as string
+                    descriptionData.splice(dateIndex, 1)
+                  }
+
+                  return (
+                    <ProgressList.Substep key={event.id} status="completed">
+                      {dateValue && (
+                        <Heading level={3} className="mb-3">
+                          {dateValue}
+                        </Heading>
+                      )}
+                      <Description
+                        data={descriptionData}
+                        termsWidth="narrow"
+                        className="mb-3"
+                      />
+                    </ProgressList.Substep>
+                  )
+                })}
+              </ProgressList.Substeps>
             </ProgressList.Step>
           )
         })}
