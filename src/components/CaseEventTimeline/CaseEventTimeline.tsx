@@ -21,7 +21,19 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
 
   const visibleEvents = showAll ? events : events.slice(0, 1)
 
-  // Group consecutive events with the same type, except GENERIC_TASK
+  // Count total occurrences per type (excluding GENERIC_TASK)
+  const totalCountPerType = useMemo(() => {
+    const counts: Record<string, number> = {}
+
+    for (const event of events) {
+      if (event.type === "GENERIC_TASK") continue
+      counts[event.type] = (counts[event.type] ?? 0) + 1
+    }
+
+    return counts
+  }, [events])
+
+  // Group only consecutive events with the same type (except GENERIC_TASK)
   const groupedEvents = useMemo(() => {
     const groups: CaseEvent[][] = []
     let currentGroup: CaseEvent[] = []
@@ -35,16 +47,16 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
       const prevEvent = currentGroup[currentGroup.length - 1]
 
       if (event.type === prevEvent.type && event.type !== "GENERIC_TASK") {
-        // Add consecutive and not GENERIC_TASK → add to group
         currentGroup.push(event)
       } else {
-        // TYPE changed or GENERIC_TASK → push current group and start new group
         groups.push(currentGroup)
         currentGroup = [event]
       }
     }
 
-    if (currentGroup.length > 0) groups.push(currentGroup)
+    if (currentGroup.length > 0) {
+      groups.push(currentGroup)
+    }
 
     return groups
   }, [visibleEvents])
@@ -57,12 +69,22 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
           const config = EVENT_CONFIG[firstEvent.type]
           if (!config) return null
 
-          const title =
+          const baseTitle =
             typeof config.title === "function"
               ? config.title(firstEvent)
               : config.title
 
-          //  If group contains only 1 event or type is GENERIC_TASK → only Step
+          const stepCount =
+            firstEvent.type === "GENERIC_TASK" ? 0 : group.length
+
+          const totalCount = totalCountPerType[firstEvent.type] ?? 0
+
+          const title =
+            totalCount > 1 && stepCount > 0
+              ? `${baseTitle} (${stepCount}/${totalCount})`
+              : baseTitle
+
+          // Single event or GENERIC_TASK → normal Step
           if (group.length === 1 || firstEvent.type === "GENERIC_TASK") {
             const event = firstEvent
             const descriptionData = buildDescriptionData(event, config)
@@ -82,7 +104,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
             )
           }
 
-          // Group multiple consecutive events → Step + Substeps
+          // Multiple consecutive events → Step with Substeps
           return (
             <ProgressList.Step
               key={firstEvent.id}
@@ -97,6 +119,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                   const dateItem = descriptionData.find(
                     (item) => item.label === "Datum",
                   )
+
                   const rest = descriptionData.filter(
                     (item) => item.label !== "Datum",
                   )
@@ -108,6 +131,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                           {dateItem.value}
                         </Heading>
                       )}
+
                       <Description
                         data={rest}
                         termsWidth="narrow"
