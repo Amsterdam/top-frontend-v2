@@ -16,7 +16,7 @@
   "dependencies": {
     "@amsterdam/design-system-assets": "^2.0.0",
     "@amsterdam/design-system-css": "^3.0.0",
-    "@amsterdam/design-system-react": "^3.0.0",
+    "@amsterdam/design-system-react": "^3.1.0",
     "@amsterdam/design-system-react-icons": "^2.0.0",
     "@amsterdam/design-system-tokens": "^3.0.0",
     "@amsterdam/ee-ads-rhf-lib": "file:amsterdam-ee-ads-rhf-lib-0.0.0.tgz",
