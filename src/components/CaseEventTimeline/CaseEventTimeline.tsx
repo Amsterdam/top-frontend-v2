@@ -16,10 +16,16 @@ function buildDescriptionData(
 ): DescriptionItem[] {
   const baseData = config.fields
     .map((field) => {
-      const value = renderValue(
-        field.value(event),
-        field.label === "start_time" ? "time" : undefined,
-      )
+      const key = field.label.toLowerCase() // lowercase key from label
+      const rawValue = field.value(event)
+
+      // Determine if we need to pass a type to renderValue
+      let type: "time" | "date" | undefined
+      if (key.includes("datum")) type = "date"
+      else if (key.includes("starttijd")) type = "time"
+
+      const value = renderValue(rawValue, type)
+
       if (value === undefined) return null
       return { label: field.label, value }
     })
@@ -28,7 +34,7 @@ function buildDescriptionData(
   // Add "Datum" field for VISIT events
   if (event.type === "VISIT") {
     const startTime = event.event_values.start_time
-    const dateValue = renderValue(startTime)
+    const dateValue = renderValue(startTime, "date")
 
     if (dateValue !== undefined) {
       return [{ label: "Datum", value: dateValue }, ...baseData]

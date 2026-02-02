@@ -1,5 +1,4 @@
 .
-├── amsterdam-ee-ads-rhf-lib-0.0.0-COPY.tgz
 ├── amsterdam-ee-ads-rhf-lib-0.0.0.tgz
 ├── directory-prompt.txt
 ├── directory-tree.txt
@@ -59,12 +58,14 @@
 │   │   │   └── Card.tsx
 │   │   ├── CaseEventTimeline
 │   │   │   ├── CaseEventTimeline.tsx
-│   │   │   ├── eventConfig.helpers.ts
-│   │   │   ├── EventConfig.ts
-│   │   │   ├── eventLabelMaps.ts
-│   │   │   ├── eventTypes.ts
-│   │   │   ├── eventValueMaps.ts
-│   │   │   └── renderValue.ts
+│   │   │   ├── config
+│   │   │   │   ├── eventConfig.ts
+│   │   │   │   ├── eventTypes.ts
+│   │   │   │   ├── labels.ts
+│   │   │   │   └── values.ts
+│   │   │   └── utils
+│   │   │       ├── eventConfig.helpers.ts
+│   │   │       └── renderValue.ts
 │   │   ├── ConfirmDialog
 │   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
@@ -253,4 +254,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-79 directories, 175 files
+81 directories, 174 files

@@ -1,15 +1,21 @@
 type LabelMap = Record<string, string>
 
+export type FieldFormatter = (value: unknown, event: CaseEvent) => unknown
+
 export function mapFields(
   labels: LabelMap,
   valueMapper?: (key: string, value: unknown) => unknown,
+  fieldFormatters?: Record<string, FieldFormatter>,
 ) {
   return Object.entries(labels).map(([key, label]) => ({
     label,
     value: (event: CaseEvent) => {
       const values = event.event_values as Record<string, unknown>
       const rawValue = values[key]
-      return valueMapper ? valueMapper(key, rawValue) : rawValue
+      const mappedValue = valueMapper ? valueMapper(key, rawValue) : rawValue
+
+      const formatter = fieldFormatters?.[key]
+      return formatter ? formatter(mappedValue, event) : mappedValue
     },
   }))
 }

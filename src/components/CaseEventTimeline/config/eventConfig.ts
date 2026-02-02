@@ -12,16 +12,23 @@ import {
 } from "./labels"
 import {
   visitEventValuesMap,
-  booleanObj,
   debriefViolationMap,
   visit_go_ahead,
 } from "./values"
-import { mapFields, mapEnum } from "../utils/eventConfig.helpers"
-import { renderValue } from "../utils/renderValue"
+import {
+  mapFields,
+  mapEnum,
+  type FieldFormatter,
+} from "../utils/eventConfig.helpers"
+import {
+  formatCurrencyEUR,
+  formatPersons,
+} from "../utils/renderValue.formatters.ts"
 
 type EventFieldConfig = {
   label: string
   value: (event: CaseEvent) => unknown
+  format?: FieldFormatter
 }
 
 type EventConfig = {
@@ -43,67 +50,54 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
     fields: mapFields(caseCloseLabelsMap),
   },
 
-  SCHEDULE: {
-    title: eventTypeTitle,
-    fields: mapFields(scheduleLabelsMap, (key, value) => {
-      if (key === "housing_corporation_combiteam" && value != null) {
-        return mapEnum(String(value), booleanObj)
-      }
-      return value
-    }),
-  },
-
-  DEBRIEFING: {
-    title: eventTypeTitle,
-    fields: mapFields(debriefLabelsMap, (key, value) => {
-      if (key === "violation") {
-        return mapEnum(value, debriefViolationMap)
-      }
-
-      if (typeof value === "boolean") {
-        return mapEnum(String(value), booleanObj)
-      }
-
-      return value
-    }),
-  },
-
-  SUMMON: {
-    title: eventTypeTitle,
-    fields: mapFields(summonLabelsMap),
-  },
-
-  DECISION: {
-    title: eventTypeTitle,
-    fields: mapFields(decisionLabelsMap),
-  },
-
   CITIZEN_REPORT: {
     title: eventTypeTitle,
     fields: mapFields(citizenReportLabelsMap),
   },
 
-  GENERIC_TASK: {
+  DECISION: {
     title: eventTypeTitle,
+    fields: mapFields(decisionLabelsMap, undefined, {
+      sanction_amount: formatCurrencyEUR,
+      persons: (value: unknown) => formatPersons(value),
+    }),
+  },
+
+  DEBRIEFING: {
+    title: eventTypeTitle,
+    fields: mapFields(debriefLabelsMap, undefined, {
+      violation: (value: unknown) => mapEnum(value, debriefViolationMap),
+    }),
+  },
+
+  GENERIC_TASK: {
+    title: (event: CaseEvent) =>
+      // TypeScript type narrowing
+      event.type === "GENERIC_TASK"
+        ? event?.event_values?.description
+        : "Generieke taak",
     fields: mapFields(genericLabelsMap),
+  },
+
+  SCHEDULE: {
+    title: eventTypeTitle,
+    fields: mapFields(scheduleLabelsMap),
+  },
+
+  SUMMON: {
+    title: eventTypeTitle,
+    fields: mapFields(summonLabelsMap, undefined, {
+      persons: (value: unknown) => formatPersons(value),
+    }),
   },
 
   VISIT: {
     title: eventTypeTitle,
-    fields: mapFields(visitLabelsMap, (key, value) => {
-      if (key === "start_time") {
-        return renderValue(value, "time")
-      }
-
-      if (key === "situation" || key === "observations") {
-        return mapEnum(value, visitEventValuesMap)
-      }
-
-      if (key === "can_next_visit_go_ahead" && value != null) {
-        return mapEnum(String(value), visit_go_ahead)
-      }
-
-      return value
+    fields: mapFields(visitLabelsMap, undefined, {
+      situation: (value: unknown) => mapEnum(value, visitEventValuesMap),
+      observations: (value: unknown) => mapEnum(value, visitEventValuesMap),
+      can_next_visit_go_ahead: (value) =>
+        value == null ? undefined : mapEnum(String(value), visit_go_ahead),
     }),
   },
 }
