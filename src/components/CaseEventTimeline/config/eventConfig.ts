@@ -57,7 +57,7 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
 
   DECISION: {
     title: eventTypeTitle,
-    fields: mapFields(decisionLabelsMap, undefined, {
+    fields: mapFields(decisionLabelsMap, {
       sanction_amount: formatCurrencyEUR,
       persons: (value: unknown) => formatPersons(value),
     }),
@@ -65,7 +65,7 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
 
   DEBRIEFING: {
     title: eventTypeTitle,
-    fields: mapFields(debriefLabelsMap, undefined, {
+    fields: mapFields(debriefLabelsMap, {
       violation: (value: unknown) => mapEnum(value, debriefViolationMap),
     }),
   },
@@ -86,14 +86,14 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
 
   SUMMON: {
     title: eventTypeTitle,
-    fields: mapFields(summonLabelsMap, undefined, {
+    fields: mapFields(summonLabelsMap, {
       persons: (value: unknown) => formatPersons(value),
     }),
   },
 
   VISIT: {
     title: eventTypeTitle,
-    fields: mapFields(visitLabelsMap, undefined, {
+    fields: mapFields(visitLabelsMap, {
       situation: (value: unknown) => mapEnum(value, visitEventValuesMap),
       observations: (value: unknown) => mapEnum(value, visitEventValuesMap),
       can_next_visit_go_ahead: (value) =>

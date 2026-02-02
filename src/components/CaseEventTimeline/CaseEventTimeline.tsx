@@ -6,43 +6,9 @@ import {
   Heading,
 } from "@amsterdam/design-system-react"
 import { MinusIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
-import { Description, type DescriptionItem } from "@/components"
-import { renderValue } from "./utils/renderValue"
+import { Description } from "@/components"
 import { EVENT_CONFIG } from "./config/eventConfig"
-
-function buildDescriptionData(
-  event: CaseEvent,
-  config: (typeof EVENT_CONFIG)[string],
-): DescriptionItem[] {
-  const baseData = config.fields
-    .map((field) => {
-      const key = field.label.toLowerCase() // lowercase key from label
-      const rawValue = field.value(event)
-
-      // Determine if we need to pass a type to renderValue
-      let type: "time" | "date" | undefined
-      if (key.includes("datum")) type = "date"
-      else if (key.includes("starttijd")) type = "time"
-
-      const value = renderValue(rawValue, type)
-
-      if (value === undefined) return null
-      return { label: field.label, value }
-    })
-    .filter(Boolean) as DescriptionItem[]
-
-  // Add "Datum" field for VISIT events
-  if (event.type === "VISIT") {
-    const startTime = event.event_values.start_time
-    const dateValue = renderValue(startTime, "date")
-
-    if (dateValue !== undefined) {
-      return [{ label: "Datum", value: dateValue }, ...baseData]
-    }
-  }
-
-  return baseData
-}
+import { buildDescriptionData } from "./utils/buildDescriptionData"
 
 export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
   const [showAll, setShowAll] = useState(true)
