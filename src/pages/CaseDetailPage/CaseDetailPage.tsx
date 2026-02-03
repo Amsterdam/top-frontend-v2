@@ -12,6 +12,7 @@ import { formatAddress } from "@/shared/formatAddress"
 import { getWorkflowName } from "@/shared"
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import ResidenceCard from "./ResidenceCard/ResidenceCard"
+import HistoryCard from "./HistoryCard/HistoryCard"
 
 const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -21,7 +22,7 @@ const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
 
 export default function CaseDetailPage() {
   const { caseId } = useParams<{ caseId: string }>()
-  const [data] = useCase(caseId)
+  const [data] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
   console.log("Data:", data)
   return (
@@ -38,10 +39,16 @@ export default function CaseDetailPage() {
         </Card>
       </Grid.Cell>
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <HistoryCard caseId={data?.id} />
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <CaseInfoCard data={data} />
       </Grid.Cell>
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <ResidenceCard data={data} />
+      </Grid.Cell>
+      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
+        <HistoryCard caseId={data?.id} />
       </Grid.Cell>
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <Card title="Ingeschreven personen">Ingeschreven personen</Card>
@@ -52,9 +59,7 @@ export default function CaseDetailPage() {
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <Card title="Vakantieverhuur">Vakantieverhuur</Card>
       </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <Card title="Zaakhistorie">Zaakhistorie</Card>
-      </Grid.Cell>
+
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <Card title="Logboek">Logboek</Card>
       </Grid.Cell>

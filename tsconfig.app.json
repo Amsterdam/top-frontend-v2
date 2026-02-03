@@ -28,6 +28,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
+  "include": ["src", "src/components/CaseEventTimeline/.tsx"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/generateSwaggerSchema.ts"]
 }

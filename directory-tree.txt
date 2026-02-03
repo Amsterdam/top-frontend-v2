@@ -21,6 +21,7 @@
 │   ├── api
 │   │   ├── ApiCacheProvider.tsx
 │   │   ├── hooks
+│   │   │   ├── address.ts
 │   │   │   ├── cases.ts
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
@@ -52,12 +53,27 @@
 │   │   │   ├── AlertProvider.tsx
 │   │   │   ├── types.ts
 │   │   │   └── useAlert.ts
+│   │   ├── Card
+│   │   │   ├── Card.module.css
+│   │   │   └── Card.tsx
+│   │   ├── CaseEventTimeline
+│   │   │   ├── CaseEventTimeline.tsx
+│   │   │   ├── config
+│   │   │   │   ├── eventConfig.ts
+│   │   │   │   ├── eventTypes.ts
+│   │   │   │   ├── labels.ts
+│   │   │   │   └── values.ts
+│   │   │   └── utils
+│   │   │       ├── eventConfig.helpers.ts
+│   │   │       └── renderValue.ts
 │   │   ├── ConfirmDialog
 │   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
 │   │   │   ├── DefaultLayout.module.css
 │   │   │   ├── DefaultLayout.tsx
 │   │   │   └── usePageHeaderOverlay.ts
+│   │   ├── Description
+│   │   │   └── Description.tsx
 │   │   ├── Distance
 │   │   │   └── Distance.tsx
 │   │   ├── Divider
@@ -75,11 +91,18 @@
 │   │   ├── index.ts
 │   │   ├── ItineraryListItem
 │   │   │   ├── AnimatedItineraryListItem.tsx
-│   │   │   ├── helpers
-│   │   │   │   └── visit.ts
 │   │   │   ├── index.ts
 │   │   │   ├── ItineraryListItem.tsx
-│   │   │   └── VisitWrapper
+│   │   │   ├── ItineraryListItem.variant.ts
+│   │   │   ├── variants
+│   │   │   │   ├── AddStartAddressVariant.tsx
+│   │   │   │   ├── AddSuggestedCaseVariant.tsx
+│   │   │   │   ├── DefaultVariant.tsx
+│   │   │   │   └── index.ts
+│   │   │   └── visit
+│   │   │       ├── index.ts
+│   │   │       ├── visit.selectors.ts
+│   │   │       ├── visit.types.ts
 │   │   │       ├── VisitWrapper.module.css
 │   │   │       └── VisitWrapper.tsx
 │   │   ├── links
@@ -87,6 +110,7 @@
 │   │   │   ├── index.ts
 │   │   │   └── ReactRouterLink.tsx
 │   │   ├── Note
+│   │   │   ├── Note.module.css
 │   │   │   └── Note.tsx
 │   │   ├── PageGrid
 │   │   │   └── PageGrid.tsx
@@ -136,6 +160,7 @@
 │   │   │   └── useTokenPayload.test.ts
 │   │   ├── useCurrentUser.ts
 │   │   ├── useDialog.ts
+│   │   ├── useMoveItineraryItemToBottom.ts
 │   │   ├── useRedirectFromState.ts
 │   │   ├── useRedirectItinerary.ts
 │   │   ├── useTokenPayload.ts
@@ -146,6 +171,14 @@
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
+│   │   ├── CaseDetailPage
+│   │   │   ├── CaseDetailPage.tsx
+│   │   │   ├── CaseInfoCard
+│   │   │   │   └── CaseInfoCard.tsx
+│   │   │   ├── HistoryCard
+│   │   │   │   └── HistoryCard.tsx
+│   │   │   └── ResidenceCard
+│   │   │       └── ResidenceCard.tsx
 │   │   ├── ChooseThemePage
 │   │   │   ├── ChooseThemePage.module.css
 │   │   │   └── ChooseThemePage.tsx
@@ -176,13 +209,13 @@
 │   │   │   │   │   └── itineraryToClipboardText.ts
 │   │   │   │   ├── DeleteItineraryButton
 │   │   │   │   │   └── DeleteItineraryButton.tsx
-│   │   │   │   ├── DeleteItineraryItemButton
-│   │   │   │   │   └── DeleteItineraryItemButton.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   └── SortableItineraryItemList
 │   │   │   │       ├── SortableItem.tsx
 │   │   │   │       ├── SortableItineraryItemList.tsx
 │   │   │   │       └── utils.ts
+│   │   │   ├── hooks
+│   │   │   │   └── useDeleteItineraryItem.tsx
 │   │   │   └── ListPage.tsx
 │   │   ├── NotFound
 │   │   │   └── NotFound.tsx
@@ -205,12 +238,14 @@
 │   ├── styles
 │   │   ├── animations.css
 │   │   ├── design-system-overrides.css
+│   │   ├── global.css
 │   │   └── spacing.css
 │   └── types
-│       ├── address.d.ts
+│       ├── Address.d.ts
 │       ├── api.d.ts
-│       ├── cache.d.ts
-│       ├── case.d.ts
+│       ├── Cache.d.ts
+│       ├── Case.d.ts
+│       ├── CaseEvent.d.ts
 │       ├── Itinerary.d.ts
 │       └── Visit.d.ts
 ├── tsconfig.app.json
@@ -219,4 +254,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-72 directories, 148 files
+81 directories, 174 files

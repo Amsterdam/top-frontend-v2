@@ -8,21 +8,13 @@ type Priority = {
 export function PriorityTag({ priority }: Priority) {
   const weight = priority?.weight ?? 0
 
-  const hasPriority = weight >= 0.5
-  const hasWarrant = weight >= 1.0
-
-  if (!hasPriority) {
-    return null
+  if (weight >= 1) {
+    return <Tag color="purple" name="Machtiging" icon={PassportIcon} />
+  } else if (weight >= 0.5) {
+    return <Tag color="red" name="Prio" icon={ArrowUpIcon} />
   }
 
-  return (
-    <>
-      {hasPriority && <Tag color="red" name="Prio" icon={ArrowUpIcon} />}
-      {hasWarrant && (
-        <Tag color="purple" name="Machtiging" icon={PassportIcon} />
-      )}
-    </>
-  )
+  return null
 }
 
 export default PriorityTag
