@@ -97,7 +97,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
               >
                 <Description
                   data={descriptionData}
-                  termsWidth="narrow"
+                  termsWidth="medium"
                   className="mb-3"
                 />
               </ProgressList.Step>
@@ -134,7 +134,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
 
                       <Description
                         data={rest}
-                        termsWidth="narrow"
+                        termsWidth="medium"
                         className="mb-3"
                       />
                     </ProgressList.Substep>

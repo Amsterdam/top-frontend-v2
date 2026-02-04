@@ -1,6 +1,7 @@
 export * from "./address"
 export * from "./cases"
 export * from "./itineraries"
+export * from "./residents"
 export * from "./teamSettings"
 export * from "./themes"
 export * from "./users"

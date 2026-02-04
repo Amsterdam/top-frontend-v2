@@ -25,6 +25,7 @@
 │   │   │   ├── cases.ts
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
+│   │   │   ├── residents.ts
 │   │   │   ├── teamSettings.ts
 │   │   │   ├── __tests__
 │   │   │   ├── themes.ts
@@ -64,7 +65,9 @@
 │   │   │   │   ├── labels.ts
 │   │   │   │   └── values.ts
 │   │   │   └── utils
+│   │   │       ├── buildDescriptionData.ts
 │   │   │       ├── eventConfig.helpers.ts
+│   │   │       ├── renderValue.formatters.ts.ts
 │   │   │       └── renderValue.ts
 │   │   ├── ConfirmDialog
 │   │   │   └── ConfirmDialog.tsx
@@ -88,6 +91,9 @@
 │   │   │   ├── Greeting.tsx
 │   │   │   └── __tests__
 │   │   │       └── Greeting.test.tsx
+│   │   ├── HeadingWithIcon
+│   │   │   ├── HeadingWithIcon.module.css
+│   │   │   └── HeadingWithIcon.tsx
 │   │   ├── index.ts
 │   │   ├── ItineraryListItem
 │   │   │   ├── AnimatedItineraryListItem.tsx
@@ -172,6 +178,16 @@
 │   ├── main.tsx
 │   ├── pages
 │   │   ├── CaseDetailPage
+│   │   │   ├── BRPRegisteredPersonsCard
+│   │   │   │   ├── BRPPersonCard.tsx
+│   │   │   │   ├── BRPPersonsCards.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── useFilteredResidents.ts
+│   │   │   │   │   └── useResidentDescription.tsx
+│   │   │   │   ├── residentsDataV2.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils
+│   │   │   │       └── residentFormatting.ts
 │   │   │   ├── CaseDetailPage.tsx
 │   │   │   ├── CaseInfoCard
 │   │   │   │   └── CaseInfoCard.tsx
@@ -231,6 +247,7 @@
 │   │   ├── index.tsx
 │   │   └── routes.tsx
 │   ├── shared
+│   │   ├── dateFormatters.ts
 │   │   ├── formatAddress.ts
 │   │   ├── getSchedulePriority.ts
 │   │   ├── getWorkflowName.ts
@@ -254,4 +271,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-81 directories, 174 files
+85 directories, 187 files

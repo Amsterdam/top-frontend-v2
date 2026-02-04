@@ -98,6 +98,8 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
       observations: (value: unknown) => mapEnum(value, visitEventValuesMap),
       can_next_visit_go_ahead: (value) =>
         value == null ? undefined : mapEnum(String(value), visit_go_ahead),
+      suggest_next_visit: (value: unknown) =>
+        mapEnum(value, visitEventValuesMap),
     }),
   },
 }
