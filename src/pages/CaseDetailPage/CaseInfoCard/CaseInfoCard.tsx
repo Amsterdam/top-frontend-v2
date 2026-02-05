@@ -12,7 +12,7 @@ import { getSchedulePriority, getWorkflowName } from "@/shared"
 import { useCorporationName } from "@/api/hooks"
 
 type Props = {
-  data: Case | undefined
+  data?: Case
 }
 
 export default function CaseInfoCard({ data }: Props) {
@@ -67,17 +67,15 @@ export default function CaseInfoCard({ data }: Props) {
           },
           {
             label: "Tags",
-            value: (
-              <>
-                {data?.tags?.map((tag) => (
+            value: data?.tags?.length
+              ? data.tags.map((tag) => (
                   <Tag
                     key={`${data.id}-${tag.id}`}
                     color="greyDark"
                     name={tag.name}
                   />
-                ))}
-              </>
-            ),
+                ))
+              : undefined,
           },
         ]}
       />

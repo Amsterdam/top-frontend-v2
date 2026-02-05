@@ -13,11 +13,18 @@ import { getWorkflowName } from "@/shared"
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import ResidenceCard from "./ResidenceCard/ResidenceCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
+import BRPPersonsCards from "./BRPPersonsCards/BRPPersonsCards"
 
 const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
   medium: 4,
   wide: 4,
+}
+
+const HISTORY_GRID_CELL_SPAN: GridCellProps["span"] = {
+  narrow: 4,
+  medium: 8,
+  wide: 8,
 }
 
 export default function CaseDetailPage() {
@@ -26,7 +33,11 @@ export default function CaseDetailPage() {
   const statusName = getWorkflowName(data?.workflows)
   console.log("Data:", data)
   return (
-    <Grid paddingBottom="x-large">
+    <Grid
+      paddingBottom="x-large"
+      gapVertical="large"
+      style={{ columnGap: "var(--ams-space-l)" }}
+    >
       <Grid.Cell span="all">
         <Card>
           <Row alignVertical="center" gap="large">
@@ -39,7 +50,7 @@ export default function CaseDetailPage() {
         </Card>
       </Grid.Cell>
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <HistoryCard caseId={data?.id} />
+        <BRPPersonsCards data={data} />
       </Grid.Cell>
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <CaseInfoCard data={data} />
@@ -47,12 +58,7 @@ export default function CaseDetailPage() {
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <ResidenceCard data={data} />
       </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <HistoryCard caseId={data?.id} />
-      </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <Card title="Ingeschreven personen">Ingeschreven personen</Card>
-      </Grid.Cell>
+
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <Card title="Vergunningen">Vergunningen</Card>
       </Grid.Cell>
@@ -62,6 +68,9 @@ export default function CaseDetailPage() {
 
       <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
         <Card title="Logboek">Logboek</Card>
+      </Grid.Cell>
+      <Grid.Cell span={HISTORY_GRID_CELL_SPAN}>
+        <HistoryCard caseId={data?.id} />
       </Grid.Cell>
     </Grid>
   )

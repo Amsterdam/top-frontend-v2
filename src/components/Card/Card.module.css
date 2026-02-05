@@ -14,3 +14,53 @@
 .Icon svg {
   color: var(--ams-color-highlight-azure);
 }
+
+.CardTitleButton {
+  all: unset;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.TitleContent {
+  flex: 1;
+}
+
+.Chevron {
+  display: flex;
+  transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ChevronOpen {
+  transform: rotate(180deg);
+}
+
+.CardTitleButton:hover {
+  cursor: pointer;
+}
+
+.CollapsibleContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.CollapsibleOpen {
+  grid-template-rows: 1fr;
+}
+
+.CollapsibleInner {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 160ms ease,
+    transform 200ms ease;
+  transition-delay: 80ms;
+}
+
+.CollapsibleOpen .CollapsibleInner {
+  opacity: 1;
+  transform: translateY(0);
+}

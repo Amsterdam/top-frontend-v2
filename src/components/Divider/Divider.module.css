@@ -1,4 +1,11 @@
-.divider {
+.Divider {
   border-bottom: 1px solid var(--ams-color-separator);
-  margin: 16px 0px;
+}
+
+.Medium {
+  margin: 12px 0;
+}
+
+.Large {
+  margin: 16px 0;
 }

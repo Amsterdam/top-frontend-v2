@@ -1,0 +1,12 @@
+.Wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.Icon {
+  margin-right: 8px;
+}
+
+.Icon svg {
+  display: block;
+}

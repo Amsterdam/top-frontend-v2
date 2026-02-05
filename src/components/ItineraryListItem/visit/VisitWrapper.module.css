@@ -29,6 +29,10 @@
 }
 
 /* specifieke states */
+.Pending {
+  --state-color: var(--ams-color-interactive);
+}
+
 .InProgress {
   --state-color: #ff9100;
 }
