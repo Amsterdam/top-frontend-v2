@@ -1,36 +1,43 @@
 import { useCase } from "@/api/hooks"
 import {
+  Breadcrumb,
+  Button,
   Grid,
   Heading,
   Row,
   type GridCellProps,
 } from "@amsterdam/design-system-react"
-import { useParams } from "react-router"
-import { Card, StatusTag } from "@/components"
+import { useNavigate, useParams } from "react-router"
+import { Card, Flex, StatusTag } from "@/components"
 
 import { formatAddress } from "@/shared/formatAddress"
 import { getWorkflowName } from "@/shared"
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
-import ResidenceCard from "./ResidenceCard/ResidenceCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
 import BRPPersonsCards from "./BRPPersonsCards/BRPPersonsCards"
+import BAGCard from "./BAGCard/BAGCard"
+import BRPCopy from "./BRPPersonsCards-copy/BRPPersonsCards"
 
-const DEFAULT_GRID_CELL_SPAN: GridCellProps["span"] = {
-  narrow: 4,
-  medium: 4,
-  wide: 4,
-}
-
-const HISTORY_GRID_CELL_SPAN: GridCellProps["span"] = {
+const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
   medium: 8,
   wide: 8,
 }
 
+const SMALL_GRID_CELL_SPAN: GridCellProps["span"] = {
+  narrow: 4,
+  medium: 8,
+  wide: 4,
+}
+
 export default function CaseDetailPage() {
-  const { caseId } = useParams<{ caseId: string }>()
+  const { itineraryId, caseId } = useParams<{
+    itineraryId: string
+    caseId: string
+  }>()
   const [data] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
+  const navigate = useNavigate()
   console.log("Data:", data)
   return (
     <Grid
@@ -39,38 +46,59 @@ export default function CaseDetailPage() {
       style={{ columnGap: "var(--ams-space-l)" }}
     >
       <Grid.Cell span="all">
-        <Card>
-          <Row alignVertical="center" gap="large">
-            <Heading level={2}>{formatAddress(data?.address)}</Heading>
+        <Breadcrumb>
+          <Breadcrumb.Link href="#">Home</Breadcrumb.Link>
+          <Breadcrumb.Link href="#">Lijst</Breadcrumb.Link>
+          <Breadcrumb.Link href="#">Zaak 5967</Breadcrumb.Link>
+        </Breadcrumb>
+      </Grid.Cell>
+      <Grid.Cell span="all">
+        <Row alignVertical="center" gap="large" wrap align="between">
+          <Flex direction="row">
+            <Heading level={2}>{formatAddress(data?.address, true)}</Heading>
             <StatusTag statusName={statusName} />
-            {/* <Paragraph style={{ fontSize: "var(--ams-heading-3-font-size)" }}>
-                - {statusName}
-              </Paragraph> */}
-          </Row>
-        </Card>
-      </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <BRPPersonsCards data={data} />
-      </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <CaseInfoCard data={data} />
-      </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <ResidenceCard data={data} />
+          </Flex>
+          <Button
+            variant="secondary"
+            onClick={() => navigate(`/bezoek/${itineraryId}/${caseId}`)}
+          >
+            Bezoek
+          </Button>
+        </Row>
       </Grid.Cell>
 
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <Card title="Vergunningen">Vergunningen</Card>
-      </Grid.Cell>
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <Card title="Vakantieverhuur">Vakantieverhuur</Card>
+      <Grid.Cell span={LARGE_GRID_CELL_SPAN}>
+        <Grid paddingBottom="x-large" gapVertical="large">
+          <Grid.Cell span="all">
+            <CaseInfoCard data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <BAGCard data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <BRPCopy data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <BRPPersonsCards data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <Card title="Vergunningen">Vergunningen</Card>
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <Card title="Vakantieverhuur">Vakantieverhuur</Card>
+          </Grid.Cell>
+        </Grid>
       </Grid.Cell>
 
-      <Grid.Cell span={DEFAULT_GRID_CELL_SPAN}>
-        <Card title="Logboek">Logboek</Card>
-      </Grid.Cell>
-      <Grid.Cell span={HISTORY_GRID_CELL_SPAN}>
-        <HistoryCard caseId={data?.id} />
+      <Grid.Cell span={SMALL_GRID_CELL_SPAN}>
+        <Grid paddingBottom="x-large" gapVertical="large">
+          <Grid.Cell span="all">
+            <Card title="Logboek">Logboek</Card>
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <HistoryCard caseId={data?.id} />
+          </Grid.Cell>
+        </Grid>
       </Grid.Cell>
     </Grid>
   )

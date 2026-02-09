@@ -5,12 +5,8 @@
   margin-bottom: 16px;
 }
 
-.ContentCardDefault {
-  padding: 12px;
-}
-
-.ContentedCard {
-  padding: 8px 12px 12px 12px;
+.ContentCard {
+  padding: 16px;
 }
 
 .StateCard {
@@ -19,8 +15,7 @@
 
 .StateRow {
   align-items: center;
-  padding: 8px 12px;
-
+  padding: 8px 16px;
   background-color: color-mix(in srgb, var(--state-color) 10%, white);
 }
 

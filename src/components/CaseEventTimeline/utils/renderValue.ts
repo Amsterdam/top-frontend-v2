@@ -1,5 +1,6 @@
 import dayjs from "dayjs"
 import type { JSX } from "react"
+import { capitalize } from "@/shared"
 
 const SUPPORTED_DATE_INPUT_FORMATS = [
   "YYYY-MM-DD",
@@ -11,19 +12,13 @@ const SUPPORTED_DATE_INPUT_FORMATS = [
 const STANDARD_DATE_DISPLAY = "dddd D MMMM YYYY"
 const STANDARD_TIME_DISPLAY = "HH:mm"
 
-// helper om eerste letter te capitalizen
-function capitalize(str?: string) {
-  if (typeof str !== "string" || str.length === 0) return ""
-  return str[0].toUpperCase() + str.slice(1)
-}
-
 export function renderValue(
   value: unknown,
   type?: "time" | "date",
 ): string | JSX.Element | undefined {
   if (value === null || value === undefined) return undefined
 
-  // Arrays netjes joinen
+  // Join arrays nicely
   if (Array.isArray(value)) {
     if (value.length === 0) return undefined
     return value.map(capitalize).join(", ")
@@ -31,7 +26,7 @@ export function renderValue(
 
   // Strings
   if (typeof value === "string") {
-    // alleen parsen als type expliciet is "date" of "time"
+    // Only parse if type is explicitly "date" or "time"
     if (type === "date" || type === "time") {
       const parsed = dayjs(value, SUPPORTED_DATE_INPUT_FORMATS, true)
       if (parsed.isValid()) {
@@ -47,7 +42,7 @@ export function renderValue(
     return capitalize(value)
   }
 
-  // Nummer of boolean
+  // Number or boolean
   if (typeof value === "number") return value.toString()
   if (typeof value === "boolean") return value ? "Ja" : "Nee"
 

@@ -1,6 +1,5 @@
 .Wrapper {
   display: flex;
-  align-items: center;
 }
 
 .Icon {
@@ -9,4 +8,8 @@
 
 .Icon svg {
   display: block;
+}
+
+.IconHighlight {
+  color: var(--ams-color-interactive);
 }

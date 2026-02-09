@@ -1,10 +1,12 @@
 import {
   Button,
-  Link,
-  Paragraph,
+  LinkList,
   type ButtonProps,
 } from "@amsterdam/design-system-react"
-import { MapMarkerOnMapIcon } from "@amsterdam/design-system-react-icons"
+import {
+  LinkExternalIcon,
+  MapMarkerOnMapIcon,
+} from "@amsterdam/design-system-react-icons"
 
 type Props = {
   addresses?: Address[]
@@ -45,16 +47,17 @@ export function GoogleMapsButton({
 
   if (as === "link") {
     return (
-      <Paragraph>
-        <Link
+      <LinkList>
+        <LinkList.Link
           href={url || undefined}
           target="_blank"
           rel="noopener noreferrer"
           aria-disabled={disabled}
+          icon={<LinkExternalIcon />}
         >
           {title}
-        </Link>
-      </Paragraph>
+        </LinkList.Link>
+      </LinkList>
     )
   }
 

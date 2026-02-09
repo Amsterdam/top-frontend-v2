@@ -53,10 +53,7 @@ export function VisitWrapper({ children, variant, item }: Props) {
 
   if (variant !== ItineraryListItemVariant.Default) {
     return (
-      <Column
-        className={`${styles.Card} ${styles.ContentCardDefault}`}
-        gap="small"
-      >
+      <Column className={`${styles.Card} ${styles.ContentCard}`} gap="small">
         {children}
       </Column>
     )
@@ -70,7 +67,7 @@ export function VisitWrapper({ children, variant, item }: Props) {
   return (
     <Column
       className={`${styles.Card} ${styles.StateCard} ${state.className}`}
-      gap="small"
+      gap="none"
     >
       {state.showHeader && state.icon && state.label && (
         <Row alignVertical="center" gap="small" className={styles.StateRow}>
@@ -88,7 +85,7 @@ export function VisitWrapper({ children, variant, item }: Props) {
         </Row>
       )}
 
-      <Column className={styles.ContentedCard} gap="small">
+      <Column className={styles.ContentCard} gap="small">
         {children}
       </Column>
     </Column>
