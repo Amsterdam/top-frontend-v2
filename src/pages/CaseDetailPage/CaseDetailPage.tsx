@@ -1,22 +1,21 @@
-import { useCase } from "@/api/hooks"
 import {
-  Breadcrumb,
-  Button,
+  Column,
   Grid,
   Heading,
   Row,
   type GridCellProps,
 } from "@amsterdam/design-system-react"
+import { HouseIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
-import { Card, Flex, StatusTag } from "@/components"
 
-import { formatAddress } from "@/shared/formatAddress"
-import { getWorkflowName } from "@/shared"
+import { Card, EllipsisActionMenu, StatusTag } from "@/components"
+import { useCase } from "@/api/hooks"
+import { formatAddress, getWorkflowName } from "@/shared"
+
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
-import BRPPersonsCards from "./BRPPersonsCards/BRPPersonsCards"
 import BAGCard from "./BAGCard/BAGCard"
-import BRPCopy from "./BRPPersonsCards-copy/BRPPersonsCards"
+import BRPCard from "./BRPCard/BRPCard"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -38,7 +37,7 @@ export default function CaseDetailPage() {
   const [data] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
-  console.log("Data:", data)
+
   return (
     <Grid
       paddingBottom="x-large"
@@ -46,24 +45,24 @@ export default function CaseDetailPage() {
       style={{ columnGap: "var(--ams-space-l)" }}
     >
       <Grid.Cell span="all">
-        <Breadcrumb>
-          <Breadcrumb.Link href="#">Home</Breadcrumb.Link>
-          <Breadcrumb.Link href="#">Lijst</Breadcrumb.Link>
-          <Breadcrumb.Link href="#">Zaak 5967</Breadcrumb.Link>
-        </Breadcrumb>
-      </Grid.Cell>
-      <Grid.Cell span="all">
-        <Row alignVertical="center" gap="large" wrap align="between">
-          <Flex direction="row">
-            <Heading level={2}>{formatAddress(data?.address, true)}</Heading>
-            <StatusTag statusName={statusName} />
-          </Flex>
-          <Button
-            variant="secondary"
-            onClick={() => navigate(`/bezoek/${itineraryId}/${caseId}`)}
-          >
-            Bezoek
-          </Button>
+        <Row align="between">
+          <Column>
+            <Row wrap alignVertical="center">
+              <Heading level={2}>{formatAddress(data?.address, true)}</Heading>
+              <StatusTag statusName={statusName} />
+            </Row>
+          </Column>
+          <Column>
+            <EllipsisActionMenu
+              actions={[
+                {
+                  label: "Bezoek",
+                  onClick: () => navigate(`/bezoek/${itineraryId}/${caseId}`),
+                  icon: HouseIcon,
+                },
+              ]}
+            />
+          </Column>
         </Row>
       </Grid.Cell>
 
@@ -76,10 +75,7 @@ export default function CaseDetailPage() {
             <BAGCard data={data} />
           </Grid.Cell>
           <Grid.Cell span="all">
-            <BRPCopy data={data} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <BRPPersonsCards data={data} />
+            <BRPCard data={data} />
           </Grid.Cell>
           <Grid.Cell span="all">
             <Card title="Vergunningen">Vergunningen</Card>

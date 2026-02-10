@@ -10,6 +10,7 @@ export type ResidentDatum = {
   datum?: string
   langFormaat?: string
   jaar?: number
+  type?: string
 }
 
 export type Resident = {
@@ -30,24 +31,47 @@ export type Resident = {
       omschrijving?: string
     }
   }
-  nationaliteiten: {
+  adressering?: {
+    aanhef?: string
+    aanschrijfwijze?: {
+      naam?: string
+    }
+    gebruikInLopendeTekst?: string
+    adresregel1?: string
+    adresregel2?: string
+  }
+  nationaliteiten?: {
     nationaliteit?: {
       omschrijving?: string
     }
   }[]
   overlijden?: {
-    datum?: {
-      langFormaat?: string
-    }
+    datum?: ResidentDatum
   }
   verblijfplaats?: {
     datumVan?: {
       datum?: string
     }
   }
-  kinderen?: { naam?: ResidentNaam; geboorte?: { datum?: ResidentDatum } }[]
-  ouders?: { naam?: ResidentNaam }[]
-  partners?: { naam?: ResidentNaam }[]
+  kinderen?: {
+    naam?: ResidentNaam
+    geboorte?: { datum?: ResidentDatum }
+  }[]
+  ouders?: {
+    naam?: ResidentNaam
+    geboorte?: { datum?: ResidentDatum }
+    ouderAanduiding?: string
+  }[]
+  partners?: {
+    naam?: ResidentNaam
+    geboorte?: { datum?: ResidentDatum }
+    aangaanHuwelijkPartnerschap?: { datum?: ResidentDatum }
+    ontbindingHuwelijkPartnerschap?: { datum?: ResidentDatum }
+    soortVerbintenis?: {
+      code?: string
+      omschrijving?: string
+    }
+  }[]
 }
 
 export type ResidentsResponse = {

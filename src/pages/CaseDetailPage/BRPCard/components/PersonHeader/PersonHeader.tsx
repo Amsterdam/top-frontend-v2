@@ -1,6 +1,6 @@
 import { Avatar, Row } from "@amsterdam/design-system-react"
-import type { Resident } from "./types"
-import { formatName } from "./utils/personFormatting"
+import type { Resident } from "../../types"
+import { formatName } from "../../utils/formatting"
 
 export function PersonHeader({ resident }: { resident: Resident }) {
   return (
@@ -12,7 +12,7 @@ export function PersonHeader({ resident }: { resident: Resident }) {
             ? "azure"
             : resident?.geslacht?.code === "V"
               ? "magenta"
-              : "lime"
+              : "green"
         }
       />
       <strong>

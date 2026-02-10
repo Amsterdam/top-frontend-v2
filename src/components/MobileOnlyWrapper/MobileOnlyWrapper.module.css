@@ -1,0 +1,9 @@
+.wrapper {
+  display: inline-flex;
+}
+
+@media (min-width: 600px) {
+  .wrapper {
+    display: none;
+  }
+}

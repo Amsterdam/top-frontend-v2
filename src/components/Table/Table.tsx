@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import styles from "./Table.module.css"
 import { getNestedValue } from "./utils"
+import { Icon } from "@amsterdam/design-system-react"
+import { ChevronDownIcon } from "@amsterdam/design-system-react-icons"
 
 type Column<T> = {
   title: string
@@ -34,15 +36,20 @@ export function Table<T extends Record<string, unknown>>({
     })
   }
 
+  const hasExpandable = Boolean(expandable)
+
   return (
-    <table className={styles.Table}>
+    <table className={styles.table}>
       <thead>
         <tr>
           {columns.map((column, index) => (
-            <th key={index} className={styles.TableTitleCell}>
+            <th key={index} className={styles.tableTitleCell}>
               {column.title}
             </th>
           ))}
+          {hasExpandable && (
+            <th className={styles.tableChevronCell}>Details</th>
+          )}
         </tr>
       </thead>
 
@@ -53,34 +60,50 @@ export function Table<T extends Record<string, unknown>>({
           return (
             <React.Fragment key={rowIndex}>
               <tr
-                className={`${expandable ? styles.TableExpandableRow : ""}`}
-                onClick={expandable ? () => toggleRow(rowIndex) : undefined}
+                className={`${styles.tableRow} ${
+                  hasExpandable ? styles.tableExpandableRow : ""
+                }`}
+                onClick={hasExpandable ? () => toggleRow(rowIndex) : undefined}
                 aria-expanded={isExpanded}
               >
                 {columns.map((column, columnIndex) => {
                   const value = getNestedValue(row, column.dataIndex)
                   return (
-                    <td key={columnIndex} className={styles.TableCell}>
+                    <td key={columnIndex} className={styles.tableCell}>
                       {column.render
                         ? column.render(value, row)
                         : ((value as React.ReactNode) ?? "")}
                     </td>
                   )
                 })}
+
+                {hasExpandable && (
+                  <td className={styles.tableChevronCell}>
+                    <span
+                      className={`${styles.chevron} ${
+                        isExpanded ? styles.chevronOpen : ""
+                      }`}
+                    >
+                      <Icon svg={ChevronDownIcon} size="heading-3" />
+                    </span>
+                  </td>
+                )}
               </tr>
 
-              {expandable && (
-                <tr className={styles.TableExpandedRow}>
+              {hasExpandable && (
+                <tr className={styles.tableExpandedRow}>
                   <td
-                    colSpan={columns.length}
-                    className={styles.TableExpandedCell}
+                    colSpan={columns.length + 1}
+                    className={styles.tableExpandedCell}
                   >
                     <div
-                      className={`${styles.TableCollapsibleContent} ${isExpanded ? styles.TableCollapsibleOpen : ""}`}
+                      className={`${styles.tableCollapsibleContent} ${
+                        isExpanded ? styles.tableCollapsibleOpen : ""
+                      }`}
                     >
-                      <div className={styles.TableCollapsibleInner}>
-                        <div className={styles.TableExpandedContent}>
-                          {expandable.expandedRow(row)}
+                      <div className={styles.tableCollapsibleInner}>
+                        <div className={styles.tableExpandedContent}>
+                          {expandable?.expandedRow(row)}
                         </div>
                       </div>
                     </div>

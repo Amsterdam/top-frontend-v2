@@ -23,7 +23,7 @@ import {
   SmallCaseCard,
 } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
-import { FootprintsIcon } from "@/icons/FootprintsIcon"
+import { FootprintsIcon } from "@/icons"
 
 type FormValues = {
   teamMembers: string[]

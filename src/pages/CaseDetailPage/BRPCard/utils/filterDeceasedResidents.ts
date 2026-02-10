@@ -14,6 +14,6 @@ const isRecentDeceased = (resident: Resident) => {
   return deceasedDate.isSame(cutoff) || deceasedDate.isAfter(cutoff)
 }
 
-export const useFilteredResidents = (residents?: Resident[]) => {
+export const filterDeceasedResidents = (residents?: Resident[]) => {
   return (residents ?? []).filter(isRecentDeceased)
 }

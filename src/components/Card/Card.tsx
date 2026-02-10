@@ -33,19 +33,19 @@ export function Card({
   }
 
   return (
-    <div className={styles.Card}>
+    <div className={styles.card}>
       {hasTitle && (
-        <div className={styles.CardTitle}>
+        <div className={styles.cardTitle}>
           {collapsible ? (
             <button
               type="button"
-              className={styles.CardTitleButton}
+              className={styles.cardTitleButton}
               onClick={toggle}
               aria-expanded={isOpen}
             >
-              <span className={styles.TitleContent}>{renderTitle}</span>
+              <span className={styles.titleContent}>{renderTitle}</span>
               <span
-                className={`${styles.Chevron} ${isOpen ? styles.ChevronOpen : ""}`}
+                className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
                 aria-hidden="true"
               >
                 <Icon svg={ChevronDownIcon} size="heading-3" />
@@ -57,14 +57,14 @@ export function Card({
         </div>
       )}
       <div
-        className={`${styles.CollapsibleContent} ${isOpen ? styles.CollapsibleOpen : ""}`}
+        className={`${styles.collapsibleContent} ${isOpen ? styles.collapsibleOpen : ""}`}
       >
-        <div className={styles.CollapsibleInner}>
+        <div className={styles.collapsibleInner}>
           {hasTitle && (
             <Divider margin="medium" noMarginBottom={noContentPadding} />
           )}
           <div
-            className={`${styles.CardContent} ${noContentPadding ? styles.NoContentPadding : ""}`}
+            className={`${styles.cardContent} ${noContentPadding ? styles.noContentPadding : ""}`}
           >
             {children}
           </div>

@@ -1,7 +1,7 @@
 import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import type { ApiOptions } from "../types/apiOptions"
-import type { Resident } from "@/pages/CaseDetailPage/BRPPersonsCards/types"
+import type { Resident } from "@/pages/CaseDetailPage/BRPCard/types"
 
 type ResidentsResponse = {
   personen: Resident[]
