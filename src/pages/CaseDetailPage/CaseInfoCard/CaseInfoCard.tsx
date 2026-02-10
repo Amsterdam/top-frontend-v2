@@ -1,15 +1,16 @@
-import { Column, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
+import { Row } from "@amsterdam/design-system-react"
 import {
   Card,
   Description,
   GoogleMapsButton,
+  HeadingWithIcon,
   PriorityTag,
   Tag,
 } from "@/components"
 
-import { formatAddress } from "@/shared/formatAddress"
-import { getSchedulePriority, getWorkflowName } from "@/shared"
+import { getSchedulePriority } from "@/shared"
 import { useCorporationName } from "@/api/hooks"
+import { InfoIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
   data?: Case
@@ -20,16 +21,22 @@ export default function CaseInfoCard({ data }: Props) {
     data?.address?.housing_corporation,
   )
   const priority = getSchedulePriority(data?.schedules)
-  const statusName = getWorkflowName(data?.workflows)
+
   return (
     <Card
       title={
-        <Column>
-          <Heading level={3}>{formatAddress(data?.address)}</Heading>
-          <Paragraph>
-            {data?.address?.postal_code} - {statusName}
-          </Paragraph>
-        </Column>
+        <Row align="between" wrap>
+          <HeadingWithIcon
+            label="Zaakinformatie"
+            svg={InfoIcon}
+            highlightIcon
+          />
+          <GoogleMapsButton
+            title="Bekijk op Google Maps"
+            addresses={[data?.address] as Address[]}
+            as="link"
+          />
+        </Row>
       }
     >
       <Description
@@ -79,14 +86,6 @@ export default function CaseInfoCard({ data }: Props) {
           },
         ]}
       />
-      <Row align="center" className="mt-3">
-        <GoogleMapsButton
-          title="Bekijk op Google Maps"
-          addresses={[data?.address] as Address[]}
-          variant="tertiary"
-          as="link"
-        />
-      </Row>
     </Card>
   )
 }

@@ -1,0 +1,75 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ams-paragraph-font-family);
+}
+
+.tableTitleCell {
+  text-align: left;
+  border-bottom: 1px solid var(--ams-color-separator);
+  padding: 8px 16px;
+}
+
+/* Hover alleen voor expandable rijen */
+.tableExpandableRow:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.tableCell,
+.tableChevronCell {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--ams-color-separator);
+}
+
+.tableExpandedRow {
+  background-color: #fafafa;
+}
+
+.tableExpandedCell {
+  padding: 0;
+}
+
+.tableCollapsibleContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tableCollapsibleOpen {
+  grid-template-rows: 1fr;
+}
+
+.tableCollapsibleInner {
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    border-bottom-width 200ms ease;
+  border-bottom: 0 solid var(--ams-color-separator);
+}
+
+.tableCollapsibleOpen .tableCollapsibleInner {
+  opacity: 1;
+  border-bottom-width: 1px;
+}
+
+.tableExpandedContent {
+  padding: 16px;
+}
+
+.tableChevronCell {
+  text-align: right;
+}
+
+.chevron {
+  display: inline-flex;
+  transition:
+    transform 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+  color: var(--ams-color-interactive);
+}

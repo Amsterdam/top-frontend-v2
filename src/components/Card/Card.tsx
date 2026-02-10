@@ -10,6 +10,7 @@ type Props = {
   children: ReactNode
   collapsible?: boolean
   defaultOpen?: boolean
+  noContentPadding?: boolean
 }
 
 export function Card({
@@ -17,6 +18,7 @@ export function Card({
   children,
   collapsible = false,
   defaultOpen = true,
+  noContentPadding = false,
 }: Props) {
   const hasTitle = Boolean(title)
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -31,38 +33,41 @@ export function Card({
   }
 
   return (
-    <div className={styles.Card}>
+    <div className={styles.card}>
       {hasTitle && (
-        <>
-          <div className={styles.CardTitle}>
-            {collapsible ? (
-              <button
-                type="button"
-                className={styles.CardTitleButton}
-                onClick={toggle}
-                aria-expanded={isOpen}
+        <div className={styles.cardTitle}>
+          {collapsible ? (
+            <button
+              type="button"
+              className={styles.cardTitleButton}
+              onClick={toggle}
+              aria-expanded={isOpen}
+            >
+              <span className={styles.titleContent}>{renderTitle}</span>
+              <span
+                className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
+                aria-hidden="true"
               >
-                <span className={styles.TitleContent}>{renderTitle}</span>
-
-                <span
-                  className={`${styles.Chevron} ${isOpen ? styles.ChevronOpen : ""}`}
-                  aria-hidden="true"
-                >
-                  <Icon svg={ChevronDownIcon} size="heading-3" />
-                </span>
-              </button>
-            ) : (
-              renderTitle
-            )}
-          </div>
-        </>
+                <Icon svg={ChevronDownIcon} size="heading-3" />
+              </span>
+            </button>
+          ) : (
+            renderTitle
+          )}
+        </div>
       )}
       <div
-        className={`${styles.CollapsibleContent} ${isOpen ? styles.CollapsibleOpen : ""}`}
+        className={`${styles.collapsibleContent} ${isOpen ? styles.collapsibleOpen : ""}`}
       >
-        <div className={`${styles.CollapsibleInner} `}>
-          {hasTitle && <Divider margin="medium" />}
-          <div className={styles.CardContent}>{children}</div>
+        <div className={styles.collapsibleInner}>
+          {hasTitle && (
+            <Divider margin="medium" noMarginBottom={noContentPadding} />
+          )}
+          <div
+            className={`${styles.cardContent} ${noContentPadding ? styles.noContentPadding : ""}`}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>

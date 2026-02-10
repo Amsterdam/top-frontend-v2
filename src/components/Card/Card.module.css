@@ -1,56 +1,59 @@
-.Card {
+.card {
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
   border: 1px solid rgba(38, 85, 115, 0.15);
-  padding: 12px 0;
+  padding: 16px 0;
   overflow: hidden;
 }
 
-.CardTitle,
-.CardContent {
-  padding: 0 12px;
+.cardTitle,
+.cardContent {
+  padding: 0 16px;
 }
 
-.Icon svg {
-  color: var(--ams-color-highlight-azure);
+.noContentPadding {
+  padding: 0 !important;
 }
 
-.CardTitleButton {
+.cardTitleButton {
   all: unset;
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 8px;
+  gap: 16px;
 }
 
-.TitleContent {
+.titleContent {
   flex: 1;
 }
 
-.Chevron {
+.chevron {
   display: flex;
-  transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 240ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ChevronOpen {
+.chevronOpen {
   transform: rotate(180deg);
+  color: var(--ams-color-interactive);
 }
 
-.CardTitleButton:hover {
+.cardTitleButton:hover {
   cursor: pointer;
 }
 
-.CollapsibleContent {
+.collapsibleContent {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.CollapsibleOpen {
+.collapsibleOpen {
   grid-template-rows: 1fr;
 }
 
-.CollapsibleInner {
+.collapsibleInner {
   overflow: hidden;
   opacity: 0;
   transform: translateY(-4px);
@@ -60,7 +63,7 @@
   transition-delay: 80ms;
 }
 
-.CollapsibleOpen .CollapsibleInner {
+.collapsibleOpen .collapsibleInner {
   opacity: 1;
   transform: translateY(0);
 }

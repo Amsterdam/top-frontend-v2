@@ -1,11 +1,16 @@
-import { Link, Paragraph, Row } from "@amsterdam/design-system-react"
-import { Card, Description } from "@/components"
+import { LinkList, Row } from "@amsterdam/design-system-react"
+import { Card, Description, HeadingWithIcon } from "@/components"
+import {
+  LinkExternalIcon,
+  MapMarkerIcon,
+} from "@amsterdam/design-system-react-icons"
+import { capitalize } from "@/shared"
 
 type Props = {
   data: Case | undefined
 }
 
-export default function ResidenceCard({ data }: Props) {
+export default function BAGCard({ data }: Props) {
   if (!data) return null
 
   const bag = data.bag_data
@@ -34,16 +39,17 @@ export default function ResidenceCard({ data }: Props) {
   const dataFields = hasBagData
     ? isWoning
       ? [
-          { label: "Gebruiksdoel", value: woningBestemming },
+          { label: "Type", value: woningTitle },
+          { label: "Gebruiksdoel", value: capitalize(woningBestemming) },
           {
             label: "Soort object (feitelijk gebruik) volgens de WOZ",
             value: (
-              <div className="breakWordAnywhere">
+              <div className="break-word-anywhere">
                 {wozSoortObjectOmschrijving}
               </div>
             ),
           },
-          { label: "Status", value: status },
+          { label: "Status", value: capitalize(status) },
           {
             label: "Woonoppervlak",
             value: oppervlakte ? `${oppervlakte} m²` : undefined,
@@ -53,7 +59,7 @@ export default function ResidenceCard({ data }: Props) {
           { label: "Verdieping toegang", value: verdiepingToegang },
           { label: "Toegang", value: toegang },
         ]
-      : [{ label: "Status", value: status }]
+      : [{ label: "Status", value: capitalize(status) }]
     : [
         {
           label: "Foutmelding",
@@ -66,17 +72,29 @@ export default function ResidenceCard({ data }: Props) {
     : undefined
 
   return (
-    <Card title={woningTitle}>
-      <Description termsWidth="wide" data={dataFields} />
-      {woningUrl && (
-        <Row align="center" className="mt-3">
-          <Paragraph>
-            <Link href={woningUrl} target="_blank" rel="noopener noreferrer">
+    <Card
+      title={
+        <Row align="between" wrap>
+          <HeadingWithIcon
+            label="BAG-gegevens"
+            svg={MapMarkerIcon}
+            highlightIcon
+          />
+          <LinkList>
+            <LinkList.Link
+              href={woningUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              icon={<LinkExternalIcon />}
+            >
               Bekijk op Data en informatie
-            </Link>
-          </Paragraph>
+            </LinkList.Link>
+          </LinkList>
         </Row>
-      )}
+      }
+      collapsible
+    >
+      <Description termsWidth="wide" data={dataFields} />
     </Card>
   )
 }
