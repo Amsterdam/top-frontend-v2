@@ -21,10 +21,12 @@ export function ResidentDetails({ resident }: { resident: Resident }) {
         <GenderHeading resident={resident} title="Persoonsgegevens" />
         <Description termsWidth="medium" data={personalDetails} />
       </Grid.Cell>
-      <Grid.Cell span={GRID_CELL_SPAN}>
-        <GenderHeading resident={resident} title="Familiegegevens" />
-        <Description termsWidth="medium" data={familyDetails} />
-      </Grid.Cell>
+      {familyDetails.length > 0 && (
+        <Grid.Cell span={GRID_CELL_SPAN}>
+          <GenderHeading resident={resident} title="Familiegegevens" />
+          <Description termsWidth="medium" data={familyDetails} />
+        </Grid.Cell>
+      )}
     </Grid>
   )
 }

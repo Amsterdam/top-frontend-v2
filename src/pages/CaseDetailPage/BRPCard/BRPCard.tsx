@@ -35,14 +35,7 @@ export function BRPCard({ data }: Props) {
   const residentsToUse = showDummyData ? dummyResidentsResponse : residentsData
   const persons = residentsToUse?.personen || []
   const filteredResidents = filterDeceasedResidents(persons)
-
-  if (isBusy) {
-    return (
-      <Card>
-        <Paragraph>Laden van BRP-gegevens...</Paragraph>
-      </Card>
-    )
-  }
+  if (!data || isBusy) return null
   if (hasErrors)
     return (
       <Card>
@@ -70,7 +63,7 @@ export function BRPCard({ data }: Props) {
       }
       collapsible
       noContentPadding
-      defaultOpen={false}
+      className="animate-scale-in-center"
     >
       <Table
         columns={columns}

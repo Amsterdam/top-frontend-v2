@@ -104,9 +104,7 @@ export function SearchAddressPage() {
         <Divider />
 
         {statusMessage && (
-          <Paragraph style={{ fontStyle: "italic", marginTop: "1rem" }}>
-            {statusMessage}
-          </Paragraph>
+          <Paragraph className="text-italic mt-3">{statusMessage}</Paragraph>
         )}
 
         {!isBusy &&

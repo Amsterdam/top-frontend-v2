@@ -22,6 +22,8 @@ export default function CaseInfoCard({ data }: Props) {
   )
   const priority = getSchedulePriority(data?.schedules)
 
+  if (!data) return null
+
   return (
     <Card
       title={
@@ -38,6 +40,8 @@ export default function CaseInfoCard({ data }: Props) {
           />
         </Row>
       }
+      className="animate-scale-in-center"
+      collapsible
     >
       <Description
         termsWidth="narrow"

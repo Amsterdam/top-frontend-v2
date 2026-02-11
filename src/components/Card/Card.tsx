@@ -11,6 +11,7 @@ type Props = {
   collapsible?: boolean
   defaultOpen?: boolean
   noContentPadding?: boolean
+  className?: string
 }
 
 export function Card({
@@ -19,6 +20,7 @@ export function Card({
   collapsible = false,
   defaultOpen = true,
   noContentPadding = false,
+  className,
 }: Props) {
   const hasTitle = Boolean(title)
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -33,7 +35,7 @@ export function Card({
   }
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${className ?? ""}`}>
       {hasTitle && (
         <div className={styles.cardTitle}>
           {collapsible ? (

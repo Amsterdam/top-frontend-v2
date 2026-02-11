@@ -11,24 +11,32 @@ import { LogbookIcon } from "@/icons"
 import { formatDate } from "@/shared"
 
 export function LogbookCard({ caseId }: { caseId?: number }) {
-  const [caseVisits] = useCaseVisits(caseId)
+  const [caseVisits, { isBusy }] = useCaseVisits(caseId)
+
+  if (!caseVisits || isBusy) return null
+
+  const visits = caseVisits.sort(
+    (a, b) =>
+      new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
+  )
 
   return (
     <Card
       title={
         <HeadingWithIcon
-          label={`Logboek (${caseVisits?.length ?? 0})`}
+          label={`Logboek (${visits?.length ?? 0})`}
           iconComponent={<LogbookIcon width={19} height={19} />}
           highlightIcon
         />
       }
       collapsible
+      className="animate-scale-in-center"
     >
-      {caseVisits?.map((visit, index) => (
+      {visits?.map((visit, index) => (
         <Column key={visit.id} gap="small">
           <Row>
             <Icon svg={ClockIcon} title="Starttijd" />
-            <Paragraph>
+            <Paragraph className="text-bold">
               {formatDate(visit.start_time, "dd DD MMM YYYY, HH:mm")}
             </Paragraph>
           </Row>
@@ -56,15 +64,16 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
                 />
               </Row>
               <Row>
-                <Paragraph className="preserve-lines italic-text">
+                <Paragraph className="preserve-lines text-italic">
                   {visit.description}
                 </Paragraph>
               </Row>
             </Column>
           )}
-          {index !== caseVisits.length - 1 && <Divider margin="medium" />}
+          {index !== visits.length - 1 && <Divider margin="medium" />}
         </Column>
       ))}
+      {visits?.length === 0 && <Paragraph>Geen notities gevonden.</Paragraph>}
     </Card>
   )
 }

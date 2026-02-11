@@ -2,7 +2,10 @@
   overflow-wrap: anywhere; /* Breaks the string where needed */
 }
 
-.italic-text {
+.text-bold {
+  font-weight: bold;
+}
+.text-italic {
   font-style: italic;
 }
 

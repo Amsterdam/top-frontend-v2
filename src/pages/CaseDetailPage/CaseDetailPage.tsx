@@ -8,7 +8,12 @@ import {
 import { HouseIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 
-import { Card, EllipsisActionMenu, StatusTag } from "@/components"
+import {
+  AmsterdamCrossSpinner,
+  Card,
+  EllipsisActionMenu,
+  StatusTag,
+} from "@/components"
 import { useCase } from "@/api/hooks"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -35,10 +40,13 @@ export default function CaseDetailPage() {
     itineraryId: string
     caseId: string
   }>()
-  const [data] = useCase(Number(caseId))
+  const [data, { isBusy }] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
 
+  if (isBusy) {
+    return <AmsterdamCrossSpinner />
+  }
   return (
     <Grid
       paddingBottom="x-large"

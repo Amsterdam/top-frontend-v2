@@ -12,7 +12,7 @@ import { buildDescriptionData } from "./utils/buildDescriptionData"
 import styles from "./CaseEventTimeline.module.css"
 
 export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
-  const [showAll, setShowAll] = useState(true)
+  const [showAll, setShowAll] = useState(false)
 
   // Sort events by ID descending
   const events = useMemo(
