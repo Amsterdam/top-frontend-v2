@@ -16,6 +16,7 @@ import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
 import BAGCard from "./BAGCard/BAGCard"
 import BRPCard from "./BRPCard/BRPCard"
+import LogbookCard from "./LogbookCard/LogbookCard"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -89,7 +90,7 @@ export default function CaseDetailPage() {
       <Grid.Cell span={SMALL_GRID_CELL_SPAN}>
         <Grid paddingBottom="x-large" gapVertical="large">
           <Grid.Cell span="all">
-            <Card title="Logboek">Logboek</Card>
+            <LogbookCard caseId={data?.id} />
           </Grid.Cell>
           <Grid.Cell span="all">
             <HistoryCard caseId={data?.id} />
