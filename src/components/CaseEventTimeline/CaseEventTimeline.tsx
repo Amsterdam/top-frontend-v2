@@ -6,9 +6,10 @@ import {
   Heading,
 } from "@amsterdam/design-system-react"
 import { MinusIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
-import { Description } from "@/components"
+import { Description, Divider } from "@/components"
 import { EVENT_CONFIG } from "./config/eventConfig"
 import { buildDescriptionData } from "./utils/buildDescriptionData"
+import styles from "./CaseEventTimeline.module.css"
 
 export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
   const [showAll, setShowAll] = useState(true)
@@ -98,8 +99,9 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                 <Description
                   data={descriptionData}
                   termsWidth="medium"
-                  className="mb-3"
+                  className="mt-4"
                 />
+                <Divider className={styles.customDivider} />
               </ProgressList.Step>
             )
           }
@@ -135,8 +137,9 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                       <Description
                         data={rest}
                         termsWidth="medium"
-                        className="mb-3"
+                        className="mt-4"
                       />
+                      <Divider className={styles.customDivider} />
                     </ProgressList.Substep>
                   )
                 })}
