@@ -15,7 +15,6 @@ const timeMapper: Record<string, string> = {
 }
 
 export const getTimeFromNow = (date?: string | number) => {
-  console.log("DATE", date)
   if (!date) return ""
   const fromNow = dayjs(date).fromNow(true)
   return fromNow.replace(

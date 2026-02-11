@@ -70,6 +70,7 @@ export function BRPCard({ data }: Props) {
       }
       collapsible
       noContentPadding
+      defaultOpen={false}
     >
       <Table
         columns={columns}
