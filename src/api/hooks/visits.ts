@@ -14,3 +14,10 @@ export const useVisit = (id?: string | number, options?: ApiOptions) =>
     url: makeApiUrl(`visits/${id}`),
     lazy: options?.lazy ?? !id,
   })
+
+export const useCaseVisits = (caseId?: number, options?: ApiOptions) =>
+  useApi<Visit[]>({
+    ...options,
+    url: makeApiUrl(`cases/${caseId}/visits`),
+    lazy: options?.lazy ?? !caseId,
+  })

@@ -1,3 +1,3 @@
 export * from "./BabyIcon"
 export * from "./FootprintsIcon"
-export * from "./HistoryIcon"
+export * from "./LogbookIcon"

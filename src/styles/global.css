@@ -1,5 +1,12 @@
 .break-word-anywhere {
-  overflow-wrap: anywhere; /* breekt de string waar nodig */
+  overflow-wrap: anywhere; /* Breaks the string where needed */
+}
+
+.text-bold {
+  font-weight: bold;
+}
+.text-italic {
+  font-style: italic;
 }
 
 .mobile-only-icon {
@@ -10,4 +17,8 @@
   .mobile-only-icon {
     display: none;
   }
+}
+
+.preserve-lines {
+  white-space: pre-line; /* Preserves the original whitespace and lines */
 }

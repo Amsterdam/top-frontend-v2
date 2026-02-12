@@ -8,6 +8,7 @@ import { capitalize } from "@/shared"
 
 type Props = {
   data: Case | undefined
+  isBusy?: boolean
 }
 
 export default function BAGCard({ data }: Props) {
@@ -93,6 +94,7 @@ export default function BAGCard({ data }: Props) {
         </Row>
       }
       collapsible
+      className="animate-scale-in-center"
     >
       <Description termsWidth="wide" data={dataFields} />
     </Card>

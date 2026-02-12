@@ -8,7 +8,12 @@ import {
 import { HouseIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 
-import { Card, EllipsisActionMenu, StatusTag } from "@/components"
+import {
+  AmsterdamCrossSpinner,
+  Card,
+  EllipsisActionMenu,
+  StatusTag,
+} from "@/components"
 import { useCase } from "@/api/hooks"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -16,6 +21,7 @@ import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
 import BAGCard from "./BAGCard/BAGCard"
 import BRPCard from "./BRPCard/BRPCard"
+import LogbookCard from "./LogbookCard/LogbookCard"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -34,10 +40,13 @@ export default function CaseDetailPage() {
     itineraryId: string
     caseId: string
   }>()
-  const [data] = useCase(Number(caseId))
+  const [data, { isBusy }] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
 
+  if (isBusy) {
+    return <AmsterdamCrossSpinner />
+  }
   return (
     <Grid
       paddingBottom="x-large"
@@ -89,7 +98,7 @@ export default function CaseDetailPage() {
       <Grid.Cell span={SMALL_GRID_CELL_SPAN}>
         <Grid paddingBottom="x-large" gapVertical="large">
           <Grid.Cell span="all">
-            <Card title="Logboek">Logboek</Card>
+            <LogbookCard caseId={data?.id} />
           </Grid.Cell>
           <Grid.Cell span="all">
             <HistoryCard caseId={data?.id} />

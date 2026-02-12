@@ -95,5 +95,5 @@ export function getResidentFamilyDetails(resident: Resident) {
       label: "Kinderen",
       value: getFamilyNames(resident?.kinderen, true),
     },
-  ].filter((item) => item.value !== undefined)
+  ].filter((item) => item.value !== undefined && item.value !== null)
 }
