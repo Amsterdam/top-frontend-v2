@@ -55,7 +55,7 @@
     "jsdom": "^28.0.0",
     "openapi-typescript": "^7.13.0",
     "prettier": "3.8.1",
-    "typescript-eslint": "^8.53.0",
+    "typescript-eslint": "^8.55.0",
     "vitest": "^4.0.15"
   }
 }
