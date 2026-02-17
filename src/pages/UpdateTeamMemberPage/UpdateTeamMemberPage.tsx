@@ -13,7 +13,7 @@ import dayjs from "dayjs"
 import { AmsterdamCrossSpinner, Divider } from "@/components"
 import { useItinerary, useItineraryChangeTeamMembers } from "@/api/hooks"
 import { useCurrentUser, useUserOptions } from "@/hooks"
-import { FormProvider } from "@amsterdam/ee-ads-rhf-lib"
+import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 
 type FormValues = {

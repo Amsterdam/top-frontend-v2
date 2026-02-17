@@ -5,7 +5,7 @@ import {
   SaveIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
-import { RadioControl, TextAreaControl } from "@amsterdam/ee-ads-rhf-lib"
+import { RadioControl, TextAreaControl } from "@amsterdam/ee-ads-rhf"
 import { useFormContext, useWatch } from "react-hook-form"
 import { type FormValuesVisit } from "../FormValuesVisit"
 import { useItinerary } from "@/api/hooks"

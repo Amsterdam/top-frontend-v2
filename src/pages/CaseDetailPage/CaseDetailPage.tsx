@@ -22,6 +22,7 @@ import HistoryCard from "./HistoryCard/HistoryCard"
 import BAGCard from "./BAGCard/BAGCard"
 import BRPCard from "./BRPCard/BRPCard"
 import LogbookCard from "./LogbookCard/LogbookCard"
+import VakantieverhuurCard from "./VakantieverhuurCard/VakantieverhuurCard"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -76,7 +77,7 @@ export default function CaseDetailPage() {
       </Grid.Cell>
 
       <Grid.Cell span={LARGE_GRID_CELL_SPAN}>
-        <Grid paddingBottom="x-large" gapVertical="large">
+        <Grid gapVertical="large">
           <Grid.Cell span="all">
             <CaseInfoCard data={data} />
           </Grid.Cell>
@@ -90,7 +91,7 @@ export default function CaseDetailPage() {
             <Card title="Vergunningen">Vergunningen</Card>
           </Grid.Cell>
           <Grid.Cell span="all">
-            <Card title="Vakantieverhuur">Vakantieverhuur</Card>
+            <VakantieverhuurCard bagId={data?.address?.bag_id} />
           </Grid.Cell>
         </Grid>
       </Grid.Cell>

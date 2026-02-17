@@ -20,17 +20,17 @@ export function HeadingWithIcon({
   const size = `heading-${level}` as IconProps["size"]
 
   return (
-    <div className={styles.Wrapper}>
+    <div className={styles.wrapper}>
       {IconComponent ? (
         <div
-          className={`${styles.Icon} ${highlightIcon ? styles.IconHighlight : ""}`}
+          className={`${styles.icon} ${highlightIcon ? styles.iconHighlight : ""}`}
         >
           {IconComponent}
         </div>
       ) : svg ? (
         <Icon
           size={size}
-          className={`${styles.Icon} ${highlightIcon ? styles.IconHighlight : ""}`}
+          className={`${styles.icon} ${highlightIcon ? styles.iconHighlight : ""}`}
           svg={svg}
         />
       ) : null}

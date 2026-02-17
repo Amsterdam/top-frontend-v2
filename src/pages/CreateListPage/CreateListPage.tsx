@@ -11,7 +11,7 @@ import {
   FormProvider,
   TextInputControl,
   RadioControl,
-} from "@amsterdam/ee-ads-rhf-lib"
+} from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
 import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"

@@ -1,5 +1,5 @@
 import { Button, ActionGroup } from "@amsterdam/design-system-react"
-import { TextAreaControl } from "@amsterdam/ee-ads-rhf-lib"
+import { TextAreaControl } from "@amsterdam/ee-ads-rhf"
 import {
   ChevronBackwardIcon,
   SaveIcon,

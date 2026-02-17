@@ -52,6 +52,10 @@ export type Resident = {
     datumVan?: {
       datum?: string
     }
+    functieAdres?: {
+      code?: string
+      omschrijving?: string
+    }
   }
   kinderen?: {
     naam?: ResidentNaam

@@ -1,5 +1,5 @@
 import { Alert, Paragraph } from "@amsterdam/design-system-react"
-import { SelectControl } from "@amsterdam/ee-ads-rhf-lib"
+import { SelectControl } from "@amsterdam/ee-ads-rhf"
 
 const TEAM_LABELS = ["Toezichthouder 1", "Toezichthouder 2", "Handhaver"]
 

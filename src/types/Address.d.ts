@@ -18,3 +18,27 @@ type Address = {
   suffix: string
   suffix_letter: string
 }
+
+type Melding = {
+  gasten: number
+  nachten: number
+  gemaaktOp: string
+  isAangepast: boolean
+  isVerwijderd: boolean
+  startDatum: string
+  eindDatum: string
+}
+
+type Registration = Omit<
+  components["schemas"]["RegistrationDetails"],
+  "requester"
+> & {
+  requester: {
+    personalDetails: {
+      firstName: string
+      lastNamePrefix: string | null
+      lastName: string
+    }
+    email: string
+  }
+}
