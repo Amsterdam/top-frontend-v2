@@ -23,7 +23,7 @@ export function PersonHeader({ resident }: { resident: Resident }) {
         {isDeceased && " †"}
       </strong>
       {isMailAddress && (
-        <Tag name="briefadres" color="orange" icon={WarningIcon} />
+        <Tag name="Briefadres" color="orange" icon={WarningIcon} />
       )}
     </Row>
   )
