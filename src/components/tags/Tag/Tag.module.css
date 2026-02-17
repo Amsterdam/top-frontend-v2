@@ -3,9 +3,11 @@
   --tag-bg-strength: 10%;
 
   display: inline-flex;
+  align-items: center;
   font-family: var(--ams-badge-font-family);
   font-weight: 500;
-  border-radius: 4px;
+  font-size: var(--ams-paragraph-small-font-size);
+  border-radius: 6px;
   padding-inline: 8px;
   gap: 4px;
 
