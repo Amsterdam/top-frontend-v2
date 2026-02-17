@@ -49,8 +49,15 @@ export type Resident = {
     datum?: ResidentDatum
   }
   verblijfplaats?: {
+    type?: string
     datumVan?: {
+      type?: string
       datum?: string
+      langFormaat?: string
+    }
+    functieAdres?: {
+      code?: string
+      omschrijving?: string
     }
   }
   kinderen?: {

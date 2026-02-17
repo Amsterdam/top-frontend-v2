@@ -1,0 +1,17 @@
+.meldingen {
+  background-color: #f6f7f8;
+  border-radius: 6px;
+}
+
+.melding {
+  font-family: var(--ams-paragraph-font-family);
+  padding: 8px;
+}
+
+.iconOrange svg {
+  color: var(--ams-color-feedback-warning);
+}
+
+.iconRed svg {
+  color: var(--ams-color-feedback-error);
+}

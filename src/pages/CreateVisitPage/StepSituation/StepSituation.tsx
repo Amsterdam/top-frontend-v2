@@ -1,7 +1,7 @@
 import { ActionGroup, Button } from "@amsterdam/design-system-react"
 import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
 import dayjs from "dayjs"
-import { RadioControl, TimeControl } from "@amsterdam/ee-ads-rhf-lib"
+import { RadioControl, TimeControl } from "@amsterdam/ee-ads-rhf"
 import type { FormValuesVisit } from "../FormValuesVisit"
 import { useFormContext, useWatch } from "react-hook-form"
 

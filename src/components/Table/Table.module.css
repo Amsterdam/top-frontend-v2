@@ -22,6 +22,16 @@
   border-bottom: 1px solid var(--ams-color-separator);
 }
 
+@media (max-width: 768px) {
+  .tableChevronCell {
+    font-size: 0; /* headertekst verdwijnt */
+  }
+
+  .tableChevronCell i {
+    font-size: inherit; /* herstelt de icon grootte */
+  }
+}
+
 .tableExpandedRow {
   background-color: #fafafa;
 }

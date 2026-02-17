@@ -53,6 +53,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Afrikanerplein 1",
         adresregel2: "1091 PN  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "1994-01-20",
+          langFormaat: "20 januari 1994",
+        },
+      },
       kinderen: [
         {
           naam: {
@@ -217,6 +229,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         },
         gebruikInLopendeTekst: "heer Duck",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "1994-01-20",
+          langFormaat: "20 januari 1994",
+        },
+      },
       kinderen: [
         {
           naam: {
@@ -351,6 +375,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       ouders: [
         {
           naam: {
@@ -415,6 +451,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Kwek Duck",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       ouders: [
         {
@@ -481,6 +529,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       ouders: [
         {
           naam: {
@@ -545,6 +605,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "heer Duck",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "B",
+          omschrijving: "briefadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "1906-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [
         {
@@ -632,6 +704,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       kinderen: [
         {
           naam: {
@@ -718,6 +802,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       kinderen: [],
       ouders: [],
       partners: [
@@ -787,6 +883,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       kinderen: [],
       ouders: [],
       partners: [],
@@ -821,6 +929,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Willem Beentjes",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [],
       ouders: [],
@@ -857,6 +977,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       kinderen: [],
       ouders: [],
       partners: [],
@@ -891,6 +1023,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Juffrouw Ans",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [],
       ouders: [],
@@ -927,6 +1071,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
       },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
+      },
       kinderen: [],
       ouders: [],
       partners: [],
@@ -962,6 +1118,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Inspecteur van der Willighagen",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [],
       ouders: [
@@ -1013,6 +1181,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Priscilla Precise",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [
         {
@@ -1069,6 +1249,18 @@ export const dummyResidentsResponse: ResidentsResponse = {
         gebruikInLopendeTekst: "Professor Eppo Epsilon",
         adresregel1: "Aalbersestraat 281",
         adresregel2: "1067 MD  AMSTERDAM",
+      },
+      verblijfplaats: {
+        type: "Adres",
+        functieAdres: {
+          code: "W",
+          omschrijving: "woonadres",
+        },
+        datumVan: {
+          type: "Datum",
+          datum: "2016-01-20",
+          langFormaat: "20 januari 2016",
+        },
       },
       kinderen: [],
       ouders: [

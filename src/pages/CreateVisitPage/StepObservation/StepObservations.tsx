@@ -4,7 +4,7 @@ import {
   ChevronBackwardIcon,
   ChevronForwardIcon,
 } from "@amsterdam/design-system-react-icons"
-import { CheckboxControlGroup } from "@amsterdam/ee-ads-rhf-lib"
+import { CheckboxControlGroup } from "@amsterdam/ee-ads-rhf"
 import { type FormValuesVisit } from "../FormValuesVisit"
 import { useItinerary } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"

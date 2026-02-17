@@ -1,17 +1,17 @@
-.Wrapper {
+.wrapper {
   display: flex;
 }
 
-.Icon {
+.icon {
   margin-right: 8px;
   display: flex;
   align-items: center;
 }
 
-.Icon svg {
+.icon svg {
   display: block;
 }
 
-.IconHighlight {
+.iconHighlight {
   color: var(--ams-color-interactive);
 }

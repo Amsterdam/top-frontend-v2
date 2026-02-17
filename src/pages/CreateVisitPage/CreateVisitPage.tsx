@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Grid, Heading, StandaloneLink } from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
-import { FormProvider } from "@amsterdam/ee-ads-rhf-lib"
+import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
 import {
   ChevronBackwardIcon,
