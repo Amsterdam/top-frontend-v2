@@ -42,3 +42,7 @@ type Registration = Omit<
     email: string
   }
 }
+
+type Permit = components["schemas"]["Powerbrowser"] & {
+  omschrijvinG_KORT: string | null
+}
