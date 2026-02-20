@@ -47,3 +47,10 @@ export const useMeldingen = (
     lazy: options?.lazy ?? !bagId,
   })
 }
+
+export const usePermits = (bagId?: string, options?: ApiOptions) =>
+  useApi<Permit[]>({
+    ...options,
+    url: makeApiUrl("addresses", bagId, "permits-powerbrowser"),
+    lazy: options?.lazy ?? !bagId,
+  })

@@ -10,7 +10,6 @@ import { useNavigate, useParams } from "react-router"
 
 import {
   AmsterdamCrossSpinner,
-  Card,
   EllipsisActionMenu,
   StatusTag,
 } from "@/components"
@@ -23,6 +22,7 @@ import BAGCard from "./BAGCard/BAGCard"
 import BRPCard from "./BRPCard/BRPCard"
 import LogbookCard from "./LogbookCard/LogbookCard"
 import VakantieverhuurCard from "./VakantieverhuurCard/VakantieverhuurCard"
+import PermitsCard from "./PermitsCard/PermitsCard"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -44,6 +44,8 @@ export default function CaseDetailPage() {
   const [data, { isBusy }] = useCase(Number(caseId))
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
+
+  const bagId = data?.address?.bag_id
 
   if (isBusy) {
     return <AmsterdamCrossSpinner />
@@ -88,10 +90,10 @@ export default function CaseDetailPage() {
             <BRPCard data={data} />
           </Grid.Cell>
           <Grid.Cell span="all">
-            <Card title="Vergunningen">Vergunningen</Card>
+            <PermitsCard bagId={bagId} />
           </Grid.Cell>
           <Grid.Cell span="all">
-            <VakantieverhuurCard bagId={data?.address?.bag_id} />
+            <VakantieverhuurCard bagId={bagId} />
           </Grid.Cell>
         </Grid>
       </Grid.Cell>
