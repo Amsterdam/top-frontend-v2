@@ -10,6 +10,11 @@
 .cardContent {
   padding: 0 16px;
 }
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* ruimte tussen toggle en actions */
+}
 
 .noContentPadding {
   padding: 0 !important;
@@ -19,11 +24,14 @@
   all: unset;
   display: flex;
   align-items: center;
-  width: 100%;
+  justify-content: space-between;
+  flex: 1;
   gap: 16px;
 }
 
 .titleContent {
+  display: flex;
+  align-items: center;
   flex: 1;
 }
 

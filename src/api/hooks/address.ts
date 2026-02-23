@@ -24,6 +24,13 @@ export function useCorporationName(corporationId?: number | null) {
   }, [corporationId, corporations])
 }
 
+export const useDistricts = (options?: ApiOptions) => {
+  return useApi<HousingCorporation[]>({
+    ...options,
+    url: makeApiUrl("addresses", "districts"),
+  })
+}
+
 export const useRegistrations = (bagId?: string, options?: ApiOptions) =>
   useApi<Registration[]>({
     ...options,

@@ -1,0 +1,23 @@
+.masonry {
+  column-count: 1;
+  column-gap: 1.5rem;
+}
+
+.item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+/* tablet */
+@media (min-width: 600px) {
+  .masonry {
+    column-count: 2;
+  }
+}
+
+/* desktop */
+@media (min-width: 1024px) {
+  .masonry {
+    column-count: 3;
+  }
+}

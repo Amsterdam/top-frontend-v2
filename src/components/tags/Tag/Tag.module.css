@@ -4,6 +4,7 @@
 
   display: inline-flex;
   align-items: center;
+  width: max-content;
   font-family: var(--ams-badge-font-family);
   font-weight: 500;
   font-size: var(--ams-paragraph-small-font-size);

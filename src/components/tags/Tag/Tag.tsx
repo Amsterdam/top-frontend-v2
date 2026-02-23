@@ -1,6 +1,6 @@
-import { Icon } from "@amsterdam/design-system-react"
+import { type ReactNode } from "react"
+import { Icon, type IconProps } from "@amsterdam/design-system-react"
 import styles from "./Tag.module.css"
-import type { ComponentType } from "react"
 
 const TAG_COLORS = {
   azure: "#009de6",
@@ -26,12 +26,11 @@ export type TagColor = keyof typeof TAG_COLORS
 type TagProps = {
   name?: string | null
   color?: TagColor
-  icon?: ComponentType
+  svg?: IconProps["svg"]
+  icon?: ReactNode
 }
 
-export function Tag({ name, color = "blue", icon }: TagProps) {
-  const IconComponent = icon
-
+export function Tag({ name, color = "blue", svg, icon }: TagProps) {
   const style: React.CSSProperties = {
     "--tag-color": TAG_COLORS[color],
     color: darkTextColors.includes(color)
@@ -41,7 +40,8 @@ export function Tag({ name, color = "blue", icon }: TagProps) {
 
   return (
     <span className={styles.tag} style={style}>
-      {IconComponent && <Icon svg={IconComponent} size="heading-4" />}
+      {icon}
+      {svg && <Icon svg={svg} size="heading-4" />}
       {name}
     </span>
   )
