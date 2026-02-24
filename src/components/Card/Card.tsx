@@ -12,6 +12,7 @@ type Props = {
   defaultOpen?: boolean
   noContentPadding?: boolean
   className?: string
+  actions?: ReactNode
 }
 
 export function Card({
@@ -21,6 +22,7 @@ export function Card({
   defaultOpen = true,
   noContentPadding = false,
   className,
+  actions,
 }: Props) {
   const hasTitle = Boolean(title)
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -39,20 +41,23 @@ export function Card({
       {hasTitle && (
         <div className={styles.cardTitle}>
           {collapsible ? (
-            <button
-              type="button"
-              className={styles.cardTitleButton}
-              onClick={toggle}
-              aria-expanded={isOpen}
-            >
-              <span className={styles.titleContent}>{renderTitle}</span>
-              <span
-                className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
-                aria-hidden="true"
+            <>
+              <button
+                type="button"
+                className={styles.cardTitleButton}
+                onClick={toggle}
+                aria-expanded={isOpen}
               >
-                <Icon svg={ChevronDownIcon} size="heading-3" />
-              </span>
-            </button>
+                <span className={styles.titleContent}>{renderTitle}</span>
+                <Icon
+                  svg={ChevronDownIcon}
+                  aria-hidden="true"
+                  size="heading-3"
+                  className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
+                />
+              </button>
+              {actions}
+            </>
           ) : (
             renderTitle
           )}

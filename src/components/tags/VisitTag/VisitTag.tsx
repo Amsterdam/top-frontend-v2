@@ -14,17 +14,17 @@ export function VisitTag({ situation }: { situation?: string | null }) {
     situation
 
   let color: TagColor = "azure"
-  let icon
+  let svg
   if (situation === "access_granted") {
     color = "green"
-    icon = SuccessIcon
+    svg = SuccessIcon
   } else if (situation === "nobody_present") {
     color = "orange"
-    icon = InfoIcon
+    svg = InfoIcon
   } else if (situation === "no_cooperation") {
     color = "red"
-    icon = ErrorIcon
+    svg = ErrorIcon
   }
 
-  return <Tag name={name} color={color} icon={icon} />
+  return <Tag name={name} color={color} svg={svg} />
 }

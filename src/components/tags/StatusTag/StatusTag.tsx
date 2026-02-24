@@ -9,15 +9,15 @@ export function StatusTag({ statusName }: { statusName?: string | null }) {
   if (!statusName) return null
 
   let color: TagColor = "azure"
-  let icon = HouseIcon
+  let svg = HouseIcon
 
   if (statusName === "Hercontrole") {
     color = "magenta"
-    icon = HistoryIcon
+    svg = HistoryIcon
   } else if (statusName === "Debrief") {
     color = "green"
-    icon = DocumentCheckMarkIcon
+    svg = DocumentCheckMarkIcon
   }
 
-  return <Tag name={statusName} color={color} icon={icon} />
+  return <Tag name={statusName} color={color} svg={svg} />
 }

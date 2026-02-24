@@ -9,6 +9,7 @@ import SearchAddressPage from "@/pages/SearchAddressPage/SearchAddressPage"
 import SuggestionPage from "@/pages/SuggestionPage/SuggestionPage"
 import CreateVisitPage from "@/pages/CreateVisitPage/CreateVisitPage"
 import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
+import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
 
 export const routes = [
   {
@@ -31,13 +32,13 @@ export const routes = [
       { path: "lijst/nieuw/:themeId/zoeken", element: <SearchAddressPage /> },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
       { path: "team-settings", element: <UnderConstruction /> },
-      { path: "team-settings/:themeId", element: <UnderConstruction /> },
+      { path: "team-settings/:themeId", element: <TeamSettingsPage /> },
       {
         path: "team-settings/:themeId/:daySettingsId",
         element: <UnderConstruction />,
       },
       {
-        path: "team-settings/:themeId/nieuw",
+        path: "team-settings/:themeId/nieuw/:dayOfWeek",
         element: <UnderConstruction />,
       },
       { path: "zoeken", element: <UnderConstruction /> },
