@@ -1,5 +1,4 @@
 .
-├── amsterdam-ee-ads-rhf-lib-0.0.0.tgz
 ├── directory-prompt.txt
 ├── directory-tree.txt
 ├── docker-compose.yml
@@ -15,6 +14,7 @@
 ├── public
 │   ├── favicon -> ../node_modules/@amsterdam/design-system-assets/favicon
 │   └── images
+│       ├── background-settings.webp
 │       └── background.webp
 ├── README.md
 ├── src
@@ -23,6 +23,7 @@
 │   │   ├── hooks
 │   │   │   ├── address.ts
 │   │   │   ├── cases.ts
+│   │   │   ├── daySettings.ts
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
 │   │   │   ├── residents.ts
@@ -58,6 +59,7 @@
 │   │   │   ├── Card.module.css
 │   │   │   └── Card.tsx
 │   │   ├── CaseEventTimeline
+│   │   │   ├── CaseEventTimeline.module.css
 │   │   │   ├── CaseEventTimeline.tsx
 │   │   │   ├── config
 │   │   │   │   ├── eventConfig.ts
@@ -115,6 +117,9 @@
 │   │   │   ├── IconLink.tsx
 │   │   │   ├── index.ts
 │   │   │   └── ReactRouterLink.tsx
+│   │   ├── MobileOnlyWrapper
+│   │   │   ├── MobileOnlyWrapper.module.css
+│   │   │   └── MobileOnlyWrapper.tsx
 │   │   ├── Note
 │   │   │   ├── Note.module.css
 │   │   │   └── Note.tsx
@@ -136,17 +141,24 @@
 │   │   │   └── WritingLoader
 │   │   │       ├── WritingLoader.module.css
 │   │   │       └── WritingLoader.tsx
+│   │   ├── Table
+│   │   │   ├── Table.module.css
+│   │   │   ├── Table.tsx
+│   │   │   └── utils.ts
 │   │   └── tags
 │   │       ├── index.ts
 │   │       ├── PriorityTag
 │   │       │   └── PriorityTag.tsx
 │   │       ├── StatusTag
 │   │       │   └── StatusTag.tsx
-│   │       └── Tag
-│   │           ├── Tag.module.css
-│   │           └── Tag.tsx
+│   │       ├── Tag
+│   │       │   ├── Tag.module.css
+│   │       │   └── Tag.tsx
+│   │       └── VisitTag
+│   │           └── VisitTag.tsx
 │   ├── config
 │   │   ├── env.ts
+│   │   ├── isAcceptanceOrLocalEnvironment.ts
 │   │   └── oidc.ts
 │   ├── forms
 │   │   ├── components
@@ -172,29 +184,61 @@
 │   │   ├── useTokenPayload.ts
 │   │   └── useUserOptions.ts
 │   ├── icons
+│   │   ├── BabyIcon.tsx
 │   │   ├── FootprintsIcon.tsx
-│   │   └── index.ts
+│   │   ├── index.ts
+│   │   └── LogbookIcon.tsx
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
 │   │   ├── CaseDetailPage
-│   │   │   ├── BRPRegisteredPersonsCard
-│   │   │   │   ├── BRPPersonCard.tsx
-│   │   │   │   ├── BRPPersonsCards.tsx
-│   │   │   │   ├── hooks
-│   │   │   │   │   ├── useFilteredResidents.ts
-│   │   │   │   │   └── useResidentDescription.tsx
-│   │   │   │   ├── residentsDataV2.ts
+│   │   │   ├── BAGCard
+│   │   │   │   └── BAGCard.tsx
+│   │   │   ├── BRPCard
+│   │   │   │   ├── BRPCard.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   ├── GenderHeading
+│   │   │   │   │   │   ├── GenderHeading.module.css
+│   │   │   │   │   │   └── GenderHeading.tsx
+│   │   │   │   │   ├── PersonHeader
+│   │   │   │   │   │   └── PersonHeader.tsx
+│   │   │   │   │   └── ResidentDetails
+│   │   │   │   │       └── ResidentDetails.tsx
+│   │   │   │   ├── data
+│   │   │   │   │   └── dummyResidentsResponse.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils
-│   │   │   │       └── residentFormatting.ts
+│   │   │   │       ├── filterDeceasedResidents.ts
+│   │   │   │       ├── formatting.ts
+│   │   │   │       ├── getGenderColor.ts
+│   │   │   │       ├── getResidentFamilyDetails.tsx
+│   │   │   │       └── getResidentPersonalDetails.tsx
 │   │   │   ├── CaseDetailPage.tsx
 │   │   │   ├── CaseInfoCard
 │   │   │   │   └── CaseInfoCard.tsx
 │   │   │   ├── HistoryCard
 │   │   │   │   └── HistoryCard.tsx
-│   │   │   └── ResidenceCard
-│   │   │       └── ResidenceCard.tsx
+│   │   │   ├── LogbookCard
+│   │   │   │   └── LogbookCard.tsx
+│   │   │   ├── PermitsCard
+│   │   │   │   ├── createPermitDescriptionData.ts
+│   │   │   │   ├── Permit
+│   │   │   │   │   └── Permit.tsx
+│   │   │   │   ├── PermitsCard.tsx
+│   │   │   │   ├── PermitTag
+│   │   │   │   │   └── PermitTag.tsx
+│   │   │   │   └── utils.ts
+│   │   │   └── VakantieverhuurCard
+│   │   │       ├── Meldingen
+│   │   │       │   ├── Meldingen.module.css
+│   │   │       │   └── Meldingen.tsx
+│   │   │       ├── Registrations
+│   │   │       │   ├── Registrations.module.css
+│   │   │       │   └── Registrations.tsx
+│   │   │       └── VakantieverhuurCard.tsx
+│   │   ├── ChooseTeamSettingsPage
+│   │   │   ├── ChooseTeamSettingsPage.module.css
+│   │   │   └── ChooseTeamSettingsPage.tsx
 │   │   ├── ChooseThemePage
 │   │   │   ├── ChooseThemePage.module.css
 │   │   │   └── ChooseThemePage.tsx
@@ -239,6 +283,19 @@
 │   │   │   └── SearchAddressPage.tsx
 │   │   ├── SuggestionPage
 │   │   │   └── SuggestionPage.tsx
+│   │   ├── TeamSettingsPage
+│   │   │   ├── DaySettingsCard
+│   │   │   │   ├── DaySettingsCard.tsx
+│   │   │   │   ├── DaySettingsContent
+│   │   │   │   │   ├── DaySettingsContent.module.css
+│   │   │   │   │   └── DaySettingsContent.tsx
+│   │   │   │   ├── DeleteDaySettingsButton
+│   │   │   │   │   └── DeleteDaySettingsButton.tsx
+│   │   │   │   └── utils.ts
+│   │   │   ├── TeamSettingsPage.tsx
+│   │   │   ├── types.ts
+│   │   │   └── WeekConfig
+│   │   │       └── WeekDaySettings.tsx
 │   │   ├── UnderConstruction
 │   │   │   └── UnderConstruction.tsx
 │   │   └── UpdateTeamMemberPage
@@ -251,7 +308,8 @@
 │   │   ├── formatAddress.ts
 │   │   ├── getSchedulePriority.ts
 │   │   ├── getWorkflowName.ts
-│   │   └── index.ts
+│   │   ├── index.ts
+│   │   └── textFormatters.ts
 │   ├── styles
 │   │   ├── animations.css
 │   │   ├── design-system-overrides.css
@@ -263,6 +321,7 @@
 │       ├── Cache.d.ts
 │       ├── Case.d.ts
 │       ├── CaseEvent.d.ts
+│       ├── DaySettings.d.ts
 │       ├── Itinerary.d.ts
 │       └── Visit.d.ts
 ├── tsconfig.app.json
@@ -271,4 +330,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-85 directories, 187 files
+105 directories, 226 files
