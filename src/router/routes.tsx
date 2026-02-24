@@ -10,6 +10,7 @@ import SuggestionPage from "@/pages/SuggestionPage/SuggestionPage"
 import CreateVisitPage from "@/pages/CreateVisitPage/CreateVisitPage"
 import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
 import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
+import ChooseTeamSettingsPage from "@/pages/ChooseTeamSettingsPage/ChooseTeamSettingsPage"
 
 export const routes = [
   {
@@ -31,7 +32,7 @@ export const routes = [
       { path: "lijst/nieuw/:themeId", element: <CreateListPage /> },
       { path: "lijst/nieuw/:themeId/zoeken", element: <SearchAddressPage /> },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
-      { path: "team-settings", element: <UnderConstruction /> },
+      { path: "team-settings", element: <ChooseTeamSettingsPage /> },
       { path: "team-settings/:themeId", element: <TeamSettingsPage /> },
       {
         path: "team-settings/:themeId/:daySettingsId",
