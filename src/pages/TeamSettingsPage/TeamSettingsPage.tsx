@@ -50,28 +50,41 @@ export default function TeamSettingsPage() {
   }
 
   const daySettings = (teamSettings?.day_settings_list || []) as DaySettings[]
+
   return (
     <>
       <PageHeading
         icon={SettingsIcon}
-        label={`Looplijst instellingen (${teamSettings?.name ?? ""})`}
+        label={
+          <span>
+            Looplijst instellingen (
+            {teamSettings?.name && (
+              <span className="animate-tracking-expand">
+                {teamSettings?.name ?? ""}
+              </span>
+            )}
+            )
+          </span>
+        }
         backLinkLabel="Terug"
       />
       <Paragraph>
         Pas hier de instellingen aan die worden gebruikt om automatisch een
         looplijst te genereren.
       </Paragraph>
-      {dayOfWeeks.map((dayOfWeek) => (
-        <WeekDaySettings
-          key={dayOfWeek.id}
-          dayOfWeekId={dayOfWeek.id}
-          dayOfWeekName={dayOfWeek.name}
-          daySettings={daySettings.filter((ds) =>
-            ds?.week_days?.includes(dayOfWeek.id),
-          )}
-          teamSettingsOptions={teamSettingsOptions}
-        />
-      ))}
+      {teamSettings &&
+        dayOfWeeks.map((dayOfWeek, index) => (
+          <WeekDaySettings
+            key={dayOfWeek.id}
+            dayOfWeekId={dayOfWeek.id}
+            dayOfWeekName={dayOfWeek.name}
+            daySettings={daySettings.filter((ds) =>
+              ds?.week_days?.includes(dayOfWeek.id),
+            )}
+            teamSettingsOptions={teamSettingsOptions}
+            animationDelay={index * 0.2}
+          />
+        ))}
     </>
   )
 }

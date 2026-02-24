@@ -11,8 +11,9 @@ type Props = {
   collapsible?: boolean
   defaultOpen?: boolean
   noContentPadding?: boolean
-  className?: string
   actions?: ReactNode
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function Card({
@@ -21,8 +22,9 @@ export function Card({
   collapsible = false,
   defaultOpen = true,
   noContentPadding = false,
-  className,
   actions,
+  className,
+  style,
 }: Props) {
   const hasTitle = Boolean(title)
   const [isOpen, setIsOpen] = useState(defaultOpen)
@@ -37,7 +39,7 @@ export function Card({
   }
 
   return (
-    <div className={`${styles.card} ${className ?? ""}`}>
+    <div className={`${styles.card} ${className ?? ""}`} style={style}>
       {hasTitle && (
         <div className={styles.cardTitle}>
           {collapsible ? (

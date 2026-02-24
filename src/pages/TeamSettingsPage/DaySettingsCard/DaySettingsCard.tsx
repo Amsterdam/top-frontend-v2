@@ -9,11 +9,13 @@ import { DeleteDaySettingsButton } from "./DeleteDaySettingsButton/DeleteDaySett
 type Props = {
   daySetting: DaySettings
   teamSettingsOptions: TeamSettingsOptions
+  animationDelay?: number
 }
 
 export default function DaySettingsCard({
   daySetting,
   teamSettingsOptions,
+  animationDelay = 0,
 }: Props) {
   const navigate = useNavigate()
   return (
@@ -45,7 +47,8 @@ export default function DaySettingsCard({
           />
         </ActionGroup>
       }
-      className="animate-scale-in-center"
+      className="animate-scale-in-center mb-3"
+      style={{ animationDelay: `${animationDelay}s` }}
       collapsible
       defaultOpen={true}
     >
