@@ -10,20 +10,13 @@ export const useRedirectItinerary = () => {
 
   useEffect(() => {
     // Exceptions for certain paths
-    if (location.pathname.startsWith("/team-settings")) {
-      return
-    }
-
-    // If ID's are present, do not redirect
-    if (themeId) {
-      return
-    }
-
-    if (caseId) {
-      return
-    }
-
-    if (!itineraries || itineraryId) {
+    if (
+      location.pathname.startsWith("/team-settings") ||
+      themeId ||
+      caseId ||
+      itineraryId ||
+      !itineraries
+    ) {
       return
     }
 
