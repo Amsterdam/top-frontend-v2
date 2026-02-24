@@ -2,12 +2,12 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { PersonsIcon } from "@amsterdam/design-system-react-icons"
 import { Card, HeadingWithIcon, Table } from "@/components"
 import { useResidents } from "@/api/hooks"
-import { filterDeceasedResidents } from "./utils/filterDeceasedResidents"
 import type { Resident } from "./types"
 import { PersonHeader } from "./components/PersonHeader/PersonHeader"
 import { dummyResidentsResponse } from "./data/dummyResidentsResponse"
 import { ResidentDetails } from "./components/ResidentDetails/ResidentDetails"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
+import { getVisibleResidentsSortedByAge } from "./utils/getVisibleResidentsSortedByAge"
 
 type Props = {
   data?: Case
@@ -34,7 +34,9 @@ export function BRPCard({ data }: Props) {
     isDevOrAcc && data && !isBusy && !residentsData?.personen?.length
   const residentsToUse = showDummyData ? dummyResidentsResponse : residentsData
   const persons = residentsToUse?.personen || []
-  const filteredResidents = filterDeceasedResidents(persons)
+
+  const sortedResidents = getVisibleResidentsSortedByAge(persons)
+
   if (!data || isBusy) return null
   if (hasErrors)
     return (
@@ -44,7 +46,7 @@ export function BRPCard({ data }: Props) {
         </Paragraph>
       </Card>
     )
-  if (!isBusy && residentsData && !filteredResidents.length) {
+  if (!isBusy && residentsData && !sortedResidents.length) {
     return (
       <Card>
         <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
@@ -56,7 +58,7 @@ export function BRPCard({ data }: Props) {
     <Card
       title={
         <HeadingWithIcon
-          label={`Ingeschreven personen (${filteredResidents.length})`}
+          label={`Ingeschreven personen (${sortedResidents.length})`}
           svg={PersonsIcon}
           highlightIcon
         />
@@ -67,7 +69,7 @@ export function BRPCard({ data }: Props) {
     >
       <Table
         columns={columns}
-        data={filteredResidents}
+        data={sortedResidents}
         expandable={{
           expandedRow: (resident) => <ResidentDetails resident={resident} />,
         }}
