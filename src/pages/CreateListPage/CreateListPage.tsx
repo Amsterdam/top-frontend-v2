@@ -148,7 +148,17 @@ export default function CreateListPage() {
     <>
       <PageHeading
         icon={FootprintsIcon}
-        label={`Genereer looplijst (${theme?.name})`}
+        label={
+          <span>
+            Genereer looplijst (
+            {theme?.name && (
+              <span className="animate-tracking-expand">
+                {theme?.name ?? ""}
+              </span>
+            )}
+            )
+          </span>
+        }
       />
 
       <FormProvider form={form} onSubmit={onSubmit}>

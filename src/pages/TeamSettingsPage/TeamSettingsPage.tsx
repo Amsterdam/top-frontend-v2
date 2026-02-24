@@ -55,7 +55,17 @@ export default function TeamSettingsPage() {
     <>
       <PageHeading
         icon={SettingsIcon}
-        label={`Looplijst instellingen (${teamSettings?.name ?? ""})`}
+        label={
+          <span>
+            Looplijst instellingen (
+            {teamSettings?.name && (
+              <span className="animate-tracking-expand">
+                {teamSettings?.name ?? ""}
+              </span>
+            )}
+            )
+          </span>
+        }
         backLinkLabel="Terug"
       />
       <Paragraph>

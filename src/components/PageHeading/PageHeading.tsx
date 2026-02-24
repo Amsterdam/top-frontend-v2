@@ -6,7 +6,7 @@ import { ChevronBackwardIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, type To } from "react-router"
 
 type Props = {
-  label: string
+  label: string | React.ReactNode
   level?: 1 | 2 | 3 | 4 | 5 | 6
   icon?: IconProps["svg"]
   border?: boolean
