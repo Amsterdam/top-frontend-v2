@@ -23,6 +23,7 @@ type CreateItineraryPayload = {
 type UpdateItineraryPayload = {
   id: number
   itinerary: number
+  position?: number
 }
 
 export const useItinerariesSummary = () => {

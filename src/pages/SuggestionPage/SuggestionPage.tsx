@@ -14,13 +14,21 @@ import {
 } from "@/components"
 import { useState } from "react"
 
+function getTopPosition(items?: { position: number }[]): number {
+  if (!items || items.length === 0) {
+    return 1
+  }
+  const lowest = Math.min(...items.map((item) => item.position))
+  return lowest / 2
+}
+
 export default function SuggestionPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const [data, { isBusy }] = useItinerarySuggestions(itineraryId)
   const [itinerary, { updateCache }] = useItinerary(itineraryId)
   const [, { execPost }] = useItineraryItems({ lazy: true })
 
-  // Alleen loading state voor actieve POST requests
+  // Loading state for active POST requests
   const [loadingIds, setLoadingIds] = useState<number[]>([])
 
   const onAddCase = async (caseData: Case) => {
@@ -28,10 +36,13 @@ export default function SuggestionPage() {
 
     setLoadingIds((prev) => [...prev, caseData.id])
 
+    const position = getTopPosition(itinerary?.items)
+
     try {
       const resp = await execPost({
         itinerary: Number(itineraryId),
         id: caseData.id,
+        position,
       })
 
       // Update cache
@@ -42,7 +53,7 @@ export default function SuggestionPage() {
           id: resp.id,
           notes: [],
           visits: [],
-          position: cache.items.length + 1,
+          position,
         })
       })
     } finally {
