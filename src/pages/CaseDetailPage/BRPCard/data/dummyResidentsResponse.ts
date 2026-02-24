@@ -609,8 +609,8 @@ export const dummyResidentsResponse: ResidentsResponse = {
       verblijfplaats: {
         type: "Adres",
         functieAdres: {
-          code: "B",
-          omschrijving: "briefadres",
+          code: "W",
+          omschrijving: "woonadres",
         },
         datumVan: {
           type: "Datum",
@@ -980,8 +980,8 @@ export const dummyResidentsResponse: ResidentsResponse = {
       verblijfplaats: {
         type: "Adres",
         functieAdres: {
-          code: "W",
-          omschrijving: "woonadres",
+          code: "B",
+          omschrijving: "briefadres",
         },
         datumVan: {
           type: "Datum",
