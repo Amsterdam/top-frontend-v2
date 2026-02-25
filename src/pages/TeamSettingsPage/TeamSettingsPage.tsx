@@ -2,6 +2,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { SettingsIcon } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
 import { PageHeading } from "@/components"
+import { AnimatedName } from "@/animations"
 import { WeekDaySettings } from "./WeekConfig/WeekDaySettings"
 import {
   useTeamSettings,
@@ -57,13 +58,10 @@ export default function TeamSettingsPage() {
         icon={SettingsIcon}
         label={
           <span>
-            Looplijst instellingen (
+            Looplijst instellingen{" "}
             {teamSettings?.name && (
-              <span className="animate-tracking-expand">
-                {teamSettings?.name ?? ""}
-              </span>
+              <AnimatedName text={`(${teamSettings.name})`} />
             )}
-            )
           </span>
         }
         backLinkLabel="Terug"

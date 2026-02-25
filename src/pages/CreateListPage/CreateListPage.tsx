@@ -24,6 +24,7 @@ import {
 } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 import { FootprintsIcon } from "@/icons"
+import { AnimatedName } from "@/animations"
 
 type FormValues = {
   teamMembers: string[]
@@ -150,13 +151,8 @@ export default function CreateListPage() {
         icon={FootprintsIcon}
         label={
           <span>
-            Genereer looplijst (
-            {theme?.name && (
-              <span className="animate-tracking-expand">
-                {theme?.name ?? ""}
-              </span>
-            )}
-            )
+            Genereer looplijst
+            {theme?.name && <AnimatedName text={` (${theme.name})`} />}
           </span>
         }
       />
