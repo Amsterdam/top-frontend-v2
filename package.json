@@ -27,7 +27,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/leaflet": "^1.9.20",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/qs": "^6.14.0",
+    "@types/qs": "^6.15.0",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@types/supercluster": "^7.1.3",
