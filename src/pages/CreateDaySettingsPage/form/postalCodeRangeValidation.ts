@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useWatch } from "react-hook-form"
 import type { UseFormReturn } from "react-hook-form"
-import type { FormValues } from "./types"
+import type { FormValues } from "../types"
 
 /**
  * Defines the allowed postal code ranges that users are permitted to enter.

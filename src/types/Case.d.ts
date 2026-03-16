@@ -1,3 +1,5 @@
+type Theme = components["schemas"]["TeamSettingsTheme"]
+
 type Workflow =
   | string
   | {

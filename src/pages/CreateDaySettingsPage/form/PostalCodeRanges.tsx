@@ -3,7 +3,7 @@ import { Row, Column, Button, Paragraph } from "@amsterdam/design-system-react"
 import { DeleteIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { usePostalCodeValidation } from "./postalCodeRangeValidation"
-import type { FormValues } from "./types"
+import type { FormValues } from "../types"
 
 type PostalCodeRangesProps = {
   name: "postal_code_ranges"
