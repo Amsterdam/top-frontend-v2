@@ -13,6 +13,7 @@ import {
   RadioControl,
 } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
+import dayjs from "dayjs"
 import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
@@ -85,7 +86,6 @@ export default function CreateListPage() {
     "id",
     "name",
     teamSettingsDayOptionsData,
-    false,
   )
 
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function CreateListPage() {
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true)
-    const createdAt = new Date().toISOString().split("T")[0]
+    const createdAt = dayjs().format("YYYY-MM-DD")
     const payload = {
       created_at: createdAt,
       team_members: values.teamMembers.map((id) => ({

@@ -15,17 +15,8 @@ import {
   useCorporations,
   useDistricts,
 } from "@/api/hooks"
+import { DAY_OF_WEEKS } from "@/shared/constants/dayOfWeeks"
 import type { TeamSettingsOptions } from "./types"
-
-const dayOfWeeks = [
-  { id: 0, name: "Maandag" },
-  { id: 1, name: "Dinsdag" },
-  { id: 2, name: "Woensdag" },
-  { id: 3, name: "Donderdag" },
-  { id: 4, name: "Vrijdag" },
-  { id: 5, name: "Zaterdag" },
-  { id: 6, name: "Zondag" },
-]
 
 export default function TeamSettingsPage() {
   const { themeId } = useParams<{ themeId: string }>()
@@ -71,7 +62,7 @@ export default function TeamSettingsPage() {
         looplijst te genereren.
       </Paragraph>
       {teamSettings &&
-        dayOfWeeks.map((dayOfWeek, index) => (
+        DAY_OF_WEEKS.map((dayOfWeek, index) => (
           <WeekDaySettings
             key={dayOfWeek.id}
             dayOfWeekId={dayOfWeek.id}
