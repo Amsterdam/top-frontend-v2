@@ -59,7 +59,7 @@ export default function CreateDaySettingsForm({
         )}
 
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          {caseCount && (
+          {caseCount !== undefined && (
             <Paragraph>Aantal mogelijke bezoeken: {caseCount}</Paragraph>
           )}
           <Button
