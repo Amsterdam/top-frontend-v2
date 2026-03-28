@@ -5,8 +5,6 @@ import { makeApiUrl } from "../utils/makeApiUrl"
 import { stringifyQueryParams } from "../utils/stringifyQueryParams"
 import dayjs from "dayjs"
 
-type HousingCorporation = components["schemas"]["HousingCorporation"]
-
 export const useCorporations = (options?: ApiOptions) => {
   return useApi<HousingCorporation[]>({
     ...options,
@@ -25,7 +23,7 @@ export function useCorporationName(corporationId?: number | null) {
 }
 
 export const useDistricts = (options?: ApiOptions) => {
-  return useApi<HousingCorporation[]>({
+  return useApi<District[]>({
     ...options,
     url: makeApiUrl("addresses", "districts"),
   })

@@ -2,6 +2,7 @@
   --tag-color: #000;
   --tag-bg-strength: 10%;
 
+  min-height: 24px;
   display: inline-flex;
   align-items: center;
   width: max-content;

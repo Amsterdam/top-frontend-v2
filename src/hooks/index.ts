@@ -1,5 +1,6 @@
 export * from "./useCurrentUser"
 export * from "./useDialog"
+export * from "./useMediaQuery"
 export * from "./useMoveItineraryItemToBottom"
 export * from "./useRedirectFromState"
 export * from "./useRedirectItinerary"

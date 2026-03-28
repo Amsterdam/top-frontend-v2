@@ -1,0 +1,34 @@
+.formContent {
+  padding-bottom: 100px;
+}
+.stickyBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.stickyBarContent {
+  max-inline-size: var(--ams-page-max-inline-size);
+  margin-inline: auto;
+  padding-block: 16px;
+}
+
+.stickyBarContentRow {
+  padding-inline: var(--ams-space-l);
+}
+
+@media (min-width: 992px) and (max-width: 72.5rem) {
+  .stickyBarContentRow {
+    padding-inline: var(--ams-page-header-padding-inline);
+  }
+}
+
+@media (min-width: 72.5rem) {
+  .stickyBarContentRow {
+    padding-inline: var(--ams-page-header-wide-padding-inline);
+  }
+}

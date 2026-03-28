@@ -23,7 +23,7 @@ export const StepNextVisitSuggestion = ({ onPrevStep, onNextStep }: Props) => {
   const items =
     itinerary?.settings?.day_settings?.team_settings
       ?.suggest_next_visit_choices || []
-  const options = mapToOptions("value", "verbose", items, false)
+  const options = mapToOptions("value", "verbose", items)
 
   const { control } = useFormContext<FormValuesVisit>()
   const suggestNextVisit = useWatch({

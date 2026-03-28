@@ -4,7 +4,7 @@ type IconProps = {
   className?: string
 }
 
-export const BabyIcon: React.FC<IconProps> = ({
+export const TagIcon: React.FC<IconProps> = ({
   color = "currentColor",
   size = "1em",
   className = "",
@@ -21,9 +21,7 @@ export const BabyIcon: React.FC<IconProps> = ({
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"></path>
-    <path d="M15 12h.01"></path>
-    <path d="M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"></path>
-    <path d="M9 12h.01"></path>
+    <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
+    <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
   </svg>
 )
