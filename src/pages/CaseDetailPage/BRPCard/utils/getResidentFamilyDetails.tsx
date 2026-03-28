@@ -30,7 +30,7 @@ const getFamilyNames = (
             <Row key={index} gap="small" alignVertical="center">
               <MobileOnlyWrapper>
                 {isChild ? (
-                  <BabyIcon width={16} height={16} />
+                  <BabyIcon size={16} />
                 ) : (
                   <Icon svg={PersonIcon} />
                 )}
