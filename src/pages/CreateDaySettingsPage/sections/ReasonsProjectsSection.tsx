@@ -1,7 +1,8 @@
 import { Grid } from "@amsterdam/design-system-react"
+import { FolderIcon } from "@amsterdam/design-system-react-icons"
 import { CheckboxControlGroup } from "@amsterdam/ee-ads-rhf"
 
-import { Card } from "@/components"
+import { Card, HeadingWithIcon } from "@/components"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import {
   useTeamSettingsCaseProjects,
@@ -17,7 +18,16 @@ export function ReasonsProjectsSection({ themeId }: Props) {
   const [reasons] = useTeamSettingsReasons(themeId!)
   const [caseProjects] = useTeamSettingsCaseProjects(themeId!)
   return (
-    <Card title="Openingsredenen & Projecten" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Openingsredenen & Projecten"
+          highlightIcon
+          svg={FolderIcon}
+        />
+      }
+      className="mt-3"
+    >
       <Grid gapVertical="large">
         <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
           <CheckboxControlGroup<FormValues>

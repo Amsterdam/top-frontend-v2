@@ -1,11 +1,21 @@
 import { Grid } from "@amsterdam/design-system-react"
 import { TextInputControl, DateControl } from "@amsterdam/ee-ads-rhf"
-import { Card } from "@/components"
+import { Card, HeadingWithIcon } from "@/components"
 import type { FormValues } from "../types"
+import { SettingsIcon } from "@amsterdam/design-system-react-icons"
 
 export function GeneralSettingsSection() {
   return (
-    <Card title="Algemene instellingen" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Algemene instellingen"
+          highlightIcon
+          svg={SettingsIcon}
+        />
+      }
+      className="mt-3"
+    >
       <Grid gapVertical="large" paddingBottom="large">
         <Grid.Cell span={{ narrow: 4, medium: 4, wide: 6 }}>
           <TextInputControl<FormValues>

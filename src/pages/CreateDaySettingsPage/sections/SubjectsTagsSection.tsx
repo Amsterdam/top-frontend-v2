@@ -1,10 +1,11 @@
 import { Grid } from "@amsterdam/design-system-react"
 import { CheckboxControlGroup } from "@amsterdam/ee-ads-rhf"
 
-import { Card } from "@/components"
+import { Card, HeadingWithIcon } from "@/components"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useTeamSettingsSubjects, useTeamSettingsTags } from "@/api/hooks"
 import type { FormValues } from "../types"
+import { TagIcon } from "@/icons/TagIcon"
 
 type Props = {
   themeId?: string
@@ -14,7 +15,17 @@ export function SubjectsTagsSection({ themeId }: Props) {
   const [subjects] = useTeamSettingsSubjects(themeId!)
   const [tags] = useTeamSettingsTags(themeId!)
   return (
-    <Card title="Onderwerpen & Tags" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Onderwerpen & Tags"
+          highlightIcon
+          iconComponent={<TagIcon />}
+        />
+      }
+      className="mt-3"
+    >
+      {/* <TagIcon /> */}
       <Grid gapVertical="large">
         <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
           <CheckboxControlGroup<FormValues>

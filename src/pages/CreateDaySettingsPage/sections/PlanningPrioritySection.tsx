@@ -1,12 +1,13 @@
 import { Grid } from "@amsterdam/design-system-react"
 import { CheckboxControlGroup } from "@amsterdam/ee-ads-rhf"
-import { Card } from "@/components"
+import { Card, HeadingWithIcon } from "@/components"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import {
   useTeamSettingsScheduleTypes,
   useTeamSettingsStateTypes,
 } from "@/api/hooks"
 import type { FormValues } from "../types"
+import { CalendarIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
   themeId: string
@@ -17,7 +18,16 @@ export function PlanningPrioritySection({ themeId }: Props) {
   const [stateTypes] = useTeamSettingsStateTypes(themeId!)
 
   return (
-    <Card title="Planning & Prioriteit" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Planning & Prioriteit"
+          highlightIcon
+          svg={CalendarIcon}
+        />
+      }
+      className="mt-3"
+    >
       <Grid gapVertical="large">
         <Grid.Cell span={{ narrow: 4, medium: 4, wide: 12 }}>
           <CheckboxControlGroup<FormValues>

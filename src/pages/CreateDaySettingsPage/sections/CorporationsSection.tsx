@@ -1,6 +1,8 @@
 import { Grid } from "@amsterdam/design-system-react"
+import { BuildingsIcon } from "@amsterdam/design-system-react-icons"
 import { SelectControl, CheckboxControlGroup } from "@amsterdam/ee-ads-rhf"
-import { Card } from "@/components"
+
+import { Card, HeadingWithIcon } from "@/components"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCorporations } from "@/api/hooks/address"
 import { useMediaQuery, BREAKPOINTS } from "@/hooks"
@@ -11,7 +13,16 @@ export function CorporationsSection() {
   const isMobile = useMediaQuery(BREAKPOINTS.sm)
 
   return (
-    <Card title="Corporaties" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Corporaties"
+          highlightIcon
+          svg={BuildingsIcon}
+        />
+      }
+      className="mt-3"
+    >
       <Grid gapVertical="large">
         <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
           <SelectControl<FormValues>

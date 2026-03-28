@@ -89,7 +89,7 @@ export default function CreateDaySettingsPage() {
     <>
       <PageHeading
         icon={SettingsIcon}
-        label="Toevoegen daginstelling"
+        label="Nieuwe daginstelling"
         backLinkLabel="Terug"
       />
       <CreateDaySettingsForm

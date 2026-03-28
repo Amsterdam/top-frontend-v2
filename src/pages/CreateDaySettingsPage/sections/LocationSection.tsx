@@ -1,12 +1,13 @@
 import { Grid } from "@amsterdam/design-system-react"
+import { MapMarkerIcon } from "@amsterdam/design-system-react-icons"
 import { CheckboxControlGroup, RadioControl } from "@amsterdam/ee-ads-rhf"
 import { useWatch } from "react-hook-form"
 
-import { Card } from "@/components"
-import { PostalCodeRanges } from "../form/PostalCodeRanges"
+import { Card, HeadingWithIcon } from "@/components"
 import { useMediaQuery, BREAKPOINTS } from "@/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useDistricts } from "@/api/hooks/"
+import { PostalCodeRanges } from "../form/PostalCodeRanges"
 import type { FormValues } from "../types"
 
 export function LocationSection() {
@@ -19,7 +20,16 @@ export function LocationSection() {
   const isPostalCode = postalCodesType === "postcode"
 
   return (
-    <Card title="Locatie & Stadsdelen" className="mt-3">
+    <Card
+      title={
+        <HeadingWithIcon
+          label="Locatie & Stadsdelen"
+          svg={MapMarkerIcon}
+          highlightIcon
+        />
+      }
+      className="mt-3"
+    >
       <Grid gapVertical="large">
         <Grid.Cell span={{ narrow: 4, medium: 5, wide: 4 }}>
           <RadioControl<FormValues>

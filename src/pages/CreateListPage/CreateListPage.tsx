@@ -148,7 +148,7 @@ export default function CreateListPage() {
   return (
     <>
       <PageHeading
-        icon={FootprintsIcon}
+        icon={<FootprintsIcon />}
         label={
           <span>
             Genereer looplijst
@@ -222,7 +222,7 @@ export default function CreateListPage() {
               <Button
                 type="submit"
                 disabled={!formState.isValid}
-                icon={FootprintsIcon}
+                icon={<FootprintsIcon />}
                 iconBefore
               >
                 Genereer looplijst

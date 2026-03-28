@@ -19,6 +19,7 @@ import { hasPostalCodeOverlap } from "./form/postalCodeRangeValidation"
 import { AnimatedName } from "@/animations"
 import { DAY_OF_WEEK_MAP } from "@/shared/constants/dayOfWeeks"
 import type { FormValues } from "./types"
+import styles from "./CreateDaySettingsForm.module.css"
 
 type Props = {
   form: ReturnType<typeof useForm<FormValues>>
@@ -51,49 +52,49 @@ export default function CreateDaySettingsForm({
 
   return (
     <FormProvider form={form} onSubmit={onSubmit}>
-      <Row align="between" wrap>
-        {themeName && (
-          <Heading level={2}>
-            <AnimatedName text={`${themeName} - ${nameDayOfWeek ?? "?"}`} />
-          </Heading>
-        )}
-
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          {caseCount !== undefined && (
-            <Paragraph>Aantal mogelijke bezoeken: {caseCount}</Paragraph>
+      <div className={styles.formContent}>
+        <Row align="between" wrap>
+          {themeName && (
+            <Heading level={2}>
+              <AnimatedName text={`${themeName} - ${nameDayOfWeek ?? "?"}`} />
+            </Heading>
           )}
-          <Button
-            type="submit"
-            disabled={!formState.isValid || hasInvalidPostalRanges}
-            icon={SaveIcon}
-            iconBefore
-          >
-            Bereken en bewaar
-          </Button>
+        </Row>
+
+        <GeneralSettingsSection />
+        <LocationSection />
+        {isThemeOnderhuur && <CorporationsSection />}
+        <ReasonsProjectsSection themeId={themeId} />
+        <SubjectsTagsSection themeId={themeId} />
+        <PlanningPrioritySection themeId={themeId} />
+
+        <div className={styles.stickyBar}>
+          <div className={styles.stickyBarContent}>
+            <Row
+              align="end"
+              alignVertical="center"
+              className={styles.stickyBarContentRow}
+            >
+              {caseCount !== undefined && (
+                <Paragraph>Aantal mogelijke bezoeken: {caseCount}</Paragraph>
+              )}
+              <ActionGroup>
+                <Button
+                  type="submit"
+                  disabled={!formState.isValid || hasInvalidPostalRanges}
+                  icon={SaveIcon}
+                  iconBefore
+                >
+                  Bereken en bewaar
+                </Button>
+                <Button variant="secondary" onClick={onCancel}>
+                  Annuleren
+                </Button>
+              </ActionGroup>
+            </Row>
+          </div>
         </div>
-      </Row>
-
-      <GeneralSettingsSection />
-      <LocationSection />
-      {isThemeOnderhuur && <CorporationsSection />}
-      <ReasonsProjectsSection themeId={themeId} />
-      <SubjectsTagsSection themeId={themeId} />
-      <PlanningPrioritySection themeId={themeId} />
-
-      <ActionGroup className="mt-5 mb-5">
-        <Button
-          type="submit"
-          icon={SaveIcon}
-          iconBefore
-          disabled={!formState.isValid || hasInvalidPostalRanges}
-        >
-          Bereken en bewaar
-        </Button>
-
-        <Button variant="secondary" onClick={onCancel}>
-          Annuleren
-        </Button>
-      </ActionGroup>
+      </div>
     </FormProvider>
   )
 }
