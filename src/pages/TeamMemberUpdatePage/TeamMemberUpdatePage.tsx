@@ -20,7 +20,7 @@ type FormValues = {
   teamMembers: string[]
 }
 
-export default function UpdateTeamMemberPage() {
+export default function TeamMemberUpdatePage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
   const [itinerary, { isBusy, execGet, updateCache }] = useItinerary(
