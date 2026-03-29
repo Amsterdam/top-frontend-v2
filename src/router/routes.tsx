@@ -11,7 +11,7 @@ import CreateVisitPage from "@/pages/CreateVisitPage/CreateVisitPage"
 import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
 import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
 import ChooseTeamSettingsPage from "@/pages/ChooseTeamSettingsPage/ChooseTeamSettingsPage"
-import CreateDaySettingsPage from "@/pages/CreateDaySettingsPage/CreateDaySettingsPage"
+import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
 
 export const routes = [
   {
@@ -37,11 +37,11 @@ export const routes = [
       { path: "team-settings/:themeId", element: <TeamSettingsPage /> },
       {
         path: "team-settings/:themeId/:daySettingsId",
-        element: <UnderConstruction />,
+        element: <DaySettingsPage />,
       },
       {
         path: "team-settings/:themeId/nieuw/:dayOfWeek",
-        element: <CreateDaySettingsPage />,
+        element: <DaySettingsPage />,
       },
       { path: "zoeken", element: <UnderConstruction /> },
       { path: "bezoek/:itineraryId/:caseId", element: <CreateVisitPage /> }, // CREATE

@@ -21,7 +21,7 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
   })
 
   return (
-    <div>
+    <div className="mb-1">
       {fields.map((field, index) => {
         const startError =
           formState.errors.postal_code_ranges?.[index]?.range_start?.message

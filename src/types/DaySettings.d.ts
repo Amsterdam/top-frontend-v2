@@ -62,6 +62,6 @@ type DaySettingsPayload = Omit<
   tags?: string[] | null
   team_settings?: string | null
   used_today_count?: string[] | null
-  week_days?: string[] | null
+  week_days?: number[] | null
   week_segments?: string[] | null
 }

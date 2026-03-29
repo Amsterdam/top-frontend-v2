@@ -19,19 +19,19 @@ import { hasPostalCodeOverlap } from "./form/postalCodeRangeValidation"
 import { AnimatedName } from "@/animations"
 import { DAY_OF_WEEK_MAP } from "@/shared/constants/dayOfWeeks"
 import type { FormValues } from "./types"
-import styles from "./CreateDaySettingsForm.module.css"
+import styles from "./DaySettingsForm.module.css"
 
 type Props = {
   form: ReturnType<typeof useForm<FormValues>>
   themeName?: string
   themeId: string
-  dayOfWeek?: string
+  dayOfWeek?: string | number
   caseCount?: number
   onSubmit: (values: FormValues) => void
   onCancel: () => void
 }
 
-export default function CreateDaySettingsForm({
+export default function DaySettingsForm({
   form,
   themeName,
   themeId,
