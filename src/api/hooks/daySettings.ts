@@ -2,17 +2,11 @@ import { useApi } from "@/api/useApi"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import type { ApiOptions } from "../types/apiOptions"
 
-export const useDaySetting = (daySettingId?: number, options?: ApiOptions) =>
-  useApi<DaySettings, DaySettingsPayload>({
-    url: makeApiUrl("day-settings", daySettingId),
-    lazy: options?.lazy ?? !daySettingId,
-  })
-
-export const useDaySettingCasesCount = (
-  daySettingId?: number,
+export const useDaySetting = (
+  daySettingId?: string | number,
   options?: ApiOptions,
 ) =>
-  useApi<DaySettings>({
+  useApi<DaySettings, DaySettingsPayload>({
     url: makeApiUrl("day-settings", daySettingId, "?case-count=true"),
     lazy: options?.lazy ?? !daySettingId,
   })

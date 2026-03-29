@@ -1,6 +1,36 @@
 .
 ├── directory-prompt.txt
 ├── directory-tree.txt
+├── dist
+│   ├── assets
+│   │   ├── AmsterdamSans-Bold-B-eEYlh-.eot
+│   │   ├── AmsterdamSans-Bold-CN8ieXn0.woff
+│   │   ├── AmsterdamSans-BoldItalic-D8IgX2tE.eot
+│   │   ├── AmsterdamSans-BoldItalic-DGVdd_B4.woff2
+│   │   ├── AmsterdamSans-BoldItalic-Iks2g4JK.woff
+│   │   ├── AmsterdamSans-Bold-rXlH1Jru.woff2
+│   │   ├── AmsterdamSans-ExtraBold-0zPbyHYJ.eot
+│   │   ├── AmsterdamSans-ExtraBold-GN1-Za61.woff
+│   │   ├── AmsterdamSans-ExtraBold-hk2GetsY.woff2
+│   │   ├── AmsterdamSans-Italic-D8oH3P5t.woff
+│   │   ├── AmsterdamSans-Italic-Djuh9q7q.eot
+│   │   ├── AmsterdamSans-Italic-DW94SgHh.woff2
+│   │   ├── AmsterdamSans-Light-C9JJu_TU.eot
+│   │   ├── AmsterdamSans-Light-D_AncfMf.woff2
+│   │   ├── AmsterdamSans-Light-iEj3CW9t.woff
+│   │   ├── AmsterdamSans-Regular-BSIiMMb3.eot
+│   │   ├── AmsterdamSans-Regular-nwmnLZDN.woff
+│   │   ├── AmsterdamSans-Regular-QnM7etvR.woff2
+│   │   ├── index-BKT56pco.css
+│   │   └── index-Cz7djWEN.js
+│   ├── favicon
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon.ico
+│   │   └── icon.svg
+│   ├── images
+│   │   ├── background-settings.webp
+│   │   └── background.webp
+│   └── index.html
 ├── docker-compose.yml
 ├── Dockerfile
 ├── entrypoint.sh
@@ -196,7 +226,8 @@
 │   │   ├── BabyIcon.tsx
 │   │   ├── FootprintsIcon.tsx
 │   │   ├── index.ts
-│   │   └── LogbookIcon.tsx
+│   │   ├── LogbookIcon.tsx
+│   │   └── TagIcon.tsx
 │   ├── index.css
 │   ├── main.tsx
 │   ├── pages
@@ -250,31 +281,24 @@
 │   │   │   └── ChooseTeamSettingsPage.tsx
 │   │   ├── ChooseThemePage
 │   │   │   └── ChooseThemePage.tsx
-│   │   ├── CreateDaySettingsPage
-│   │   │   ├── CreateDaySettingsPage.module.css
-│   │   │   ├── CreateDaySettingsPage.tsx
-│   │   │   └── form
-│   │   │       ├── PostalCodeRanges.tsx
-│   │   │       ├── postalCodeRangeValidation.ts
-│   │   │       └── types.ts
-│   │   ├── CreateListPage
-│   │   │   └── CreateListPage.tsx
-│   │   ├── CreateVisitPage
-│   │   │   ├── CreateVisitPage.tsx
-│   │   │   ├── FormValuesVisit.ts
-│   │   │   ├── helpers
-│   │   │   │   ├── mapValues.ts
-│   │   │   │   └── mapVisitToFormValues.ts
-│   │   │   ├── StepCanNextVisitGoAhead
-│   │   │   │   └── StepCanNextVisitGoAhead.tsx
-│   │   │   ├── StepNextVisitSuggestion
-│   │   │   │   └── StepNextVisitSuggestion.tsx
-│   │   │   ├── StepNotesAndDescription
-│   │   │   │   └── StepNotesAndDescription.tsx
-│   │   │   ├── StepObservation
-│   │   │   │   └── StepObservations.tsx
-│   │   │   └── StepSituation
-│   │   │       └── StepSituation.tsx
+│   │   ├── DaySettingsPage
+│   │   │   ├── DaySettingsForm.module.css
+│   │   │   ├── DaySettingsForm.tsx
+│   │   │   ├── DaySettingsPage.tsx
+│   │   │   ├── form
+│   │   │   │   ├── PostalCodeRanges.tsx
+│   │   │   │   └── postalCodeRangeValidation.ts
+│   │   │   ├── sections
+│   │   │   │   ├── CorporationsSection.tsx
+│   │   │   │   ├── GeneralSettingsSection.tsx
+│   │   │   │   ├── LocationSection.tsx
+│   │   │   │   ├── PlanningPrioritySection.tsx
+│   │   │   │   ├── ReasonsProjectsSection.tsx
+│   │   │   │   └── SubjectsTagsSection.tsx
+│   │   │   ├── types.ts
+│   │   │   └── useDaySettingsForm.ts
+│   │   ├── ListCreatePage
+│   │   │   └── ListCreatePage.tsx
 │   │   ├── ListPage
 │   │   │   ├── components
 │   │   │   │   ├── CompleteVisitButton
@@ -298,6 +322,8 @@
 │   │   │   └── SearchAddressPage.tsx
 │   │   ├── SuggestionPage
 │   │   │   └── SuggestionPage.tsx
+│   │   ├── TeamMemberUpdatePage
+│   │   │   └── TeamMemberUpdatePage.tsx
 │   │   ├── TeamSettingsPage
 │   │   │   ├── DaySettingsCard
 │   │   │   │   ├── DaySettingsCard.tsx
@@ -313,8 +339,22 @@
 │   │   │       └── WeekDaySettings.tsx
 │   │   ├── UnderConstruction
 │   │   │   └── UnderConstruction.tsx
-│   │   └── UpdateTeamMemberPage
-│   │       └── UpdateTeamMemberPage.tsx
+│   │   └── VisitCreatePage
+│   │       ├── FormValuesVisit.ts
+│   │       ├── helpers
+│   │       │   ├── mapValues.ts
+│   │       │   └── mapVisitToFormValues.ts
+│   │       ├── StepCanNextVisitGoAhead
+│   │       │   └── StepCanNextVisitGoAhead.tsx
+│   │       ├── StepNextVisitSuggestion
+│   │       │   └── StepNextVisitSuggestion.tsx
+│   │       ├── StepNotesAndDescription
+│   │       │   └── StepNotesAndDescription.tsx
+│   │       ├── StepObservation
+│   │       │   └── StepObservations.tsx
+│   │       ├── StepSituation
+│   │       │   └── StepSituation.tsx
+│   │       └── VisitCreatePage.tsx
 │   ├── router
 │   │   ├── index.tsx
 │   │   └── routes.tsx
@@ -347,4 +387,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-111 directories, 237 files
+116 directories, 272 files
