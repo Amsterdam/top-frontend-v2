@@ -20,7 +20,7 @@ export const StepObservations = ({ onPrevStep, onNextStep }: Props) => {
 
   const items =
     itinerary?.settings?.day_settings?.team_settings?.observation_choices || []
-  const options = mapToOptions("value", "verbose", items, false)
+  const options = mapToOptions("value", "verbose", items)
 
   return (
     <>

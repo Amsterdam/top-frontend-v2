@@ -25,7 +25,7 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
       title={
         <HeadingWithIcon
           label={`Logboek (${visits?.length ?? 0})`}
-          iconComponent={<LogbookIcon width={19} height={19} />}
+          iconComponent={<LogbookIcon size={19} />}
           highlightIcon
         />
       }

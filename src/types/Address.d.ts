@@ -46,3 +46,5 @@ type Registration = Omit<
 type Permit = components["schemas"]["Powerbrowser"] & {
   omschrijvinG_KORT: string | null
 }
+
+type HousingCorporation = components["schemas"]["HousingCorporation"]

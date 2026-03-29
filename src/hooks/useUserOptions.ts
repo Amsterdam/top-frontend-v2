@@ -7,7 +7,7 @@ export function useUserOptions() {
   const [usersData] = useUsers()
 
   const userOptions: Option[] = usersData
-    ? mapToOptions("id", "full_name", usersData.results)
+    ? mapToOptions("id", "full_name", usersData.results, "Maak een keuze")
     : []
 
   return userOptions

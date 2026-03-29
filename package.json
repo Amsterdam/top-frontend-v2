@@ -16,10 +16,10 @@
   "dependencies": {
     "@amsterdam/design-system-assets": "^2.0.0",
     "@amsterdam/design-system-css": "^3.1.0",
-    "@amsterdam/design-system-react": "^3.1.0",
+    "@amsterdam/design-system-react": "^3.2.1",
     "@amsterdam/design-system-react-icons": "^2.0.0",
     "@amsterdam/design-system-tokens": "^3.1.0",
-    "@amsterdam/ee-ads-rhf": "^0.0.1",
+    "@amsterdam/ee-ads-rhf": "^0.0.4",
     "@dnd-kit/sortable": "^10.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

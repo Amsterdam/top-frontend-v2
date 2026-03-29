@@ -1,6 +1,6 @@
 import { IconButton } from "@amsterdam/design-system-react"
 import { DeleteIcon } from "@amsterdam/design-system-react-icons"
-import { useDaySettings } from "@/api/hooks"
+import { useDaySetting } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { useDialog } from "@/hooks/useDialog"
@@ -12,7 +12,7 @@ export function DeleteDaySettingsButton({
   daySettingId: number
   daySettingName: string
 }) {
-  const [, { execDelete, isBusy }] = useDaySettings(daySettingId, {
+  const [, { execDelete, isBusy }] = useDaySetting(daySettingId, {
     lazy: true,
   })
   const { showAlert } = useAlert()

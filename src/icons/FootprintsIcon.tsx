@@ -1,9 +1,25 @@
-export const FootprintsIcon = (props: React.SVGProps<SVGSVGElement>) => (
+type IconProps = {
+  color?: string
+  size?: number
+  className?: string
+}
+
+export const FootprintsIcon: React.FC<IconProps> = ({
+  color = "currentColor",
+  size = "1em",
+  className = "",
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    stroke={color}
+    className={className}
     viewBox="0 0 24 24"
-    stroke="currentColor"
-    {...props}
+    fill="none"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
     <path
       fill="none"

@@ -18,6 +18,11 @@
 │       └── background.webp
 ├── README.md
 ├── src
+│   ├── animations
+│   │   ├── AnimatedName
+│   │   │   ├── AnimatedName.module.css
+│   │   │   └── AnimatedName.tsx
+│   │   └── index.ts
 │   ├── api
 │   │   ├── ApiCacheProvider.tsx
 │   │   ├── hooks
@@ -71,6 +76,9 @@
 │   │   │       ├── eventConfig.helpers.ts
 │   │   │       ├── renderValue.formatters.ts.ts
 │   │   │       └── renderValue.ts
+│   │   ├── ChooseThemeBase
+│   │   │   ├── ChooseThemeBase.module.css
+│   │   │   └── ChooseThemeBase.tsx
 │   │   ├── ConfirmDialog
 │   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
@@ -178,6 +186,7 @@
 │   │   │   └── useTokenPayload.test.ts
 │   │   ├── useCurrentUser.ts
 │   │   ├── useDialog.ts
+│   │   ├── useMediaQuery.ts
 │   │   ├── useMoveItineraryItemToBottom.ts
 │   │   ├── useRedirectFromState.ts
 │   │   ├── useRedirectItinerary.ts
@@ -212,7 +221,8 @@
 │   │   │   │       ├── formatting.ts
 │   │   │   │       ├── getGenderColor.ts
 │   │   │   │       ├── getResidentFamilyDetails.tsx
-│   │   │   │       └── getResidentPersonalDetails.tsx
+│   │   │   │       ├── getResidentPersonalDetails.tsx
+│   │   │   │       └── getVisibleResidentsSortedByAge.ts
 │   │   │   ├── CaseDetailPage.tsx
 │   │   │   ├── CaseInfoCard
 │   │   │   │   └── CaseInfoCard.tsx
@@ -237,11 +247,16 @@
 │   │   │       │   └── Registrations.tsx
 │   │   │       └── VakantieverhuurCard.tsx
 │   │   ├── ChooseTeamSettingsPage
-│   │   │   ├── ChooseTeamSettingsPage.module.css
 │   │   │   └── ChooseTeamSettingsPage.tsx
 │   │   ├── ChooseThemePage
-│   │   │   ├── ChooseThemePage.module.css
 │   │   │   └── ChooseThemePage.tsx
+│   │   ├── CreateDaySettingsPage
+│   │   │   ├── CreateDaySettingsPage.module.css
+│   │   │   ├── CreateDaySettingsPage.tsx
+│   │   │   └── form
+│   │   │       ├── PostalCodeRanges.tsx
+│   │   │       ├── postalCodeRangeValidation.ts
+│   │   │       └── types.ts
 │   │   ├── CreateListPage
 │   │   │   └── CreateListPage.tsx
 │   │   ├── CreateVisitPage
@@ -304,6 +319,8 @@
 │   │   ├── index.tsx
 │   │   └── routes.tsx
 │   ├── shared
+│   │   ├── constants
+│   │   │   └── dayOfWeeks.ts
 │   │   ├── dateFormatters.ts
 │   │   ├── formatAddress.ts
 │   │   ├── getSchedulePriority.ts
@@ -330,4 +347,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-105 directories, 226 files
+111 directories, 237 files

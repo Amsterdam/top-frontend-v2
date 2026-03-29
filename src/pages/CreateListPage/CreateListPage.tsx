@@ -13,6 +13,7 @@ import {
   RadioControl,
 } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
+import dayjs from "dayjs"
 import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
@@ -24,6 +25,7 @@ import {
 } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 import { FootprintsIcon } from "@/icons"
+import { AnimatedName } from "@/animations"
 
 type FormValues = {
   teamMembers: string[]
@@ -84,7 +86,6 @@ export default function CreateListPage() {
     "id",
     "name",
     teamSettingsDayOptionsData,
-    false,
   )
 
   useEffect(() => {
@@ -116,7 +117,7 @@ export default function CreateListPage() {
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true)
-    const createdAt = new Date().toISOString().split("T")[0]
+    const createdAt = dayjs().format("YYYY-MM-DD")
     const payload = {
       created_at: createdAt,
       team_members: values.teamMembers.map((id) => ({
@@ -147,16 +148,11 @@ export default function CreateListPage() {
   return (
     <>
       <PageHeading
-        icon={FootprintsIcon}
+        icon={<FootprintsIcon />}
         label={
           <span>
-            Genereer looplijst (
-            {theme?.name && (
-              <span className="animate-tracking-expand">
-                {theme?.name ?? ""}
-              </span>
-            )}
-            )
+            Genereer looplijst
+            {theme?.name && <AnimatedName text={` (${theme.name})`} />}
           </span>
         }
       />
@@ -226,7 +222,7 @@ export default function CreateListPage() {
               <Button
                 type="submit"
                 disabled={!formState.isValid}
-                icon={FootprintsIcon}
+                icon={<FootprintsIcon />}
                 iconBefore
               >
                 Genereer looplijst
