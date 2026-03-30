@@ -1,0 +1,24 @@
+.dayHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  background: white;
+  padding-top: 0.5rem;
+
+  /* To prevent the `DaySettingsCard` box shadow from overflowing. */
+  margin: 0 -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* optioneel voor mooi effect */
+.daySection {
+  position: relative;
+}
+
+.flexRowCenter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

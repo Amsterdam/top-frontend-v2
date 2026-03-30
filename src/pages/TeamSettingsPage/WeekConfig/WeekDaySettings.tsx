@@ -4,6 +4,7 @@ import { useNavigate } from "react-router"
 import { Divider, Tag } from "@/components"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
 import type { TeamSettingsOptions } from "../types"
+import styles from "./WeekDaySettings.module.css"
 
 type Props = {
   dayOfWeekId: number
@@ -23,26 +24,28 @@ export function WeekDaySettings({
   const navigate = useNavigate()
   return (
     <div
-      className="animate-slide-in-bottom mb-6"
+      className={`animate-slide-in-bottom mb-6 ${styles.daySection}`}
       style={{ animationDelay: `${animationDelay}s` }}
     >
-      <Row align="between" alignVertical="end" wrap className="mt-4">
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <Heading level={2}>{dayOfWeekName}</Heading>
-          <Tag
-            name={`${daySettings?.length ?? 0} actieve instelling${daySettings?.length === 1 ? "" : "en"}`}
-            color="azure"
-          />
-        </div>
-        <Button
-          icon={PlusIcon}
-          iconBefore
-          onClick={() => navigate(`nieuw/${dayOfWeekId}`)}
-        >
-          Nieuwe instelling
-        </Button>
-      </Row>
-      <Divider />
+      <div className={styles.dayHeader}>
+        <Row align="between" alignVertical="end" wrap className="mt-2">
+          <div className={styles.flexRowCenter}>
+            <Heading level={2}>{dayOfWeekName}</Heading>
+            <Tag
+              name={`${daySettings?.length ?? 0} actieve instelling${daySettings?.length === 1 ? "" : "en"}`}
+              color="azure"
+            />
+          </div>
+          <Button
+            icon={PlusIcon}
+            iconBefore
+            onClick={() => navigate(`nieuw/${dayOfWeekId}`)}
+          >
+            Nieuwe instelling
+          </Button>
+        </Row>
+        <Divider />
+      </div>
       {daySettings.length === 0 ? (
         <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
       ) : (
