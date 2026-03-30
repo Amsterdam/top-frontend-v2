@@ -1,7 +1,7 @@
 import { Paragraph } from "@amsterdam/design-system-react"
 import { SettingsIcon } from "@amsterdam/design-system-react-icons"
 import { useParams } from "react-router"
-import { PageHeading } from "@/components"
+import { AmsterdamCrossSpinner, PageHeading } from "@/components"
 import { AnimatedName } from "@/animations"
 import { WeekDaySettings } from "./WeekConfig/WeekDaySettings"
 import {
@@ -20,7 +20,7 @@ import type { TeamSettingsOptions } from "./types"
 
 export default function TeamSettingsPage() {
   const { themeId } = useParams<{ themeId: string }>()
-  const [teamSettings] = useTeamSettings(themeId!)
+  const [teamSettings, { isBusy }] = useTeamSettings(themeId!)
   const [reasons] = useTeamSettingsReasons(themeId!)
   const [scheduleTypes] = useTeamSettingsScheduleTypes(themeId!)
   const [stateTypes] = useTeamSettingsStateTypes(themeId!)
@@ -42,7 +42,9 @@ export default function TeamSettingsPage() {
   }
 
   const daySettings = (teamSettings?.day_settings_list || []) as DaySettings[]
-
+  if (isBusy) {
+    return <AmsterdamCrossSpinner />
+  }
   return (
     <>
       <PageHeading
