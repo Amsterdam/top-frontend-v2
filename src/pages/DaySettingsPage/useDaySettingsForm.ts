@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import dayjs from "dayjs"
 import { useDaySetting, useTheme } from "@/api/hooks"
+import { useAlert } from "@/components/alerts/useAlert"
 import {
   hasPostalCodeOverlap,
   ALLOWED_POSTAL_CODE_RANGES,
@@ -26,6 +27,7 @@ export function useDaySettingsForm({
   const [daySetting, { execPut, execPost, isBusy }] =
     useDaySetting(daySettingsId)
   const [isLoading, setIsLoading] = useState(false)
+  const { showAlert } = useAlert()
 
   const form = useForm<FormValues>({
     mode: "onChange",
@@ -110,11 +112,20 @@ export function useDaySettingsForm({
     }
 
     const exec = daySettingsId ? execPut : execPost
-    const response = await exec(payload, {})
-    if (response?.id) {
-      onSuccess?.(response.id)
-    }
-    setTimeout(() => setIsLoading(false), 350)
+    exec(payload, { clearCacheKeys: ["/team-settings"] })
+      .then((res) => {
+        if (res?.id) {
+          showAlert({
+            title: "Daginstelling opgeslagen!",
+            description: `De daginstelling is succesvol ${daySettingsId ? "bijgewerkt" : "aangemaakt"}.`,
+            severity: "success",
+          })
+          onSuccess?.(res.id)
+        }
+      })
+      .finally(() => {
+        setTimeout(() => setIsLoading(false), 350)
+      })
   }
 
   return {
