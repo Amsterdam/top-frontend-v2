@@ -23,6 +23,7 @@ import BRPCard from "./BRPCard/BRPCard"
 import LogbookCard from "./LogbookCard/LogbookCard"
 import VakantieverhuurCard from "./VakantieverhuurCard/VakantieverhuurCard"
 import PermitsCard from "./PermitsCard/PermitsCard"
+import PermitsCardDecos from "./PermitsCardDecos/PermitsCardDecos"
 
 const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
   narrow: 4,
@@ -91,6 +92,9 @@ export default function CaseDetailPage() {
           </Grid.Cell>
           <Grid.Cell span="all">
             <PermitsCard bagId={bagId} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
+            <PermitsCardDecos bagId={bagId} />
           </Grid.Cell>
           <Grid.Cell span="all">
             <VakantieverhuurCard bagId={bagId} />

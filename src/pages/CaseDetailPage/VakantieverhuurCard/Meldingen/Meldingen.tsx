@@ -29,9 +29,11 @@ export default function Meldingen({ meldingen }: Props) {
           svg={NotificationIcon}
           level={4}
         />
-        <Paragraph size="small">
-          {totalNights} nachten sinds {formatDate(startDate, "D MMM YYYY")}
-        </Paragraph>
+        {meldingen && meldingen.length > 0 && (
+          <Paragraph size="small">
+            {totalNights} nachten sinds {formatDate(startDate, "D MMM YYYY")}
+          </Paragraph>
+        )}
       </Row>
       {!meldingen ||
         (meldingen.length === 0 && (
