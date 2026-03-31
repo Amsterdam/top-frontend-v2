@@ -21,8 +21,8 @@
 │   │   ├── AmsterdamSans-Regular-BSIiMMb3.eot
 │   │   ├── AmsterdamSans-Regular-nwmnLZDN.woff
 │   │   ├── AmsterdamSans-Regular-QnM7etvR.woff2
-│   │   ├── index-BKT56pco.css
-│   │   └── index-Cz7djWEN.js
+│   │   ├── index-DLr3esQc.css
+│   │   └── index-vB5-fKLf.js
 │   ├── favicon
 │   │   ├── apple-touch-icon.png
 │   │   ├── favicon.ico
@@ -262,13 +262,22 @@
 │   │   │   ├── LogbookCard
 │   │   │   │   └── LogbookCard.tsx
 │   │   │   ├── PermitsCard
-│   │   │   │   ├── createPermitDescriptionData.ts
-│   │   │   │   ├── Permit
+│   │   │   │   ├── components
+│   │   │   │   │   ├── PermitTag.tsx
 │   │   │   │   │   └── Permit.tsx
-│   │   │   │   ├── PermitsCard.tsx
-│   │   │   │   ├── PermitTag
-│   │   │   │   │   └── PermitTag.tsx
-│   │   │   │   └── utils.ts
+│   │   │   │   ├── data
+│   │   │   │   │   ├── createPermitDescriptionData.ts
+│   │   │   │   │   ├── dummyPowerBrowserResponse.ts
+│   │   │   │   │   └── utils.ts
+│   │   │   │   └── PermitsCard.tsx
+│   │   │   ├── PermitsCardDecos
+│   │   │   │   ├── components
+│   │   │   │   │   └── DecosPermit.tsx
+│   │   │   │   ├── data
+│   │   │   │   │   ├── createPermitDescriptionData.ts
+│   │   │   │   │   ├── dummyDecosResponse.ts
+│   │   │   │   │   └── utils.ts
+│   │   │   │   └── PermitsCardDecos.tsx
 │   │   │   └── VakantieverhuurCard
 │   │   │       ├── Meldingen
 │   │   │       │   ├── Meldingen.module.css
@@ -336,6 +345,7 @@
 │   │   │   ├── TeamSettingsPage.tsx
 │   │   │   ├── types.ts
 │   │   │   └── WeekConfig
+│   │   │       ├── WeekDaySettings.module.css
 │   │   │       └── WeekDaySettings.tsx
 │   │   ├── UnderConstruction
 │   │   │   └── UnderConstruction.tsx
@@ -387,4 +397,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-116 directories, 272 files
+119 directories, 279 files

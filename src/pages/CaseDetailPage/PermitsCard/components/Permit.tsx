@@ -1,11 +1,17 @@
 import { Heading, Icon, Row } from "@amsterdam/design-system-react"
 import { ErrorIcon, SuccessIcon } from "@amsterdam/design-system-react-icons"
-import { Description, Divider } from "@/components"
-import { createPermitDescriptionData } from "../createPermitDescriptionData"
-import { isValidPermit } from "../utils"
-import { PermitTag } from "../PermitTag/PermitTag"
 
-export function Permit({ permit }: { permit: Permit }) {
+import { Description, Divider } from "@/components"
+import { createPermitDescriptionData } from "../data/createPermitDescriptionData"
+import { isValidPermit } from "../data/utils"
+import { PermitTag } from "./PermitTag"
+
+type Props = {
+  permit: Permit
+  showDivider?: boolean
+}
+
+export function Permit({ permit, showDivider = true }: Props) {
   const isValid = isValidPermit(permit)
   const data = createPermitDescriptionData(permit)
 
@@ -33,7 +39,7 @@ export function Permit({ permit }: { permit: Permit }) {
         <PermitTag status={permit.status} />
       </Row>
       <Description termsWidth="narrow" data={data} />
-      <Divider />
+      {showDivider && <Divider />}
     </>
   )
 }

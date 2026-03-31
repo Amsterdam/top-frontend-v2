@@ -59,3 +59,10 @@ export const usePermits = (bagId?: string, options?: ApiOptions) =>
     url: makeApiUrl("addresses", bagId, "permits-powerbrowser"),
     lazy: options?.lazy ?? !bagId,
   })
+
+export const usePermitsDecos = (bagId?: string, options?: ApiOptions) =>
+  useApi<PermitDecos[]>({
+    ...options,
+    url: makeApiUrl("addresses", bagId, "decos"),
+    lazy: options?.lazy ?? !bagId,
+  })
