@@ -461,8 +461,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Search query parameters */
-        get: operations["search_retrieve"];
+        /** @description Legacy search endpoint */
+        get: operations["search_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/search-v2/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Search v2 endpoint for cases */
+        get: operations["search_v2_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -752,6 +769,9 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        CaseAddress: {
+            bag_id: string;
+        };
         CaseProject: {
             readonly id: number;
             readonly name: string;
@@ -761,6 +781,15 @@ export interface components {
             readonly id: number;
             readonly name: string;
             readonly team: number;
+        };
+        CaseSearch: {
+            id: string;
+            readonly address: components["schemas"]["CaseAddress"];
+            reason: components["schemas"]["IdName"];
+            workflows: components["schemas"]["CaseWorkflowState"][];
+            project?: components["schemas"]["IdName"] | null;
+            subjects: components["schemas"]["IdName"][];
+            tags: components["schemas"]["IdName"][];
         };
         CaseSimple: {
             id: string;
@@ -779,6 +808,9 @@ export interface components {
             readonly id: number;
             readonly name: string;
             readonly team: number;
+        };
+        CaseWorkflowState: {
+            name: string;
         };
         DaySettings: {
             readonly id: number;
@@ -815,12 +847,25 @@ export interface components {
             readonly id: number;
             readonly name: string;
         };
+        IdName: {
+            id: number;
+            name: string;
+        };
         Itinerary: {
             readonly id: number;
             /** Format: date */
             readonly created_at: string;
             team_members: components["schemas"]["ItineraryTeamMember"][];
             readonly items: components["schemas"]["ItineraryItem"][];
+            readonly settings: components["schemas"]["ItinerarySettings"];
+            readonly postal_code_settings: components["schemas"]["PostalCodeSettings"][];
+        };
+        ItineraryDetail: {
+            readonly id: number;
+            /** Format: date */
+            readonly created_at: string;
+            team_members: components["schemas"]["ItineraryTeamMember"][];
+            items: components["schemas"]["ItineraryItemDetail"][];
             readonly settings: components["schemas"]["ItinerarySettings"];
             readonly postal_code_settings: components["schemas"]["PostalCodeSettings"][];
         };
@@ -837,6 +882,13 @@ export interface components {
             id: string;
             /** Format: double */
             position?: number;
+        };
+        ItineraryItemDetail: {
+            readonly id: number;
+            /** Format: double */
+            position: number;
+            readonly notes: components["schemas"]["Note"][];
+            readonly visits: components["schemas"]["Visit"][];
         };
         ItineraryItemUpdate: {
             readonly id: number;
@@ -863,6 +915,8 @@ export interface components {
             readonly id: number;
             readonly team_members: string;
             readonly theme: string;
+            readonly num_cases: number;
+            readonly day_settings_name: string;
         };
         ItineraryTeamMember: {
             readonly id: number;
@@ -1812,7 +1866,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Itinerary"];
+                    "application/json": components["schemas"]["ItineraryDetail"];
                 };
             };
         };
@@ -2332,30 +2386,41 @@ export interface operations {
             };
         };
     };
-    search_retrieve: {
+    search_list: {
         parameters: {
-            query?: {
-                /** @description Postal Code */
-                postalCode?: string;
-                /** @description Street Name */
-                streetName?: string;
-                /** @description Street Number */
-                streetNumber?: string;
-                /** @description Suffix */
-                suffix?: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CaseSearch"][];
+                };
+            };
+        };
+    };
+    search_v2_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseSearch"][];
+                };
             };
         };
     };

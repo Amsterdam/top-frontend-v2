@@ -27,7 +27,7 @@ type UpdateItineraryPayload = {
 }
 
 export const useItinerariesSummary = () => {
-  return useApi<Itinerary[]>({
+  return useApi<components["schemas"]["ItinerarySummary"][]>({
     url: makeApiUrl("itineraries", "summary"),
   })
 }

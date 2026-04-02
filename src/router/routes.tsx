@@ -12,6 +12,7 @@ import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
 import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
 import ChooseTeamSettingsPage from "@/pages/ChooseTeamSettingsPage/ChooseTeamSettingsPage"
 import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
+import ChooseListPage from "@/pages/ChooseListPage/ChooseListPage"
 
 export const routes = [
   {
@@ -20,7 +21,7 @@ export const routes = [
     errorElement: <NotFound />,
     children: [
       { path: "zaken/:caseId", element: <CaseDetailPage /> },
-      { path: "kies-looplijst", element: <UnderConstruction /> },
+      { path: "kies-looplijst", element: <ChooseListPage /> },
       { path: "lijst", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId", element: <ListPage /> },
       {
