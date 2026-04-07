@@ -99,6 +99,13 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
         isFetchingRef.current = true
         setIsBusy(true)
 
+        const response = await request<Schema>(
+          options.method as HttpMethod,
+          url,
+          payload,
+          { protected: isProtected },
+        )
+
         if (isMutateOptions(options)) {
           if (!options.skipCacheClear) {
             cache.delete(url)
@@ -114,13 +121,6 @@ export const useApi = <Schema, Payload = Partial<Schema>>({
             })
           }
         }
-
-        const response = await request<Schema>(
-          options.method as HttpMethod,
-          url,
-          payload,
-          { protected: isProtected },
-        )
 
         if (
           isGetOptions(options) ||
