@@ -1,7 +1,9 @@
 import {
   Button,
   Column,
+  Grid,
   Heading,
+  LinkList,
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
@@ -37,39 +39,35 @@ export function ChooseThemeBase({
   }
 
   return (
-    <div
-      className={
-        settingsIllustration
-          ? styles.settingsIllustration
-          : styles.defaultIllustration
-      }
-    >
-      <PageHeading icon={icon} label={title} />
-      <Heading level={2}>Selecteer een team</Heading>
-      <div className="animate-tracking-expand mt-3 mb-3">
-        {currentUser?.first_name && (
-          <>
-            <Paragraph>
-              <Greeting /> <strong>{currentUser.first_name}!</strong>
-            </Paragraph>
-            {description && <Paragraph>{description}</Paragraph>}
-          </>
-        )}
-      </div>
-      <Column alignHorizontal="start">
-        {themes.map((theme, index) => (
-          <Button
-            key={theme.id}
-            variant="secondary"
-            icon={ChevronForwardIcon}
-            className="animate-fade-slide-in-bottom"
-            style={{ animationDelay: `${index * 0.1}s` }}
-            onClick={() => handleClick(theme.id)}
-          >
-            {theme.name}
-          </Button>
-        ))}
-      </Column>
-    </div>
+    <Grid paddingVertical="large">
+      <Grid.Cell span="all">
+        <Column gap="small">
+          <Heading level={1}>{title}</Heading>
+          <Heading level={2}>Selecteer een team</Heading>
+          {currentUser?.first_name && (
+            <>
+              <Paragraph>
+                <Greeting /> <strong>{currentUser.first_name}!</strong>
+              </Paragraph>
+              {description && (
+                <Paragraph className="ams-mb-m">{description}</Paragraph>
+              )}
+            </>
+          )}
+          <LinkList>
+            {themes.map((theme, index) => (
+              <LinkList.Link
+                key={theme.id}
+                icon={ChevronForwardIcon}
+                style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => handleClick(theme.id)}
+              >
+                {theme.name}
+              </LinkList.Link>
+            ))}
+          </LinkList>
+        </Column>
+      </Grid.Cell>
+    </Grid>
   )
 }
