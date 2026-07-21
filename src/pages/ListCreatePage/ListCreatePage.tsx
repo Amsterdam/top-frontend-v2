@@ -5,6 +5,7 @@ import {
   Label,
   Column,
   ActionGroup,
+  Heading,
 } from "@amsterdam/design-system-react"
 import { useLocation, useNavigate, useParams } from "react-router"
 import {
@@ -147,19 +148,15 @@ export default function CreateListPage() {
 
   return (
     <>
-      <PageHeading
-        icon={<FootprintsIcon />}
-        label={
-          <span>
-            Genereer looplijst
-            {theme?.name && <AnimatedName text={` (${theme.name})`} />}
-          </span>
-        }
-      />
-
       <FormProvider form={form} onSubmit={onSubmit}>
         <Grid paddingBottom="x-large" paddingTop="large">
-          <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={1}>
+              Genereer looplijst
+              {theme?.name && ` (${theme.name})`}
+            </Heading>
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <TeamMembersFields
               teamMembers={teamMembers}
               userOptions={userOptions}

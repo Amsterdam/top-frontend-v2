@@ -1,7 +1,7 @@
-import { Heading, Icon, Row } from "@amsterdam/design-system-react"
+import { Badge, Heading, Icon, Row } from "@amsterdam/design-system-react"
 import { ErrorIcon, SuccessIcon } from "@amsterdam/design-system-react-icons"
 
-import { Description, Divider, Tag } from "@/components"
+import { Description } from "@/components"
 import { createPermitDescriptionData } from "../data/createPermitDescriptionData"
 import { isDateValid } from "../data/utils"
 
@@ -10,7 +10,7 @@ type Props = {
   showDivider?: boolean
 }
 
-export function DecosPermit({ permit, showDivider = true }: Props) {
+export function DecosPermit({ permit }: Props) {
   const { permit_type, permit_granted } = permit
   const isGranted = permit_granted === "GRANTED"
   const hasValidDate = isDateValid(permit)
@@ -25,9 +25,9 @@ export function DecosPermit({ permit, showDivider = true }: Props) {
         gap="small"
         alignVertical="center"
         align="between"
-        className="mb-3"
+        className="ams-mb-s"
       >
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <Row wrap gap="small" alignVertical="center">
           <Icon
             svg={isValid ? SuccessIcon : ErrorIcon}
             size="heading-3"
@@ -38,11 +38,10 @@ export function DecosPermit({ permit, showDivider = true }: Props) {
             }}
           />
           <Heading level={3}>{permit_type}</Heading>
-        </div>
-        {hasExpired && <Tag name="Verlopen" color="red" />}
+        </Row>
+        {hasExpired && <Badge label="Verlopen" color="red" />}
       </Row>
       <Description termsWidth="narrow" data={data} />
-      {showDivider && <Divider />}
     </>
   )
 }

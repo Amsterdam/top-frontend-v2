@@ -6,7 +6,7 @@ import {
   Heading,
 } from "@amsterdam/design-system-react"
 import { MinusIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
-import { Description, Divider } from "@/components"
+import { Description } from "@/components"
 import { EVENT_CONFIG } from "./config/eventConfig"
 import { buildDescriptionData } from "./utils/buildDescriptionData"
 import styles from "./CaseEventTimeline.module.css"
@@ -20,7 +20,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
     [data],
   )
 
-  const visibleEvents = showAll ? events : events.slice(0, 1)
+  const visibleEvents = showAll ? events : events.slice(0, 3)
 
   // Count total occurrences per type (excluding GENERIC_TASK)
   const totalCountPerType = useMemo(() => {
@@ -101,7 +101,6 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                   termsWidth="medium"
                   className="mt-4"
                 />
-                <Divider className={styles.customDivider} />
               </ProgressList.Step>
             )
           }
@@ -139,7 +138,6 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                         termsWidth="medium"
                         className="mt-4"
                       />
-                      <Divider className={styles.customDivider} />
                     </ProgressList.Substep>
                   )
                 })}

@@ -62,7 +62,6 @@ export function SortableItem({
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <div
-        className={animate ? "animate-slide-in-left" : ""}
         style={{
           animationDelay: `${animationDelay}s`,
         }}

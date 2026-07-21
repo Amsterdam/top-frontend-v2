@@ -1,16 +1,14 @@
-import { Row } from "@amsterdam/design-system-react"
 import {
   Card,
   Description,
   GoogleMapsButton,
-  HeadingWithIcon,
   PriorityTag,
   Tag,
 } from "@/components"
 
 import { getSchedulePriority } from "@/shared"
 import { useCorporationName } from "@/api/hooks"
-import { InfoIcon } from "@amsterdam/design-system-react-icons"
+import { SuitcaseIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
   data?: Case
@@ -26,22 +24,15 @@ export default function CaseInfoCard({ data }: Props) {
 
   return (
     <Card
-      title={
-        <Row align="between" wrap>
-          <HeadingWithIcon
-            label="Zaakinformatie"
-            svg={InfoIcon}
-            highlightIcon
-          />
-          <GoogleMapsButton
-            title="Bekijk op Google Maps"
-            addresses={[data?.address] as Address[]}
-            as="link"
-          />
-        </Row>
+      title="Zaakinformatie"
+      icon={SuitcaseIcon}
+      actions={
+        <GoogleMapsButton
+          title="Bekijk op Google Maps"
+          addresses={[data?.address] as Address[]}
+          as="link"
+        />
       }
-      className="animate-scale-in-center"
-      collapsible
     >
       <Description
         termsWidth="narrow"

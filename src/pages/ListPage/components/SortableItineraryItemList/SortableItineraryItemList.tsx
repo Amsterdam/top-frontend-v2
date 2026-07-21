@@ -16,6 +16,7 @@ import { useItinerary, useItineraryItem } from "@/api/hooks"
 import { calculateNewPosition, itemsPositionSorter } from "./utils"
 import { SortableItem } from "./SortableItem"
 import { ItineraryListItem } from "@/components"
+import { Column } from "@amsterdam/design-system-react"
 
 type Props = {
   itineraryId: string
@@ -83,11 +84,13 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
       onDragStart={handleDragStart}
     >
       <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-        {sortedItems.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} animationDelay={index * 0.2}>
-            <ItineraryListItem item={item} />
-          </SortableItem>
-        ))}
+        <Column>
+          {sortedItems.map((item) => (
+            <SortableItem key={item.id} id={item.id}>
+              <ItineraryListItem item={item} />
+            </SortableItem>
+          ))}
+        </Column>
       </SortableContext>
     </DndContext>
   )

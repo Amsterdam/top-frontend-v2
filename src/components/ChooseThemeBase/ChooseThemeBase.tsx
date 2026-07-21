@@ -1,5 +1,4 @@
 import {
-  Button,
   Column,
   Grid,
   Heading,
@@ -9,9 +8,8 @@ import {
 import { ChevronForwardIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import { useThemes } from "@/api/hooks"
-import { Greeting, PageHeading } from "@/components"
+import { Greeting } from "@/components"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
-import styles from "./ChooseThemeBase.module.css"
 
 interface ChooseThemeBaseProps {
   title: string
@@ -24,8 +22,6 @@ interface ChooseThemeBaseProps {
 export function ChooseThemeBase({
   title,
   description,
-  icon,
-  settingsIllustration = false,
   onThemeClick,
 }: ChooseThemeBaseProps) {
   const [themesData] = useThemes()

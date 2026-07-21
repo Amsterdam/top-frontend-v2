@@ -4,6 +4,9 @@ import { resolve } from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
+  css: {
+    devSourcemap: true,
+  },
   plugins: [react()],
   server: {
     port: 3000,

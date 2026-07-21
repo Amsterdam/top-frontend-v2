@@ -1,4 +1,10 @@
 .card {
+  background-color: var(--ams-grid-cell-background-color);
+  padding-block: var(--ams-grid-cell-padding-block);
+  padding-inline: var(--ams-grid-cell-padding-inline);
+}
+
+/*.card {
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
   border: 1px solid rgba(38, 85, 115, 0.15);
@@ -13,7 +19,7 @@
 .cardTitle {
   display: flex;
   align-items: center;
-  gap: 16px; /* ruimte tussen toggle en actions */
+  gap: 16px;
 }
 
 .noContentPadding {
@@ -74,4 +80,4 @@
 .collapsibleOpen .collapsibleInner {
   opacity: 1;
   transform: translateY(0);
-}
+}*/
