@@ -61,7 +61,7 @@ export default function CaseDetailPage() {
       <Grid.Cell span="all" appearance="transparent">
         <Row align="between" wrap>
           <Row wrap alignVertical="center">
-            <Heading level={2}>{formatAddress(data?.address, true)}</Heading>
+            <Heading level={1}>{formatAddress(data?.address, true)}</Heading>
             <StatusTag statusName={statusName} />
           </Row>
           <ActionGroup>

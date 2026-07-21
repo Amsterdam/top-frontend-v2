@@ -38,7 +38,7 @@ export default function ListPage() {
       <Grid.Cell span="all" appearance="transparent">
         <Row align="between" wrap>
           <Heading
-            level={2}
+            level={1}
           >{`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
           <Row wrap align="end">
             <CopyToClipboardButton itinerary={itinerary} />
@@ -54,7 +54,7 @@ export default function ListPage() {
         </Row>
       </Grid.Cell>
       <Grid.Cell as="aside" span={{ narrow: 4, medium: 8, wide: 4 }}>
-        <Column gap="none">
+        <Column gap="none" className="ams-mb-xl">
           <Heading level={3}>
             {itinerary?.settings.day_settings.team_settings.name} –{" "}
             {itinerary?.settings.day_settings.name}
@@ -65,7 +65,7 @@ export default function ListPage() {
               .join(", ")}
           </Paragraph>
         </Column>
-        <Row align="between" wrap className="mt-3">
+        <Row align="between" wrap>
           <GoogleMapsButton addresses={addresses} />
           <Button
             variant="secondary"

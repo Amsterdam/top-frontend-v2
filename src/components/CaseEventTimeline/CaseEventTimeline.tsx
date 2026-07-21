@@ -64,7 +64,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
 
   return (
     <>
-      <ProgressList headingLevel={3}>
+      <ProgressList headingLevel={3} className="ams-mb-xl">
         {groupedEvents.map((group, groupIndex) => {
           const firstEvent = group[0]
           const config = EVENT_CONFIG[firstEvent.type]

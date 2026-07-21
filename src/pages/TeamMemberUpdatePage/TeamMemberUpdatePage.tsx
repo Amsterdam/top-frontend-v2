@@ -97,49 +97,35 @@ export default function TeamMemberUpdatePage() {
   }
 
   return (
-    <>
-      <div>
-        <Column gap="none">
-          <Heading
-            level={2}
-            className="mb-3"
-          >{`Wijzig teamleden looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
-          <Heading level={3}>
-            {itinerary?.settings.day_settings.team_settings.name} –{" "}
-            {itinerary?.settings.day_settings.name}
-          </Heading>
-          <Paragraph>
-            {itinerary?.team_members
-              .map((member) => member.user.full_name)
-              .join(", ")}
-          </Paragraph>
-        </Column>
-        <Divider />
+    <Grid paddingVertical="large" gapVertical="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Heading
+          level={1}
+        >{`Wijzig teamleden looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
+        <Paragraph size="large">
+          {itinerary?.settings.day_settings.team_settings.name} –{" "}
+          {itinerary?.settings.day_settings.name}
+        </Paragraph>
+      </Grid.Cell>
+      <Grid.Cell span="all">
         <FormProvider form={form} onSubmit={onSubmit}>
-          <Grid paddingBottom="x-large">
-            <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
-              <TeamMembersFields
-                teamMembers={teamMembers}
-                userOptions={userOptions}
-                showCurrentUserWarning
-                currentUserId={currentUser?.id}
-              />
+          <TeamMembersFields
+            teamMembers={teamMembers}
+            userOptions={userOptions}
+            showCurrentUserWarning
+            currentUserId={currentUser?.id}
+          />
 
-              <ActionGroup className="mt-3">
-                <Button
-                  type="submit"
-                  disabled={!formState.isValid || isUpdating}
-                >
-                  {isUpdating ? "Opslaan…" : "Opslaan"}
-                </Button>
-                <Button variant="secondary" onClick={() => navigate(-1)}>
-                  Annuleren
-                </Button>
-              </ActionGroup>
-            </Grid.Cell>
-          </Grid>
+          <ActionGroup className="mt-3">
+            <Button type="submit" disabled={!formState.isValid || isUpdating}>
+              {isUpdating ? "Opslaan…" : "Opslaan"}
+            </Button>
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Annuleren
+            </Button>
+          </ActionGroup>
         </FormProvider>
-      </div>
-    </>
+      </Grid.Cell>
+    </Grid>
   )
 }

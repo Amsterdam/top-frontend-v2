@@ -1,17 +1,11 @@
-import { Paragraph } from "@amsterdam/design-system-react"
+import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
 import { useParams } from "react-router"
 import {
   useItinerary,
   useItineraryItems,
   useItinerarySuggestions,
 } from "@/api/hooks"
-import {
-  AmsterdamCrossSpinner,
-  Divider,
-  AnimatedItineraryListItem,
-  ItineraryListItem,
-  PageHeading,
-} from "@/components"
+import { AmsterdamCrossSpinner, ItineraryListItem } from "@/components"
 import { useState } from "react"
 
 function getTopPosition(items?: { position: number }[]): number {
@@ -68,37 +62,41 @@ export default function SuggestionPage() {
   }
 
   return (
-    <>
-      <PageHeading
-        label="Voeg een zaak toe aan je looplijst"
-        backLinkLabel="Terug"
-      />
-      <Paragraph>Deze zaken liggen dichtbij de adressen in je lijst:</Paragraph>
-      <Divider />
+    <Grid paddingVertical="large" gapVertical="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Heading level={1}>Voeg een zaak toe aan je looplijst</Heading>
+      </Grid.Cell>
 
-      {cases.length === 0 && (
-        <div style={{ marginTop: "1rem" }}>
-          <Paragraph style={{ fontStyle: "italic", display: "inline" }}>
-            Geen suggesties beschikbaar.
-          </Paragraph>
-          <span>😢</span>
-        </div>
-      )}
+      <Grid.Cell span="all">
+        {cases.length === 0 && (
+          <div style={{ marginTop: "1rem" }}>
+            <Paragraph style={{ fontStyle: "italic", display: "inline" }}>
+              Geen suggesties beschikbaar.
+            </Paragraph>
+            <span>😢</span>
+          </div>
+        )}
 
-      {cases.map((caseData, index) => {
-        const isAdded = itinerary?.items.some((i) => i.case.id === caseData.id)
-        const isLoading = loadingIds.includes(caseData.id)
-        return (
-          <AnimatedItineraryListItem key={caseData.id} index={index}>
-            <ItineraryListItem
-              item={{ case: caseData } as ItineraryItem}
-              variant="addSuggestedCase"
-              onAdd={() => onAddCase(caseData)}
-              status={isAdded ? "added" : isLoading ? "loading" : "idle"}
-            />
-          </AnimatedItineraryListItem>
-        )
-      })}
-    </>
+        {cases.map((caseData) => {
+          const isAdded = itinerary?.items.some(
+            (i) => i.case.id === caseData.id,
+          )
+          const isLoading = loadingIds.includes(caseData.id)
+          return (
+            <div key={caseData.id}>
+              <Paragraph>
+                Deze zaken liggen dichtbij de adressen in je lijst:
+              </Paragraph>
+              <ItineraryListItem
+                item={{ case: caseData } as ItineraryItem}
+                variant="addSuggestedCase"
+                onAdd={() => onAddCase(caseData)}
+                status={isAdded ? "added" : isLoading ? "loading" : "idle"}
+              />
+            </div>
+          )
+        })}
+      </Grid.Cell>
+    </Grid>
   )
 }

@@ -1,49 +1,49 @@
 import { Outlet } from "react-router"
 import {
-  LinkList,
   Menu,
   Page,
   PageFooter,
   PageHeader,
 } from "@amsterdam/design-system-react"
-import { LogOutIcon, SearchIcon } from "@amsterdam/design-system-react-icons"
+import {
+  HouseCanalIcon,
+  LogOutIcon,
+  SearchIcon,
+} from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import { useRedirectItinerary } from "@/hooks"
-import { usePageHeaderOverlay } from "./usePageHeaderOverlay"
 
-import styles from "./DefaultLayout.module.css"
-
-type HeaderAction = {
-  key: string
-  label: string
-  icon: React.ComponentType
-  onClick?: (e: React.MouseEvent) => void
-}
+// type HeaderAction = {
+//   key: string
+//   label: string
+//   icon: React.ComponentType
+//   onClick?: (e: React.MouseEvent) => void
+// }
 
 export function DefaultLayout() {
   useRedirectFromState()
   useRedirectItinerary()
   const auth = useAuth()
 
-  const headerActions: HeaderAction[] = [
-    {
-      key: "zoeken",
-      label: "Zoeken",
-      icon: SearchIcon,
-    },
-    {
-      key: "uitloggen",
-      label: "Uitloggen",
-      icon: LogOutIcon,
-      onClick: (e) => {
-        e.preventDefault()
-        auth.signoutRedirect()
-      },
-    },
-  ]
+  // const headerActions: HeaderAction[] = [
+  //   {
+  //     key: "zoeken",
+  //     label: "Zoeken",
+  //     icon: SearchIcon,
+  //   },
+  //   {
+  //     key: "uitloggen",
+  //     label: "Uitloggen",
+  //     icon: LogOutIcon,
+  //     onClick: (e) => {
+  //       e.preventDefault()
+  //       auth.signoutRedirect()
+  //     },
+  //   },
+  // ]
 
   return (
     <Page withMenu>
@@ -64,6 +64,9 @@ export function DefaultLayout() {
         className="ams-page__area--header"
       >
         <Menu>
+          <Menu.Link href="/" icon={HouseCanalIcon}>
+            Home
+          </Menu.Link>
           <Menu.Link href="/zoeken" icon={SearchIcon}>
             Zoeken
           </Menu.Link>
@@ -81,6 +84,9 @@ export function DefaultLayout() {
       </PageHeader>
 
       <Menu className="ams-page__area--menu" inWideWindow>
+        <Menu.Link href="/" icon={HouseCanalIcon}>
+          Home
+        </Menu.Link>
         <Menu.Link href="/zoeken" icon={SearchIcon}>
           Zoeken
         </Menu.Link>
