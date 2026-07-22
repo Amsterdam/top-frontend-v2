@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { IconButton } from "@amsterdam/design-system-react"
+import { Button } from "@amsterdam/design-system-react"
 import {
   ClipboardIcon,
   CheckMarkIcon,
@@ -23,17 +23,13 @@ export function CopyToClipboardButton({ itinerary }: { itinerary: Itinerary }) {
   }
 
   return (
-    <IconButton
-      svg={copied ? CheckMarkIcon : ClipboardIcon}
-      label="Kopieer naar klembord"
-      title={copied ? "Gekopieerd!" : "Kopieer naar klembord"}
-      size="heading-1"
+    <Button
+      icon={copied ? CheckMarkIcon : ClipboardIcon}
       onClick={handleCopy}
-      style={{
-        color: copied ? "#00a03c" : undefined,
-        transition: "color 300ms ease",
-      }}
-    />
+      variant="secondary"
+    >
+      {copied ? "Gekopieerd!" : "Kopieer naar klembord"}
+    </Button>
   )
 }
 

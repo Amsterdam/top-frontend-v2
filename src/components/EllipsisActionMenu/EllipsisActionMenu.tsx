@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  type CSSProperties,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 import { createPortal } from "react-dom"
 import {
   Button,
@@ -11,7 +18,7 @@ import styles from "./EllipsisActionMenu.module.css"
 type Action = {
   label: string
   onClick: () => void
-  icon?: IconProps["svg"]
+  icon: IconProps["svg"]
 }
 
 type EllipsisActionMenuProps = {
@@ -21,6 +28,12 @@ type EllipsisActionMenuProps = {
 export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const anchorName = `--ellipsis-action-menu-${useId().replace(/:/g, "")}`
+  const supportsAnchorPositioning =
+    typeof CSS !== "undefined" &&
+    CSS.supports("anchor-name: --anchor") &&
+    CSS.supports("position-anchor: --anchor") &&
+    CSS.supports("position-area: block-end span-inline-end")
 
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
@@ -34,7 +47,7 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
   }
 
   useLayoutEffect(() => {
-    if (!open || !buttonRef.current) return
+    if (!open || !buttonRef.current || supportsAnchorPositioning) return
 
     const rect = buttonRef.current.getBoundingClientRect()
 
@@ -42,7 +55,7 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
       top: rect.bottom + 4,
       left: rect.right,
     })
-  }, [open])
+  }, [open, supportsAnchorPositioning])
 
   useEffect(() => {
     if (!open) return
@@ -84,12 +97,14 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
       <IconButton
         ref={buttonRef}
         svg={EllipsisIcon}
-        size="heading-1"
+        size="heading-3"
         label="Meer acties"
         title="Meer acties"
         aria-haspopup="true"
         aria-expanded={open}
         onClick={toggle}
+        style={{ anchorName }}
+        className={styles.contextMenuButton}
       />
 
       {open &&
@@ -98,10 +113,13 @@ export function EllipsisActionMenu({ actions }: EllipsisActionMenuProps) {
             ref={menuRef}
             role="menu"
             className={styles.menu}
-            style={{
-              top: position.top,
-              left: position.left,
-            }}
+            style={
+              {
+                positionAnchor: anchorName,
+                "--menu-top": `${position.top}px`,
+                "--menu-left": `${position.left}px`,
+              } as CSSProperties
+            }
           >
             {actions.map((action) => (
               <Button

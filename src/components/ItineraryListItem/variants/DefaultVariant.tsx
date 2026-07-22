@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router"
-import { Column, Button, Row } from "@amsterdam/design-system-react"
-import { DeleteIcon, PencilIcon } from "@amsterdam/design-system-react-icons"
-import { EllipsisActionMenu } from "@/components/EllipsisActionMenu/EllipsisActionMenu"
+import { Button, Column } from "@amsterdam/design-system-react"
+import { HouseIcon } from "@amsterdam/design-system-react-icons"
+// import { EllipsisActionMenu } from "@/components/EllipsisActionMenu/EllipsisActionMenu"
 import { CompleteVisitButton } from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
-import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
+// import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
 import { getMostRecentVisit, getVisitState, VisitState } from "../visit"
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export function DefaultVariant({ item }: Props) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const { deleteItineraryItem, dialog } = useDeleteItineraryItem(item.id)
+  // const { deleteItineraryItem, dialog } = useDeleteItineraryItem(item.id)
   const navigate = useNavigate()
 
   const caseData = item.case
@@ -21,23 +21,30 @@ export function DefaultVariant({ item }: Props) {
 
   return (
     <Column alignHorizontal="end">
-      {dialog}
+      {/*{dialog}*/}
       {visitState === VisitState.Pending && (
         <>
           <Button
             onClick={() => navigate(`/bezoek/${itineraryId}/${caseData?.id}`)}
+            icon={HouseIcon}
           >
             Bezoek
           </Button>
-          <EllipsisActionMenu
+          {/*<EllipsisActionMenu
             actions={[
+              {
+                label: "Bezoek",
+                onClick: () =>
+                  navigate(`/bezoek/${itineraryId}/${caseData?.id}`),
+                icon: HouseIcon,
+              },
               {
                 label: "Verwijderen",
                 onClick: deleteItineraryItem,
                 icon: DeleteIcon,
               },
             ]}
-          />
+          />*/}
         </>
       )}
       {visitState === VisitState.InProgress && (
@@ -46,7 +53,7 @@ export function DefaultVariant({ item }: Props) {
             visitId={mostRecentVisit?.id}
             itineraryItemId={item.id}
           />
-          <Row>
+          {/*<Row gap="small">
             <EllipsisActionMenu
               actions={[
                 {
@@ -64,7 +71,7 @@ export function DefaultVariant({ item }: Props) {
                 },
               ]}
             />
-          </Row>
+          </Row>*/}
         </>
       )}
     </Column>

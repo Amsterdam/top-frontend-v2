@@ -1,84 +1,80 @@
-import { type ReactNode, useState } from "react"
-import { Heading, Icon } from "@amsterdam/design-system-react"
-import { Divider } from "../Divider/Divider"
+import { useId, useState, type CSSProperties, type ReactNode } from "react"
+import {
+  Column,
+  Heading,
+  Icon,
+  Row,
+  type IconProps,
+} from "@amsterdam/design-system-react"
 import { ChevronDownIcon } from "@amsterdam/design-system-react-icons"
 
 import styles from "./Card.module.css"
 
 type Props = {
-  title?: string | ReactNode
+  title: string | ReactNode
   children: ReactNode
-  collapsible?: boolean
-  defaultOpen?: boolean
-  noContentPadding?: boolean
   actions?: ReactNode
   className?: string
-  style?: React.CSSProperties
+  icon?: IconProps["svg"]
+  style?: CSSProperties
+  collapsible?: boolean
+  defaultOpen?: boolean
 }
 
 export function Card({
   title,
   children,
-  collapsible = false,
-  defaultOpen = true,
-  noContentPadding = false,
   actions,
   className,
+  icon,
   style,
+  collapsible = false,
+  defaultOpen = false,
 }: Props) {
-  const hasTitle = Boolean(title)
   const [isOpen, setIsOpen] = useState(defaultOpen)
+  const collapsibleContentId = useId()
 
-  const renderTitle =
+  const titleContent =
     typeof title === "string" ? <Heading level={3}>{title}</Heading> : title
 
-  const toggle = () => {
-    if (collapsible) {
-      setIsOpen(!isOpen)
-    }
-  }
-
   return (
-    <div className={`${styles.card} ${className ?? ""}`} style={style}>
-      {hasTitle && (
-        <div className={styles.cardTitle}>
+    <Column className={`${styles.card} ${className ?? ""}`} style={style}>
+      <Row align="between" gap="small" wrap>
+        <div className={styles.titleContent}>
+          {icon && <Icon svg={icon} size="heading-3" />}
           {collapsible ? (
-            <>
-              <button
-                type="button"
-                className={styles.cardTitleButton}
-                onClick={toggle}
-                aria-expanded={isOpen}
+            <button
+              type="button"
+              className={styles.cardTitleButton}
+              onClick={() => setIsOpen((open) => !open)}
+              aria-expanded={isOpen}
+              aria-controls={collapsibleContentId}
+            >
+              {titleContent}
+              <span
+                className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
               >
-                <span className={styles.titleContent}>{renderTitle}</span>
-                <Icon
-                  svg={ChevronDownIcon}
-                  aria-hidden="true"
-                  size="heading-3"
-                  className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
-                />
-              </button>
-              {actions}
-            </>
+                <Icon svg={ChevronDownIcon} size="heading-3" />
+              </span>
+            </button>
           ) : (
-            renderTitle
+            titleContent
           )}
         </div>
-      )}
-      <div
-        className={`${styles.collapsibleContent} ${isOpen ? styles.collapsibleOpen : ""}`}
-      >
-        <div className={styles.collapsibleInner}>
-          {hasTitle && (
-            <Divider margin="medium" noMarginBottom={noContentPadding} />
-          )}
-          <div
-            className={`${styles.cardContent} ${noContentPadding ? styles.noContentPadding : ""}`}
-          >
-            {children}
+        {actions && <Row align="end">{actions}</Row>}
+      </Row>
+      {collapsible ? (
+        <div
+          id={collapsibleContentId}
+          className={`${styles.collapsibleContent} ${isOpen ? styles.collapsibleOpen : ""}`}
+        >
+          <div className={styles.collapsibleInner}>
+            <div>{children}</div>
           </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <div>{children}</div>
+      )}
+    </Column>
   )
 }

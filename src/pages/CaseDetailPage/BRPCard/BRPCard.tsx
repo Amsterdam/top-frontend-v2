@@ -1,6 +1,6 @@
 import { Paragraph } from "@amsterdam/design-system-react"
 import { PersonsIcon } from "@amsterdam/design-system-react-icons"
-import { Card, HeadingWithIcon, Table } from "@/components"
+import { Card, Table } from "@/components"
 import { useResidents } from "@/api/hooks"
 import type { Resident } from "./types"
 import { PersonHeader } from "./components/PersonHeader/PersonHeader"
@@ -38,42 +38,29 @@ export function BRPCard({ data }: Props) {
   const sortedResidents = getVisibleResidentsSortedByAge(persons)
 
   if (!data || isBusy) return null
-  if (hasErrors)
-    return (
-      <Card>
-        <Paragraph>
-          Er is iets misgegaan bij het ophalen van de BRP-gegevens. 😢
-        </Paragraph>
-      </Card>
-    )
-  if (!isBusy && residentsData && !sortedResidents.length) {
-    return (
-      <Card>
-        <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
-      </Card>
-    )
-  }
 
   return (
     <Card
-      title={
-        <HeadingWithIcon
-          label={`Ingeschreven personen (${sortedResidents.length})`}
-          svg={PersonsIcon}
-          highlightIcon
-        />
-      }
-      collapsible
-      noContentPadding
-      className="animate-scale-in-center"
+      title={`Ingeschreven personen (${sortedResidents.length})`}
+      icon={PersonsIcon}
     >
-      <Table
-        columns={columns}
-        data={sortedResidents}
-        expandable={{
-          expandedRow: (resident) => <ResidentDetails resident={resident} />,
-        }}
-      />
+      {hasErrors && (
+        <Paragraph>
+          Er is iets misgegaan bij het ophalen van de BRP-gegevens. 😢
+        </Paragraph>
+      )}
+      {!hasErrors && !sortedResidents.length && (
+        <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
+      )}
+      {!hasErrors && sortedResidents.length > 0 && (
+        <Table
+          columns={columns}
+          data={sortedResidents}
+          expandable={{
+            expandedRow: (resident) => <ResidentDetails resident={resident} />,
+          }}
+        />
+      )}
     </Card>
   )
 }

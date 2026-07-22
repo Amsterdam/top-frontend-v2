@@ -3,7 +3,7 @@ import {
   PassportIcon,
   ThumbsUpIcon,
 } from "@amsterdam/design-system-react-icons"
-import { Tag } from "../Tag/Tag"
+import { Badge } from "@amsterdam/design-system-react"
 
 type Props = {
   priority?: { weight: number }
@@ -14,11 +14,11 @@ export function PriorityTag({ priority, showNormalPriority }: Props) {
   const weight = priority?.weight ?? 0
 
   if (weight >= 1) {
-    return <Tag color="purple" name="Machtiging" svg={PassportIcon} />
+    return <Badge color="magenta" label="Machtiging" icon={PassportIcon} />
   } else if (weight >= 0.5) {
-    return <Tag color="red" name="Prio" svg={ArrowUpIcon} />
+    return <Badge color="red" label="Prio" icon={ArrowUpIcon} />
   } else if (showNormalPriority) {
-    return <Tag color="green" name="Normaal" svg={ThumbsUpIcon} />
+    return <Badge color="lime" label="Normaal" icon={ThumbsUpIcon} />
   }
 
   return null

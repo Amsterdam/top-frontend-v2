@@ -4,14 +4,14 @@
 @import "@amsterdam/design-system-tokens/dist/compact.css";
 @import "./styles/animations.css";
 @import "./styles/design-system-overrides.css";
-@import "./styles/global.css";
-@import "./styles/spacing.css";
+/*@import "./styles/global.css";*/
+/*@import "./styles/spacing.css";*/
 
 /* * {
   outline: 1px solid red;
 } */
 
-/* 
+/*
 --ams-color-interactive-secondary: #202020;
     --ams-color-interactive-contrast: #202020;
     --ams-color-interactive: #004699;
@@ -41,8 +41,8 @@
     --ams-color-text-secondary: #767676;
 */
 
-html,
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--ams-page-background-color);
 }

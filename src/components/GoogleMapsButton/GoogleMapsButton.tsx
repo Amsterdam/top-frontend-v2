@@ -1,6 +1,6 @@
 import {
   Button,
-  LinkList,
+  StandaloneLink,
   type ButtonProps,
 } from "@amsterdam/design-system-react"
 import {
@@ -47,17 +47,15 @@ export function GoogleMapsButton({
 
   if (as === "link") {
     return (
-      <LinkList>
-        <LinkList.Link
-          href={url || undefined}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-disabled={disabled}
-          icon={<LinkExternalIcon />}
-        >
-          {title}
-        </LinkList.Link>
-      </LinkList>
+      <StandaloneLink
+        href={url || undefined}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-disabled={disabled}
+        icon={<LinkExternalIcon />}
+      >
+        {title}
+      </StandaloneLink>
     )
   }
 

@@ -1,85 +1,121 @@
 import { Outlet } from "react-router"
-import { LinkList, Page, PageHeader } from "@amsterdam/design-system-react"
-import { LogOutIcon, SearchIcon } from "@amsterdam/design-system-react-icons"
+import {
+  Menu,
+  Page,
+  PageFooter,
+  PageHeader,
+} from "@amsterdam/design-system-react"
+import {
+  HouseCanalIcon,
+  LogOutIcon,
+  SearchIcon,
+} from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import { useRedirectItinerary } from "@/hooks"
-import { usePageHeaderOverlay } from "./usePageHeaderOverlay"
 
-import styles from "./DefaultLayout.module.css"
-
-type HeaderAction = {
-  key: string
-  label: string
-  icon: React.ComponentType
-  onClick?: (e: React.MouseEvent) => void
-}
+// type HeaderAction = {
+//   key: string
+//   label: string
+//   icon: React.ComponentType
+//   onClick?: (e: React.MouseEvent) => void
+// }
 
 export function DefaultLayout() {
   useRedirectFromState()
   useRedirectItinerary()
   const auth = useAuth()
-  const { menuOpen, closeMenu } = usePageHeaderOverlay()
 
-  const headerActions: HeaderAction[] = [
-    {
-      key: "zoeken",
-      label: "Zoeken",
-      icon: SearchIcon,
-    },
-    {
-      key: "uitloggen",
-      label: "Uitloggen",
-      icon: LogOutIcon,
-      onClick: (e) => {
-        e.preventDefault()
-        auth.signoutRedirect()
-      },
-    },
-  ]
+  // const headerActions: HeaderAction[] = [
+  //   {
+  //     key: "zoeken",
+  //     label: "Zoeken",
+  //     icon: SearchIcon,
+  //   },
+  //   {
+  //     key: "uitloggen",
+  //     label: "Uitloggen",
+  //     icon: LogOutIcon,
+  //     onClick: (e) => {
+  //       e.preventDefault()
+  //       auth.signoutRedirect()
+  //     },
+  //   },
+  // ]
 
   return (
-    <Page>
+    <Page withMenu>
       <PageHeader
         brandName={`${env.VITE_APP_TITLE} ${env.VITE_ENVIRONMENT_SHORT}`}
-        menuItems={headerActions.map((action) => (
-          <PageHeader.MenuLink
-            key={action.key}
-            href="#"
-            icon={action.icon}
-            onClick={action.onClick}
-          >
-            {action.label}
-          </PageHeader.MenuLink>
-        ))}
+        brandNameShort={`TOP  ${env.VITE_ENVIRONMENT_SHORT}`}
+        // menuItems={headerActions.map((action) => (
+        //   <PageHeader.MenuLink
+        //     key={action.key}
+        //     href="#"
+        //     icon={action.icon}
+        //     onClick={action.onClick}
+        //   >
+        //     {action.label}
+        //   </PageHeader.MenuLink>
+        // ))}
         noMenuButtonOnWideWindow
-        className={styles.PageHeader}
+        className="ams-page__area--header"
       >
-        <LinkList>
-          {headerActions.map((action) => (
-            <LinkList.Link
-              key={action.key}
-              href="/zoeken"
-              icon={action.icon}
-              onClick={action.onClick}
-            >
-              {action.label}
-            </LinkList.Link>
-          ))}
-        </LinkList>
+        <Menu>
+          <Menu.Link href="/" icon={HouseCanalIcon}>
+            Home
+          </Menu.Link>
+          <Menu.Link href="/zoeken" icon={SearchIcon}>
+            Zoeken
+          </Menu.Link>
+          <Menu.Link
+            href="#"
+            icon={LogOutIcon}
+            onClick={(e) => {
+              e.preventDefault()
+              auth.signoutRedirect()
+            }}
+          >
+            Uitloggen
+          </Menu.Link>
+        </Menu>
       </PageHeader>
-      {menuOpen && (
-        <div
-          className={`${styles.MainMenuOverlay} animate-fade-in`}
-          onClick={closeMenu}
-        />
-      )}
 
-      <main id="main" className={styles.main}>
+      <Menu className="ams-page__area--menu" inWideWindow>
+        <Menu.Link href="/" icon={HouseCanalIcon}>
+          Home
+        </Menu.Link>
+        <Menu.Link href="/zoeken" icon={SearchIcon}>
+          Zoeken
+        </Menu.Link>
+        <Menu.Link
+          href="#"
+          icon={LogOutIcon}
+          onClick={(e) => {
+            e.preventDefault()
+            auth.signoutRedirect()
+          }}
+        >
+          Uitloggen
+        </Menu.Link>
+      </Menu>
+
+      <main className="ams-page__area--body" id="main">
         <Outlet />
       </main>
+
+      <PageFooter className="ams-page-footer ams-page__area--footer">
+        <PageFooter.Menu data-testid="app-footer-navigation">
+          <PageFooter.MenuLink
+            href="/support"
+            data-testid="app-footer-navigation-link-support"
+          >
+            Ondersteuning
+          </PageFooter.MenuLink>
+        </PageFooter.Menu>
+      </PageFooter>
     </Page>
   )
 }

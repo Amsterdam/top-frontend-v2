@@ -1,7 +1,6 @@
-import { Paragraph } from "@amsterdam/design-system-react"
-import { SettingsIcon } from "@amsterdam/design-system-react-icons"
+import { Heading, Paragraph } from "@amsterdam/design-system-react"
 import { useParams } from "react-router"
-import { AmsterdamCrossSpinner, PageHeading } from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 import { AnimatedName } from "@/animations"
 import { WeekDaySettings } from "./WeekConfig/WeekDaySettings"
 import {
@@ -47,18 +46,14 @@ export default function TeamSettingsPage() {
   }
   return (
     <>
-      <PageHeading
-        icon={SettingsIcon}
-        label={
-          <span>
-            Looplijst instellingen{" "}
-            {teamSettings?.name && (
-              <AnimatedName text={`(${teamSettings.name})`} />
-            )}
-          </span>
-        }
-        backLinkLabel="Terug"
-      />
+      <Heading level={1}>
+        <span>
+          Looplijst instellingen{" "}
+          {teamSettings?.name && (
+            <AnimatedName text={`(${teamSettings.name})`} />
+          )}
+        </span>
+      </Heading>
       <Paragraph>
         Pas hier de instellingen aan die worden gebruikt om automatisch een
         looplijst te genereren.

@@ -6,8 +6,7 @@ import {
   PersonsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useCaseVisits } from "@/api/hooks"
-import { Card, Divider, HeadingWithIcon, VisitTag } from "@/components"
-import { LogbookIcon } from "@/icons"
+import { Card, HeadingWithIcon, VisitTag } from "@/components"
 import { formatDate } from "@/shared"
 
 export function LogbookCard({ caseId }: { caseId?: number }) {
@@ -21,18 +20,8 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
   )
 
   return (
-    <Card
-      title={
-        <HeadingWithIcon
-          label={`Logboek (${visits?.length ?? 0})`}
-          iconComponent={<LogbookIcon size={19} />}
-          highlightIcon
-        />
-      }
-      collapsible
-      className="animate-scale-in-center"
-    >
-      {visits?.map((visit, index) => (
+    <Card title={`Logboek (${visits?.length ?? 0})`} icon={ClockIcon}>
+      {visits?.map((visit) => (
         <Column key={visit.id} gap="small">
           <Row>
             <Icon svg={ClockIcon} title="Starttijd" />
@@ -70,7 +59,6 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
               </Row>
             </Column>
           )}
-          {index !== visits.length - 1 && <Divider margin="medium" />}
         </Column>
       ))}
       {visits?.length === 0 && <Paragraph>Geen notities gevonden.</Paragraph>}

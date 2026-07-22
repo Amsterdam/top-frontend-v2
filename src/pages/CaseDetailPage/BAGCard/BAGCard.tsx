@@ -1,5 +1,5 @@
-import { LinkList, Row } from "@amsterdam/design-system-react"
-import { Card, Description, HeadingWithIcon } from "@/components"
+import { StandaloneLink } from "@amsterdam/design-system-react"
+import { Card, Description } from "@/components"
 import {
   LinkExternalIcon,
   MapMarkerIcon,
@@ -74,27 +74,18 @@ export default function BAGCard({ data }: Props) {
 
   return (
     <Card
-      title={
-        <Row align="between" wrap>
-          <HeadingWithIcon
-            label="BAG-gegevens"
-            svg={MapMarkerIcon}
-            highlightIcon
-          />
-          <LinkList>
-            <LinkList.Link
-              href={woningUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              icon={<LinkExternalIcon />}
-            >
-              Bekijk op Data en informatie
-            </LinkList.Link>
-          </LinkList>
-        </Row>
+      title="BAG-gegevens"
+      icon={MapMarkerIcon}
+      actions={
+        <StandaloneLink
+          href={woningUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          icon={<LinkExternalIcon />}
+        >
+          Bekijk op Data en informatie
+        </StandaloneLink>
       }
-      collapsible
-      className="animate-scale-in-center"
     >
       <Description termsWidth="wide" data={dataFields} />
     </Card>

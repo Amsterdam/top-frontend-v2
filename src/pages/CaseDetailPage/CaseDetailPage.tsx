@@ -1,19 +1,27 @@
 import {
+  ActionGroup,
+  Button,
   Column,
   Grid,
   Heading,
   Row,
-  type GridCellProps,
 } from "@amsterdam/design-system-react"
-import { HouseIcon } from "@amsterdam/design-system-react-icons"
+import {
+  DeleteIcon,
+  HouseIcon,
+  PencilIcon,
+} from "@amsterdam/design-system-react-icons"
+import dayjs from "dayjs"
 import { useNavigate, useParams } from "react-router"
 
 import {
-  AmsterdamCrossSpinner,
-  EllipsisActionMenu,
-  StatusTag,
-} from "@/components"
-import { useCase } from "@/api/hooks"
+  useCase,
+  useItinerary,
+  useMeldingen,
+  useRegistrations,
+} from "@/api/hooks"
+import { AmsterdamCrossSpinner, StatusTag } from "@/components"
+import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { formatAddress, getWorkflowName } from "@/shared"
 
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
@@ -21,21 +29,17 @@ import HistoryCard from "./HistoryCard/HistoryCard"
 import BAGCard from "./BAGCard/BAGCard"
 import BRPCard from "./BRPCard/BRPCard"
 import LogbookCard from "./LogbookCard/LogbookCard"
+import MeldingenCard from "./MeldingenCard/MeldingenCard"
 import VakantieverhuurCard from "./VakantieverhuurCard/VakantieverhuurCard"
 import PermitsCard from "./PermitsCard/PermitsCard"
 import PermitsCardDecos from "./PermitsCardDecos/PermitsCardDecos"
-
-const LARGE_GRID_CELL_SPAN: GridCellProps["span"] = {
-  narrow: 4,
-  medium: 8,
-  wide: 8,
-}
-
-const SMALL_GRID_CELL_SPAN: GridCellProps["span"] = {
-  narrow: 4,
-  medium: 8,
-  wide: 4,
-}
+import {
+  getMostRecentVisit,
+  getVisitState,
+  VisitState,
+} from "@/components/ItineraryListItem/visit"
+import CompleteVisitButton from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
+import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
 
 export default function CaseDetailPage() {
   const { itineraryId, caseId } = useParams<{
@@ -43,75 +47,143 @@ export default function CaseDetailPage() {
     caseId: string
   }>()
   const [data, { isBusy }] = useCase(Number(caseId))
+  const [itinerary] = useItinerary(itineraryId)
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
 
+  const itineraryItem = itinerary?.items.find(
+    (item) => item?.case.id === Number(caseId),
+  )
+  const { deleteItineraryItem, dialog } = useDeleteItineraryItem(
+    itineraryItem?.id,
+    {
+      onSuccess: () => {
+        if (itineraryId) {
+          navigate(`/lijst/${itineraryId}`)
+        }
+      },
+    },
+  )
+  const visitState = itineraryItem ? getVisitState(itineraryItem) : undefined
+  const mostRecentVisit = itineraryItem
+    ? getMostRecentVisit(itineraryItem)
+    : null
+
   const bagId = data?.address?.bag_id
+  const startDate = dayjs().subtract(1, "year").startOf("year").format()
+  const [registrationsData, { isBusy: isBusyRegistrations }] =
+    useRegistrations(bagId)
+  const [meldingenData, { isBusy: isBusyMeldingen }] = useMeldingen(
+    bagId,
+    startDate,
+  )
+
+  const registrations = registrationsData || []
+  const meldingen = (meldingenData?.data || []) as Melding[]
+  const isBusyVakantieverhuur = isBusyRegistrations || isBusyMeldingen
+  const showDummyVakantieverhuurData =
+    Boolean(bagId) &&
+    isAcceptanceOrLocalEnvironment() &&
+    !isBusyVakantieverhuur &&
+    !registrations.length &&
+    !meldingen.length
 
   if (isBusy) {
     return <AmsterdamCrossSpinner />
   }
   return (
-    <Grid
-      paddingBottom="x-large"
-      gapVertical="large"
-      style={{ columnGap: "var(--ams-space-l)" }}
-    >
-      <Grid.Cell span="all">
-        <Row align="between">
-          <Column>
+    <>
+      {dialog}
+      <Grid paddingVertical="large" gapVertical="large">
+        <Grid.Cell span="all" appearance="transparent">
+          <Row align="between" wrap>
             <Row wrap alignVertical="center">
-              <Heading level={2}>{formatAddress(data?.address, true)}</Heading>
+              <Heading level={1}>{formatAddress(data?.address, true)}</Heading>
               <StatusTag statusName={statusName} />
             </Row>
-          </Column>
-          <Column>
-            <EllipsisActionMenu
-              actions={[
-                {
-                  label: "Bezoek",
-                  onClick: () => navigate(`/bezoek/${itineraryId}/${caseId}`),
-                  icon: HouseIcon,
-                },
-              ]}
+            <ActionGroup>
+              {visitState === VisitState.InProgress &&
+                itineraryItem &&
+                mostRecentVisit && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      icon={DeleteIcon}
+                      onClick={deleteItineraryItem}
+                    >
+                      Verwijderen
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      icon={PencilIcon}
+                      onClick={() =>
+                        navigate(
+                          `/bezoek/${itineraryId}/${itineraryItem.case?.id}/${mostRecentVisit.id}`,
+                        )
+                      }
+                    >
+                      Bewerken
+                    </Button>
+                    <CompleteVisitButton
+                      visitId={mostRecentVisit.id}
+                      itineraryItemId={itineraryItem.id}
+                    />
+                  </>
+                )}
+              {visitState === VisitState.Pending && itineraryItem && (
+                <>
+                  <Button
+                    variant="secondary"
+                    icon={DeleteIcon}
+                    onClick={deleteItineraryItem}
+                  >
+                    Verwijderen
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate(`/bezoek/${itineraryId}/${caseId}`)}
+                    icon={HouseIcon}
+                  >
+                    Bezoek
+                  </Button>
+                </>
+              )}
+            </ActionGroup>
+          </Row>
+        </Grid.Cell>
+
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 8 }}
+          appearance="transparent"
+        >
+          <Column gap="large">
+            <CaseInfoCard data={data} />
+            <BAGCard data={data} />
+            <BRPCard data={data} />
+            <PermitsCard bagId={bagId} />
+            <PermitsCardDecos bagId={bagId} />
+            <VakantieverhuurCard
+              registrations={registrations}
+              showDummyData={showDummyVakantieverhuurData}
+            />
+            <MeldingenCard
+              meldingen={meldingen}
+              startDate={startDate}
+              showDummyData={showDummyVakantieverhuurData}
             />
           </Column>
-        </Row>
-      </Grid.Cell>
+        </Grid.Cell>
 
-      <Grid.Cell span={LARGE_GRID_CELL_SPAN}>
-        <Grid gapVertical="large">
-          <Grid.Cell span="all">
-            <CaseInfoCard data={data} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <BAGCard data={data} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <BRPCard data={data} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <PermitsCard bagId={bagId} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <PermitsCardDecos bagId={bagId} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
-            <VakantieverhuurCard bagId={bagId} />
-          </Grid.Cell>
-        </Grid>
-      </Grid.Cell>
-
-      <Grid.Cell span={SMALL_GRID_CELL_SPAN}>
-        <Grid paddingBottom="x-large" gapVertical="large">
-          <Grid.Cell span="all">
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 4 }}
+          appearance="transparent"
+        >
+          <Column gap="large">
             <LogbookCard caseId={data?.id} />
-          </Grid.Cell>
-          <Grid.Cell span="all">
             <HistoryCard caseId={data?.id} />
-          </Grid.Cell>
-        </Grid>
-      </Grid.Cell>
-    </Grid>
+          </Column>
+        </Grid.Cell>
+      </Grid>
+    </>
   )
 }

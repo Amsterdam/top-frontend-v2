@@ -1,16 +1,66 @@
-import { Paragraph } from "@amsterdam/design-system-react"
-import { DocumentCheckMarkIcon } from "@amsterdam/design-system-react-icons"
+import { Badge, Icon, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  CertificateIcon,
+  ErrorIcon,
+  SuccessIcon,
+} from "@amsterdam/design-system-react-icons"
 
-import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
-import { Card, HeadingWithIcon } from "@/components"
 import { usePermitsDecos } from "@/api/hooks"
-import DecosPermit from "./components/DecosPermit"
-import { filterKnownPermits } from "./data/utils"
+import { Card, Description, Table } from "@/components"
+import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
+import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyDecosResponse from "./data/dummyDecosResponse"
+import { filterKnownPermits, isDateValid } from "./data/utils"
 
 type Props = {
   bagId?: string
 }
+
+function renderPermitStatus(permit: PermitDecos) {
+  if (permit.permit_granted === "GRANTED") {
+    return isDateValid(permit) ? (
+      <Badge label="Verleend" color="lime" />
+    ) : (
+      <Badge label="Verlopen" color="red" />
+    )
+  }
+
+  if (permit.permit_granted === "NOT_GRANTED") {
+    return <Badge label="Niet verleend" color="yellow" />
+  }
+
+  return null
+}
+
+const columns = [
+  {
+    title: "Vergunning",
+    dataIndex: "permit_type",
+    render: (_: unknown, permit: PermitDecos) => {
+      const isValid = permit.permit_granted === "GRANTED" && isDateValid(permit)
+
+      return (
+        <Row alignVertical="center" wrap>
+          <Icon
+            svg={isValid ? SuccessIcon : ErrorIcon}
+            size="heading-3"
+            style={{
+              color: isValid
+                ? "var(--ams-color-feedback-success)"
+                : "var(--ams-color-feedback-error)",
+            }}
+          />
+          <strong>{permit.permit_type || "-"}</strong>
+        </Row>
+      )
+    },
+  },
+  {
+    title: "Status",
+    dataIndex: "permit_granted",
+    render: (_: unknown, permit: PermitDecos) => renderPermitStatus(permit),
+  },
+] as const
 
 export default function PermitsCardDecos({ bagId }: Props) {
   const [permitsDecos, { isBusy }] = usePermitsDecos(bagId)
@@ -21,30 +71,28 @@ export default function PermitsCardDecos({ bagId }: Props) {
   // Show dummy data if we're in dev or acceptance environment, we have a valid address, we're not currently loading data, and we didn't get any residents back from the API
   const showDummyData = isDevOrAcc && !permitsDecos?.length
   const permitsToUse = showDummyData ? dummyDecosResponse : permitsDecos
-  const knownPermits = filterKnownPermits(permitsToUse)
+  const knownPermits = filterKnownPermits(permitsToUse) ?? []
 
   return (
     <Card
-      title={
-        <HeadingWithIcon
-          label={`Vergunningen Decos (${knownPermits?.length ?? 0})`}
-          svg={DocumentCheckMarkIcon}
-          highlightIcon
-        />
-      }
-      className="animate-scale-in-center"
-      collapsible
+      title={`Vergunningen Decos (${knownPermits.length})`}
+      icon={CertificateIcon}
     >
-      {knownPermits?.length === 0 ? (
+      {knownPermits.length === 0 ? (
         <Paragraph>Geen Decos vergunningen gevonden.</Paragraph>
       ) : (
-        knownPermits?.map((permit, index) => (
-          <DecosPermit
-            key={`${permit.permit_type}-${index}`}
-            permit={permit}
-            showDivider={index !== knownPermits.length - 1}
-          />
-        ))
+        <Table
+          columns={columns}
+          data={knownPermits}
+          expandable={{
+            expandedRow: (permit) => (
+              <Description
+                termsWidth="narrow"
+                data={createPermitDescriptionData(permit)}
+              />
+            ),
+          }}
+        />
       )}
     </Card>
   )

@@ -1,7 +1,5 @@
 .genderHeading {
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding-block-end: var(--ams-space-l);
 }
 
 .genderHeading strong {

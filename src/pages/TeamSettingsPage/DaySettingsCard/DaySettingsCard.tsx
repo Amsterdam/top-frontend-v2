@@ -1,7 +1,7 @@
 import { ActionGroup, IconButton } from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
 import { PencilIcon, SettingsIcon } from "@amsterdam/design-system-react-icons"
-import { Card, HeadingWithIcon } from "@/components"
+import { Card } from "@/components"
 import type { TeamSettingsOptions } from "../types"
 import DaySettingsContent from "./DaySettingsContent/DaySettingsContent"
 import { DeleteDaySettingsButton } from "./DeleteDaySettingsButton/DeleteDaySettingsButton"
@@ -15,18 +15,12 @@ type Props = {
 export default function DaySettingsCard({
   daySetting,
   teamSettingsOptions,
-  animationDelay = 0,
 }: Props) {
   const navigate = useNavigate()
   return (
     <Card
-      title={
-        <HeadingWithIcon
-          label={daySetting.name}
-          svg={SettingsIcon}
-          highlightIcon
-        />
-      }
+      title={daySetting.name}
+      icon={SettingsIcon}
       actions={
         <ActionGroup>
           <IconButton
@@ -47,10 +41,6 @@ export default function DaySettingsCard({
           />
         </ActionGroup>
       }
-      className="animate-scale-in-center mb-3"
-      style={{ animationDelay: `${animationDelay}s` }}
-      collapsible
-      defaultOpen={true}
     >
       <DaySettingsContent
         daySetting={daySetting}

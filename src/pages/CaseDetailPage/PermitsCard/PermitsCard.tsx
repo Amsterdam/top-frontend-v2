@@ -1,16 +1,53 @@
-import { Paragraph } from "@amsterdam/design-system-react"
-import { DocumentCheckMarkIcon } from "@amsterdam/design-system-react-icons"
+import { Icon, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  CertificateIcon,
+  ErrorIcon,
+  SuccessIcon,
+} from "@amsterdam/design-system-react-icons"
 
-import { Card, HeadingWithIcon } from "@/components"
-import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { usePermits } from "@/api/hooks"
-import Permit from "./components/Permit"
-import { sortPermits } from "./data/utils"
+import { Card, Description, Table } from "@/components"
+import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
+import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyPowerBrowserResponse from "./data/dummyPowerBrowserResponse"
+import { isValidPermit, sortPermits } from "./data/utils"
+import { PermitTag } from "./components/PermitTag"
 
 type Props = {
   bagId?: string
 }
+
+const columns = [
+  {
+    title: "Vergunning",
+    dataIndex: "product",
+    render: (_: unknown, permit: Permit) => {
+      const isValid = isValidPermit(permit)
+
+      return (
+        <Row alignVertical="center" wrap>
+          <Icon
+            svg={isValid ? SuccessIcon : ErrorIcon}
+            size="heading-3"
+            style={{
+              color: isValid
+                ? "var(--ams-color-feedback-success)"
+                : "var(--ams-color-feedback-error)",
+            }}
+          />
+          <strong>{permit.product || "-"}</strong>
+        </Row>
+      )
+    },
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    render: (_: unknown, permit: Permit) => (
+      <PermitTag status={permit.status ?? ""} />
+    ),
+  },
+] as const
 
 export default function PermitsCard({ bagId }: Props) {
   const [permits, { isBusy }] = usePermits(bagId)
@@ -26,26 +63,24 @@ export default function PermitsCard({ bagId }: Props) {
 
   return (
     <Card
-      title={
-        <HeadingWithIcon
-          label={`Vergunningen PowerBrowser (${sortedPermits.length})`}
-          svg={DocumentCheckMarkIcon}
-          highlightIcon
-        />
-      }
-      className="animate-scale-in-center"
-      collapsible
+      title={`Vergunningen PowerBrowser (${sortedPermits.length})`}
+      icon={CertificateIcon}
     >
       {sortedPermits.length === 0 ? (
         <Paragraph>Geen vergunningen gevonden.</Paragraph>
       ) : (
-        sortedPermits.map((permit, index) => (
-          <Permit
-            key={`${permit.kenmerk}-${index}`}
-            permit={permit}
-            showDivider={index !== sortedPermits.length - 1}
-          />
-        ))
+        <Table
+          columns={columns}
+          data={sortedPermits}
+          expandable={{
+            expandedRow: (permit) => (
+              <Description
+                termsWidth="narrow"
+                data={createPermitDescriptionData(permit)}
+              />
+            ),
+          }}
+        />
       )}
     </Card>
   )

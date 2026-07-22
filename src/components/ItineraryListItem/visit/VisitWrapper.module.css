@@ -1,12 +1,11 @@
 .Card {
-  border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
-  border: 1px solid rgba(38, 85, 115, 0.15);
-  margin-bottom: 16px;
-}
+  border: 1px solid var(--ams-color-separator);
+  padding-block: var(--ams-grid-cell-padding-block);
+  padding-inline: var(--ams-grid-cell-padding-inline);
 
-.ContentCard {
-  padding: 16px;
+  button {
+    z-index: 999;
+  }
 }
 
 .StateCard {
@@ -15,8 +14,8 @@
 
 .StateRow {
   align-items: center;
-  padding: 8px 16px;
   background-color: color-mix(in srgb, var(--state-color) 10%, white);
+  margin-block-end: var(--ams-space-s);
 }
 
 .StateIcon {
@@ -25,13 +24,13 @@
 
 /* specifieke states */
 .Pending {
-  --state-color: var(--ams-color-interactive);
+  --state-color: var(--ams-color-feedback-info);
 }
 
 .InProgress {
-  --state-color: #ff9100;
+  --state-color: var(--ams-color-feedback-warning);
 }
 
 .Completed {
-  --state-color: #00a03c;
+  --state-color: var(--ams-color-feedback-success);
 }

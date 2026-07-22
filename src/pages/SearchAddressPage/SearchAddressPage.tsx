@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from "react"
-import { Heading, Paragraph, SearchField } from "@amsterdam/design-system-react"
-import { SearchIcon } from "@amsterdam/design-system-react-icons"
+import {
+  Grid,
+  Heading,
+  Paragraph,
+  SearchField,
+} from "@amsterdam/design-system-react"
 import { useLocation, useNavigate, useParams } from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch, useTheme } from "@/api/hooks"
-import {
-  AnimatedItineraryListItem,
-  Divider,
-  PageGrid,
-  PageHeading,
-} from "@/components"
 import { ItineraryListItem } from "@/components"
 
 const DELAY = 750
@@ -78,48 +76,41 @@ export function SearchAddressPage() {
   }
 
   return (
-    <PageGrid>
-      <PageHeading
-        label="Startadres zoeken"
-        icon={SearchIcon}
-        backLinkLabel="Terug"
-        backLinkUrl={`/lijst/nieuw/${themeId}`}
-        backLinkState={{
-          formValues: { ...currentFormValues },
-        }}
-      />
+    <Grid paddingVertical="large" gapVertical="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Heading level={1}>Startadres zoeken</Heading>
+      </Grid.Cell>
 
-      <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
-        <SearchField.Input
-          placeholder="Zoek een adres op basis van postcode en huisnummer of straatnaam."
-          name="search-box"
-          onChange={onChange}
-          value={inputValue}
-        />
-        <SearchField.Button />
-      </SearchField>
+      <Grid.Cell span="all">
+        <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
+          <SearchField.Input
+            placeholder="Zoek een adres op basis van postcode en huisnummer of straatnaam."
+            name="search-box"
+            onChange={onChange}
+            value={inputValue}
+          />
+          <SearchField.Button />
+        </SearchField>
+      </Grid.Cell>
 
-      <>
-        <Heading level={3}>Adressen ({cases?.length || 0})</Heading>
-        <Divider />
+      <Grid.Cell span="all">
+        <Heading level={2} className="ams-mb-l">
+          Adressen ({cases?.length || 0})
+        </Heading>
 
-        {statusMessage && (
-          <Paragraph className="text-italic mt-3">{statusMessage}</Paragraph>
-        )}
+        {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
 
         {!isBusy &&
-          cases?.map((caseData, index) => (
-            <AnimatedItineraryListItem key={caseData.id} index={index}>
-              <ItineraryListItem
-                key={caseData.id}
-                item={{ case: caseData } as ItineraryItem}
-                variant="addStartAddress"
-                onAdd={onAddCase}
-              />
-            </AnimatedItineraryListItem>
+          cases?.map((caseData) => (
+            <ItineraryListItem
+              key={caseData.id}
+              item={{ case: caseData } as ItineraryItem}
+              variant="addStartAddress"
+              onAdd={onAddCase}
+            />
           ))}
-      </>
-    </PageGrid>
+      </Grid.Cell>
+    </Grid>
   )
 }
 

@@ -3,8 +3,14 @@
   display: inline-block;
 }
 
+.contextMenuButton {
+  z-index: 999;
+}
+
 .menu {
   position: fixed;
+  top: var(--menu-top, 0px);
+  left: var(--menu-left, 0px);
   transform: translateX(-100%);
   background: var(--ams-color-background);
   border-radius: 4px;
@@ -14,6 +20,19 @@
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
   padding: 4px 0;
   z-index: 1000;
+}
+
+@supports (anchor-name: --anchor) and (position-anchor: --anchor) and
+  (position-area: block-end span-inline-end) {
+  .menu {
+    inset: auto;
+    top: auto;
+    left: auto;
+    margin: 4px 0;
+    transform: none;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline;
+  }
 }
 
 .menuItem {
