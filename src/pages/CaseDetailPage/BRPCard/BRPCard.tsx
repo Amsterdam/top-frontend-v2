@@ -52,7 +52,7 @@ export function BRPCard({ data }: Props) {
       {!hasErrors && !sortedResidents.length && (
         <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
       )}
-      {sortedResidents.length > 0 && (
+      {!hasErrors && sortedResidents.length > 0 && (
         <Table
           columns={columns}
           data={sortedResidents}
