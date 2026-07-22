@@ -174,9 +174,14 @@ export default function CaseDetailPage() {
           </Column>
         </Grid.Cell>
 
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 4 }}>
-          <LogbookCard caseId={data?.id} />
-          <HistoryCard caseId={data?.id} />
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 4 }}
+          appearance="transparent"
+        >
+          <Column gap="large">
+            <LogbookCard caseId={data?.id} />
+            <HistoryCard caseId={data?.id} />
+          </Column>
         </Grid.Cell>
       </Grid>
     </>
