@@ -77,23 +77,21 @@ export default function SuggestionPage() {
           </div>
         )}
 
+        {cases.length > 0 && (
+          <Paragraph>Deze zaken liggen dichtbij de adressen in je lijst:</Paragraph>
+        )}
+
         {cases.map((caseData) => {
-          const isAdded = itinerary?.items.some(
-            (i) => i.case.id === caseData.id,
-          )
+          const isAdded = itinerary?.items.some((i) => i.case.id === caseData.id)
           const isLoading = loadingIds.includes(caseData.id)
           return (
-            <div key={caseData.id}>
-              <Paragraph>
-                Deze zaken liggen dichtbij de adressen in je lijst:
-              </Paragraph>
-              <ItineraryListItem
-                item={{ case: caseData } as ItineraryItem}
-                variant="addSuggestedCase"
-                onAdd={() => onAddCase(caseData)}
-                status={isAdded ? "added" : isLoading ? "loading" : "idle"}
-              />
-            </div>
+            <ItineraryListItem
+              key={caseData.id}
+              item={{ case: caseData } as ItineraryItem}
+              variant="addSuggestedCase"
+              onAdd={() => onAddCase(caseData)}
+              status={isAdded ? "added" : isLoading ? "loading" : "idle"}
+            />
           )
         })}
       </Grid.Cell>
