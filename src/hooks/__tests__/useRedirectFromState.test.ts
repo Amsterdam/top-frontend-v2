@@ -1,11 +1,16 @@
 import { renderHook } from "@testing-library/react"
 import { vi, describe, it, expect, beforeEach } from "vitest"
 import { useRedirectFromState } from "../useRedirectFromState"
-import * as router from "react-router"
 
 // Mock useNavigate
 const mockNavigate = vi.fn()
-vi.spyOn(router, "useNavigate").mockImplementation(() => mockNavigate)
+vi.mock("react-router", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-router")>()
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
 
 describe("useRedirectFromState", () => {
   beforeEach(() => {
