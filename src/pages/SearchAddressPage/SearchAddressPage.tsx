@@ -63,7 +63,7 @@ export function SearchAddressPage() {
   const isValid = isValidSearchString(debouncedSearchString)
   const noResults = !isBusy && isValid && cases && cases.length === 0
 
-  let statusMessage: string | null = null
+  let statusMessage: string | null
 
   if (isBusy) {
     statusMessage = "Zoeken naar adressen..."
