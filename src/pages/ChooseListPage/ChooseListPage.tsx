@@ -1,7 +1,6 @@
-import { Column } from "@amsterdam/design-system-react"
+import { Column, Heading } from "@amsterdam/design-system-react"
 
-import { FootprintsIcon } from "@/icons"
-import { PageHeading, Tag } from "@/components"
+import { Tag } from "@/components"
 import { useItinerariesSummary } from "@/api/hooks/itineraries"
 import ListCard from "./ListCard"
 
@@ -10,7 +9,7 @@ export default function ChooseListPage() {
   return (
     <Column gap="large">
       <Column gap="small">
-        <PageHeading icon={<FootprintsIcon />} label="Mijn looplijsten" />
+        <Heading level={2}>Mijn looplijsten</Heading>
         <Tag name={`${itineraries?.length ?? ""} actieve lijsten`} />
       </Column>
       <Column gap="small">

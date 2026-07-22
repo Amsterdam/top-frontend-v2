@@ -1,5 +1,4 @@
 import { useSortable } from "@dnd-kit/sortable"
-import { useEffect, useEffectEvent, useState } from "react"
 
 export function SortableItem({
   id,
@@ -18,23 +17,6 @@ export function SortableItem({
     transition,
     isDragging,
   } = useSortable({ id })
-
-  const [animate, setAnimate] = useState(true)
-
-  const updateAnimate = useEffectEvent((bool: boolean) => {
-    setAnimate(bool)
-  })
-
-  useEffect(() => {
-    const duration = 1000 // duration of the animation in ms
-    const timer = setTimeout(
-      () => {
-        updateAnimate(false)
-      },
-      duration + animationDelay * 1000,
-    )
-    return () => clearTimeout(timer)
-  }, [animationDelay])
 
   const scale = isDragging ? 1.025 : 1
   const translateY = transform?.y ?? 0

@@ -20,13 +20,11 @@ import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
 import {
   AmsterdamCrossSpinner,
-  PageHeading,
   ReactRouterLink,
   SmallCaseCard,
 } from "@/components"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
 import { FootprintsIcon } from "@/icons"
-import { AnimatedName } from "@/animations"
 
 type FormValues = {
   teamMembers: string[]

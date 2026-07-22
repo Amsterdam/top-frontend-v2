@@ -9,13 +9,10 @@ import {
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
-import {
-  ChevronBackwardIcon,
-  HouseIcon,
-} from "@amsterdam/design-system-react-icons"
+import { ChevronBackwardIcon } from "@amsterdam/design-system-react-icons"
 import { useItinerary, useVisit, useVisits } from "@/api/hooks"
 import { formatAddress } from "@/shared"
-import { AmsterdamCrossSpinner, Divider, PageHeading } from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 import { type FormValuesVisit } from "./FormValuesVisit"
 import StepSituation from "./StepSituation/StepSituation"
 import StepObservations from "./StepObservation/StepObservations"

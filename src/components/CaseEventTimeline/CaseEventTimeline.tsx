@@ -9,7 +9,6 @@ import { MinusIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { Description } from "@/components"
 import { EVENT_CONFIG } from "./config/eventConfig"
 import { buildDescriptionData } from "./utils/buildDescriptionData"
-import styles from "./CaseEventTimeline.module.css"
 
 export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
   const [showAll, setShowAll] = useState(false)

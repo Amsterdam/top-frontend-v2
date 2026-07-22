@@ -1,7 +1,6 @@
 import {
   Button,
   Column,
-  Heading,
   Icon,
   Paragraph,
   Row,
@@ -27,11 +26,7 @@ export function ListCard({ itinerary }: Props) {
   const handhaver = teamMembers[2]
 
   return (
-    <Card>
-      <Heading level={3}>
-        {itinerary.theme} - {itinerary.day_settings_name}
-      </Heading>
-
+    <Card title={`${itinerary.theme} - ${itinerary.day_settings_name}`}>
       {toezichthouders.map((member) => (
         <Row key={member}>
           <Icon svg={PersonsIcon} title="Toezichthouder" />

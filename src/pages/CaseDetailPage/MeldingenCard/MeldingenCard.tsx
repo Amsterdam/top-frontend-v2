@@ -5,7 +5,7 @@ import {
   PencilIcon,
 } from "@amsterdam/design-system-react-icons"
 
-import { Card, Description, Table, Tag } from "@/components"
+import { Card, Description, Table } from "@/components"
 import { formatDate } from "@/shared/dateFormatters"
 
 import { dummyMeldingenResponse } from "./data/dummyMeldingenResponse"

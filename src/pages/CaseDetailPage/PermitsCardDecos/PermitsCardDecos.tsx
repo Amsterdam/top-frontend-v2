@@ -6,7 +6,7 @@ import {
 } from "@amsterdam/design-system-react-icons"
 
 import { usePermitsDecos } from "@/api/hooks"
-import { Card, Description, Table, Tag } from "@/components"
+import { Card, Description, Table } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyDecosResponse from "./data/dummyDecosResponse"

@@ -1,10 +1,10 @@
 // src/pages/DaySettingsPage/DaySettingsPage.tsx
-import { PageHeading, AmsterdamCrossSpinner } from "@/components"
-import { SettingsIcon } from "@amsterdam/design-system-react-icons"
+import { AmsterdamCrossSpinner } from "@/components"
 import { useNavigate, useParams } from "react-router"
 
 import DaySettingsForm from "./DaySettingsForm"
 import { useDaySettingsForm } from "./useDaySettingsForm"
+import { Heading } from "@amsterdam/design-system-react"
 
 export default function DaySettingsPage() {
   const { themeId, dayOfWeek, daySettingsId } = useParams()
@@ -21,12 +21,9 @@ export default function DaySettingsPage() {
 
   return (
     <>
-      <PageHeading
-        icon={SettingsIcon}
-        label={daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
-        backLinkLabel="Terug"
-        backLinkUrl={`/team-settings/${themeId}`}
-      />
+      <Heading level={1}>
+        {daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
+      </Heading>
       <DaySettingsForm
         form={form}
         themeName={theme?.name}
