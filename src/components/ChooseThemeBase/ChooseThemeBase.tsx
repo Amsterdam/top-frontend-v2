@@ -56,7 +56,10 @@ export function ChooseThemeBase({
                 href="#"
                 key={theme.id}
                 icon={ChevronForwardIcon}
-                onClick={() => handleClick(theme.id)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleClick(theme.id)
+                }}
               >
                 {theme.name}
               </LinkList.Link>
