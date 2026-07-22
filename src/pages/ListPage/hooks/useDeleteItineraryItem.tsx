@@ -4,18 +4,28 @@ import { useAlert } from "@/components/alerts/useAlert"
 import { useDialog } from "@/hooks/useDialog"
 import { ConfirmDialog } from "@/components"
 
-export function useDeleteItineraryItem(itineraryItemId: number) {
+type Options = {
+  onSuccess?: () => void
+}
+
+export function useDeleteItineraryItem(
+  itineraryItemId?: number,
+  options?: Options,
+) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const [, { updateCache }] = useItinerary(itineraryId, { lazy: true })
   const [, { execDelete, isBusy }] = useItineraryItem(itineraryItemId, {
     lazy: true,
   })
   const { showAlert } = useAlert()
-  const dialogId = `delete-itinerary-item-${itineraryItemId}`
-  const { openDialog } = useDialog(dialogId)
+  const dialogId = `delete-itinerary-item-${itineraryItemId ?? "unknown"}`
+  const { openDialog, closeDialog } = useDialog(dialogId)
 
   const deleteItineraryItem = async () => {
+    if (!itineraryItemId) return
+
     await execDelete()
+    closeDialog()
     updateCache((cache) => {
       if (!cache) return
       cache.items = cache.items.filter((item) => item.id !== itineraryItemId)
@@ -25,6 +35,7 @@ export function useDeleteItineraryItem(itineraryItemId: number) {
       description: "De zaak is succesvol uit je looplijst verwijderd.",
       severity: "success",
     })
+    options?.onSuccess?.()
   }
 
   const dialog = (

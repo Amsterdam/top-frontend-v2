@@ -2,22 +2,28 @@
   /*border-radius: 6px;*/
   /*box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;*/
   border: 1px solid var(--ams-color-separator);
+  padding-block: var(--ams-grid-cell-padding-block);
+  padding-inline: var(--ams-grid-cell-padding-inline);
   /*margin-bottom: 16px;*/
-}
 
-.ContentCard {
-  padding: var(--ams-space-m);
+  button {
+    z-index: 999;
+  }
 }
+/*
+.ContentCard {
+  padding-block: var(--ams-space-m);
+}*/
 
 .StateCard {
   border-left: 4px solid var(--state-color);
 }
 
-/*.StateRow {
+.StateRow {
   align-items: center;
-  padding: 8px 16px;
   background-color: color-mix(in srgb, var(--state-color) 10%, white);
-}*/
+  margin-block-end: var(--ams-space-s);
+}
 
 .StateIcon {
   color: var(--state-color);

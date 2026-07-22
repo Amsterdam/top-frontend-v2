@@ -51,11 +51,11 @@ export function ChooseThemeBase({
             </>
           )}
           <LinkList>
-            {themes.map((theme, index) => (
+            {themes.map((theme) => (
               <LinkList.Link
+                href="#"
                 key={theme.id}
                 icon={ChevronForwardIcon}
-                style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => handleClick(theme.id)}
               >
                 {theme.name}

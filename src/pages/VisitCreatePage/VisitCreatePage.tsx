@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react"
-import { Grid, Heading, StandaloneLink } from "@amsterdam/design-system-react"
+import {
+  Grid,
+  Heading,
+  Paragraph,
+  Row,
+  StandaloneLink,
+} from "@amsterdam/design-system-react"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
@@ -152,29 +158,29 @@ export default function CreateVisitPage() {
     return <AmsterdamCrossSpinner />
   }
   return (
-    <>
-      <PageHeading icon={HouseIcon} label="Verwerk bezoek" />
-      <Heading level={3}>
-        {formatAddress(itineraryItem?.case?.address, true)}
-      </Heading>
-
-      <Divider />
-
-      <StandaloneLink
-        href="#"
-        icon={ChevronBackwardIcon}
-        onClick={() => navigate(`/lijst/${itineraryId}`)}
-      >
-        Terug naar looplijst
-      </StandaloneLink>
-
-      <FormProvider form={form} onSubmit={onSubmit}>
-        <Grid paddingBottom="x-large" paddingTop="large">
-          <Grid.Cell span={{ narrow: 4, medium: 8, wide: 8 }}>
-            {steps[currentStep]}
-          </Grid.Cell>
-        </Grid>
-      </FormProvider>
-    </>
+    <Grid paddingBottom="x-large" paddingTop="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Row align="between" wrap>
+          <div>
+            <Heading level={1}>Verwerk bezoek</Heading>
+            <Paragraph size="large">
+              {formatAddress(itineraryItem?.case?.address, true)}
+            </Paragraph>
+          </div>
+          <StandaloneLink
+            href="#"
+            icon={ChevronBackwardIcon}
+            onClick={() => navigate(`/lijst/${itineraryId}`)}
+          >
+            Terug naar looplijst
+          </StandaloneLink>
+        </Row>
+      </Grid.Cell>
+      <Grid.Cell span="all">
+        <FormProvider form={form} onSubmit={onSubmit}>
+          {steps[currentStep]}
+        </FormProvider>
+      </Grid.Cell>
+    </Grid>
   )
 }

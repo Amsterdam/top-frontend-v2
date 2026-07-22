@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import {
   ActionGroup,
   Button,
-  Column,
   Grid,
   Heading,
   Paragraph,
@@ -10,7 +9,7 @@ import {
 import { useForm, useWatch } from "react-hook-form"
 import { useNavigate, useParams } from "react-router"
 import dayjs from "dayjs"
-import { AmsterdamCrossSpinner, Divider } from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 import { useItinerary, useItineraryChangeTeamMembers } from "@/api/hooks"
 import { useCurrentUser, useUserOptions } from "@/hooks"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"

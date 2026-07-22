@@ -35,9 +35,8 @@ export function AddSuggestedCaseVariant({ item, onAdd, status }: Props) {
       ) : (
         <Button
           icon={status === "loading" ? SettingsIcon : PlusIcon}
-          iconBefore
           variant="secondary"
-          title="Zaak toevoegen aan looplijst"
+          title="Toevoegen"
           onClick={() => status === "idle" && onAdd?.(caseData!)}
           disabled={status === "loading"}
         >

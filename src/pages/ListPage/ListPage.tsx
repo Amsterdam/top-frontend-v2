@@ -1,11 +1,11 @@
 import { useMemo } from "react"
 import dayjs from "dayjs"
 import {
+  ActionGroup,
   Button,
   Column,
   Grid,
   Heading,
-  IconButton,
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
@@ -40,17 +40,18 @@ export default function ListPage() {
           <Heading
             level={1}
           >{`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
-          <Row wrap align="end">
-            <CopyToClipboardButton itinerary={itinerary} />
-            <IconButton
-              svg={PersonsIcon}
-              label="Wijzig teamleden"
-              title="Wijzig teamleden"
-              size="heading-1"
-              onClick={() => navigate("wijzig-team")}
-            />
-            <DeleteItineraryButton itineraryId={itineraryId!} />
-          </Row>
+
+          <ActionGroup>
+            <GoogleMapsButton addresses={addresses} />
+            <Button
+              variant="primary"
+              iconBefore
+              icon={PlusIcon}
+              onClick={() => navigate("suggesties")}
+            >
+              Voeg zaak toe
+            </Button>
+          </ActionGroup>
         </Row>
       </Grid.Cell>
       <Grid.Cell as="aside" span={{ narrow: 4, medium: 8, wide: 4 }}>
@@ -65,17 +66,17 @@ export default function ListPage() {
               .join(", ")}
           </Paragraph>
         </Column>
-        <Row align="between" wrap>
-          <GoogleMapsButton addresses={addresses} />
+        <ActionGroup>
+          <CopyToClipboardButton itinerary={itinerary} />
           <Button
             variant="secondary"
-            iconBefore
-            icon={PlusIcon}
-            onClick={() => navigate("suggesties")}
+            icon={PersonsIcon}
+            onClick={() => navigate("wijzig-team")}
           >
-            Voeg zaak toe
+            Wijzig teamleden
           </Button>
-        </Row>
+          <DeleteItineraryButton itineraryId={itineraryId!} />
+        </ActionGroup>
       </Grid.Cell>
 
       <Grid.Cell

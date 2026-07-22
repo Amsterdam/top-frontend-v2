@@ -1,5 +1,11 @@
 // src/components/ItineraryListItem/ItineraryListItem.tsx
-import { Column, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  Card,
+  Column,
+  Heading,
+  Paragraph,
+  Row,
+} from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusTag, PriorityTag, Note, Tag } from "@/components"
@@ -41,8 +47,12 @@ export function ItineraryListItem({
   return (
     <VisitWrapper variant={variant} item={item}>
       <Row>
-        <Column gap="x-small" style={{ flexGrow: 1 }} onClick={onCardClick}>
-          <Heading level={3}>{formatAddress(address)}</Heading>
+        <Column gap="x-small" style={{ flexGrow: 1 }}>
+          <Heading level={3}>
+            <Card.Link href="#" onClick={onCardClick}>
+              {formatAddress(address)}
+            </Card.Link>
+          </Heading>
           <Paragraph>{address?.postal_code}</Paragraph>
           <Paragraph>{caseData?.reason?.name}</Paragraph>
           <Paragraph>{caseData?.project?.name}</Paragraph>
@@ -59,19 +69,17 @@ export function ItineraryListItem({
           <AddSuggestedCaseVariant item={item} onAdd={onAdd} status={status} />
         )}
       </Row>
-      <div onClick={onCardClick}>
-        <Row wrap className="mt-1 ">
-          <StatusTag statusName={statusName} />
-          <PriorityTag priority={priority} />
-          {caseData?.tags?.map((tag) => (
-            <Tag
-              key={`${caseData.id}-${tag.id}`}
-              color="greyDark"
-              name={tag.name}
-            />
-          ))}
-        </Row>
-        <Note note={notes} className="mt-2" />
+      <div>
+        <Column>
+          <Row wrap className="mt-1 ">
+            <StatusTag statusName={statusName} />
+            <PriorityTag priority={priority} />
+            {caseData?.tags?.map((tag) => (
+              <Tag key={`${caseData.id}-${tag.id}`} name={tag.name} />
+            ))}
+          </Row>
+          <Note note={notes} />
+        </Column>
       </div>
     </VisitWrapper>
   )

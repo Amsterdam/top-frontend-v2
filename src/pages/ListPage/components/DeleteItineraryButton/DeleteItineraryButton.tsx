@@ -1,7 +1,7 @@
 import { useItinerary } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
-import { IconButton } from "@amsterdam/design-system-react"
+import { Button } from "@amsterdam/design-system-react"
 import { DeleteIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import { useDialog } from "@/hooks/useDialog"
@@ -33,13 +33,9 @@ export function DeleteItineraryButton({
 
   return (
     <>
-      <IconButton
-        svg={DeleteIcon}
-        label="Verwijder looplijst"
-        title="Verwijder looplijst"
-        size="heading-1"
-        onClick={openDialog}
-      />
+      <Button icon={DeleteIcon} onClick={openDialog} variant="secondary">
+        Verwijder looplijst
+      </Button>
       <ConfirmDialog
         id={dialogId}
         title="Looplijst verwijderen"
