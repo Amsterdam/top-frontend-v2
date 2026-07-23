@@ -9,7 +9,7 @@ import { useMediaQuery, BREAKPOINTS } from "@/hooks"
 import type { FormValues } from "../types"
 
 export function CorporationsSection() {
-  const [corporations] = useCorporations()
+  const { data: corporations } = useCorporations()
   const isMobile = useMediaQuery(BREAKPOINTS.sm)
 
   return (

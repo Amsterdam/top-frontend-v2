@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { useItinerary, useVisit } from "@/api/hooks"
+import { useCompleteVisit, useUpdateItineraryCache } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { Button } from "@amsterdam/design-system-react"
@@ -14,36 +14,41 @@ export function CompleteVisitButton({
   itineraryItemId: number
 }) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [, { isBusy, execPatch }] = useVisit(visitId, { lazy: true })
-  const [, { updateCache }] = useItinerary(itineraryId, { lazy: true })
+  const completeVisit = useCompleteVisit(visitId)
+  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
   const { showAlert } = useAlert()
   const dialogId = `complete-visit-${visitId}`
   const { openDialog, closeDialog } = useDialog(dialogId)
 
-  const completeVisit = async () => {
-    execPatch({ completed: true }).then(() => {
-      showAlert({
-        title: "Bezoek afgerond",
-        description: "Het bezoek is succesvol afgerond.",
-        severity: "success",
-      })
-      closeDialog()
-      updateCache((cache) => {
-        if (!cache) return
+  const handleComplete = () => {
+    completeVisit.mutate(
+      { completed: true },
+      {
+        onSuccess: () => {
+          showAlert({
+            title: "Bezoek afgerond",
+            description: "Het bezoek is succesvol afgerond.",
+            severity: "success",
+          })
+          closeDialog()
+          updateItineraryCache((cache) => {
+            if (!cache) return
 
-        const itemToUpdate = cache.items.find(
-          (item) => item.id === itineraryItemId,
-        )
-        if (!itemToUpdate) return
+            const itemToUpdate = cache.items.find(
+              (item) => item.id === itineraryItemId,
+            )
+            if (!itemToUpdate) return
 
-        const visitToUpdate = itemToUpdate.visits.find(
-          (visit) => visit.id === visitId,
-        )
-        if (!visitToUpdate) return
+            const visitToUpdate = itemToUpdate.visits.find(
+              (visit) => visit.id === visitId,
+            )
+            if (!visitToUpdate) return
 
-        visitToUpdate.completed = true
-      })
-    })
+            visitToUpdate.completed = true
+          })
+        },
+      },
+    )
   }
 
   return (
@@ -55,9 +60,9 @@ export function CompleteVisitButton({
         id={dialogId}
         title="Bezoek afronden"
         content={<span>Weet je zeker dat je dit bezoek wilt afronden?</span>}
-        onOk={completeVisit}
+        onOk={handleComplete}
         onOkText="Afronden"
-        loading={isBusy}
+        loading={completeVisit.isPending}
       />
     </>
   )

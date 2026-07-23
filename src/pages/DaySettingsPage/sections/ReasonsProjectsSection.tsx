@@ -15,8 +15,8 @@ type Props = {
 }
 
 export function ReasonsProjectsSection({ themeId }: Props) {
-  const [reasons] = useTeamSettingsReasons(themeId!)
-  const [caseProjects] = useTeamSettingsCaseProjects(themeId!)
+  const { data: reasons } = useTeamSettingsReasons(themeId!)
+  const { data: caseProjects } = useTeamSettingsCaseProjects(themeId!)
   return (
     <Card
       title={

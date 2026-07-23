@@ -1,19 +1,25 @@
 import { useMemo } from "react"
-import type { ApiOptions } from "../types/apiOptions"
-import useApi from "../useApi"
+import { useQuery } from "@tanstack/react-query"
+import dayjs from "dayjs"
+import { useApiFetch } from "@/api/useApiFetch"
+import { queryKeys } from "@/api/queryKeys"
 import { makeApiUrl } from "../utils/makeApiUrl"
 import { stringifyQueryParams } from "../utils/stringifyQueryParams"
-import dayjs from "dayjs"
 
-export const useCorporations = (options?: ApiOptions) => {
-  return useApi<HousingCorporation[]>({
-    ...options,
-    url: makeApiUrl("addresses", "housing-corporations"),
+export const useCorporations = () => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.addresses.corporations,
+    queryFn: () =>
+      fetch<HousingCorporation[]>(
+        makeApiUrl("addresses", "housing-corporations"),
+      ),
   })
 }
 
 export function useCorporationName(corporationId?: number | null) {
-  const [corporations] = useCorporations()
+  const { data: corporations } = useCorporations()
 
   return useMemo(() => {
     if (!corporationId) return undefined
@@ -22,47 +28,60 @@ export function useCorporationName(corporationId?: number | null) {
   }, [corporationId, corporations])
 }
 
-export const useDistricts = (options?: ApiOptions) => {
-  return useApi<District[]>({
-    ...options,
-    url: makeApiUrl("addresses", "districts"),
+export const useDistricts = () => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.addresses.districts,
+    queryFn: () => fetch<District[]>(makeApiUrl("addresses", "districts")),
   })
 }
 
-export const useRegistrations = (bagId?: string, options?: ApiOptions) =>
-  useApi<Registration[]>({
-    ...options,
-    url: makeApiUrl("addresses", bagId, "registrations"),
-    lazy: options?.lazy ?? !bagId,
-  })
+export const useRegistrations = (bagId?: string) => {
+  const fetch = useApiFetch()
 
-export const useMeldingen = (
-  bagId?: string,
-  startDate?: string,
-  options?: ApiOptions,
-) => {
-  const params = {
-    start_date:
-      startDate || dayjs().subtract(1, "year").startOf("year").format(),
-  }
-  const queryString = stringifyQueryParams(params)
-  return useApi<components["schemas"]["Meldingen"]>({
-    ...options,
-    url: makeApiUrl("addresses", bagId, "meldingen", queryString),
-    lazy: options?.lazy ?? !bagId,
+  return useQuery({
+    queryKey: queryKeys.addresses.registrations(bagId ?? ""),
+    queryFn: () =>
+      fetch<Registration[]>(makeApiUrl("addresses", bagId, "registrations")),
+    enabled: Boolean(bagId),
   })
 }
 
-export const usePermits = (bagId?: string, options?: ApiOptions) =>
-  useApi<Permit[]>({
-    ...options,
-    url: makeApiUrl("addresses", bagId, "permits-powerbrowser"),
-    lazy: options?.lazy ?? !bagId,
-  })
+export const useMeldingen = (bagId?: string, startDate?: string) => {
+  const fetch = useApiFetch()
+  const resolvedStartDate =
+    startDate || dayjs().subtract(1, "year").startOf("year").format()
+  const queryString = stringifyQueryParams({ start_date: resolvedStartDate })
 
-export const usePermitsDecos = (bagId?: string, options?: ApiOptions) =>
-  useApi<PermitDecos[]>({
-    ...options,
-    url: makeApiUrl("addresses", bagId, "decos"),
-    lazy: options?.lazy ?? !bagId,
+  return useQuery({
+    queryKey: queryKeys.addresses.meldingen(bagId ?? "", resolvedStartDate),
+    queryFn: () =>
+      fetch<components["schemas"]["Meldingen"]>(
+        makeApiUrl("addresses", bagId, "meldingen", queryString),
+      ),
+    enabled: Boolean(bagId),
   })
+}
+
+export const usePermits = (bagId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.addresses.permits(bagId ?? ""),
+    queryFn: () =>
+      fetch<Permit[]>(makeApiUrl("addresses", bagId, "permits-powerbrowser")),
+    enabled: Boolean(bagId),
+  })
+}
+
+export const usePermitsDecos = (bagId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.addresses.permitsDecos(bagId ?? ""),
+    queryFn: () =>
+      fetch<PermitDecos[]>(makeApiUrl("addresses", bagId, "decos")),
+    enabled: Boolean(bagId),
+  })
+}

@@ -1,23 +1,87 @@
-import { useApi } from "@/api/useApi"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
-import type { ApiOptions } from "@/api/types/apiOptions"
+import { queryKeys } from "@/api/queryKeys"
 
-export const useVisits = (options?: ApiOptions) =>
-  useApi<Visit[], VisitPayload>({
-    ...options,
-    url: makeApiUrl("visits"),
-  })
+export const useVisits = () => {
+  const fetch = useApiFetch()
 
-export const useVisit = (id?: string | number, options?: ApiOptions) =>
-  useApi<Visit, VisitPayload>({
-    ...options,
-    url: makeApiUrl(`visits/${id}`),
-    lazy: options?.lazy ?? !id,
+  return useQuery({
+    queryKey: queryKeys.visits.all,
+    queryFn: () => fetch<Visit[]>(makeApiUrl("visits")),
   })
+}
 
-export const useCaseVisits = (caseId?: number, options?: ApiOptions) =>
-  useApi<Visit[]>({
-    ...options,
-    url: makeApiUrl(`cases/${caseId}/visits`),
-    lazy: options?.lazy ?? !caseId,
+export const useVisit = (
+  id?: string | number,
+  options?: { enabled?: boolean },
+) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.visits.detail(id ?? ""),
+    queryFn: () => fetch<Visit>(makeApiUrl("visits", id)),
+    enabled: options?.enabled ?? Boolean(id),
   })
+}
+
+export const useCaseVisits = (caseId?: number) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.cases.visits(caseId ?? -1),
+    queryFn: () => fetch<Visit[]>(makeApiUrl("cases", caseId, "visits")),
+    enabled: Boolean(caseId),
+  })
+}
+
+type SaveVisitOptions = {
+  visitId?: string | number
+  itineraryId?: string
+}
+
+export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: VisitPayload) =>
+      fetch<Visit>(makeApiUrl("visits", visitId), {
+        method: visitId ? "PUT" : "POST",
+        data: payload,
+      }),
+    onSuccess: () => {
+      if (visitId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.visits.detail(visitId),
+        })
+      } else {
+        queryClient.invalidateQueries({ queryKey: queryKeys.visits.all })
+      }
+
+      if (itineraryId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.itineraries.detail(itineraryId),
+        })
+      }
+    },
+  })
+}
+
+export const useCompleteVisit = (visitId?: string | number) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: { completed: boolean }) =>
+      fetch<Visit>(makeApiUrl("visits", visitId), {
+        method: "PATCH",
+        data: payload,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.visits.detail(visitId ?? ""),
+      })
+    },
+  })
+}

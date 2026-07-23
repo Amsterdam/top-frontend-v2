@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
 import { ChevronBackwardIcon } from "@amsterdam/design-system-react-icons"
-import { useItinerary, useVisit, useVisits } from "@/api/hooks"
+import { useItinerary, useSaveVisit, useVisit } from "@/api/hooks"
 import { formatAddress } from "@/shared"
 import { AmsterdamCrossSpinner } from "@/components"
 import { type FormValuesVisit } from "./FormValuesVisit"
@@ -31,9 +31,11 @@ export default function CreateVisitPage() {
     visitId?: string
   }>()
   const [isLoading, setIsLoading] = useState(false)
-  const [, { execPost }] = useVisits({ lazy: true })
-  const [visit, { execPut, execGet }] = useVisit(visitId, { lazy: true })
-  const [itinerary] = useItinerary(itineraryId, { lazy: true })
+  const { data: visit, refetch: execGet } = useVisit(visitId, {
+    enabled: false,
+  })
+  const saveVisit = useSaveVisit({ visitId, itineraryId })
+  const { data: itinerary } = useItinerary(itineraryId, { enabled: false })
   const currentUser = useCurrentUser()
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
@@ -89,8 +91,6 @@ export default function CreateVisitPage() {
   const onSubmit = async (values: FormValuesVisit) => {
     if (!currentUser?.id || !caseId || !itineraryItem?.id) return
 
-    const execRequest = visitId ? execPut : execPost
-
     setIsLoading(true)
 
     const initialValues = {
@@ -100,10 +100,8 @@ export default function CreateVisitPage() {
     }
     const payload = mapValues({ ...values, ...initialValues })
 
-    execRequest(payload, {
-      clearCacheKeys: [`/itineraries/${itineraryId}`],
-    })
-      .then(async () => {
+    saveVisit.mutate(payload, {
+      onSuccess: async () => {
         await moveItineraryItemToBottom()
         navigate(`/lijst/${itineraryId}`)
         showAlert({
@@ -112,13 +110,14 @@ export default function CreateVisitPage() {
             "Het bezoek is verwerkt en opgeslagen. Je wordt nu teruggestuurd naar de looplijst.",
           severity: "success",
         })
-      })
-      .finally(() => {
+      },
+      onSettled: () => {
         // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
         setTimeout(() => {
           setIsLoading(false)
         }, 350)
-      })
+      },
+    })
   }
 
   const situation = useWatch({

@@ -5,7 +5,7 @@ import { useItinerariesSummary } from "@/api/hooks/itineraries"
 import ListCard from "./ListCard"
 
 export default function ChooseListPage() {
-  const [itineraries] = useItinerariesSummary()
+  const { data: itineraries } = useItinerariesSummary()
   return (
     <Column gap="large">
       <Column gap="small">

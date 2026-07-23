@@ -50,9 +50,9 @@ const columns = [
 ] as const
 
 export default function PermitsCard({ bagId }: Props) {
-  const [permits, { isBusy }] = usePermits(bagId)
+  const { data: permits, isPending } = usePermits(bagId)
 
-  if (!bagId || isBusy) return null
+  if (!bagId || isPending) return null
 
   const isDevOrAcc = isAcceptanceOrLocalEnvironment()
   // Show dummy data if we're in dev or acceptance environment, we have a valid address, we're not currently loading data, and we didn't get any residents back from the API

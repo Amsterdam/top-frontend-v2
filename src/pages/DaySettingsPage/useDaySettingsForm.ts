@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import dayjs from "dayjs"
-import { useDaySetting, useTheme } from "@/api/hooks"
+import { useDaySetting, useSaveDaySetting, useTheme } from "@/api/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 import {
   hasPostalCodeOverlap,
@@ -23,9 +23,12 @@ export function useDaySettingsForm({
   daySettingsId,
   onSuccess,
 }: Options) {
-  const [theme] = useTheme(themeId)
-  const [daySetting, { execPut, execPost, isBusy }] =
-    useDaySetting(daySettingsId)
+  const { data: theme } = useTheme(themeId)
+  const { data: daySetting } = useDaySetting(daySettingsId)
+  const saveDaySetting = useSaveDaySetting({
+    daySettingId: daySettingsId,
+    teamId: themeId,
+  })
   const [isLoading, setIsLoading] = useState(false)
   const { showAlert } = useAlert()
 
@@ -111,9 +114,8 @@ export function useDaySettingsForm({
       payload.districts = []
     }
 
-    const exec = daySettingsId ? execPut : execPost
-    exec(payload, { clearCacheKeys: ["/team-settings"] })
-      .then((res) => {
+    saveDaySetting.mutate(payload, {
+      onSuccess: (res) => {
         if (res?.id) {
           showAlert({
             title: "Daginstelling opgeslagen!",
@@ -122,10 +124,11 @@ export function useDaySettingsForm({
           })
           onSuccess?.(res.id)
         }
-      })
-      .finally(() => {
+      },
+      onSettled: () => {
         setTimeout(() => setIsLoading(false), 350)
-      })
+      },
+    })
   }
 
   return {
@@ -133,6 +136,6 @@ export function useDaySettingsForm({
     theme,
     daySetting,
     onSubmit,
-    isLoading: isLoading || isBusy,
+    isLoading: isLoading || saveDaySetting.isPending,
   }
 }

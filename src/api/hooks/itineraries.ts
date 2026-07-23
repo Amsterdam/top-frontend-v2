@@ -1,6 +1,8 @@
-import { useApi } from "@/api/useApi"
+import { useCallback } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
-import type { ApiOptions } from "@/api/types/apiOptions"
+import { queryKeys } from "@/api/queryKeys"
 
 type SuggestionsResponse = {
   cases: Case[]
@@ -20,59 +22,161 @@ type CreateItineraryPayload = {
   start_case: Record<string, unknown>
 }
 
-type UpdateItineraryPayload = {
+type AddItineraryItemPayload = {
   id: number
   itinerary: number
   position?: number
 }
 
 export const useItinerariesSummary = () => {
-  return useApi<components["schemas"]["ItinerarySummary"][]>({
-    url: makeApiUrl("itineraries", "summary"),
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.itineraries.summary(),
+    queryFn: () =>
+      fetch<components["schemas"]["ItinerarySummary"][]>(
+        makeApiUrl("itineraries", "summary"),
+      ),
   })
 }
 
-export const useItinerary = (itineraryId?: string, options?: ApiOptions) => {
-  return useApi<Itinerary, CreateItineraryPayload>({
-    ...options,
-    url: makeApiUrl("itineraries", itineraryId),
-    lazy: options?.lazy ?? !itineraryId,
-  })
-}
-
-export const useItinerarySuggestions = (
+export const useItinerary = (
   itineraryId?: string,
-  options?: ApiOptions,
+  options?: { enabled?: boolean },
 ) => {
-  return useApi<SuggestionsResponse>({
-    ...options,
-    url: makeApiUrl("itineraries", itineraryId, "suggestions"),
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.itineraries.detail(itineraryId ?? ""),
+    queryFn: () => fetch<Itinerary>(makeApiUrl("itineraries", itineraryId)),
+    enabled: options?.enabled ?? Boolean(itineraryId),
   })
 }
 
-export const useItineraryChangeTeamMembers = (itineraryId?: string) => {
-  return useApi<
-    { team_members: components["schemas"]["ItineraryTeamMember"][] },
-    { team_members: TeamMemberPayload[] }
-  >({
-    url: makeApiUrl("itineraries", itineraryId, "team"),
-    lazy: true,
+export const useItinerarySuggestions = (itineraryId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.itineraries.suggestions(itineraryId ?? ""),
+    queryFn: () =>
+      fetch<SuggestionsResponse>(
+        makeApiUrl("itineraries", itineraryId, "suggestions"),
+      ),
+    enabled: Boolean(itineraryId),
   })
 }
 
-export const useItineraryItem = (
+/**
+ * Optimistically patches the cached itinerary detail for itineraryId. Several
+ * components (drag-reorder, delete item, complete visit, ...) need to patch
+ * this same cache entry without necessarily holding a live useItinerary query.
+ */
+export const useUpdateItineraryCache = (itineraryId?: string) => {
+  const queryClient = useQueryClient()
+
+  return useCallback(
+    (updater: (itinerary: Itinerary | undefined) => void) => {
+      queryClient.setQueryData(
+        queryKeys.itineraries.detail(itineraryId ?? ""),
+        (current: Itinerary | undefined) => {
+          const next = current ? structuredClone(current) : undefined
+          updater(next)
+          return next
+        },
+      )
+    },
+    [queryClient, itineraryId],
+  )
+}
+
+export const useCreateItinerary = () => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: CreateItineraryPayload) =>
+      fetch<Itinerary>(makeApiUrl("itineraries"), {
+        method: "POST",
+        data: payload,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.itineraries.all })
+    },
+  })
+}
+
+export const useDeleteItinerary = (itineraryId?: string) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () =>
+      fetch<unknown>(makeApiUrl("itineraries", itineraryId), {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.itineraries.summary(),
+      })
+    },
+  })
+}
+
+export const useChangeTeamMembers = (itineraryId?: string) => {
+  const fetch = useApiFetch()
+
+  return useMutation({
+    mutationFn: (payload: { team_members: TeamMemberPayload[] }) =>
+      fetch<{ team_members: components["schemas"]["ItineraryTeamMember"][] }>(
+        makeApiUrl("itineraries", itineraryId, "team"),
+        { method: "PUT", data: payload },
+      ),
+  })
+}
+
+export const useCreateItineraryItem = () => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AddItineraryItemPayload) =>
+      fetch<ItineraryItem>(makeApiUrl("itinerary-items"), {
+        method: "POST",
+        data: payload,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.itineraryItems.all })
+    },
+  })
+}
+
+export const useRemoveItineraryItem = (itineraryItemId?: string | number) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () =>
+      fetch<unknown>(makeApiUrl("itinerary-items", itineraryItemId), {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.itineraryItems.detail(itineraryItemId ?? ""),
+      })
+    },
+  })
+}
+
+export const useUpdateItineraryItemPosition = (
   itineraryItemId?: string | number,
-  options?: ApiOptions,
 ) => {
-  return useApi<ItineraryItem>({
-    ...options,
-    url: makeApiUrl("itinerary-items", itineraryItemId),
-  })
-}
+  const fetch = useApiFetch()
 
-export const useItineraryItems = (options?: ApiOptions) => {
-  return useApi<ItineraryItem, UpdateItineraryPayload>({
-    ...options,
-    url: makeApiUrl("itinerary-items"),
+  return useMutation({
+    mutationFn: (payload: { position: number }) =>
+      fetch<ItineraryItem>(makeApiUrl("itinerary-items", itineraryItemId), {
+        method: "PATCH",
+        data: payload,
+      }),
   })
 }

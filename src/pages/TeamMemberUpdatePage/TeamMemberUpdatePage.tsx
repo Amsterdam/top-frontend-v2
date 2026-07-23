@@ -8,9 +8,15 @@ import {
 } from "@amsterdam/design-system-react"
 import { useForm, useWatch } from "react-hook-form"
 import { useNavigate, useParams } from "react-router"
+import { useQueryClient } from "@tanstack/react-query"
 import dayjs from "dayjs"
 import { AmsterdamCrossSpinner } from "@/components"
-import { useItinerary, useItineraryChangeTeamMembers } from "@/api/hooks"
+import {
+  useChangeTeamMembers,
+  useItinerary,
+  useUpdateItineraryCache,
+} from "@/api/hooks"
+import { queryKeys } from "@/api/queryKeys"
 import { useCurrentUser, useUserOptions } from "@/hooks"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { TeamMembersFields } from "@/forms/components/TeamMembersFields"
@@ -22,23 +28,12 @@ type FormValues = {
 export default function TeamMemberUpdatePage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const navigate = useNavigate()
-  const [itinerary, { isBusy, execGet, updateCache }] = useItinerary(
-    itineraryId,
-    {
-      lazy: true,
-    },
-  )
-  const [, { execPut, isBusy: isUpdating }] =
-    useItineraryChangeTeamMembers(itineraryId)
+  const queryClient = useQueryClient()
+  const { data: itinerary, isPending } = useItinerary(itineraryId)
+  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
+  const changeTeamMembers = useChangeTeamMembers(itineraryId)
   const currentUser = useCurrentUser()
   const userOptions = useUserOptions()
-
-  useEffect(() => {
-    if (!itinerary && !isUpdating && itineraryId) {
-      execGet()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itinerary, itineraryId])
 
   const form = useForm<FormValues>({
     mode: "onChange",
@@ -72,26 +67,28 @@ export default function TeamMemberUpdatePage() {
     const isCurrentUserInTeam =
       !!currentUser?.id && values.teamMembers.includes(currentUser.id)
 
-    const clearCacheKeys: string[] = isCurrentUserInTeam ? [] : ["/itineraries"]
-
-    execPut(payload, {
-      clearCacheKeys,
-    }).then((resp) => {
-      updateCache((cache) => {
-        if (!cache || !resp?.team_members) return
-        cache.team_members = resp.team_members
-      })
-      if (isCurrentUserInTeam) {
-        navigate(`/lijst/${itineraryId}`)
-      } else {
-        navigate("/")
-      }
+    changeTeamMembers.mutate(payload, {
+      onSuccess: (resp) => {
+        updateItineraryCache((cache) => {
+          if (!cache || !resp?.team_members) return
+          cache.team_members = resp.team_members
+        })
+        if (!isCurrentUserInTeam) {
+          queryClient.invalidateQueries({ queryKey: queryKeys.itineraries.all })
+        }
+        if (isCurrentUserInTeam) {
+          navigate(`/lijst/${itineraryId}`)
+        } else {
+          navigate("/")
+        }
+      },
     })
   }
 
   const { formState } = form
+  const isUpdating = changeTeamMembers.isPending
 
-  if (isBusy || !itinerary) {
+  if (isPending || !itinerary) {
     return <AmsterdamCrossSpinner />
   }
 

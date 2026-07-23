@@ -1,4 +1,4 @@
-import { useItinerary } from "@/api/hooks"
+import { useDeleteItinerary } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { Button } from "@amsterdam/design-system-react"
@@ -11,23 +11,22 @@ export function DeleteItineraryButton({
 }: {
   itineraryId: string
 }) {
-  const [, { execDelete, isBusy }] = useItinerary(itineraryId)
+  const deleteItinerary = useDeleteItinerary(itineraryId)
   const navigate = useNavigate()
   const { showAlert } = useAlert()
   const dialogId = `delete-itinerary-${itineraryId}`
   const { openDialog } = useDialog(dialogId)
 
-  const deleteItinerary = async () => {
-    execDelete({
-      clearCacheKeys: ["/itineraries/summary"],
-      skipCacheClear: true, // Prevent cache clearing /iternaries/itineraryId because ListPage is fetching it again after deletion. TODO: refactor to avoid this hack
-    }).then(() => {
-      showAlert({
-        title: "Looplijst verwijderd",
-        description: "De looplijst is succesvol verwijderd.",
-        severity: "success",
-      })
-      navigate("/lijst-instellingen")
+  const handleDelete = () => {
+    deleteItinerary.mutate(undefined, {
+      onSuccess: () => {
+        showAlert({
+          title: "Looplijst verwijderd",
+          description: "De looplijst is succesvol verwijderd.",
+          severity: "success",
+        })
+        navigate("/lijst-instellingen")
+      },
     })
   }
 
@@ -42,9 +41,9 @@ export function DeleteItineraryButton({
         content={
           <span>Weet je zeker dat je de looplijst wilt verwijderen?</span>
         }
-        onOk={deleteItinerary}
+        onOk={handleDelete}
         onOkText="Verwijderen"
-        loading={isBusy}
+        loading={deleteItinerary.isPending}
       />
     </>
   )

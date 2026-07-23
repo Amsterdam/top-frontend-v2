@@ -19,15 +19,15 @@ import type { TeamSettingsOptions } from "./types"
 
 export default function TeamSettingsPage() {
   const { themeId } = useParams<{ themeId: string }>()
-  const [teamSettings, { isBusy }] = useTeamSettings(themeId!)
-  const [reasons] = useTeamSettingsReasons(themeId!)
-  const [scheduleTypes] = useTeamSettingsScheduleTypes(themeId!)
-  const [stateTypes] = useTeamSettingsStateTypes(themeId!)
-  const [caseProjects] = useTeamSettingsCaseProjects(themeId!)
-  const [subjects] = useTeamSettingsSubjects(themeId!)
-  const [tags] = useTeamSettingsTags(themeId!)
-  const [housingCorporations] = useCorporations()
-  const [districts] = useDistricts()
+  const { data: teamSettings, isPending } = useTeamSettings(themeId!)
+  const { data: reasons } = useTeamSettingsReasons(themeId!)
+  const { data: scheduleTypes } = useTeamSettingsScheduleTypes(themeId!)
+  const { data: stateTypes } = useTeamSettingsStateTypes(themeId!)
+  const { data: caseProjects } = useTeamSettingsCaseProjects(themeId!)
+  const { data: subjects } = useTeamSettingsSubjects(themeId!)
+  const { data: tags } = useTeamSettingsTags(themeId!)
+  const { data: housingCorporations } = useCorporations()
+  const { data: districts } = useDistricts()
 
   const teamSettingsOptions: TeamSettingsOptions = {
     reasons,
@@ -41,7 +41,7 @@ export default function TeamSettingsPage() {
   }
 
   const daySettings = (teamSettings?.day_settings_list || []) as DaySettings[]
-  if (isBusy) {
+  if (isPending) {
     return <AmsterdamCrossSpinner />
   }
   return (
@@ -68,6 +68,7 @@ export default function TeamSettingsPage() {
               ds?.week_days?.includes(dayOfWeek.id),
             )}
             teamSettingsOptions={teamSettingsOptions}
+            teamId={themeId!}
             animationDelay={index * 0.2}
           />
         ))}

@@ -9,12 +9,14 @@ import { DeleteDaySettingsButton } from "./DeleteDaySettingsButton/DeleteDaySett
 type Props = {
   daySetting: DaySettings
   teamSettingsOptions: TeamSettingsOptions
+  teamId: string
   animationDelay?: number
 }
 
 export default function DaySettingsCard({
   daySetting,
   teamSettingsOptions,
+  teamId,
 }: Props) {
   const navigate = useNavigate()
   return (
@@ -38,6 +40,7 @@ export default function DaySettingsCard({
           <DeleteDaySettingsButton
             daySettingId={daySetting.id}
             daySettingName={daySetting.name}
+            teamId={teamId}
           />
         </ActionGroup>
       }

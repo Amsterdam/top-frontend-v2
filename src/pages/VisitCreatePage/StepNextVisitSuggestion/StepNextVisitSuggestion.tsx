@@ -18,7 +18,7 @@ type Props = {
 
 export const StepNextVisitSuggestion = ({ onPrevStep, onNextStep }: Props) => {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [itinerary] = useItinerary(itineraryId)
+  const { data: itinerary } = useItinerary(itineraryId)
 
   const items =
     itinerary?.settings?.day_settings?.team_settings

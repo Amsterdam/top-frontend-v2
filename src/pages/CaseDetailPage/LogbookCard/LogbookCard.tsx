@@ -10,9 +10,9 @@ import { Card, HeadingWithIcon, VisitTag } from "@/components"
 import { formatDate } from "@/shared"
 
 export function LogbookCard({ caseId }: { caseId?: number }) {
-  const [caseVisits, { isBusy }] = useCaseVisits(caseId)
+  const { data: caseVisits, isPending } = useCaseVisits(caseId)
 
-  if (!caseVisits || isBusy) return null
+  if (!caseVisits || isPending) return null
 
   const visits = caseVisits.sort(
     (a, b) =>

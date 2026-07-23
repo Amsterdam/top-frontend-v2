@@ -1,9 +1,10 @@
 import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
 import { useParams } from "react-router"
 import {
+  useCreateItineraryItem,
   useItinerary,
-  useItineraryItems,
   useItinerarySuggestions,
+  useUpdateItineraryCache,
 } from "@/api/hooks"
 import { AmsterdamCrossSpinner, ItineraryListItem } from "@/components"
 import { useState } from "react"
@@ -18,9 +19,10 @@ function getTopPosition(items?: { position: number }[]): number {
 
 export default function SuggestionPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [data, { isBusy }] = useItinerarySuggestions(itineraryId)
-  const [itinerary, { updateCache }] = useItinerary(itineraryId)
-  const [, { execPost }] = useItineraryItems({ lazy: true })
+  const { data, isPending } = useItinerarySuggestions(itineraryId)
+  const { data: itinerary } = useItinerary(itineraryId)
+  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
+  const createItineraryItem = useCreateItineraryItem()
 
   // Loading state for active POST requests
   const [loadingIds, setLoadingIds] = useState<number[]>([])
@@ -33,14 +35,14 @@ export default function SuggestionPage() {
     const position = getTopPosition(itinerary?.items)
 
     try {
-      const resp = await execPost({
+      const resp = await createItineraryItem.mutateAsync({
         itinerary: Number(itineraryId),
         id: caseData.id,
         position,
       })
 
       // Update cache
-      updateCache((cache) => {
+      updateItineraryCache((cache) => {
         if (!cache || !resp?.id) return
         cache.items.push({
           case: caseData,
@@ -57,7 +59,7 @@ export default function SuggestionPage() {
 
   const cases = data?.cases ?? []
 
-  if (isBusy) {
+  if (isPending) {
     return <AmsterdamCrossSpinner />
   }
 

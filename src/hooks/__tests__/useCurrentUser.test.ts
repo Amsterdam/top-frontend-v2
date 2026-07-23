@@ -13,17 +13,17 @@ describe("useCurrentUser", () => {
     }))
 
     vi.doMock("@/api/hooks", () => ({
-      useUsers: () => [
-        {
+      useUsers: () => ({
+        data: {
           results: [
             { id: "1", username: "john", name: "John Doe" },
             { id: "2", username: "jane", name: "Jane Doe" },
           ],
         },
-      ],
+      }),
     }))
 
-    const { useCurrentUser } = await import("@/hooks/useCurrentUser")
+    const { useCurrentUser } = await import("../useCurrentUser")
     const { result } = renderHook(() => useCurrentUser())
 
     expect(result.current).toEqual({
@@ -44,17 +44,17 @@ describe("useCurrentUser", () => {
     }))
 
     vi.doMock("@/api/hooks", () => ({
-      useUsers: () => [
-        {
+      useUsers: () => ({
+        data: {
           results: [
             { id: "1", username: "john", name: "John Doe" },
             { id: "2", username: "jane", name: "Jane Doe" },
           ],
         },
-      ],
+      }),
     }))
 
-    const { useCurrentUser } = await import("@/hooks/useCurrentUser")
+    const { useCurrentUser } = await import("../useCurrentUser")
     const { result } = renderHook(() => useCurrentUser())
 
     expect(result.current).toBeUndefined()
