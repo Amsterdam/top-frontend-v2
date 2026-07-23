@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { useCompleteVisit, useUpdateItineraryCache } from "@/api/hooks"
+import { useCompleteVisit } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { Button } from "@amsterdam/design-system-react"
@@ -14,8 +14,11 @@ export function CompleteVisitButton({
   itineraryItemId: number
 }) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const completeVisit = useCompleteVisit(visitId)
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
+  const completeVisit = useCompleteVisit({
+    visitId,
+    itineraryId,
+    itineraryItemId,
+  })
   const { showAlert } = useAlert()
   const dialogId = `complete-visit-${visitId}`
   const { openDialog, closeDialog } = useDialog(dialogId)
@@ -31,21 +34,6 @@ export function CompleteVisitButton({
             severity: "success",
           })
           closeDialog()
-          updateItineraryCache((cache) => {
-            if (!cache) return
-
-            const itemToUpdate = cache.items.find(
-              (item) => item.id === itineraryItemId,
-            )
-            if (!itemToUpdate) return
-
-            const visitToUpdate = itemToUpdate.visits.find(
-              (visit) => visit.id === visitId,
-            )
-            if (!visitToUpdate) return
-
-            visitToUpdate.completed = true
-          })
         },
       },
     )

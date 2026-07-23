@@ -9,7 +9,6 @@ export const queryKeys = {
   addresses: {
     corporations: ["addresses", "housing-corporations"] as const,
     districts: ["addresses", "districts"] as const,
-    all: (bagId: string) => ["addresses", bagId] as const,
     registrations: (bagId: string) =>
       ["addresses", bagId, "registrations"] as const,
     meldingen: (bagId: string, startDate: string) =>
@@ -23,7 +22,6 @@ export const queryKeys = {
   cases: {
     search: (addressSearch: string, themeName?: string) =>
       ["cases", "search", { addressSearch, themeName }] as const,
-    all: ["cases"] as const,
     detail: (caseId: number) => ["cases", caseId] as const,
     events: (caseId: number) => ["cases", caseId, "events"] as const,
     visits: (caseId: number) => ["cases", caseId, "visits"] as const,
@@ -41,14 +39,6 @@ export const queryKeys = {
     detail: (itineraryId: string) => ["itineraries", itineraryId] as const,
     suggestions: (itineraryId: string) =>
       ["itineraries", itineraryId, "suggestions"] as const,
-    team: (itineraryId: string) =>
-      ["itineraries", itineraryId, "team"] as const,
-  },
-
-  itineraryItems: {
-    all: ["itinerary-items"] as const,
-    detail: (itineraryItemId: string | number) =>
-      ["itinerary-items", itineraryItemId] as const,
   },
 
   teamSettings: {

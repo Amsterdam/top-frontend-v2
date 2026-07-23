@@ -12,11 +12,7 @@ import {
 } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
-import {
-  useItinerary,
-  useUpdateItineraryCache,
-  useUpdateItineraryItemPosition,
-} from "@/api/hooks"
+import { useItinerary, useUpdateItineraryItemPosition } from "@/api/hooks"
 import { calculateNewPosition, itemsPositionSorter } from "./utils"
 import { SortableItem } from "./SortableItem"
 import { ItineraryListItem } from "@/components"
@@ -29,8 +25,10 @@ type Props = {
 export function SortableItineraryItemList({ itineraryId }: Props) {
   const [draggableId, setIsDragging] = useState<UniqueIdentifier>()
   const { data: itinerary } = useItinerary(itineraryId, { enabled: false })
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
-  const updateItineraryItemPosition = useUpdateItineraryItemPosition(draggableId)
+  const updateItineraryItemPosition = useUpdateItineraryItemPosition({
+    itineraryId,
+    itineraryItemId: draggableId,
+  })
 
   const sortedItems = useMemo(() => {
     const items = itinerary?.items ?? []
@@ -65,13 +63,6 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
     if (oldIndex === -1 || newIndex === -1) return
 
     const newPosition = calculateNewPosition(sortedItems, oldIndex, newIndex)
-
-    updateItineraryCache((cache) => {
-      const item = cache?.items.find((_) => _.id === active.id)
-      if (item) {
-        item.position = newPosition
-      }
-    })
 
     updateItineraryItemPosition.mutate({ position: newPosition })
   }

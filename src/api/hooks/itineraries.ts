@@ -1,4 +1,3 @@
-import { useCallback } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
@@ -66,29 +65,6 @@ export const useItinerarySuggestions = (itineraryId?: string) => {
   })
 }
 
-/**
- * Optimistically patches the cached itinerary detail for itineraryId. Several
- * components (drag-reorder, delete item, complete visit, ...) need to patch
- * this same cache entry without necessarily holding a live useItinerary query.
- */
-export const useUpdateItineraryCache = (itineraryId?: string) => {
-  const queryClient = useQueryClient()
-
-  return useCallback(
-    (updater: (itinerary: Itinerary | undefined) => void) => {
-      queryClient.setQueryData(
-        queryKeys.itineraries.detail(itineraryId ?? ""),
-        (current: Itinerary | undefined) => {
-          const next = current ? structuredClone(current) : undefined
-          updater(next)
-          return next
-        },
-      )
-    },
-    [queryClient, itineraryId],
-  )
-}
-
 export const useCreateItinerary = () => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
@@ -124,6 +100,7 @@ export const useDeleteItinerary = (itineraryId?: string) => {
 
 export const useChangeTeamMembers = (itineraryId?: string) => {
   const fetch = useApiFetch()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (payload: { team_members: TeamMemberPayload[] }) =>
@@ -131,10 +108,19 @@ export const useChangeTeamMembers = (itineraryId?: string) => {
         makeApiUrl("itineraries", itineraryId, "team"),
         { method: "PUT", data: payload },
       ),
+    onSuccess: (resp) => {
+      queryClient.setQueryData(
+        queryKeys.itineraries.detail(itineraryId ?? ""),
+        (current: Itinerary | undefined) => {
+          if (!current || !resp?.team_members) return current
+          return { ...current, team_members: resp.team_members }
+        },
+      )
+    },
   })
 }
 
-export const useCreateItineraryItem = () => {
+export const useCreateItineraryItem = (itineraryId?: string) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
@@ -144,13 +130,27 @@ export const useCreateItineraryItem = () => {
         method: "POST",
         data: payload,
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.itineraryItems.all })
+    onSuccess: (newItem) => {
+      queryClient.setQueryData(
+        queryKeys.itineraries.detail(itineraryId ?? ""),
+        (current: Itinerary | undefined) => {
+          if (!current) return current
+          return { ...current, items: [...current.items, newItem] }
+        },
+      )
     },
   })
 }
 
-export const useRemoveItineraryItem = (itineraryItemId?: string | number) => {
+type RemoveItineraryItemOptions = {
+  itineraryId?: string
+  itineraryItemId?: string | number
+}
+
+export const useRemoveItineraryItem = ({
+  itineraryId,
+  itineraryItemId,
+}: RemoveItineraryItemOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
@@ -160,17 +160,33 @@ export const useRemoveItineraryItem = (itineraryItemId?: string | number) => {
         method: "DELETE",
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.itineraryItems.detail(itineraryItemId ?? ""),
-      })
+      queryClient.setQueryData(
+        queryKeys.itineraries.detail(itineraryId ?? ""),
+        (current: Itinerary | undefined) => {
+          if (!current) return current
+          return {
+            ...current,
+            items: current.items.filter(
+              (item) => item.id !== itineraryItemId,
+            ),
+          }
+        },
+      )
     },
   })
 }
 
-export const useUpdateItineraryItemPosition = (
-  itineraryItemId?: string | number,
-) => {
+type UpdateItineraryItemPositionOptions = {
+  itineraryId?: string
+  itineraryItemId?: string | number
+}
+
+export const useUpdateItineraryItemPosition = ({
+  itineraryId,
+  itineraryItemId,
+}: UpdateItineraryItemPositionOptions) => {
   const fetch = useApiFetch()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (payload: { position: number }) =>
@@ -178,5 +194,28 @@ export const useUpdateItineraryItemPosition = (
         method: "PATCH",
         data: payload,
       }),
+    onMutate: (payload) => {
+      const queryKey = queryKeys.itineraries.detail(itineraryId ?? "")
+      const previousItinerary = queryClient.getQueryData<Itinerary>(queryKey)
+
+      queryClient.setQueryData(
+        queryKey,
+        (current: Itinerary | undefined) => {
+          if (!current) return current
+
+          const next = structuredClone(current)
+          const item = next.items.find((i) => i.id === itineraryItemId)
+          if (item) item.position = payload.position
+          return next
+        },
+      )
+
+      return { queryKey, previousItinerary }
+    },
+    onError: (_error, _payload, context) => {
+      if (context) {
+        queryClient.setQueryData(context.queryKey, context.previousItinerary)
+      }
+    },
   })
 }

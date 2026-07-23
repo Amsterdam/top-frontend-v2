@@ -11,11 +11,7 @@ import { useNavigate, useParams } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import dayjs from "dayjs"
 import { AmsterdamCrossSpinner } from "@/components"
-import {
-  useChangeTeamMembers,
-  useItinerary,
-  useUpdateItineraryCache,
-} from "@/api/hooks"
+import { useChangeTeamMembers, useItinerary } from "@/api/hooks"
 import { queryKeys } from "@/api/queryKeys"
 import { useCurrentUser, useUserOptions } from "@/hooks"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
@@ -30,7 +26,6 @@ export default function TeamMemberUpdatePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { data: itinerary, isPending } = useItinerary(itineraryId)
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
   const changeTeamMembers = useChangeTeamMembers(itineraryId)
   const currentUser = useCurrentUser()
   const userOptions = useUserOptions()
@@ -68,11 +63,7 @@ export default function TeamMemberUpdatePage() {
       !!currentUser?.id && values.teamMembers.includes(currentUser.id)
 
     changeTeamMembers.mutate(payload, {
-      onSuccess: (resp) => {
-        updateItineraryCache((cache) => {
-          if (!cache || !resp?.team_members) return
-          cache.team_members = resp.team_members
-        })
+      onSuccess: () => {
         if (!isCurrentUserInTeam) {
           queryClient.invalidateQueries({ queryKey: queryKeys.itineraries.all })
         }

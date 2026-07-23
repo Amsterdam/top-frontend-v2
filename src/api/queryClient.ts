@@ -12,7 +12,7 @@ export const queryClient = new QueryClient({
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
-      staleTime: 60_000,
+      staleTime: 300_000,
     },
   },
   queryCache: new QueryCache({ onError: handleApiError }),

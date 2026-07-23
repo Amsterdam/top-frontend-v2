@@ -4,7 +4,6 @@ import {
   useCreateItineraryItem,
   useItinerary,
   useItinerarySuggestions,
-  useUpdateItineraryCache,
 } from "@/api/hooks"
 import { AmsterdamCrossSpinner, ItineraryListItem } from "@/components"
 import { useState } from "react"
@@ -21,8 +20,7 @@ export default function SuggestionPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const { data, isPending } = useItinerarySuggestions(itineraryId)
   const { data: itinerary } = useItinerary(itineraryId)
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
-  const createItineraryItem = useCreateItineraryItem()
+  const createItineraryItem = useCreateItineraryItem(itineraryId)
 
   // Loading state for active POST requests
   const [loadingIds, setLoadingIds] = useState<number[]>([])
@@ -35,22 +33,10 @@ export default function SuggestionPage() {
     const position = getTopPosition(itinerary?.items)
 
     try {
-      const resp = await createItineraryItem.mutateAsync({
+      await createItineraryItem.mutateAsync({
         itinerary: Number(itineraryId),
         id: caseData.id,
         position,
-      })
-
-      // Update cache
-      updateItineraryCache((cache) => {
-        if (!cache || !resp?.id) return
-        cache.items.push({
-          case: caseData,
-          id: resp.id,
-          notes: [],
-          visits: [],
-          position,
-        })
       })
     } finally {
       setLoadingIds((prev) => prev.filter((id) => id !== caseData.id))

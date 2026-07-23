@@ -68,7 +68,17 @@ export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
   })
 }
 
-export const useCompleteVisit = (visitId?: string | number) => {
+type CompleteVisitOptions = {
+  visitId?: string | number
+  itineraryId?: string
+  itineraryItemId?: number
+}
+
+export const useCompleteVisit = ({
+  visitId,
+  itineraryId,
+  itineraryItemId,
+}: CompleteVisitOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
@@ -82,6 +92,28 @@ export const useCompleteVisit = (visitId?: string | number) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.visits.detail(visitId ?? ""),
       })
+
+      queryClient.setQueryData(
+        queryKeys.itineraries.detail(itineraryId ?? ""),
+        (current: Itinerary | undefined) => {
+          if (!current) return current
+          return {
+            ...current,
+            items: current.items.map((item) =>
+              item.id === itineraryItemId
+                ? {
+                    ...item,
+                    visits: item.visits.map((visit) =>
+                      visit.id === visitId
+                        ? { ...visit, completed: true }
+                        : visit,
+                    ),
+                  }
+                : item,
+            ),
+          }
+        },
+      )
     },
   })
 }

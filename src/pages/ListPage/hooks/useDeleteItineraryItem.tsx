@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { useRemoveItineraryItem, useUpdateItineraryCache } from "@/api/hooks"
+import { useRemoveItineraryItem } from "@/api/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 import { useDialog } from "@/hooks/useDialog"
 import { ConfirmDialog } from "@/components"
@@ -13,8 +13,10 @@ export function useDeleteItineraryItem(
   options?: Options,
 ) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
-  const removeItineraryItem = useRemoveItineraryItem(itineraryItemId)
+  const removeItineraryItem = useRemoveItineraryItem({
+    itineraryId,
+    itineraryItemId,
+  })
   const { showAlert } = useAlert()
   const dialogId = `delete-itinerary-item-${itineraryItemId ?? "unknown"}`
   const { openDialog, closeDialog } = useDialog(dialogId)
@@ -24,10 +26,6 @@ export function useDeleteItineraryItem(
 
     await removeItineraryItem.mutateAsync()
     closeDialog()
-    updateItineraryCache((cache) => {
-      if (!cache) return
-      cache.items = cache.items.filter((item) => item.id !== itineraryItemId)
-    })
     showAlert({
       title: "Zaak verwijderd",
       description: "De zaak is succesvol uit je looplijst verwijderd.",

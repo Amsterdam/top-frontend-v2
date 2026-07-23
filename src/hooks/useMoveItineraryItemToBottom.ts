@@ -1,9 +1,5 @@
 import { useCallback, useMemo } from "react"
-import {
-  useItinerary,
-  useUpdateItineraryCache,
-  useUpdateItineraryItemPosition,
-} from "@/api/hooks"
+import { useItinerary, useUpdateItineraryItemPosition } from "@/api/hooks"
 import {
   calculateNewPosition,
   itemsPositionSorter,
@@ -14,9 +10,10 @@ export const useMoveItineraryItemToBottom = (
   itineraryItemId?: number,
 ) => {
   const { data: itinerary } = useItinerary(itineraryId, { enabled: false })
-  const updateItineraryCache = useUpdateItineraryCache(itineraryId)
-  const updateItineraryItemPosition =
-    useUpdateItineraryItemPosition(itineraryItemId)
+  const updateItineraryItemPosition = useUpdateItineraryItemPosition({
+    itineraryId,
+    itineraryItemId,
+  })
 
   const sortedItems = useMemo(() => {
     return [...(itinerary?.items ?? [])].sort(itemsPositionSorter)
@@ -32,18 +29,8 @@ export const useMoveItineraryItemToBottom = (
 
     const newPosition = calculateNewPosition(sortedItems, oldIndex, newIndex)
 
-    updateItineraryCache((cache) => {
-      const item = cache?.items.find((i) => i.id === itineraryItemId)
-      if (item) item.position = newPosition
-    })
-
     await updateItineraryItemPosition.mutateAsync({ position: newPosition })
-  }, [
-    sortedItems,
-    updateItineraryCache,
-    itineraryItemId,
-    updateItineraryItemPosition,
-  ])
+  }, [sortedItems, itineraryItemId, updateItineraryItemPosition])
 
   return { moveItineraryItemToBottom }
 }
