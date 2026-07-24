@@ -37,8 +37,8 @@ export const queryKeys = {
     all: ["itineraries"] as const,
     summary: () => ["itineraries", "summary"] as const,
     detail: (itineraryId: string) => ["itineraries", itineraryId] as const,
-    suggestions: (itineraryId: string) =>
-      ["itineraries", itineraryId, "suggestions"] as const,
+    suggestions: (itineraryId: string, lat?: number, lng?: number) =>
+      ["itineraries", itineraryId, "suggestions", { lat, lng }] as const,
   },
 
   teamSettings: {

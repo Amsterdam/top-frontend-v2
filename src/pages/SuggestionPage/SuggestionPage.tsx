@@ -1,11 +1,18 @@
-import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
+import {
+  Column,
+  Grid,
+  Heading,
+  Paragraph,
+} from "@amsterdam/design-system-react"
 import { useParams } from "react-router"
 import {
+  isValidCoordinates,
   useCreateItineraryItem,
   useItinerary,
   useItinerarySuggestions,
 } from "@/api/hooks"
 import { AmsterdamCrossSpinner, ItineraryListItem } from "@/components"
+import { useGeolocation } from "@/hooks"
 import { useState } from "react"
 
 function getTopPosition(items?: { position: number }[]): number {
@@ -18,7 +25,12 @@ function getTopPosition(items?: { position: number }[]): number {
 
 export default function SuggestionPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const { data, isPending } = useItinerarySuggestions(itineraryId)
+  const { lat, lng } = useGeolocation()
+  const usesGeolocation = isValidCoordinates({ lat, lng })
+  const { data, isPending } = useItinerarySuggestions(itineraryId, {
+    lat,
+    lng,
+  })
   const { data: itinerary } = useItinerary(itineraryId)
   const createItineraryItem = useCreateItineraryItem(itineraryId)
 
@@ -37,6 +49,7 @@ export default function SuggestionPage() {
         itinerary: Number(itineraryId),
         id: caseData.id,
         position,
+        case: caseData,
       })
     } finally {
       setLoadingIds((prev) => prev.filter((id) => id !== caseData.id))
@@ -55,33 +68,37 @@ export default function SuggestionPage() {
         <Heading level={1}>Voeg een zaak toe aan je looplijst</Heading>
       </Grid.Cell>
 
-      <Grid.Cell span="all">
-        {cases.length === 0 && (
-          <div style={{ marginTop: "1rem" }}>
-            <Paragraph style={{ fontStyle: "italic", display: "inline" }}>
-              Geen suggesties beschikbaar.
-            </Paragraph>
-            <span>😢</span>
-          </div>
-        )}
-
+      <Grid.Cell span="all" appearance="transparent">
         {cases.length > 0 && (
-          <Paragraph>Deze zaken liggen dichtbij de adressen in je lijst:</Paragraph>
+          <Paragraph>
+            {usesGeolocation
+              ? "Deze zaken liggen dichtbij je huidige locatie."
+              : "Deze zaken liggen dichtbij de adressen in je lijst."}
+          </Paragraph>
         )}
+        {cases.length === 0 && (
+          <Paragraph>Geen suggesties beschikbaar. 😢</Paragraph>
+        )}
+      </Grid.Cell>
 
-        {cases.map((caseData) => {
-          const isAdded = itinerary?.items.some((i) => i.case.id === caseData.id)
-          const isLoading = loadingIds.includes(caseData.id)
-          return (
-            <ItineraryListItem
-              key={caseData.id}
-              item={{ case: caseData } as ItineraryItem}
-              variant="addSuggestedCase"
-              onAdd={() => onAddCase(caseData)}
-              status={isAdded ? "added" : isLoading ? "loading" : "idle"}
-            />
-          )
-        })}
+      <Grid.Cell span="all" appearance="transparent">
+        <Column gap="small">
+          {cases.map((caseData) => {
+            const isAdded = itinerary?.items.some(
+              (i) => Number(i.case.id) === caseData.id,
+            )
+            const isLoading = loadingIds.includes(caseData.id)
+            return (
+              <ItineraryListItem
+                key={caseData.id}
+                item={{ case: caseData } as ItineraryItem}
+                variant="addSuggestedCase"
+                onAdd={() => onAddCase(caseData)}
+                status={isAdded ? "added" : isLoading ? "loading" : "idle"}
+              />
+            )
+          })}
+        </Column>
       </Grid.Cell>
     </Grid>
   )
