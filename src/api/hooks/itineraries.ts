@@ -1,11 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
+import { stringifyQueryParams } from "@/api/utils/stringifyQueryParams"
 import { queryKeys } from "@/api/queryKeys"
 
 type SuggestionsResponse = {
   cases: Case[]
 }
+
+export type Coordinates = {
+  lat?: number
+  lng?: number
+}
+
+export const isValidCoordinates = (
+  location?: Coordinates,
+): location is Required<Coordinates> =>
+  typeof location?.lat === "number" &&
+  typeof location?.lng === "number" &&
+  Number.isFinite(location.lat) &&
+  Number.isFinite(location.lng) &&
+  location.lat >= -90 &&
+  location.lat <= 90 &&
+  location.lng >= -180 &&
+  location.lng <= 180
 
 type TeamMemberPayload = {
   user: {
@@ -24,7 +42,8 @@ type CreateItineraryPayload = {
 type AddItineraryItemPayload = {
   id: number
   itinerary: number
-  position?: number
+  position: number
+  case: Case
 }
 
 export const useItinerariesSummary = () => {
@@ -52,14 +71,25 @@ export const useItinerary = (
   })
 }
 
-export const useItinerarySuggestions = (itineraryId?: string) => {
+export const useItinerarySuggestions = (
+  itineraryId?: string,
+  location?: Coordinates,
+) => {
   const fetch = useApiFetch()
+  const hasLocation = isValidCoordinates(location)
+  const queryString = hasLocation
+    ? stringifyQueryParams({ lat: location.lat, lng: location.lng })
+    : ""
 
   return useQuery({
-    queryKey: queryKeys.itineraries.suggestions(itineraryId ?? ""),
+    queryKey: queryKeys.itineraries.suggestions(
+      itineraryId ?? "",
+      hasLocation ? location.lat : undefined,
+      hasLocation ? location.lng : undefined,
+    ),
     queryFn: () =>
       fetch<SuggestionsResponse>(
-        makeApiUrl("itineraries", itineraryId, "suggestions"),
+        makeApiUrl("itineraries", itineraryId, "suggestions") + queryString,
       ),
     enabled: Boolean(itineraryId),
   })
@@ -91,9 +121,23 @@ export const useDeleteItinerary = (itineraryId?: string) => {
         method: "DELETE",
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.itineraries.summary(),
+      // Purge rather than invalidate: the itinerary is gone, so a
+      // background refetch would just 404. This also covers the nested
+      // suggestions query since it shares the detail key as a prefix.
+      queryClient.removeQueries({
+        queryKey: queryKeys.itineraries.detail(itineraryId ?? ""),
       })
+      // Update synchronously rather than invalidate: useRedirectItinerary
+      // reads this cache on every navigation, and an invalidate-triggered
+      // background refetch leaves a window where the deleted itinerary is
+      // still the only entry, causing it to navigate straight back into it.
+      queryClient.setQueryData(
+        queryKeys.itineraries.summary(),
+        (current?: components["schemas"]["ItinerarySummary"][]) =>
+          current?.filter(
+            (itinerary) => itinerary.id !== Number(itineraryId),
+          ),
+      )
     },
   })
 }
@@ -125,12 +169,27 @@ export const useCreateItineraryItem = (itineraryId?: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
+    // The create endpoint embeds case as the raw { id, data } shape, not the
+    // flat Case shape the rest of the app expects, so the response's case is
+    // ignored and the item is rebuilt from the case we already have.
     mutationFn: (payload: AddItineraryItemPayload) =>
-      fetch<ItineraryItem>(makeApiUrl("itinerary-items"), {
+      fetch<{ id: number }>(makeApiUrl("itinerary-items"), {
         method: "POST",
-        data: payload,
+        data: {
+          id: payload.id,
+          itinerary: payload.itinerary,
+          position: payload.position,
+        },
       }),
-    onSuccess: (newItem) => {
+    onSuccess: (response, variables) => {
+      const newItem: ItineraryItem = {
+        id: response.id,
+        position: variables.position,
+        notes: [],
+        visits: [],
+        case: variables.case,
+      }
+
       queryClient.setQueryData(
         queryKeys.itineraries.detail(itineraryId ?? ""),
         (current: Itinerary | undefined) => {
