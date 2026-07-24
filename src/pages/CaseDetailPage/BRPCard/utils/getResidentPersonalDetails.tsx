@@ -21,7 +21,7 @@ export function getResidentPersonalDetails(resident: Resident) {
     },
     {
       label: "Geboren",
-      value: formatDate(geboorteDatum),
+      value: `${formatDate(geboorteDatum)} (${getTimeFromNow(geboorteDatum)})`,
     },
     {
       label: "Geboorteplaats",
@@ -36,21 +36,15 @@ export function getResidentPersonalDetails(resident: Resident) {
     },
     {
       label: "Overleden †",
-      value: overlijdenDatum ? (
-        <>
-          {capitalizeFirstLetter(overlijdenDatum)}
-          <strong> ({getTimeFromNow(overlijdenDatum)} geleden)</strong>
-        </>
-      ) : undefined,
+      value: overlijdenDatum
+        ? `${capitalizeFirstLetter(overlijdenDatum)} (${getTimeFromNow(overlijdenDatum)} geleden)`
+        : undefined,
     },
     {
       label: "Ingeschreven sinds",
-      value: datumVan ? (
-        <>
-          {formatDate(datumVan)}
-          <strong> ({getTimeFromNow(datumVan)})</strong>
-        </>
-      ) : undefined,
+      value: datumVan
+        ? `${formatDate(datumVan)} (${getTimeFromNow(datumVan)})`
+        : undefined,
     },
   ].filter((item) => item.value !== undefined)
 }

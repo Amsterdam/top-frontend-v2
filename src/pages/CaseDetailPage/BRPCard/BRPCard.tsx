@@ -2,6 +2,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { PersonsIcon } from "@amsterdam/design-system-react-icons"
 import { Card, Table } from "@/components"
 import { useResidents } from "@/api/hooks"
+import { useMediaQuery, BREAKPOINTS } from "@/hooks"
 import type { Resident } from "./types"
 import { PersonHeader } from "./components/PersonHeader/PersonHeader"
 import { dummyResidentsResponse } from "./data/dummyResidentsResponse"
@@ -13,18 +14,24 @@ type Props = {
   data?: Case
 }
 
-const columns = [
-  {
-    title: "Naam",
-    dataIndex: "name",
-    render: (_: unknown, resident: Resident) => (
-      <PersonHeader resident={resident} />
-    ),
-  },
-  { title: "Leeftijd", dataIndex: "leeftijd" },
-] as const
+function getColumns(isNarrowScreen: boolean) {
+  return [
+    {
+      title: "Naam",
+      dataIndex: "name",
+      render: (_: unknown, resident: Resident) => (
+        <PersonHeader resident={resident} />
+      ),
+    },
+    ...(isNarrowScreen
+      ? []
+      : [{ title: "Leeftijd", dataIndex: "leeftijd" }]),
+  ] as const
+}
 
 export function BRPCard({ data }: Props) {
+  const isNarrowScreen = useMediaQuery(BREAKPOINTS.sm)
+  const columns = getColumns(isNarrowScreen)
   const {
     data: residentsData,
     isPending,
