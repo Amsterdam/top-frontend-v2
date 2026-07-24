@@ -1,9 +1,5 @@
-import { Icon, Paragraph, Row } from "@amsterdam/design-system-react"
-import {
-  CertificateIcon,
-  ErrorIcon,
-  SuccessIcon,
-} from "@amsterdam/design-system-react-icons"
+import { Paragraph } from "@amsterdam/design-system-react"
+import { CertificateIcon } from "@amsterdam/design-system-react-icons"
 
 import { usePermits } from "@/api/hooks"
 import { Card, Description, Table } from "@/components"
@@ -12,6 +8,7 @@ import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyPowerBrowserResponse from "./data/dummyPowerBrowserResponse"
 import { isValidPermit, sortPermits } from "./data/utils"
 import { PermitTag } from "./components/PermitTag"
+import { PermitValidityLabel } from "./components/PermitValidityLabel"
 
 type Props = {
   bagId?: string
@@ -21,28 +18,17 @@ const columns = [
   {
     title: "Vergunning",
     dataIndex: "product",
-    render: (_: unknown, permit: Permit) => {
-      const isValid = isValidPermit(permit)
-
-      return (
-        <Row alignVertical="center" wrap>
-          <Icon
-            svg={isValid ? SuccessIcon : ErrorIcon}
-            size="heading-3"
-            style={{
-              color: isValid
-                ? "var(--ams-color-feedback-success)"
-                : "var(--ams-color-feedback-error)",
-            }}
-          />
-          <strong>{permit.product || "-"}</strong>
-        </Row>
-      )
-    },
+    render: (_: unknown, permit: Permit) => (
+      <PermitValidityLabel
+        label={permit.product}
+        isValid={isValidPermit(permit)}
+      />
+    ),
   },
   {
     title: "Status",
     dataIndex: "status",
+    hideOnMobile: true,
     render: (_: unknown, permit: Permit) => (
       <PermitTag status={permit.status ?? ""} />
     ),

@@ -8,6 +8,7 @@ type Column<T> = {
   title: string
   dataIndex: string
   render?: (value: unknown, row: T) => React.ReactNode
+  hideOnMobile?: boolean
 }
 
 type Expandable<T> = {
@@ -43,7 +44,12 @@ export function Table<T extends Record<string, unknown>>({
       <thead>
         <tr>
           {columns.map((column, index) => (
-            <th key={index} className={styles.tableTitleCell}>
+            <th
+              key={index}
+              className={`${styles.tableTitleCell} ${
+                column.hideOnMobile ? styles.hideOnMobile : ""
+              }`}
+            >
               {column.title}
             </th>
           ))}
@@ -69,7 +75,12 @@ export function Table<T extends Record<string, unknown>>({
                 {columns.map((column, columnIndex) => {
                   const value = getNestedValue(row, column.dataIndex)
                   return (
-                    <td key={columnIndex} className={styles.tableCell}>
+                    <td
+                      key={columnIndex}
+                      className={`${styles.tableCell} ${
+                        column.hideOnMobile ? styles.hideOnMobile : ""
+                      }`}
+                    >
                       {column.render
                         ? column.render(value, row)
                         : ((value as React.ReactNode) ?? "")}
