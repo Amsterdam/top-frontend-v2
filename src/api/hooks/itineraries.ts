@@ -121,9 +121,23 @@ export const useDeleteItinerary = (itineraryId?: string) => {
         method: "DELETE",
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.itineraries.summary(),
+      // Purge rather than invalidate: the itinerary is gone, so a
+      // background refetch would just 404. This also covers the nested
+      // suggestions query since it shares the detail key as a prefix.
+      queryClient.removeQueries({
+        queryKey: queryKeys.itineraries.detail(itineraryId ?? ""),
       })
+      // Update synchronously rather than invalidate: useRedirectItinerary
+      // reads this cache on every navigation, and an invalidate-triggered
+      // background refetch leaves a window where the deleted itinerary is
+      // still the only entry, causing it to navigate straight back into it.
+      queryClient.setQueryData(
+        queryKeys.itineraries.summary(),
+        (current?: components["schemas"]["ItinerarySummary"][]) =>
+          current?.filter(
+            (itinerary) => itinerary.id !== Number(itineraryId),
+          ),
+      )
     },
   })
 }
