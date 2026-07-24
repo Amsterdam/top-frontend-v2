@@ -4,7 +4,7 @@ import { useItinerariesSummary } from "@/api/hooks/itineraries"
 import ListCard from "./ListCard"
 
 export default function ChooseListPage() {
-  const [itineraries] = useItinerariesSummary()
+  const { data: itineraries } = useItinerariesSummary()
   return (
     <Grid paddingBottom="x-large" paddingTop="large">
       <Grid.Cell span="all" appearance="transparent">

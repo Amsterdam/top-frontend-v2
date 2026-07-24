@@ -11,7 +11,7 @@ import { PostalCodeRanges } from "../form/PostalCodeRanges"
 import type { FormValues } from "../types"
 
 export function LocationSection() {
-  const [districts] = useDistricts()
+  const { data: districts } = useDistricts()
   const isMobile = useMediaQuery(BREAKPOINTS.sm)
 
   const postalCodesType = useWatch({

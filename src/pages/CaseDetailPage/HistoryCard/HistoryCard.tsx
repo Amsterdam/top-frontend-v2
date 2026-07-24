@@ -3,8 +3,8 @@ import { useCaseEvents } from "@/api/hooks"
 import { HistoryIcon } from "@amsterdam/design-system-react-icons"
 
 export default function HistoryCard({ caseId }: { caseId?: number }) {
-  const [events, { isBusy }] = useCaseEvents(caseId)
-  if (!caseId || isBusy) return null
+  const { data: events, isPending } = useCaseEvents(caseId)
+  if (!caseId || isPending) return null
 
   return (
     <Card title="Zaakhistorie" icon={HistoryIcon}>

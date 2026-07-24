@@ -6,7 +6,7 @@ export const useRedirectItinerary = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { itineraryId, themeId, caseId } = useParams()
-  const [itineraries] = useItinerariesSummary()
+  const { data: itineraries } = useItinerariesSummary()
 
   useEffect(() => {
     // Exceptions for certain paths

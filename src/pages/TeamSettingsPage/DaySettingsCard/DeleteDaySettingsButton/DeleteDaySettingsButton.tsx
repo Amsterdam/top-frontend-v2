@@ -1,6 +1,6 @@
 import { IconButton } from "@amsterdam/design-system-react"
 import { DeleteIcon } from "@amsterdam/design-system-react-icons"
-import { useDaySetting } from "@/api/hooks"
+import { useDeleteDaySetting } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
 import { useAlert } from "@/components/alerts/useAlert"
 import { useDialog } from "@/hooks/useDialog"
@@ -8,26 +8,26 @@ import { useDialog } from "@/hooks/useDialog"
 export function DeleteDaySettingsButton({
   daySettingId,
   daySettingName,
+  teamId,
 }: {
   daySettingId: number
   daySettingName: string
+  teamId: string
 }) {
-  const [, { execDelete, isBusy }] = useDaySetting(daySettingId, {
-    lazy: true,
-  })
+  const deleteDaySetting = useDeleteDaySetting({ daySettingId, teamId })
   const { showAlert } = useAlert()
   const dialogId = `delete-day-setting-${daySettingId}`
   const { openDialog } = useDialog(dialogId)
 
-  const deleteDaySetting = async () => {
-    execDelete({
-      clearCacheKeys: ["/team-settings"],
-    }).then(() => {
-      showAlert({
-        title: "Instelling verwijderd",
-        description: `De instelling "${daySettingName}" is succesvol verwijderd.`,
-        severity: "success",
-      })
+  const handleDelete = () => {
+    deleteDaySetting.mutate(undefined, {
+      onSuccess: () => {
+        showAlert({
+          title: "Instelling verwijderd",
+          description: `De instelling "${daySettingName}" is succesvol verwijderd.`,
+          severity: "success",
+        })
+      },
     })
   }
 
@@ -52,9 +52,9 @@ export function DeleteDaySettingsButton({
             <strong>"{daySettingName}"</strong> wilt verwijderen?
           </span>
         }
-        onOk={deleteDaySetting}
+        onOk={handleDelete}
         onOkText="Verwijderen"
-        loading={isBusy}
+        loading={deleteDaySetting.isPending}
       />
     </>
   )

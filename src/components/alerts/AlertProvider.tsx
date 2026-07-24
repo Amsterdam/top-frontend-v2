@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Alert, Paragraph } from "@amsterdam/design-system-react"
 import { AlertContext } from "./AlertContext"
+import { registerAlertBridge } from "./alertBridge"
 import type { AlertMessage } from "./types"
 
 const TIME_TOAST_DISMISS = 5000
@@ -40,6 +41,10 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [removeAlert],
   )
+
+  useEffect(() => {
+    registerAlertBridge(showAlert)
+  }, [showAlert])
 
   return (
     <AlertContext.Provider value={{ showAlert, dismissAlert }}>

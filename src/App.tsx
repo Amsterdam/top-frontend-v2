@@ -2,9 +2,11 @@ import { useEffect, useRef } from "react"
 import { useAuth, hasAuthParams } from "react-oidc-context"
 import { Paragraph } from "@amsterdam/design-system-react"
 import { RouterProvider } from "react-router"
+import { QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import dayjs from "dayjs"
 import { router } from "@/router"
-import { ApiCacheProvider } from "@/api/ApiCacheProvider"
+import { queryClient } from "@/api/queryClient"
 import { AlertProvider, AmsterdamCrossSpinner } from "@/components"
 import "dayjs/locale/nl"
 
@@ -43,11 +45,12 @@ function App() {
   }
 
   return (
-    <AlertProvider>
-      <ApiCacheProvider>
+    <QueryClientProvider client={queryClient}>
+      <AlertProvider>
         <RouterProvider router={router} />
-      </ApiCacheProvider>
-    </AlertProvider>
+      </AlertProvider>
+      {import.meta.env.DEV && <ReactQueryDevtools />}
+    </QueryClientProvider>
   )
 }
 

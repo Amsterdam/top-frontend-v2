@@ -4,36 +4,35 @@ import type { ApiError } from "@/api/types/apiError"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
-export type RequestOptions = {
-  protected?: boolean
-  headers?: Record<string, string>
+export type ApiFetchOptions = {
+  method?: HttpMethod
+  data?: unknown
 }
 
-export const useRequest = () => {
+/**
+ * Token-bound fetcher for use as a TanStack Query queryFn/mutationFn, since
+ * queryFn isn't a component and can't call useAuth() itself.
+ */
+export const useApiFetch = () => {
   const auth = useAuth()
   const token = auth.user?.access_token
 
   return useCallback(
     async <Schema>(
-      method: HttpMethod,
       url: string,
-      data?: unknown,
-      options: RequestOptions = {},
+      { method = "GET", data }: ApiFetchOptions = {},
     ): Promise<Schema> => {
-      const { protected: isProtected = false, headers = {} } = options
-
-      const requestHeaders: HeadersInit = {
+      const headers: HeadersInit = {
         "Content-Type": "application/json",
-        ...headers,
       }
 
-      if (isProtected && token) {
-        requestHeaders.Authorization = `Bearer ${token}`
+      if (token) {
+        headers.Authorization = `Bearer ${token}`
       }
 
       const response = await fetch(url, {
         method,
-        headers: requestHeaders,
+        headers,
         body: data ? JSON.stringify(data) : undefined,
       })
 
@@ -58,5 +57,3 @@ export const useRequest = () => {
     [token],
   )
 }
-
-export default useRequest

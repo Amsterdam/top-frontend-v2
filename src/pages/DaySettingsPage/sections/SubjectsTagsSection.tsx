@@ -12,8 +12,8 @@ type Props = {
 }
 
 export function SubjectsTagsSection({ themeId }: Props) {
-  const [subjects] = useTeamSettingsSubjects(themeId!)
-  const [tags] = useTeamSettingsTags(themeId!)
+  const { data: subjects } = useTeamSettingsSubjects(themeId!)
+  const { data: tags } = useTeamSettingsTags(themeId!)
   return (
     <Card
       title={

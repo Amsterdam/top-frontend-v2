@@ -17,12 +17,14 @@ const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 
 export function SearchAddressPage() {
   const { themeId } = useParams<{ themeId: string }>()
-  const [theme] = useTheme(themeId)
+  const { data: theme } = useTheme(themeId)
   const [debouncedSearchString, setDebouncedSearchString] = useState<string>("")
   const [inputValue, setInputValue] = useState("")
-  const [cases, { execGet, isBusy }] = useCasesSearch(inputValue, theme?.name, {
-    lazy: true,
-  })
+  const {
+    data: cases,
+    refetch: execGet,
+    isFetching: isBusy,
+  } = useCasesSearch(inputValue, theme?.name, { lazy: true })
   const navigate = useNavigate()
   const location = useLocation()
   const currentFormValues = location.state?.formValues

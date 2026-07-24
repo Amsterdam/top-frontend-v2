@@ -24,7 +24,7 @@ export function ChooseThemeBase({
   description,
   onThemeClick,
 }: ChooseThemeBaseProps) {
-  const [themesData] = useThemes()
+  const { data: themesData } = useThemes()
   const currentUser = useCurrentUser()
   const navigate = useNavigate()
   const themes = themesData?.results || []

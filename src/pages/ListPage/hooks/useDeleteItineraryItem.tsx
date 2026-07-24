@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { useItinerary, useItineraryItem } from "@/api/hooks"
+import { useRemoveItineraryItem } from "@/api/hooks"
 import { useAlert } from "@/components/alerts/useAlert"
 import { useDialog } from "@/hooks/useDialog"
 import { ConfirmDialog } from "@/components"
@@ -13,9 +13,9 @@ export function useDeleteItineraryItem(
   options?: Options,
 ) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [, { updateCache }] = useItinerary(itineraryId, { lazy: true })
-  const [, { execDelete, isBusy }] = useItineraryItem(itineraryItemId, {
-    lazy: true,
+  const removeItineraryItem = useRemoveItineraryItem({
+    itineraryId,
+    itineraryItemId,
   })
   const { showAlert } = useAlert()
   const dialogId = `delete-itinerary-item-${itineraryItemId ?? "unknown"}`
@@ -24,12 +24,8 @@ export function useDeleteItineraryItem(
   const deleteItineraryItem = async () => {
     if (!itineraryItemId) return
 
-    await execDelete()
+    await removeItineraryItem.mutateAsync()
     closeDialog()
-    updateCache((cache) => {
-      if (!cache) return
-      cache.items = cache.items.filter((item) => item.id !== itineraryItemId)
-    })
     showAlert({
       title: "Zaak verwijderd",
       description: "De zaak is succesvol uit je looplijst verwijderd.",
@@ -45,9 +41,13 @@ export function useDeleteItineraryItem(
       content="Weet je zeker dat je deze zaak uit je looplijst wilt verwijderen?"
       onOk={deleteItineraryItem}
       onOkText="Verwijderen"
-      loading={isBusy}
+      loading={removeItineraryItem.isPending}
     />
   )
 
-  return { deleteItineraryItem: openDialog, isBusy, dialog }
+  return {
+    deleteItineraryItem: openDialog,
+    isBusy: removeItineraryItem.isPending,
+    dialog,
+  }
 }

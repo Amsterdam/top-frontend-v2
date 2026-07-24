@@ -25,34 +25,36 @@ const columns = [
 ] as const
 
 export function BRPCard({ data }: Props) {
-  const [residentsData, { isBusy, hasErrors }] = useResidents(
-    data?.address?.bag_id,
-  )
+  const {
+    data: residentsData,
+    isPending,
+    isError,
+  } = useResidents(data?.address?.bag_id)
   const isDevOrAcc = isAcceptanceOrLocalEnvironment()
   // Show dummy data if we're in dev or acceptance environment, we have a valid address, we're not currently loading data, and we didn't get any residents back from the API
   const showDummyData =
-    isDevOrAcc && data && !isBusy && !residentsData?.personen?.length
+    isDevOrAcc && data && !isPending && !residentsData?.personen?.length
   const residentsToUse = showDummyData ? dummyResidentsResponse : residentsData
   const persons = residentsToUse?.personen || []
 
   const sortedResidents = getVisibleResidentsSortedByAge(persons)
 
-  if (!data || isBusy) return null
+  if (!data || isPending) return null
 
   return (
     <Card
       title={`Ingeschreven personen (${sortedResidents.length})`}
       icon={PersonsIcon}
     >
-      {hasErrors && (
+      {isError && (
         <Paragraph>
           Er is iets misgegaan bij het ophalen van de BRP-gegevens. 😢
         </Paragraph>
       )}
-      {!hasErrors && !sortedResidents.length && (
+      {!isError && !sortedResidents.length && (
         <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
       )}
-      {!hasErrors && sortedResidents.length > 0 && (
+      {!isError && sortedResidents.length > 0 && (
         <Table
           columns={columns}
           data={sortedResidents}

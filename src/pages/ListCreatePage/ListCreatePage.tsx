@@ -15,7 +15,11 @@ import {
 } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
 import dayjs from "dayjs"
-import { useItinerary, useTeamSettingsOptions, useTheme } from "@/api/hooks"
+import {
+  useCreateItinerary,
+  useTeamSettingsOptions,
+  useTheme,
+} from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
 import { useCurrentUser, useUserOptions } from "@/hooks"
 import {
@@ -38,13 +42,16 @@ export default function CreateListPage() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [theme] = useTheme(themeId!)
+  const { data: theme } = useTheme(themeId!)
   const currentUser = useCurrentUser()
   const userOptions = useUserOptions()
 
   const weekday = (new Date().getDay() + 6) % 7
-  const [teamSettingsDayOptionsData] = useTeamSettingsOptions(themeId, weekday)
-  const [, { execPost }] = useItinerary()
+  const { data: teamSettingsDayOptionsData } = useTeamSettingsOptions(
+    themeId,
+    weekday,
+  )
+  const createItinerary = useCreateItinerary()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<FormValues>({
@@ -126,18 +133,17 @@ export default function CreateListPage() {
       target_length: values.numAddresses,
       start_case: values.startCase ? { id: values.startCase.id } : {},
     }
-    execPost(payload, {
-      clearCacheKeys: ["/itineraries"],
-    })
-      .then((response) => {
+    createItinerary.mutate(payload, {
+      onSuccess: (response) => {
         navigate(`/lijst/${response?.id}`)
-      })
-      .finally(() => {
+      },
+      onSettled: () => {
         // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
         setTimeout(() => {
           setIsLoading(false)
         }, 350)
-      })
+      },
+    })
   }
 
   const { formState } = form

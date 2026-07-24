@@ -46,8 +46,8 @@ export default function CaseDetailPage() {
     itineraryId: string
     caseId: string
   }>()
-  const [data, { isBusy }] = useCase(Number(caseId))
-  const [itinerary] = useItinerary(itineraryId)
+  const { data, isPending } = useCase(Number(caseId))
+  const { data: itinerary } = useItinerary(itineraryId)
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
 
@@ -71,9 +71,9 @@ export default function CaseDetailPage() {
 
   const bagId = data?.address?.bag_id
   const startDate = dayjs().subtract(1, "year").startOf("year").format()
-  const [registrationsData, { isBusy: isBusyRegistrations }] =
+  const { data: registrationsData, isPending: isBusyRegistrations } =
     useRegistrations(bagId)
-  const [meldingenData, { isBusy: isBusyMeldingen }] = useMeldingen(
+  const { data: meldingenData, isPending: isBusyMeldingen } = useMeldingen(
     bagId,
     startDate,
   )
@@ -88,7 +88,7 @@ export default function CaseDetailPage() {
     !registrations.length &&
     !meldingen.length
 
-  if (isBusy) {
+  if (isPending) {
     return <AmsterdamCrossSpinner />
   }
   return (

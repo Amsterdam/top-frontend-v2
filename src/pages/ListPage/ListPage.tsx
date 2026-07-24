@@ -21,7 +21,7 @@ import {
 
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [itinerary, { isBusy }] = useItinerary(itineraryId)
+  const { data: itinerary, isPending } = useItinerary(itineraryId)
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
@@ -29,7 +29,7 @@ export default function ListPage() {
       []) as Address[]
   }, [itinerary?.items])
 
-  if (isBusy || !itinerary) {
+  if (isPending || !itinerary) {
     return <AmsterdamCrossSpinner />
   }
 

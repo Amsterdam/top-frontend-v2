@@ -1,71 +1,109 @@
-import { useApi } from "@/api/useApi"
+import { useQuery } from "@tanstack/react-query"
+import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
-import type { ApiOptions } from "../types/apiOptions"
+import { queryKeys } from "@/api/queryKeys"
 
 type TeamSettings = components["schemas"]["TeamSettings"]
 
 type TeamSettingsTheme = components["schemas"]["TeamSettingsTheme"]
 
-export const useTeamSettings = (teamId?: string, options?: ApiOptions) =>
-  useApi<TeamSettings>({
-    url: makeApiUrl("team-settings", teamId),
-    lazy: options?.lazy ?? !teamId,
-  })
+export const useTeamSettings = (teamId?: string) => {
+  const fetch = useApiFetch()
 
-export const useTeamSettingsOptions = (
-  teamId?: string,
-  weekday?: number,
-  options?: ApiOptions,
-) =>
-  useApi<TeamSettingsTheme[]>({
-    url: makeApiUrl("team-settings", teamId, "weekday", weekday),
-    lazy: options?.lazy || teamId === undefined || weekday === undefined,
+  return useQuery({
+    queryKey: queryKeys.teamSettings.all(teamId ?? ""),
+    queryFn: () => fetch<TeamSettings>(makeApiUrl("team-settings", teamId)),
+    enabled: Boolean(teamId),
   })
+}
 
-export const useTeamSettingsReasons = (teamId?: string, options?: ApiOptions) =>
-  useApi<components["schemas"]["CaseReason"][]>({
-    url: makeApiUrl("team-settings", teamId, "reasons"),
-    lazy: options?.lazy ?? !teamId,
-  })
+export const useTeamSettingsOptions = (teamId?: string, weekday?: number) => {
+  const fetch = useApiFetch()
 
-export const useTeamSettingsScheduleTypes = (
-  teamId?: string,
-  options?: ApiOptions,
-) =>
-  useApi<TeamScheduleTypes>({
-    url: makeApiUrl("team-settings", teamId, "schedule-types"),
-    lazy: options?.lazy ?? !teamId,
+  return useQuery({
+    queryKey: queryKeys.teamSettings.options(teamId ?? "", weekday ?? -1),
+    queryFn: () =>
+      fetch<TeamSettingsTheme[]>(
+        makeApiUrl("team-settings", teamId, "weekday", weekday),
+      ),
+    enabled: teamId !== undefined && weekday !== undefined,
   })
+}
 
-export const useTeamSettingsStateTypes = (
-  teamId?: string,
-  options?: ApiOptions,
-) =>
-  useApi<components["schemas"]["CaseStateType"][]>({
-    url: makeApiUrl("team-settings", teamId, "state-types"),
-    lazy: options?.lazy ?? !teamId,
-  })
+export const useTeamSettingsReasons = (teamId?: string) => {
+  const fetch = useApiFetch()
 
-export const useTeamSettingsCaseProjects = (
-  teamId?: string,
-  options?: ApiOptions,
-) =>
-  useApi<components["schemas"]["CaseProject"][]>({
-    url: makeApiUrl("team-settings", teamId, "case-projects"),
-    lazy: options?.lazy ?? !teamId,
+  return useQuery({
+    queryKey: queryKeys.teamSettings.reasons(teamId ?? ""),
+    queryFn: () =>
+      fetch<components["schemas"]["CaseReason"][]>(
+        makeApiUrl("team-settings", teamId, "reasons"),
+      ),
+    enabled: Boolean(teamId),
   })
+}
 
-export const useTeamSettingsSubjects = (
-  teamId?: string,
-  options?: ApiOptions,
-) =>
-  useApi<components["schemas"]["CaseSubject"][]>({
-    url: makeApiUrl("team-settings", teamId, "subjects"),
-    lazy: options?.lazy ?? !teamId,
-  })
+export const useTeamSettingsScheduleTypes = (teamId?: string) => {
+  const fetch = useApiFetch()
 
-export const useTeamSettingsTags = (teamId?: string, options?: ApiOptions) =>
-  useApi<components["schemas"]["CaseTag"][]>({
-    url: makeApiUrl("team-settings", teamId, "tags"),
-    lazy: options?.lazy ?? !teamId,
+  return useQuery({
+    queryKey: queryKeys.teamSettings.scheduleTypes(teamId ?? ""),
+    queryFn: () =>
+      fetch<TeamScheduleTypes>(
+        makeApiUrl("team-settings", teamId, "schedule-types"),
+      ),
+    enabled: Boolean(teamId),
   })
+}
+
+export const useTeamSettingsStateTypes = (teamId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.teamSettings.stateTypes(teamId ?? ""),
+    queryFn: () =>
+      fetch<components["schemas"]["CaseStateType"][]>(
+        makeApiUrl("team-settings", teamId, "state-types"),
+      ),
+    enabled: Boolean(teamId),
+  })
+}
+
+export const useTeamSettingsCaseProjects = (teamId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.teamSettings.caseProjects(teamId ?? ""),
+    queryFn: () =>
+      fetch<components["schemas"]["CaseProject"][]>(
+        makeApiUrl("team-settings", teamId, "case-projects"),
+      ),
+    enabled: Boolean(teamId),
+  })
+}
+
+export const useTeamSettingsSubjects = (teamId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.teamSettings.subjects(teamId ?? ""),
+    queryFn: () =>
+      fetch<components["schemas"]["CaseSubject"][]>(
+        makeApiUrl("team-settings", teamId, "subjects"),
+      ),
+    enabled: Boolean(teamId),
+  })
+}
+
+export const useTeamSettingsTags = (teamId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.teamSettings.tags(teamId ?? ""),
+    queryFn: () =>
+      fetch<components["schemas"]["CaseTag"][]>(
+        makeApiUrl("team-settings", teamId, "tags"),
+      ),
+    enabled: Boolean(teamId),
+  })
+}

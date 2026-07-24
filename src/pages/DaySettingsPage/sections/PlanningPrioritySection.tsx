@@ -14,8 +14,8 @@ type Props = {
 }
 
 export function PlanningPrioritySection({ themeId }: Props) {
-  const [scheduleTypes] = useTeamSettingsScheduleTypes(themeId!)
-  const [stateTypes] = useTeamSettingsStateTypes(themeId!)
+  const { data: scheduleTypes } = useTeamSettingsScheduleTypes(themeId!)
+  const { data: stateTypes } = useTeamSettingsStateTypes(themeId!)
 
   return (
     <Card

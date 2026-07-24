@@ -16,7 +16,7 @@ type Props = {
 
 export const StepObservations = ({ onPrevStep, onNextStep }: Props) => {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const [itinerary] = useItinerary(itineraryId)
+  const { data: itinerary } = useItinerary(itineraryId)
 
   const items =
     itinerary?.settings?.day_settings?.team_settings?.observation_choices || []

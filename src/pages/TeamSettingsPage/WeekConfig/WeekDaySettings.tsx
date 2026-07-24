@@ -11,6 +11,7 @@ type Props = {
   dayOfWeekName: string
   daySettings: DaySettings[]
   teamSettingsOptions: TeamSettingsOptions
+  teamId: string
   animationDelay?: number
 }
 
@@ -19,6 +20,7 @@ export function WeekDaySettings({
   dayOfWeekName,
   daySettings,
   teamSettingsOptions,
+  teamId,
   animationDelay = 0,
 }: Props) {
   const navigate = useNavigate()
@@ -54,6 +56,7 @@ export function WeekDaySettings({
             key={daySetting.id}
             daySetting={daySetting}
             teamSettingsOptions={teamSettingsOptions}
+            teamId={teamId}
             animationDelay={index * 0.2}
           />
         ))
