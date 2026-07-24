@@ -13,7 +13,9 @@ const createResponse = (
 
 const mockAuth = (accessToken?: string) => {
   vi.doMock("react-oidc-context", () => ({
-    useAuth: () => ({ user: accessToken ? { access_token: accessToken } : undefined }),
+    useAuth: () => ({
+      user: accessToken ? { access_token: accessToken } : undefined,
+    }),
   }))
 }
 

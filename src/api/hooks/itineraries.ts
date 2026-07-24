@@ -134,9 +134,7 @@ export const useDeleteItinerary = (itineraryId?: string) => {
       queryClient.setQueryData(
         queryKeys.itineraries.summary(),
         (current?: components["schemas"]["ItinerarySummary"][]) =>
-          current?.filter(
-            (itinerary) => itinerary.id !== Number(itineraryId),
-          ),
+          current?.filter((itinerary) => itinerary.id !== Number(itineraryId)),
       )
     },
   })
@@ -225,9 +223,7 @@ export const useRemoveItineraryItem = ({
           if (!current) return current
           return {
             ...current,
-            items: current.items.filter(
-              (item) => item.id !== itineraryItemId,
-            ),
+            items: current.items.filter((item) => item.id !== itineraryItemId),
           }
         },
       )
@@ -257,17 +253,14 @@ export const useUpdateItineraryItemPosition = ({
       const queryKey = queryKeys.itineraries.detail(itineraryId ?? "")
       const previousItinerary = queryClient.getQueryData<Itinerary>(queryKey)
 
-      queryClient.setQueryData(
-        queryKey,
-        (current: Itinerary | undefined) => {
-          if (!current) return current
+      queryClient.setQueryData(queryKey, (current: Itinerary | undefined) => {
+        if (!current) return current
 
-          const next = structuredClone(current)
-          const item = next.items.find((i) => i.id === itineraryItemId)
-          if (item) item.position = payload.position
-          return next
-        },
-      )
+        const next = structuredClone(current)
+        const item = next.items.find((i) => i.id === itineraryItemId)
+        if (item) item.position = payload.position
+        return next
+      })
 
       return { queryKey, previousItinerary }
     },

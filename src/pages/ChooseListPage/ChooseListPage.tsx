@@ -8,13 +8,16 @@ export default function ChooseListPage() {
   return (
     <Grid paddingBottom="x-large" paddingTop="large">
       <Grid.Cell span="all" appearance="transparent">
-        <Heading level={1}>Alle looplijsten {itineraries?.length ? `(${itineraries.length})` : ""}</Heading>
+        <Heading level={1}>
+          Alle looplijsten{" "}
+          {itineraries?.length ? `(${itineraries.length})` : ""}
+        </Heading>
       </Grid.Cell>
       <Grid.Cell span="all" appearance="transparent">
         <Column gap="large">
-        {itineraries?.map((itinerary) => (
-          <ListCard key={itinerary.id} itinerary={itinerary} />
-        ))}
+          {itineraries?.map((itinerary) => (
+            <ListCard key={itinerary.id} itinerary={itinerary} />
+          ))}
         </Column>
       </Grid.Cell>
     </Grid>

@@ -1,9 +1,5 @@
-import { Badge, Icon, Paragraph, Row } from "@amsterdam/design-system-react"
-import {
-  CertificateIcon,
-  ErrorIcon,
-  SuccessIcon,
-} from "@amsterdam/design-system-react-icons"
+import { Badge, Paragraph } from "@amsterdam/design-system-react"
+import { CertificateIcon } from "@amsterdam/design-system-react-icons"
 
 import { usePermitsDecos } from "@/api/hooks"
 import { Card, Description, Table } from "@/components"
@@ -11,6 +7,7 @@ import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvi
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyDecosResponse from "./data/dummyDecosResponse"
 import { filterKnownPermits, isDateValid } from "./data/utils"
+import { PermitValidityLabel } from "../PermitsCard/components/PermitValidityLabel"
 
 type Props = {
   bagId?: string
@@ -19,7 +16,7 @@ type Props = {
 function renderPermitStatus(permit: PermitDecos) {
   if (permit.permit_granted === "GRANTED") {
     return isDateValid(permit) ? (
-      <Badge label="Verleend" color="lime" />
+      <Badge label="Verleend" />
     ) : (
       <Badge label="Verlopen" color="red" />
     )
@@ -36,28 +33,17 @@ const columns = [
   {
     title: "Vergunning",
     dataIndex: "permit_type",
-    render: (_: unknown, permit: PermitDecos) => {
-      const isValid = permit.permit_granted === "GRANTED" && isDateValid(permit)
-
-      return (
-        <Row alignVertical="center" wrap>
-          <Icon
-            svg={isValid ? SuccessIcon : ErrorIcon}
-            size="heading-3"
-            style={{
-              color: isValid
-                ? "var(--ams-color-feedback-success)"
-                : "var(--ams-color-feedback-error)",
-            }}
-          />
-          <strong>{permit.permit_type || "-"}</strong>
-        </Row>
-      )
-    },
+    render: (_: unknown, permit: PermitDecos) => (
+      <PermitValidityLabel
+        label={permit.permit_type}
+        isValid={permit.permit_granted === "GRANTED" && isDateValid(permit)}
+      />
+    ),
   },
   {
     title: "Status",
     dataIndex: "permit_granted",
+    hideOnMobile: true,
     render: (_: unknown, permit: PermitDecos) => renderPermitStatus(permit),
   },
 ] as const

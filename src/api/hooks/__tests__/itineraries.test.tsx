@@ -35,10 +35,9 @@ describe("useItinerarySuggestions", () => {
 
   it("includes lat/lng as query params when a valid location is given", async () => {
     const { useItinerarySuggestions } = await import("../itineraries")
-    renderHook(
-      () => useItinerarySuggestions("1", { lat: 52.37, lng: 4.89 }),
-      { wrapper },
-    )
+    renderHook(() => useItinerarySuggestions("1", { lat: 52.37, lng: 4.89 }), {
+      wrapper,
+    })
 
     await waitFor(() => expect(mockFetch).toHaveBeenCalled())
     const url = mockFetch.mock.calls[0][0] as string
@@ -51,14 +50,11 @@ describe("useItinerarySuggestions", () => {
     { lat: undefined, lng: 4.89 },
     { lat: 200, lng: 4.89 },
     { lat: 52.37, lng: -200 },
-  ])(
-    "omits the query string for an invalid location %o",
-    async (location) => {
-      const { useItinerarySuggestions } = await import("../itineraries")
-      renderHook(() => useItinerarySuggestions("1", location), { wrapper })
+  ])("omits the query string for an invalid location %o", async (location) => {
+    const { useItinerarySuggestions } = await import("../itineraries")
+    renderHook(() => useItinerarySuggestions("1", location), { wrapper })
 
-      await waitFor(() => expect(mockFetch).toHaveBeenCalled())
-      expect(mockFetch.mock.calls[0][0]).not.toContain("?")
-    },
-  )
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled())
+    expect(mockFetch.mock.calls[0][0]).not.toContain("?")
+  })
 })

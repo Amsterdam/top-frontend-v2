@@ -5,7 +5,7 @@ function getStatusColor(status: string): BadgeProps["color"] {
   const normalized = status.toLowerCase()
 
   if (normalized.includes("gereed")) {
-    return "lime"
+    return undefined // default color green
   }
 
   if (normalized.includes("intake")) {
