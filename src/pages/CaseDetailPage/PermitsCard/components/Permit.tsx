@@ -4,7 +4,7 @@ import { ErrorIcon, SuccessIcon } from "@amsterdam/design-system-react-icons"
 import { Description } from "@/components"
 import { createPermitDescriptionData } from "../data/createPermitDescriptionData"
 import { isValidPermit } from "../data/utils"
-import { PermitTag } from "./PermitTag"
+import { PermitBadge } from "./PermitBadge"
 
 type Props = {
   permit: Permit
@@ -35,7 +35,7 @@ export function Permit({ permit }: Props) {
           />
           <Heading level={3}>{permit.product || ""}</Heading>
         </div>
-        <PermitTag status={permit.status} />
+        <PermitBadge status={permit.status} />
       </Row>
       <Description termsWidth="narrow" data={data} />
     </>

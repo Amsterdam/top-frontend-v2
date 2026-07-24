@@ -7,7 +7,7 @@ import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvi
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyPowerBrowserResponse from "./data/dummyPowerBrowserResponse"
 import { isValidPermit, sortPermits } from "./data/utils"
-import { PermitTag } from "./components/PermitTag"
+import { PermitBadge } from "./components/PermitBadge"
 import { PermitValidityLabel } from "./components/PermitValidityLabel"
 
 type Props = {
@@ -30,7 +30,7 @@ const columns = [
     dataIndex: "status",
     hideOnMobile: true,
     render: (_: unknown, permit: Permit) => (
-      <PermitTag status={permit.status ?? ""} />
+      <PermitBadge status={permit.status ?? ""} />
     ),
   },
 ] as const
