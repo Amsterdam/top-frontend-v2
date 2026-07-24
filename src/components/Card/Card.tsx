@@ -61,7 +61,7 @@ export function Card({
             titleContent
           )}
         </div>
-        {actions && <Row align="end">{actions}</Row>}
+        {actions}
       </Row>
       {collapsible ? (
         <div
