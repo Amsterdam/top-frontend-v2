@@ -3,13 +3,12 @@ import {
   HouseIcon,
   DocumentCheckMarkIcon,
 } from "@amsterdam/design-system-react-icons"
-import { type TagColor } from "../Tag/Tag"
-import { Badge } from "@amsterdam/design-system-react"
+import { Badge, type BadgeProps } from "@amsterdam/design-system-react"
 
-export function StatusTag({ statusName }: { statusName?: string | null }) {
+export function StatusBadge({ statusName }: { statusName?: string | null }) {
   if (!statusName) return null
 
-  let color: TagColor = "azure"
+  let color: BadgeProps["color"] = "azure"
   let svg = HouseIcon
 
   if (statusName === "Hercontrole") {

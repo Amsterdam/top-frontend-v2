@@ -9,6 +9,7 @@ import {
   HouseCanalIcon,
   LogOutIcon,
   SearchIcon,
+  SettingsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
@@ -70,6 +71,9 @@ export function DefaultLayout() {
           <Menu.Link href="/zoeken" icon={SearchIcon}>
             Zoeken
           </Menu.Link>
+          <Menu.Link href="/team-instellingen" icon={SettingsIcon}>
+            Instellingen
+          </Menu.Link>
           <Menu.Link
             href="#"
             icon={LogOutIcon}
@@ -89,6 +93,9 @@ export function DefaultLayout() {
         </Menu.Link>
         <Menu.Link href="/zoeken" icon={SearchIcon}>
           Zoeken
+        </Menu.Link>
+        <Menu.Link href="/team-instellingen" icon={SettingsIcon}>
+          Instellingen
         </Menu.Link>
         <Menu.Link
           href="#"

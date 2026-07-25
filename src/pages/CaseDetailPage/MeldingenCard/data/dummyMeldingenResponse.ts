@@ -7,7 +7,7 @@ export const dummyMeldingenResponse: Melding[] = [
     nachten: 3,
     gasten: 4,
     isAangepast: true,
-    isVerwijderd: true,
+    isVerwijderd: false,
     gemaaktOp: dayjs()
       .subtract(24, "day")
       .set("hour", 10)
@@ -32,8 +32,8 @@ export const dummyMeldingenResponse: Melding[] = [
     eindDatum: dayjs().subtract(48, "day").format(),
     nachten: 2,
     gasten: 4,
-    isAangepast: true,
-    isVerwijderd: false,
+    isAangepast: false,
+    isVerwijderd: true,
     gemaaktOp: dayjs()
       .subtract(50, "day")
       .set("hour", 18)

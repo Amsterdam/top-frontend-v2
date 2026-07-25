@@ -14,7 +14,7 @@ export default function DaySettingsPage() {
     themeId: themeId!,
     dayOfWeek,
     daySettingsId,
-    onSuccess: (id) => navigate(`/team-settings/${themeId}/${id}`),
+    onSuccess: (id) => navigate(`/team-instellingen/${themeId}/${id}`),
   })
 
   if (isLoading) return <AmsterdamCrossSpinner />
@@ -31,7 +31,7 @@ export default function DaySettingsPage() {
         dayOfWeek={daySetting?.week_days?.[0] ?? dayOfWeek}
         caseCount={daySetting?.case_count?.count}
         onSubmit={onSubmit}
-        onCancel={() => navigate(`/team-settings/${themeId}`)}
+        onCancel={() => navigate(`/team-instellingen/${themeId}`)}
       />
     </>
   )

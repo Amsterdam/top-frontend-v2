@@ -1,8 +1,7 @@
-import { Avatar, Row } from "@amsterdam/design-system-react"
+import { Avatar, Badge, Row } from "@amsterdam/design-system-react"
 import { WarningIcon } from "@amsterdam/design-system-react-icons"
 import type { Resident } from "../../types"
 import { formatName } from "../../utils/formatting"
-import { Tag } from "@/components"
 
 export function PersonHeader({ resident }: { resident: Resident }) {
   const genderCode = resident?.geslacht?.code
@@ -23,7 +22,7 @@ export function PersonHeader({ resident }: { resident: Resident }) {
         {isDeceased && " †"}
       </strong>
       {isMailAddress && (
-        <Tag name="Briefadres" color="orange" svg={WarningIcon} />
+        <Badge label="Briefadres" color="orange" icon={WarningIcon} />
       )}
     </Row>
   )

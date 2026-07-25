@@ -1,6 +1,7 @@
-import { PriorityTag, StatusTag, Tag } from "@/components"
+import { PriorityBadge, StatusBadge, Tag } from "@/components"
 import type { TeamSettingsOptions } from "../../types"
 import {
+  Badge,
   Column,
   Heading,
   Paragraph,
@@ -136,7 +137,7 @@ export default function DaySettingsContent({
         <InfoRow title="Stadsdelen">
           <Row wrap gap={GAP_TAGS}>
             {districtNames.map((name) => (
-              <Tag key={name} color="grey" name={name} />
+              <Badge key={name} color="purple" label={name} />
             ))}
           </Row>
         </InfoRow>
@@ -156,7 +157,7 @@ export default function DaySettingsContent({
         <InfoRow title="Tags">
           <Row wrap gap={GAP_TAGS}>
             {tagNames.map((name) => (
-              <Tag key={name} name={name} color="grey" />
+              <Tag key={name} label={name} />
             ))}
           </Row>
         </InfoRow>
@@ -165,7 +166,7 @@ export default function DaySettingsContent({
       <InfoRow title="Statussen">
         <Row wrap gap={GAP_TAGS}>
           {stateTypeNames.map((name) => (
-            <StatusTag key={name} statusName={name} />
+            <StatusBadge key={name} statusName={name} />
           ))}
         </Row>
       </InfoRow>
@@ -174,17 +175,17 @@ export default function DaySettingsContent({
         <InfoRow title="Dagdelen & Weekdelen">
           <Row wrap gap={GAP_TAGS}>
             {daySegments.map((name) => (
-              <Tag
+              <Badge
                 key={name}
-                name={name}
-                color={name === "Overdag" ? "orange" : "blue"}
+                label={name}
+                color={name === "Overdag" ? "orange" : "azure"}
               />
             ))}
             {weekSegments.map((name) => (
-              <Tag
+              <Badge
                 key={name}
-                name={name}
-                color={name === "Doordeweeks" ? "green" : "red"}
+                label={name}
+                color={name === "Doordeweeks" ? "lime" : "red"}
               />
             ))}
           </Row>
@@ -195,7 +196,7 @@ export default function DaySettingsContent({
         <InfoRow title="Prioriteiten">
           <Row wrap gap={GAP_TAGS}>
             {priorities.map((priority) => (
-              <PriorityTag
+              <PriorityBadge
                 key={priority.id}
                 priority={priority as unknown as { weight: number }}
                 showNormalPriority

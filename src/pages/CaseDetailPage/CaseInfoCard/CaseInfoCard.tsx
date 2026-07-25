@@ -2,7 +2,7 @@ import {
   Card,
   Description,
   GoogleMapsButton,
-  PriorityTag,
+  PriorityBadge,
   Tag,
 } from "@/components"
 
@@ -64,18 +64,14 @@ export default function CaseInfoCard({ data }: Props) {
             label: "Prioriteit",
             value:
               priority?.weight && priority?.weight >= 0.5 ? (
-                <PriorityTag priority={priority} />
+                <PriorityBadge priority={priority} />
               ) : undefined,
           },
           {
             label: "Tags",
             value: data?.tags?.length
               ? data.tags.map((tag) => (
-                  <Tag
-                    key={`${data.id}-${tag.id}`}
-                    color="greyDark"
-                    name={tag.name}
-                  />
+                  <Tag key={`${data.id}-${tag.id}`} label={tag.name} />
                 ))
               : undefined,
           },

@@ -34,14 +34,14 @@ export const routes = [
       { path: "lijst/nieuw/:themeId", element: <ListCreatePage /> },
       { path: "lijst/nieuw/:themeId/zoeken", element: <SearchAddressPage /> },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
-      { path: "team-settings", element: <ChooseTeamSettingsPage /> },
-      { path: "team-settings/:themeId", element: <TeamSettingsPage /> },
+      { path: "team-instellingen", element: <ChooseTeamSettingsPage /> },
+      { path: "team-instellingen/:themeId", element: <TeamSettingsPage /> },
       {
-        path: "team-settings/:themeId/:daySettingsId",
+        path: "team-instellingen/:themeId/:daySettingsId",
         element: <DaySettingsPage />,
       },
       {
-        path: "team-settings/:themeId/nieuw/:dayOfWeek",
+        path: "team-instellingen/:themeId/nieuw/:dayOfWeek",
         element: <DaySettingsPage />,
       },
       { path: "zoeken", element: <UnderConstruction /> },

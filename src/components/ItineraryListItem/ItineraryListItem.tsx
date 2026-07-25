@@ -8,7 +8,7 @@ import {
 } from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
-import { StatusTag, PriorityTag, Note, Tag } from "@/components"
+import { StatusBadge, PriorityBadge, Note, Tag } from "@/components"
 import { VisitWrapper, getMostRecentVisit } from "./visit"
 import { ItineraryListItemVariant } from "./ItineraryListItem.variant"
 import {
@@ -78,10 +78,10 @@ export function ItineraryListItem({
       <div>
         <Column>
           <Row wrap className="mt-1 ">
-            <StatusTag statusName={statusName} />
-            <PriorityTag priority={priority} />
+            <StatusBadge statusName={statusName} />
+            <PriorityBadge priority={priority} />
             {caseData?.tags?.map((tag) => (
-              <Tag key={`${caseData.id}-${tag.id}`} name={tag.name} />
+              <Tag key={`${caseData.id}-${tag.id}`} label={tag.name} />
             ))}
           </Row>
           <Note note={notes} />
