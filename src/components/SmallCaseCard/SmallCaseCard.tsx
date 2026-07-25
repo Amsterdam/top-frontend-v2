@@ -6,7 +6,7 @@ import {
   Row,
 } from "@amsterdam/design-system-react"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
-import { StatusTag, PriorityTag, Tag } from "../tags"
+import { StatusBadge, PriorityBadge, Tag } from "../badges"
 import styles from "./SmallCaseCard.module.css"
 
 type Props = {
@@ -26,10 +26,10 @@ export function SmallCaseCard({ caseData, onRemove }: Props) {
 
       <Paragraph>{caseData?.project?.name}</Paragraph>
       <Row wrap>
-        <StatusTag statusName={statusName} />
-        <PriorityTag priority={priority} />
+        <StatusBadge statusName={statusName} />
+        <PriorityBadge priority={priority} />
         {caseData?.tags?.map((tag) => (
-          <Tag key={`${caseData.id}-${tag.id}`} color="green" name={tag.name} />
+          <Tag key={`${caseData.id}-${tag.id}`} label={tag.name} />
         ))}
       </Row>
 

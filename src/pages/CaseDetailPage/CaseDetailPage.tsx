@@ -20,7 +20,7 @@ import {
   useMeldingen,
   useRegistrations,
 } from "@/api/hooks"
-import { AmsterdamCrossSpinner, StatusTag } from "@/components"
+import { AmsterdamCrossSpinner, StatusBadge } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -99,7 +99,7 @@ export default function CaseDetailPage() {
           <Row align="between" wrap>
             <Row wrap alignVertical="center">
               <Heading level={1}>{formatAddress(data?.address, true)}</Heading>
-              <StatusTag statusName={statusName} />
+              <StatusBadge statusName={statusName} />
             </Row>
             <ActionGroup>
               {visitState === VisitState.InProgress &&

@@ -8,7 +8,7 @@ type Props = {
 
 export function PermitValidityLabel({ label, isValid }: Props) {
   return (
-    <Row alignVertical="start" gap="small">
+    <Row alignVertical="center" gap="small">
       <Icon
         svg={isValid ? SuccessIcon : ErrorIcon}
         size="heading-3"

@@ -10,7 +10,7 @@ type Props = {
   showNormalPriority?: boolean
 }
 
-export function PriorityTag({ priority, showNormalPriority }: Props) {
+export function PriorityBadge({ priority, showNormalPriority }: Props) {
   const weight = priority?.weight ?? 0
 
   if (weight >= 1) {
@@ -18,10 +18,10 @@ export function PriorityTag({ priority, showNormalPriority }: Props) {
   } else if (weight >= 0.5) {
     return <Badge color="red" label="Prio" icon={ArrowUpIcon} />
   } else if (showNormalPriority) {
-    return <Badge color="lime" label="Normaal" icon={ThumbsUpIcon} />
+    return <Badge label="Normaal" icon={ThumbsUpIcon} />
   }
 
   return null
 }
 
-export default PriorityTag
+export default PriorityBadge

@@ -19,7 +19,7 @@ function getStatusColor(status: string): BadgeProps["color"] {
   return "yellow"
 }
 
-export function PermitTag({ status }: { status: string }) {
+export function PermitBadge({ status }: { status: string }) {
   if (!status) return null
   const color = getStatusColor(status)
   return <Badge label={status} color={color} />

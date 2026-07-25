@@ -6,7 +6,7 @@ import {
   PersonsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useCaseVisits } from "@/api/hooks"
-import { Card, HeadingWithIcon, VisitTag } from "@/components"
+import { Card, HeadingWithIcon, VisitBadge } from "@/components"
 import { formatDate } from "@/shared"
 
 export function LogbookCard({ caseId }: { caseId?: number }) {
@@ -41,7 +41,7 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
           ))}
 
           <Row>
-            <VisitTag situation={visit?.situation} />
+            <VisitBadge situation={visit?.situation} />
           </Row>
           {visit.description && (
             <Column gap="small" className="mt-3">

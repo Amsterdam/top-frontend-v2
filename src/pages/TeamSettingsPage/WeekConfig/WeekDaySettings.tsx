@@ -1,7 +1,13 @@
-import { Button, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  Badge,
+  Button,
+  Heading,
+  Paragraph,
+  Row,
+} from "@amsterdam/design-system-react"
 import { PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
-import { Divider, Tag } from "@/components"
+import { Divider } from "@/components"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
 import type { TeamSettingsOptions } from "../types"
 import styles from "./WeekDaySettings.module.css"
@@ -33,8 +39,8 @@ export function WeekDaySettings({
         <Row align="between" alignVertical="end" wrap className="mt-2">
           <div className={styles.flexRowCenter}>
             <Heading level={2}>{dayOfWeekName}</Heading>
-            <Tag
-              name={`${daySettings?.length ?? 0} actieve instelling${daySettings?.length === 1 ? "" : "en"}`}
+            <Badge
+              label={`${daySettings?.length ?? 0} actieve instelling${daySettings?.length === 1 ? "" : "en"}`}
               color="azure"
             />
           </div>

@@ -3,20 +3,20 @@ import {
   ErrorIcon,
   InfoIcon,
 } from "@amsterdam/design-system-react-icons"
-import { Tag, type TagColor } from "../Tag/Tag"
+import { Badge, type BadgeProps } from "@amsterdam/design-system-react"
 import { visitEventValuesMap } from "@/components/CaseEventTimeline/config/values"
 
-export function VisitTag({ situation }: { situation?: string | null }) {
+export function VisitBadge({ situation }: { situation?: string | null }) {
   if (!situation) return null
 
   const name =
     visitEventValuesMap[situation as keyof typeof visitEventValuesMap] ??
     situation
 
-  let color: TagColor = "azure"
+  let color: BadgeProps["color"] = "azure"
   let svg
   if (situation === "access_granted") {
-    color = "green"
+    color = undefined // Badge's default resolves to the success (green) feedback color
     svg = SuccessIcon
   } else if (situation === "nobody_present") {
     color = "orange"
@@ -26,5 +26,5 @@ export function VisitTag({ situation }: { situation?: string | null }) {
     svg = ErrorIcon
   }
 
-  return <Tag name={name} color={color} svg={svg} />
+  return <Badge label={name} color={color} icon={svg} />
 }
