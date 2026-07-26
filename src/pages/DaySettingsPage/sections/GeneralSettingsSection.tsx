@@ -15,7 +15,11 @@ export function GeneralSettingsSection() {
         />
       }
     >
-      <Grid gapVertical="large" paddingBottom="large" style={{ paddingInlineStart: 0 }}>
+      <Grid
+        gapVertical="large"
+        paddingBottom="large"
+        style={{ paddingInlineStart: 0 }}
+      >
         <Grid.Cell
           span={{ narrow: 4, medium: 4, wide: 6 }}
           appearance="transparent"

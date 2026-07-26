@@ -38,6 +38,7 @@ function InfoRow({
 
 function renderNamesList(names: string[]) {
   if (!names.length) return <Paragraph>-</Paragraph>
+  if (names.length === 1) return <Paragraph>{names[0]}</Paragraph>
 
   return (
     <UnorderedList>
