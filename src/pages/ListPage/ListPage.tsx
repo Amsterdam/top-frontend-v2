@@ -34,7 +34,7 @@ export default function ListPage() {
   }
 
   return (
-    <Grid paddingBottom="x-large" paddingTop="large">
+    <Grid paddingVertical="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
         <Row align="between" wrap>
           <Heading

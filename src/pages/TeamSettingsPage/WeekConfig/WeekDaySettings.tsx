@@ -1,13 +1,6 @@
-import {
-  Badge,
-  Button,
-  Heading,
-  Paragraph,
-  Row,
-} from "@amsterdam/design-system-react"
+import { Button, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
 import { PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
-import { Divider } from "@/components"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
 import type { TeamSettingsOptions } from "../types"
 import styles from "./WeekDaySettings.module.css"
@@ -18,7 +11,6 @@ type Props = {
   daySettings: DaySettings[]
   teamSettingsOptions: TeamSettingsOptions
   teamId: string
-  animationDelay?: number
 }
 
 export function WeekDaySettings({
@@ -27,23 +19,13 @@ export function WeekDaySettings({
   daySettings,
   teamSettingsOptions,
   teamId,
-  animationDelay = 0,
 }: Props) {
   const navigate = useNavigate()
   return (
-    <div
-      className={`animate-slide-in-bottom mb-6 ${styles.daySection}`}
-      style={{ animationDelay: `${animationDelay}s` }}
-    >
+    <>
       <div className={styles.dayHeader}>
-        <Row align="between" alignVertical="end" wrap className="mt-2">
-          <div className={styles.flexRowCenter}>
-            <Heading level={2}>{dayOfWeekName}</Heading>
-            <Badge
-              label={`${daySettings?.length ?? 0} actieve instelling${daySettings?.length === 1 ? "" : "en"}`}
-              color="azure"
-            />
-          </div>
+        <Row alignVertical="center" align="between" wrap>
+          <Heading level={2}>{dayOfWeekName}</Heading>
           <Button
             icon={PlusIcon}
             iconBefore
@@ -52,7 +34,6 @@ export function WeekDaySettings({
             Nieuwe instelling
           </Button>
         </Row>
-        <Divider />
       </div>
       {daySettings.length === 0 ? (
         <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
@@ -67,6 +48,6 @@ export function WeekDaySettings({
           />
         ))
       )}
-    </div>
+    </>
   )
 }
