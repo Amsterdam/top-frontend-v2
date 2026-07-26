@@ -1,4 +1,5 @@
-import { Outlet } from "react-router"
+import { type MouseEvent } from "react"
+import { Outlet, useNavigate } from "react-router"
 import {
   Menu,
   Page,
@@ -17,61 +18,41 @@ import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
 import { useRedirectItinerary } from "@/hooks"
 
-// type HeaderAction = {
-//   key: string
-//   label: string
-//   icon: React.ComponentType
-//   onClick?: (e: React.MouseEvent) => void
-// }
-
 export function DefaultLayout() {
   useRedirectFromState()
   useRedirectItinerary()
   const auth = useAuth()
+  const navigate = useNavigate()
 
-  // const headerActions: HeaderAction[] = [
-  //   {
-  //     key: "zoeken",
-  //     label: "Zoeken",
-  //     icon: SearchIcon,
-  //   },
-  //   {
-  //     key: "uitloggen",
-  //     label: "Uitloggen",
-  //     icon: LogOutIcon,
-  //     onClick: (e) => {
-  //       e.preventDefault()
-  //       auth.signoutRedirect()
-  //     },
-  //   },
-  // ]
+  const navigateTo = (path: string) => (event: MouseEvent) => {
+    event.preventDefault()
+    navigate(path)
+  }
 
   return (
     <Page withMenu>
       <PageHeader
         brandName={`${env.VITE_APP_TITLE} ${env.VITE_ENVIRONMENT_SHORT}`}
         brandNameShort={`TOP  ${env.VITE_ENVIRONMENT_SHORT}`}
-        // menuItems={headerActions.map((action) => (
-        //   <PageHeader.MenuLink
-        //     key={action.key}
-        //     href="#"
-        //     icon={action.icon}
-        //     onClick={action.onClick}
-        //   >
-        //     {action.label}
-        //   </PageHeader.MenuLink>
-        // ))}
         noMenuButtonOnWideWindow
         className="ams-page__area--header"
       >
         <Menu>
-          <Menu.Link href="/" icon={HouseCanalIcon}>
+          <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
             Home
           </Menu.Link>
-          <Menu.Link href="/zoeken" icon={SearchIcon}>
+          <Menu.Link
+            href="/zoeken"
+            icon={SearchIcon}
+            onClick={navigateTo("/zoeken")}
+          >
             Zoeken
           </Menu.Link>
-          <Menu.Link href="/team-instellingen" icon={SettingsIcon}>
+          <Menu.Link
+            href="/team-instellingen"
+            icon={SettingsIcon}
+            onClick={navigateTo("/team-instellingen")}
+          >
             Instellingen
           </Menu.Link>
           <Menu.Link
@@ -88,13 +69,21 @@ export function DefaultLayout() {
       </PageHeader>
 
       <Menu className="ams-page__area--menu" inWideWindow>
-        <Menu.Link href="/" icon={HouseCanalIcon}>
+        <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
           Home
         </Menu.Link>
-        <Menu.Link href="/zoeken" icon={SearchIcon}>
+        <Menu.Link
+          href="/zoeken"
+          icon={SearchIcon}
+          onClick={navigateTo("/zoeken")}
+        >
           Zoeken
         </Menu.Link>
-        <Menu.Link href="/team-instellingen" icon={SettingsIcon}>
+        <Menu.Link
+          href="/team-instellingen"
+          icon={SettingsIcon}
+          onClick={navigateTo("/team-instellingen")}
+        >
           Instellingen
         </Menu.Link>
         <Menu.Link
@@ -118,6 +107,7 @@ export function DefaultLayout() {
           <PageFooter.MenuLink
             href="/support"
             data-testid="app-footer-navigation-link-support"
+            onClick={navigateTo("/support")}
           >
             Ondersteuning
           </PageFooter.MenuLink>

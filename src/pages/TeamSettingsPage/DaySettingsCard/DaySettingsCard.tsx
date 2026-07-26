@@ -22,6 +22,7 @@ export default function DaySettingsCard({
   return (
     <Card
       title={daySetting.name}
+      style={{ marginBottom: "1rem" }}
       icon={SettingsIcon}
       actions={
         <ActionGroup>
