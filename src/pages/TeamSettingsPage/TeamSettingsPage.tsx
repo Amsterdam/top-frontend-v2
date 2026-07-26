@@ -1,11 +1,12 @@
 import {
+  Breadcrumb,
   Heading,
   Paragraph,
   Grid,
   TabNavigation,
 } from "@amsterdam/design-system-react"
 import { type MouseEvent } from "react"
-import { useParams, useSearchParams } from "react-router"
+import { useNavigate, useParams, useSearchParams } from "react-router"
 import { AmsterdamCrossSpinner } from "@/components"
 import { WeekDaySettings } from "./WeekConfig/WeekDaySettings"
 import {
@@ -23,6 +24,7 @@ import { DAY_OF_WEEKS } from "@/shared/constants/dayOfWeeks"
 import type { TeamSettingsOptions } from "./types"
 
 export default function TeamSettingsPage() {
+  const navigate = useNavigate()
   const { themeId } = useParams<{ themeId: string }>()
   const { data: teamSettings, isPending } = useTeamSettings(themeId!)
   const { data: reasons } = useTeamSettingsReasons(themeId!)
@@ -72,6 +74,20 @@ export default function TeamSettingsPage() {
   return (
     <Grid paddingVertical="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
+        <Breadcrumb accessibleName="Kruimelpad">
+          <Breadcrumb.Link
+            href="/team-instellingen"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate("/team-instellingen")
+            }}
+          >
+            Instellingen
+          </Breadcrumb.Link>
+          <Breadcrumb.Link aria-current="location">
+            {teamSettings?.name ?? "Team"}
+          </Breadcrumb.Link>
+        </Breadcrumb>
         <Heading level={1}>
           Looplijst instellingen{" "}
           {teamSettings?.name && `(${teamSettings.name})`}
