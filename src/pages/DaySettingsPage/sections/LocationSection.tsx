@@ -29,8 +29,11 @@ export function LocationSection() {
         />
       }
     >
-      <Grid gapVertical="large" >
-        <Grid.Cell span={{ narrow: 4, medium: 5, wide: 4 }} appearance="transparent">
+      <Grid gapVertical="large">
+        <Grid.Cell
+          span={{ narrow: 4, medium: 5, wide: 4 }}
+          appearance="transparent"
+        >
           <RadioControl<FormValues>
             label="Selecteer postcodes of stadsdelen"
             name="postal_codes_type"
@@ -44,7 +47,10 @@ export function LocationSection() {
             columns={isMobile ? 1 : 2}
           />
         </Grid.Cell>
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 9 }} appearance="transparent">
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 9 }}
+          appearance="transparent"
+        >
           {isPostalCode ? (
             <PostalCodeRanges name="postal_code_ranges" />
           ) : (
