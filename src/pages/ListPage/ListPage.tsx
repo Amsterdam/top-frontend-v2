@@ -57,8 +57,8 @@ export default function ListPage() {
       <Grid.Cell as="aside" span={{ narrow: 4, medium: 8, wide: 4 }}>
         <Column gap="none" className="ams-mb-xl">
           <Heading level={3}>
-            {itinerary?.settings.day_settings.team_settings.name} –{" "}
-            {itinerary?.settings.day_settings.name}
+            {itinerary?.settings?.day_settings?.team_settings?.name} –{" "}
+            {itinerary?.settings?.day_settings?.name}
           </Heading>
           <Paragraph>
             {itinerary?.team_members
