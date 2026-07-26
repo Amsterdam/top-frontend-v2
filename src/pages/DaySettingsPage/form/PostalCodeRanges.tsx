@@ -1,5 +1,5 @@
 import { useFieldArray, useFormContext } from "react-hook-form"
-import { Row, Column, Button, Paragraph } from "@amsterdam/design-system-react"
+import { Row, Column, Button, Paragraph, ActionGroup } from "@amsterdam/design-system-react"
 import { DeleteIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { usePostalCodeValidation } from "./postalCodeRangeValidation"
@@ -21,7 +21,7 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
   })
 
   return (
-    <div className="mb-1">
+    <div className="ams-mb-m">
       {fields.map((field, index) => {
         const startError =
           formState.errors.postal_code_ranges?.[index]?.range_start?.message
@@ -33,7 +33,7 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
         const rowError = startError || endError || rowLevelError
 
         return (
-          <div key={field.id} className="mb-3">
+          <div key={field.id} className="ams-mb-m">
             <Row>
               <Column>
                 <TextInputControl<FormValues>
@@ -100,13 +100,15 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
           </div>
         )
       })}
-      <Button
-        icon={PlusIcon}
-        iconBefore
-        onClick={() => append({ range_start: undefined, range_end: undefined })}
-      >
-        Voeg rij toe
-      </Button>
+      <ActionGroup>
+        <Button
+          icon={PlusIcon}
+          iconBefore
+          onClick={() => append({ range_start: undefined, range_end: undefined })}
+        >
+          Voeg rij toe
+        </Button>
+      </ActionGroup>
     </div>
   )
 }

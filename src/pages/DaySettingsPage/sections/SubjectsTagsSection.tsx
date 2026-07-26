@@ -23,18 +23,22 @@ export function SubjectsTagsSection({ themeId }: Props) {
           iconComponent={<TagIcon />}
         />
       }
-      className="mt-3"
     >
-      {/* <TagIcon /> */}
       <Grid gapVertical="large">
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 6 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Met welke onderwerpen wil je dat de looplijsten gegenereerd worden?"
             name="subjects"
             options={mapToOptions("id", "name", subjects)}
           />
         </Grid.Cell>
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 6 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Met welke tags wil je dat de looplijsten gegenereerd worden?"
             name="tags"

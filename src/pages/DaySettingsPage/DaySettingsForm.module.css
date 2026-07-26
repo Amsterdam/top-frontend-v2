@@ -1,20 +1,11 @@
-.formContent {
-  padding-bottom: 100px;
-}
 .stickyBar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
+  z-index: 10;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.stickyBarContent {
-  max-inline-size: var(--ams-page-max-inline-size);
-  margin-inline: auto;
-  padding-block: 16px;
+  background-color: var(--ams-color-background);
+  padding-block: var(--ams-grid-cell-padding-block);
+  padding-inline: var(--ams-grid-cell-padding-inline);
 }
 
 .stickyBarContentRow {
