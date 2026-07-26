@@ -21,10 +21,9 @@ export function CorporationsSection() {
           svg={BuildingsIcon}
         />
       }
-      className="mt-3"
     >
       <Grid gapVertical="large">
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }} appearance="transparent">
           <SelectControl<FormValues>
             name="housing_corporation_combiteam"
             label="Wil je deze looplijst samenlopen met een corporatie?"
@@ -35,7 +34,7 @@ export function CorporationsSection() {
             ]}
           />
         </Grid.Cell>
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }} appearance="transparent">
           <CheckboxControlGroup<FormValues>
             label="Met welke corporaties wil je dat de looplijsten gegenereerd worden?"
             name="housing_corporations"

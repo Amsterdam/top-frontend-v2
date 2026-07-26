@@ -26,10 +26,12 @@ export function ReasonsProjectsSection({ themeId }: Props) {
           svg={FolderIcon}
         />
       }
-      className="mt-3"
     >
       <Grid gapVertical="large">
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 6 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Met welke openingsredenen wil je dat de looplijsten gegenereerd worden?"
             name="reasons"
@@ -39,7 +41,10 @@ export function ReasonsProjectsSection({ themeId }: Props) {
             }}
           />
         </Grid.Cell>
-        <Grid.Cell span={{ narrow: 4, medium: 8, wide: 6 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 8, wide: 6 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Met welke projecten wil je dat de looplijsten gegenereerd worden?"
             name="project_ids"

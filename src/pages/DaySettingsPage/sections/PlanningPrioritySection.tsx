@@ -26,10 +26,12 @@ export function PlanningPrioritySection({ themeId }: Props) {
           svg={CalendarIcon}
         />
       }
-      className="mt-3"
     >
       <Grid gapVertical="large">
-        <Grid.Cell span={{ narrow: 4, medium: 4, wide: 12 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 4, wide: 12 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Met welke status wil je dat de looplijsten gegenereerd worden?"
             name="state_types"
@@ -40,7 +42,10 @@ export function PlanningPrioritySection({ themeId }: Props) {
           />
         </Grid.Cell>
 
-        <Grid.Cell span={{ narrow: 4, medium: 4, wide: 4 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 4, wide: 4 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Welke dagdelen?"
             name="day_segments"
@@ -51,7 +56,10 @@ export function PlanningPrioritySection({ themeId }: Props) {
           />
         </Grid.Cell>
 
-        <Grid.Cell span={{ narrow: 4, medium: 4, wide: 4 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 4, wide: 4 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Welke weekdelen?"
             name="week_segments"
@@ -61,7 +69,10 @@ export function PlanningPrioritySection({ themeId }: Props) {
             }}
           />
         </Grid.Cell>
-        <Grid.Cell span={{ narrow: 4, medium: 4, wide: 4 }}>
+        <Grid.Cell
+          span={{ narrow: 4, medium: 4, wide: 4 }}
+          appearance="transparent"
+        >
           <CheckboxControlGroup<FormValues>
             label="Prioriteiten"
             name="priorities"

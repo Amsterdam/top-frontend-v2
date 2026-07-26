@@ -4,7 +4,8 @@ import { useNavigate, useParams } from "react-router"
 
 import DaySettingsForm from "./DaySettingsForm"
 import { useDaySettingsForm } from "./useDaySettingsForm"
-import { Breadcrumb, Heading } from "@amsterdam/design-system-react"
+import { Breadcrumb, Grid, Heading } from "@amsterdam/design-system-react"
+import { DAY_OF_WEEK_MAP } from "@/shared/constants/dayOfWeeks"
 
 export default function DaySettingsPage() {
   const { themeId, dayOfWeek, daySettingsId } = useParams()
@@ -19,43 +20,53 @@ export default function DaySettingsPage() {
 
   if (isLoading) return <AmsterdamCrossSpinner />
 
+  const nameDayOfWeek =
+    DAY_OF_WEEK_MAP[Number(daySetting?.week_days?.[0] ?? dayOfWeek)]
+
   return (
-    <>
-      <Breadcrumb accessibleName="Kruimelpad">
-        <Breadcrumb.Link
-          href="/team-instellingen"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate("/team-instellingen")
-          }}
-        >
-          Instellingen
-        </Breadcrumb.Link>
-        <Breadcrumb.Link
-          href={`/team-instellingen/${themeId}`}
-          onClick={(e) => {
-            e.preventDefault()
-            navigate(`/team-instellingen/${themeId}`)
-          }}
-        >
-          {theme?.name ?? "Team"}
-        </Breadcrumb.Link>
-        <Breadcrumb.Link aria-current="location">
+    <Grid paddingVertical="large" gapVertical="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Breadcrumb accessibleName="Kruimelpad">
+          <Breadcrumb.Link
+            href="/team-instellingen"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate("/team-instellingen")
+            }}
+          >
+            Instellingen
+          </Breadcrumb.Link>
+          <Breadcrumb.Link
+            href={`/team-instellingen/${themeId}`}
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(`/team-instellingen/${themeId}`)
+            }}
+          >
+            {theme?.name ?? "Team"}
+          </Breadcrumb.Link>
+          <Breadcrumb.Link aria-current="location">
+            {daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
+          </Breadcrumb.Link>
+        </Breadcrumb>
+        <Heading level={1}>
           {daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
-        </Breadcrumb.Link>
-      </Breadcrumb>
-      <Heading level={1}>
-        {daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
-      </Heading>
-      <DaySettingsForm
-        form={form}
-        themeName={theme?.name}
-        themeId={themeId!}
-        dayOfWeek={daySetting?.week_days?.[0] ?? dayOfWeek}
-        caseCount={daySetting?.case_count?.count}
-        onSubmit={onSubmit}
-        onCancel={() => navigate(`/team-instellingen/${themeId}`)}
-      />
-    </>
+        </Heading>
+        <Heading level={2}>
+          {`${theme?.name} - ${nameDayOfWeek ?? "?"}`}
+        </Heading>
+      </Grid.Cell>
+      <Grid.Cell span="all" appearance="transparent">
+        <DaySettingsForm
+          form={form}
+          themeName={theme?.name}
+          themeId={themeId!}
+          dayOfWeek={daySetting?.week_days?.[0] ?? dayOfWeek}
+          caseCount={daySetting?.case_count?.count}
+          onSubmit={onSubmit}
+          onCancel={() => navigate(`/team-instellingen/${themeId}`)}
+        />
+      </Grid.Cell>
+    </Grid>
   )
 }
