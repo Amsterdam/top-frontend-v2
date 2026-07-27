@@ -2,17 +2,21 @@ import { useMemo } from "react"
 import dayjs from "dayjs"
 import {
   ActionGroup,
+  Breadcrumb,
   Button,
   Column,
   Grid,
   Heading,
-  Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
 import { PersonsIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
-import { AmsterdamCrossSpinner, GoogleMapsButton } from "@/components"
-import { useItinerary } from "@/api/hooks"
+import {
+  AmsterdamCrossSpinner,
+  GoogleMapsButton,
+  ItineraryTeamSummary,
+} from "@/components"
+import { useItinerariesSummary, useItinerary } from "@/api/hooks"
 import {
   CopyToClipboardButton,
   DeleteItineraryButton,
@@ -22,6 +26,7 @@ import {
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const { data: itinerary, isPending } = useItinerary(itineraryId)
+  const { data: itineraries } = useItinerariesSummary()
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
@@ -36,6 +41,23 @@ export default function ListPage() {
   return (
     <Grid paddingVertical="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
+        {itineraries && itineraries.length > 1 && (
+          <Breadcrumb accessibleName="Kruimelpad">
+            <Breadcrumb.Link
+              href="/kies-looplijst"
+              onClick={(e) => {
+                e.preventDefault()
+                navigate("/kies-looplijst")
+              }}
+            >
+              Alle looplijsten
+            </Breadcrumb.Link>
+            <Breadcrumb.Link aria-current="location">
+              {`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}
+            </Breadcrumb.Link>
+          </Breadcrumb>
+        )}
+
         <Row align="between" wrap>
           <Heading
             level={1}
@@ -60,11 +82,13 @@ export default function ListPage() {
             {itinerary?.settings?.day_settings?.team_settings?.name} –{" "}
             {itinerary?.settings?.day_settings?.name}
           </Heading>
-          <Paragraph>
-            {itinerary?.team_members
-              .map((member) => member.user.full_name)
-              .join(", ")}
-          </Paragraph>
+          <ItineraryTeamSummary
+            teamMembers={
+              itinerary?.team_members.map((member) => member.user.full_name) ??
+              []
+            }
+            caseCount={itinerary?.items?.length ?? 0}
+          />
         </Column>
         <ActionGroup>
           <CopyToClipboardButton itinerary={itinerary} />

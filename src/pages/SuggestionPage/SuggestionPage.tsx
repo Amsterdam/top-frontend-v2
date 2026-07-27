@@ -66,9 +66,6 @@ export default function SuggestionPage() {
     <Grid paddingVertical="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
         <Heading level={1}>Voeg een zaak toe aan je looplijst</Heading>
-      </Grid.Cell>
-
-      <Grid.Cell span="all" appearance="transparent">
         {cases.length > 0 && (
           <Paragraph>
             {usesGeolocation
