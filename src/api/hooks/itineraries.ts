@@ -52,9 +52,7 @@ export const useItinerariesSummary = () => {
   return useQuery({
     queryKey: queryKeys.itineraries.summary(),
     queryFn: () =>
-      fetch<components["schemas"]["ItinerarySummary"][]>(
-        makeApiUrl("itineraries", "summary"),
-      ),
+      fetch<ItinerarySummary[]>(makeApiUrl("itineraries", "summary")),
   })
 }
 
@@ -133,7 +131,7 @@ export const useDeleteItinerary = (itineraryId?: string) => {
       // still the only entry, causing it to navigate straight back into it.
       queryClient.setQueryData(
         queryKeys.itineraries.summary(),
-        (current?: components["schemas"]["ItinerarySummary"][]) =>
+        (current?: ItinerarySummary[]) =>
           current?.filter((itinerary) => itinerary.id !== Number(itineraryId)),
       )
     },

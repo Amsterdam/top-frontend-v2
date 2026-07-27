@@ -4,11 +4,7 @@ import { useNavigate } from "react-router"
 import { Card, ItineraryTeamSummary } from "@/components"
 
 type Props = {
-  // team_members is typed as `string` in the generated schema, but the API
-  // actually returns a string[]; the OpenAPI schema is stale.
-  itinerary: Omit<components["schemas"]["ItinerarySummary"], "team_members"> & {
-    team_members: string[]
-  }
+  itinerary: ItinerarySummary
 }
 
 export function ListCard({ itinerary }: Props) {
