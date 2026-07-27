@@ -39,13 +39,17 @@ export const useSaveDaySetting = ({
 
   return useMutation({
     mutationFn: (payload: DaySettingsPayload) =>
-      fetch<DaySettings>(makeApiUrl("day-settings", daySettingId), {
-        method: daySettingId ? "PUT" : "POST",
-        data: payload,
-      }),
+      fetch<DaySettings>(
+        makeApiUrl("day-settings", daySettingId, "?case-count=true"),
+        {
+          method: daySettingId ? "PUT" : "POST",
+          data: payload,
+        },
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.teamSettings.all(teamId),
+        exact: true,
       })
     },
   })
@@ -71,6 +75,7 @@ export const useDeleteDaySetting = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.teamSettings.all(teamId),
+        exact: true,
       })
     },
   })
