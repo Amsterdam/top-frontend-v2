@@ -8,14 +8,9 @@ import {
   Row,
   SearchField,
 } from "@amsterdam/design-system-react"
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router"
+import { useSearchParams } from "react-router"
 import debounce from "lodash.debounce"
-import { useCasesSearch, useTheme } from "@/api/hooks"
+import { useCasesSearch } from "@/api/hooks"
 import { ItineraryListItem, ItineraryListItemVariant } from "@/components"
 
 const DELAY = 750
@@ -23,22 +18,32 @@ const MIN_CHARS = 3
 
 const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 
-export function SearchAddressPage() {
-  const { themeId } = useParams<{ themeId: string }>()
-  const { data: theme } = useTheme(themeId)
+type Props = {
+  title: string
+  themeName?: string
+  variant: ItineraryListItemVariant
+  onAdd?: (caseData: Case) => void
+  onCancel?: () => void
+}
+
+export function SearchAddressView({
+  title,
+  themeName,
+  variant,
+  onAdd,
+  onCancel,
+}: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const initialSearchString = searchParams.get("q") ?? ""
   const [debouncedSearchString, setDebouncedSearchString] =
     useState<string>(initialSearchString)
   const [inputValue, setInputValue] = useState(initialSearchString)
   const isValid = isValidSearchString(debouncedSearchString)
-  const {
-    data: cases,
-    isFetching: isBusy,
-  } = useCasesSearch(debouncedSearchString, theme?.name, { lazy: !isValid })
-  const navigate = useNavigate()
-  const location = useLocation()
-  const currentFormValues = location.state?.formValues
+  const { data: cases, isFetching: isBusy } = useCasesSearch(
+    debouncedSearchString,
+    themeName,
+    { lazy: !isValid },
+  )
 
   // Memoize the debounced function to prevent recreation on every render
   const debouncedSetValue = useMemo(
@@ -63,15 +68,6 @@ export function SearchAddressPage() {
     setSearchParams(inputValue ? { q: inputValue } : {}, { replace: true })
   }
 
-  const onAddCase = (caseData: Case) => {
-    navigate(`/lijst/nieuw/${themeId}`, {
-      replace: true,
-      state: {
-        formValues: { ...currentFormValues, startCase: caseData },
-      },
-    })
-  }
-
   const noResults = !isBusy && isValid && cases && cases.length === 0
 
   let statusMessage: string | null
@@ -90,19 +86,12 @@ export function SearchAddressPage() {
     <Grid paddingBottom="x-large" paddingTop="large">
       <Grid.Cell span="all" appearance="transparent">
         <Row align="between" wrap>
-          <Heading level={1}>Startadres zoeken</Heading>
-    
-            <Button
-              variant="secondary"
-              onClick={() =>
-                navigate(`/lijst/nieuw/${themeId}`, {
-                  state: { formValues: currentFormValues },
-                })
-              }
-            >
+          <Heading level={1}>{title}</Heading>
+          {onCancel && (
+            <Button variant="secondary" onClick={onCancel}>
               Annuleren
             </Button>
-         
+          )}
         </Row>
       </Grid.Cell>
 
@@ -126,12 +115,12 @@ export function SearchAddressPage() {
         {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
         <Column>
           {!isBusy &&
-            cases?.map((caseData, index) => (
+            cases?.map((caseData) => (
               <ItineraryListItem
-                key={`${caseData.id}&${index}`}
+                key={caseData.id}
                 item={{ case: caseData } as ItineraryItem}
-                variant={ItineraryListItemVariant.AddStartAddress}
-                onAdd={onAddCase}
+                variant={variant}
+                onAdd={onAdd}
               />
             ))}
         </Column>
@@ -140,4 +129,4 @@ export function SearchAddressPage() {
   )
 }
 
-export default SearchAddressPage
+export default SearchAddressView

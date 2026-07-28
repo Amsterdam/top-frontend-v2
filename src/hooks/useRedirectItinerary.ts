@@ -12,6 +12,7 @@ export const useRedirectItinerary = () => {
     // Exceptions for certain paths
     if (
       location.pathname.startsWith("/team-instellingen") ||
+      location.pathname.startsWith("/zoeken") ||
       themeId ||
       caseId ||
       itineraryId ||

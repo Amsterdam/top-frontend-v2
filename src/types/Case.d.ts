@@ -1,5 +1,18 @@
 type Theme = components["schemas"]["TeamSettingsTheme"]
 
+type TeamMember = {
+  id: number
+  user: {
+    id: string
+    email: string
+    username: string
+    first_name: string
+    last_name: string
+    full_name: string
+    team_settings: unknown[]
+  }
+}
+
 type Workflow =
   | string
   | {
@@ -23,4 +36,6 @@ type Case = {
   subjects?: components["schemas"]["CaseSubject"][]
   distance?: number
   bag_data?: Record<string, Value>
+  theme?: Theme
+  teams?: TeamMember[][]
 }

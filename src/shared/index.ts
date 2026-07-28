@@ -1,5 +1,6 @@
 export * from "./dateFormatters"
 export * from "./formatAddress"
 export * from "./getSchedulePriority"
+export * from "./getTopPosition"
 export * from "./getWorkflowName"
 export * from "./textFormatters"

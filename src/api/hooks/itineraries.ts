@@ -160,7 +160,7 @@ export const useChangeTeamMembers = (itineraryId?: string) => {
   })
 }
 
-export const useCreateItineraryItem = (itineraryId?: string) => {
+export const useCreateItineraryItem = () => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
@@ -187,7 +187,7 @@ export const useCreateItineraryItem = (itineraryId?: string) => {
       }
 
       queryClient.setQueryData(
-        queryKeys.itineraries.detail(itineraryId ?? ""),
+        queryKeys.itineraries.detail(String(variables.itinerary)),
         (current: Itinerary | undefined) => {
           if (!current) return current
           return { ...current, items: [...current.items, newItem] }

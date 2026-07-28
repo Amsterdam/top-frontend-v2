@@ -13,15 +13,8 @@ import {
 } from "@/api/hooks"
 import { AmsterdamCrossSpinner, ItineraryListItem } from "@/components"
 import { useGeolocation } from "@/hooks"
+import { getTopPosition } from "@/shared"
 import { useState } from "react"
-
-function getTopPosition(items?: { position: number }[]): number {
-  if (!items || items.length === 0) {
-    return 1
-  }
-  const lowest = Math.min(...items.map((item) => item.position))
-  return lowest / 2
-}
 
 export default function SuggestionPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
@@ -32,7 +25,7 @@ export default function SuggestionPage() {
     lng,
   })
   const { data: itinerary } = useItinerary(itineraryId)
-  const createItineraryItem = useCreateItineraryItem(itineraryId)
+  const createItineraryItem = useCreateItineraryItem()
 
   // Loading state for active POST requests
   const [loadingIds, setLoadingIds] = useState<number[]>([])
@@ -82,7 +75,7 @@ export default function SuggestionPage() {
         <Column gap="small">
           {cases.map((caseData) => {
             const isAdded = itinerary?.items.some(
-              (i) => Number(i.case.id) === caseData.id,
+              (i) => String(i.case.id) === String(caseData.id),
             )
             const isLoading = loadingIds.includes(caseData.id)
             return (

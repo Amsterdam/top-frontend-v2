@@ -14,6 +14,7 @@ import { ItineraryListItemVariant } from "./ItineraryListItem.variant"
 import {
   AddStartAddressVariant,
   AddSuggestedCaseVariant,
+  AddToItineraryVariant,
   DefaultVariant,
 } from "./variants"
 
@@ -41,7 +42,7 @@ export function ItineraryListItem({
   const notes = mostRecentVisit?.personal_notes
 
   const onCardClick = () => {
-    navigate(`zaken/${caseData.id}`)
+    navigate(`/zaken/${caseData.id}`)
   }
 
   return (
@@ -60,6 +61,9 @@ export function ItineraryListItem({
             </Card.Link>
           </Heading>
           <Paragraph>{address?.postal_code}</Paragraph>
+          {variant === ItineraryListItemVariant.AddToItinerary && (
+            <Paragraph>{caseData?.theme?.name}</Paragraph>
+          )}
           <Paragraph>{caseData?.reason?.name}</Paragraph>
           <Paragraph>{caseData?.project?.name}</Paragraph>
         </Column>
@@ -73,6 +77,10 @@ export function ItineraryListItem({
 
         {variant === ItineraryListItemVariant.AddSuggestedCase && (
           <AddSuggestedCaseVariant item={item} onAdd={onAdd} status={status} />
+        )}
+
+        {variant === ItineraryListItemVariant.AddToItinerary && (
+          <AddToItineraryVariant item={item} />
         )}
       </Row>
       <div>

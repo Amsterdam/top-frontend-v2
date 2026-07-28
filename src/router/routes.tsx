@@ -5,7 +5,8 @@ import NotFound from "@/pages/NotFound/NotFound"
 import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
 import ListPage from "@/pages/ListPage/ListPage"
 import TeamMemberUpdatePage from "@/pages/TeamMemberUpdatePage/TeamMemberUpdatePage"
-import SearchAddressPage from "@/pages/SearchAddressPage/SearchAddressPage"
+import SelectStartAddressPage from "@/pages/SelectStartAddressPage/SelectStartAddressPage"
+import SearchPage from "@/pages/SearchPage/SearchPage"
 import SuggestionPage from "@/pages/SuggestionPage/SuggestionPage"
 import VisitCreatePage from "@/pages/VisitCreatePage/VisitCreatePage"
 import CaseDetailPage from "@/pages/CaseDetailPage/CaseDetailPage"
@@ -32,7 +33,10 @@ export const routes = [
       { path: "lijst/:itineraryId/zaken/:caseId", element: <CaseDetailPage /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <ListCreatePage /> },
-      { path: "lijst/nieuw/:themeId/zoeken", element: <SearchAddressPage /> },
+      {
+        path: "lijst/nieuw/:themeId/zoeken",
+        element: <SelectStartAddressPage />,
+      },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
       { path: "team-instellingen", element: <ChooseTeamSettingsPage /> },
       { path: "team-instellingen/:themeId", element: <TeamSettingsPage /> },
@@ -44,7 +48,7 @@ export const routes = [
         path: "team-instellingen/:themeId/nieuw/:dayOfWeek",
         element: <DaySettingsPage />,
       },
-      { path: "zoeken", element: <UnderConstruction /> },
+      { path: "zoeken", element: <SearchPage /> },
       { path: "bezoek/:itineraryId/:caseId", element: <VisitCreatePage /> }, // CREATE
       {
         path: "bezoek/:itineraryId/:caseId/:visitId", // EDIT
