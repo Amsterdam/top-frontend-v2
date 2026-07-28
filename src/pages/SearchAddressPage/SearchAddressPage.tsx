@@ -1,14 +1,22 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import {
+  Button,
+  Column,
   Grid,
   Heading,
   Paragraph,
+  Row,
   SearchField,
 } from "@amsterdam/design-system-react"
-import { useLocation, useNavigate, useParams } from "react-router"
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch, useTheme } from "@/api/hooks"
-import { ItineraryListItem } from "@/components"
+import { ItineraryListItem, ItineraryListItemVariant } from "@/components"
 
 const DELAY = 750
 const MIN_CHARS = 3
@@ -18,21 +26,28 @@ const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 export function SearchAddressPage() {
   const { themeId } = useParams<{ themeId: string }>()
   const { data: theme } = useTheme(themeId)
-  const [debouncedSearchString, setDebouncedSearchString] = useState<string>("")
-  const [inputValue, setInputValue] = useState("")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialSearchString = searchParams.get("q") ?? ""
+  const [debouncedSearchString, setDebouncedSearchString] =
+    useState<string>(initialSearchString)
+  const [inputValue, setInputValue] = useState(initialSearchString)
+  const isValid = isValidSearchString(debouncedSearchString)
   const {
     data: cases,
-    refetch: execGet,
     isFetching: isBusy,
-  } = useCasesSearch(inputValue, theme?.name, { lazy: true })
+  } = useCasesSearch(debouncedSearchString, theme?.name, { lazy: !isValid })
   const navigate = useNavigate()
   const location = useLocation()
   const currentFormValues = location.state?.formValues
 
   // Memoize the debounced function to prevent recreation on every render
   const debouncedSetValue = useMemo(
-    () => debounce((value: string) => setDebouncedSearchString(value), DELAY),
-    [],
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearchString(value)
+        setSearchParams(value ? { q: value } : {}, { replace: true })
+      }, DELAY),
+    [setSearchParams],
   )
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,16 +56,11 @@ export function SearchAddressPage() {
     debouncedSetValue(value)
   }
 
-  useEffect(() => {
-    if (isValidSearchString(debouncedSearchString)) {
-      execGet()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchString])
-
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    execGet()
+    debouncedSetValue.cancel()
+    setDebouncedSearchString(inputValue)
+    setSearchParams(inputValue ? { q: inputValue } : {}, { replace: true })
   }
 
   const onAddCase = (caseData: Case) => {
@@ -62,7 +72,6 @@ export function SearchAddressPage() {
     })
   }
 
-  const isValid = isValidSearchString(debouncedSearchString)
   const noResults = !isBusy && isValid && cases && cases.length === 0
 
   let statusMessage: string | null
@@ -78,12 +87,26 @@ export function SearchAddressPage() {
   }
 
   return (
-    <Grid paddingVertical="large" gapVertical="large">
+    <Grid paddingBottom="x-large" paddingTop="large">
       <Grid.Cell span="all" appearance="transparent">
-        <Heading level={1}>Startadres zoeken</Heading>
+        <Row align="between" wrap>
+          <Heading level={1}>Startadres zoeken</Heading>
+    
+            <Button
+              variant="secondary"
+              onClick={() =>
+                navigate(`/lijst/nieuw/${themeId}`, {
+                  state: { formValues: currentFormValues },
+                })
+              }
+            >
+              Annuleren
+            </Button>
+         
+        </Row>
       </Grid.Cell>
 
-      <Grid.Cell span="all">
+      <Grid.Cell span="all" appearance="transparent">
         <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
           <SearchField.Input
             placeholder="Zoek een adres op basis van postcode en huisnummer of straatnaam."
@@ -95,22 +118,23 @@ export function SearchAddressPage() {
         </SearchField>
       </Grid.Cell>
 
-      <Grid.Cell span="all">
+      <Grid.Cell span="all" appearance="transparent">
         <Heading level={2} className="ams-mb-l">
           Adressen ({cases?.length || 0})
         </Heading>
 
         {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
-
-        {!isBusy &&
-          cases?.map((caseData) => (
-            <ItineraryListItem
-              key={caseData.id}
-              item={{ case: caseData } as ItineraryItem}
-              variant="addStartAddress"
-              onAdd={onAddCase}
-            />
-          ))}
+        <Column>
+          {!isBusy &&
+            cases?.map((caseData, index) => (
+              <ItineraryListItem
+                key={`${caseData.id}&${index}`}
+                item={{ case: caseData } as ItineraryItem}
+                variant={ItineraryListItemVariant.AddStartAddress}
+                onAdd={onAddCase}
+              />
+            ))}
+        </Column>
       </Grid.Cell>
     </Grid>
   )
