@@ -16,11 +16,9 @@ import { useAuth } from "react-oidc-context"
 
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
-import { useRedirectItinerary } from "@/hooks"
 
 export function DefaultLayout() {
   useRedirectFromState()
-  useRedirectItinerary()
   const auth = useAuth()
   const navigate = useNavigate()
 
@@ -39,7 +37,7 @@ export function DefaultLayout() {
       >
         <Menu>
           <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-            Home
+            Looplijst
           </Menu.Link>
           <Menu.Link
             href="/zoeken"
@@ -70,7 +68,7 @@ export function DefaultLayout() {
 
       <Menu className="ams-page__area--menu" inWideWindow>
         <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-          Home
+          Looplijst
         </Menu.Link>
         <Menu.Link
           href="/zoeken"

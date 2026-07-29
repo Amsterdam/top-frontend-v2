@@ -1,4 +1,4 @@
-import { Button } from "@amsterdam/design-system-react"
+import { Button, Column } from "@amsterdam/design-system-react"
 import { PlusIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
@@ -10,7 +10,7 @@ export function AddStartAddressVariant({ item, onAdd }: Props) {
   const caseData = item.case
 
   return (
-    <>
+    <Column alignHorizontal="end">
       <Button
         icon={PlusIcon}
         variant="secondary"
@@ -19,6 +19,6 @@ export function AddStartAddressVariant({ item, onAdd }: Props) {
       >
         Toevoegen
       </Button>
-    </>
+    </Column>
   )
 }

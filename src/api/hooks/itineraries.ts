@@ -119,14 +119,14 @@ export const useDeleteItinerary = (itineraryId?: string) => {
         method: "DELETE",
       }),
     onSuccess: () => {
-      // Purge rather than invalidate: the itinerary is gone, so a
-      // background refetch would just 404. This also covers the nested
-      // suggestions query since it shares the detail key as a prefix.
-      queryClient.removeQueries({
-        queryKey: queryKeys.itineraries.detail(itineraryId ?? ""),
-      })
-      // Update synchronously rather than invalidate: useRedirectItinerary
-      // reads this cache on every navigation, and an invalidate-triggered
+      // Don't invalidate/remove the detail query here: ListPage is still
+      // mounted (navigation away happens in the caller's own onSuccess,
+      // which runs after this one) and actively observing it, so either
+      // would immediately refetch the itinerary we just deleted and 404.
+      // Leaving the stale cache entry in place is harmless — the component
+      // unmounts right after navigation and the entry is garbage collected.
+      // Update synchronously rather than invalidate: IndexRedirectPage
+      // reads this cache when landing on "/", and an invalidate-triggered
       // background refetch leaves a window where the deleted itinerary is
       // still the only entry, causing it to navigate straight back into it.
       queryClient.setQueryData(
@@ -160,7 +160,7 @@ export const useChangeTeamMembers = (itineraryId?: string) => {
   })
 }
 
-export const useCreateItineraryItem = (itineraryId?: string) => {
+export const useCreateItineraryItem = () => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
@@ -187,7 +187,7 @@ export const useCreateItineraryItem = (itineraryId?: string) => {
       }
 
       queryClient.setQueryData(
-        queryKeys.itineraries.detail(itineraryId ?? ""),
+        queryKeys.itineraries.detail(String(variables.itinerary)),
         (current: Itinerary | undefined) => {
           if (!current) return current
           return { ...current, items: [...current.items, newItem] }

@@ -3,26 +3,15 @@
 ├── directory-tree.txt
 ├── dist
 │   ├── assets
-│   │   ├── AmsterdamSans-Bold-B-eEYlh-.eot
-│   │   ├── AmsterdamSans-Bold-CN8ieXn0.woff
-│   │   ├── AmsterdamSans-BoldItalic-D8IgX2tE.eot
+│   │   ├── AmsterdamSans-Black-CPolvDGu.woff2
 │   │   ├── AmsterdamSans-BoldItalic-DGVdd_B4.woff2
-│   │   ├── AmsterdamSans-BoldItalic-Iks2g4JK.woff
 │   │   ├── AmsterdamSans-Bold-rXlH1Jru.woff2
-│   │   ├── AmsterdamSans-ExtraBold-0zPbyHYJ.eot
-│   │   ├── AmsterdamSans-ExtraBold-GN1-Za61.woff
 │   │   ├── AmsterdamSans-ExtraBold-hk2GetsY.woff2
-│   │   ├── AmsterdamSans-Italic-D8oH3P5t.woff
-│   │   ├── AmsterdamSans-Italic-Djuh9q7q.eot
 │   │   ├── AmsterdamSans-Italic-DW94SgHh.woff2
-│   │   ├── AmsterdamSans-Light-C9JJu_TU.eot
 │   │   ├── AmsterdamSans-Light-D_AncfMf.woff2
-│   │   ├── AmsterdamSans-Light-iEj3CW9t.woff
-│   │   ├── AmsterdamSans-Regular-BSIiMMb3.eot
-│   │   ├── AmsterdamSans-Regular-nwmnLZDN.woff
 │   │   ├── AmsterdamSans-Regular-QnM7etvR.woff2
-│   │   ├── index-DLr3esQc.css
-│   │   └── index-vB5-fKLf.js
+│   │   ├── index-B0mIiN3j.css
+│   │   └── index-RJtvkhVY.js
 │   ├── favicon
 │   │   ├── apple-touch-icon.png
 │   │   ├── favicon.ico
@@ -48,13 +37,7 @@
 │       └── background.webp
 ├── README.md
 ├── src
-│   ├── animations
-│   │   ├── AnimatedName
-│   │   │   ├── AnimatedName.module.css
-│   │   │   └── AnimatedName.tsx
-│   │   └── index.ts
 │   ├── api
-│   │   ├── ApiCacheProvider.tsx
 │   │   ├── hooks
 │   │   │   ├── address.ts
 │   │   │   ├── cases.ts
@@ -64,32 +47,45 @@
 │   │   │   ├── residents.ts
 │   │   │   ├── teamSettings.ts
 │   │   │   ├── __tests__
+│   │   │   │   └── itineraries.test.tsx
 │   │   │   ├── themes.ts
 │   │   │   ├── users.ts
 │   │   │   └── visits.ts
+│   │   ├── queryClient.ts
+│   │   ├── queryKeys.ts
+│   │   ├── __tests__
+│   │   │   └── useApiFetch.test.ts
 │   │   ├── types
-│   │   │   ├── apiError.ts
-│   │   │   └── apiOptions.ts
-│   │   ├── useApiCache.ts
-│   │   ├── useApi.ts
-│   │   ├── useRequest.ts
+│   │   │   └── apiError.ts
+│   │   ├── useApiFetch.ts
 │   │   └── utils
 │   │       ├── makeApiUrl.ts
+│   │       ├── mapApiErrorToAlert.ts
+│   │       ├── normalizeApiError.ts
 │   │       ├── slashSandwich.ts
 │   │       ├── stringifyQueryParams.ts
-│   │       ├── __tests__
-│   │       │   ├── makeApiUrl.test.ts
-│   │       │   ├── slashSandwich.test.ts
-│   │       │   ├── stringifyQueryParams.test.ts
-│   │       │   └── useApiErrorHandler.test.tsx
-│   │       └── useApiErrorHandler.ts
+│   │       └── __tests__
+│   │           ├── makeApiUrl.test.ts
+│   │           ├── slashSandwich.test.ts
+│   │           └── stringifyQueryParams.test.ts
 │   ├── App.tsx
 │   ├── components
 │   │   ├── alerts
+│   │   │   ├── alertBridge.ts
 │   │   │   ├── AlertContext.ts
 │   │   │   ├── AlertProvider.tsx
 │   │   │   ├── types.ts
 │   │   │   └── useAlert.ts
+│   │   ├── badges
+│   │   │   ├── index.ts
+│   │   │   ├── PriorityBadge
+│   │   │   │   └── PriorityBadge.tsx
+│   │   │   ├── StatusBadge
+│   │   │   │   └── StatusBadge.tsx
+│   │   │   ├── Tag
+│   │   │   │   └── Tag.tsx
+│   │   │   └── VisitBadge
+│   │   │       └── VisitBadge.tsx
 │   │   ├── Card
 │   │   │   ├── Card.module.css
 │   │   │   └── Card.tsx
@@ -114,6 +110,7 @@
 │   │   ├── DefaultLayout
 │   │   │   ├── DefaultLayout.module.css
 │   │   │   ├── DefaultLayout.tsx
+│   │   │   ├── navigation
 │   │   │   └── usePageHeaderOverlay.ts
 │   │   ├── Description
 │   │   │   └── Description.tsx
@@ -136,6 +133,7 @@
 │   │   │   └── HeadingWithIcon.tsx
 │   │   ├── index.ts
 │   │   ├── ItineraryListItem
+│   │   │   ├── actions
 │   │   │   ├── AnimatedItineraryListItem.tsx
 │   │   │   ├── index.ts
 │   │   │   ├── ItineraryListItem.tsx
@@ -143,6 +141,7 @@
 │   │   │   ├── variants
 │   │   │   │   ├── AddStartAddressVariant.tsx
 │   │   │   │   ├── AddSuggestedCaseVariant.tsx
+│   │   │   │   ├── AddToItineraryVariant.tsx
 │   │   │   │   ├── DefaultVariant.tsx
 │   │   │   │   └── index.ts
 │   │   │   └── visit
@@ -151,6 +150,8 @@
 │   │   │       ├── visit.types.ts
 │   │   │       ├── VisitWrapper.module.css
 │   │   │       └── VisitWrapper.tsx
+│   │   ├── ItineraryTeamSummary
+│   │   │   └── ItineraryTeamSummary.tsx
 │   │   ├── links
 │   │   │   ├── IconLink.tsx
 │   │   │   ├── index.ts
@@ -158,14 +159,12 @@
 │   │   ├── MobileOnlyWrapper
 │   │   │   ├── MobileOnlyWrapper.module.css
 │   │   │   └── MobileOnlyWrapper.tsx
+│   │   ├── N
 │   │   ├── Note
 │   │   │   ├── Note.module.css
 │   │   │   └── Note.tsx
-│   │   ├── PageGrid
-│   │   │   └── PageGrid.tsx
-│   │   ├── PageHeading
-│   │   │   ├── PageHeading.module.css
-│   │   │   └── PageHeading.tsx
+│   │   ├── SearchAddressView
+│   │   │   └── SearchAddressView.tsx
 │   │   ├── SmallCaseCard
 │   │   │   ├── SmallCaseCard.module.css
 │   │   │   └── SmallCaseCard.tsx
@@ -179,21 +178,10 @@
 │   │   │   └── WritingLoader
 │   │   │       ├── WritingLoader.module.css
 │   │   │       └── WritingLoader.tsx
-│   │   ├── Table
-│   │   │   ├── Table.module.css
-│   │   │   ├── Table.tsx
-│   │   │   └── utils.ts
-│   │   └── tags
-│   │       ├── index.ts
-│   │       ├── PriorityTag
-│   │       │   └── PriorityTag.tsx
-│   │       ├── StatusTag
-│   │       │   └── StatusTag.tsx
-│   │       ├── Tag
-│   │       │   ├── Tag.module.css
-│   │       │   └── Tag.tsx
-│   │       └── VisitTag
-│   │           └── VisitTag.tsx
+│   │   └── Table
+│   │       ├── Table.module.css
+│   │       ├── Table.tsx
+│   │       └── utils.ts
 │   ├── config
 │   │   ├── env.ts
 │   │   ├── isAcceptanceOrLocalEnvironment.ts
@@ -212,14 +200,15 @@
 │   │   ├── __tests__
 │   │   │   ├── useCurrentUser.test.ts
 │   │   │   ├── useDialog.test.ts
+│   │   │   ├── useGeolocation.test.ts
 │   │   │   ├── useRedirectFromState.test.ts
 │   │   │   └── useTokenPayload.test.ts
 │   │   ├── useCurrentUser.ts
 │   │   ├── useDialog.ts
+│   │   ├── useGeolocation.ts
 │   │   ├── useMediaQuery.ts
 │   │   ├── useMoveItineraryItemToBottom.ts
 │   │   ├── useRedirectFromState.ts
-│   │   ├── useRedirectItinerary.ts
 │   │   ├── useTokenPayload.ts
 │   │   └── useUserOptions.ts
 │   ├── icons
@@ -261,10 +250,15 @@
 │   │   │   │   └── HistoryCard.tsx
 │   │   │   ├── LogbookCard
 │   │   │   │   └── LogbookCard.tsx
+│   │   │   ├── MeldingenCard
+│   │   │   │   ├── data
+│   │   │   │   │   └── dummyMeldingenResponse.ts
+│   │   │   │   └── MeldingenCard.tsx
 │   │   │   ├── PermitsCard
 │   │   │   │   ├── components
-│   │   │   │   │   ├── PermitTag.tsx
-│   │   │   │   │   └── Permit.tsx
+│   │   │   │   │   ├── PermitBadge.tsx
+│   │   │   │   │   ├── Permit.tsx
+│   │   │   │   │   └── PermitValidityLabel.tsx
 │   │   │   │   ├── data
 │   │   │   │   │   ├── createPermitDescriptionData.ts
 │   │   │   │   │   ├── dummyPowerBrowserResponse.ts
@@ -279,13 +273,15 @@
 │   │   │   │   │   └── utils.ts
 │   │   │   │   └── PermitsCardDecos.tsx
 │   │   │   └── VakantieverhuurCard
-│   │   │       ├── Meldingen
-│   │   │       │   ├── Meldingen.module.css
-│   │   │       │   └── Meldingen.tsx
+│   │   │       ├── data
+│   │   │       │   └── dummyRegistrationsResponse.ts
 │   │   │       ├── Registrations
 │   │   │       │   ├── Registrations.module.css
 │   │   │       │   └── Registrations.tsx
 │   │   │       └── VakantieverhuurCard.tsx
+│   │   ├── ChooseListPage
+│   │   │   ├── ChooseListPage.tsx
+│   │   │   └── ListCard.tsx
 │   │   ├── ChooseTeamSettingsPage
 │   │   │   └── ChooseTeamSettingsPage.tsx
 │   │   ├── ChooseThemePage
@@ -306,6 +302,8 @@
 │   │   │   │   └── SubjectsTagsSection.tsx
 │   │   │   ├── types.ts
 │   │   │   └── useDaySettingsForm.ts
+│   │   ├── IndexRedirectPage
+│   │   │   └── IndexRedirectPage.tsx
 │   │   ├── ListCreatePage
 │   │   │   └── ListCreatePage.tsx
 │   │   ├── ListPage
@@ -327,8 +325,10 @@
 │   │   │   └── ListPage.tsx
 │   │   ├── NotFound
 │   │   │   └── NotFound.tsx
-│   │   ├── SearchAddressPage
-│   │   │   └── SearchAddressPage.tsx
+│   │   ├── SearchPage
+│   │   │   └── SearchPage.tsx
+│   │   ├── SelectStartAddressPage
+│   │   │   └── SelectStartAddressPage.tsx
 │   │   ├── SuggestionPage
 │   │   │   └── SuggestionPage.tsx
 │   │   ├── TeamMemberUpdatePage
@@ -374,6 +374,7 @@
 │   │   ├── dateFormatters.ts
 │   │   ├── formatAddress.ts
 │   │   ├── getSchedulePriority.ts
+│   │   ├── getTopPosition.ts
 │   │   ├── getWorkflowName.ts
 │   │   ├── index.ts
 │   │   └── textFormatters.ts
@@ -382,10 +383,11 @@
 │   │   ├── design-system-overrides.css
 │   │   ├── global.css
 │   │   └── spacing.css
+│   ├── test-utils
+│   │   └── __tests__
 │   └── types
 │       ├── Address.d.ts
 │       ├── api.d.ts
-│       ├── Cache.d.ts
 │       ├── Case.d.ts
 │       ├── CaseEvent.d.ts
 │       ├── DaySettings.d.ts
@@ -394,7 +396,8 @@
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
+├── tsconfig.tsbuildinfo
 ├── vite.config.ts
 └── vitest.config.ts
 
-119 directories, 279 files
+128 directories, 273 files

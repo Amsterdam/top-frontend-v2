@@ -1,4 +1,6 @@
 .Card {
+  /* Containing block for Card.Link's stretched ::after; without it the link covers the whole page instead of just this card. */
+  position: relative;
   border: 1px solid var(--ams-color-separator);
   padding-block: var(--ams-grid-cell-padding-block);
   padding-inline: var(--ams-grid-cell-padding-inline);
