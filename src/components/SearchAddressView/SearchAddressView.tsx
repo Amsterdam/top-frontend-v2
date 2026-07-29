@@ -20,6 +20,7 @@ const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 
 type Props = {
   title: string
+  description?: string
   themeName?: string
   variant: ItineraryListItemVariant
   onAdd?: (caseData: Case) => void
@@ -28,6 +29,7 @@ type Props = {
 
 export function SearchAddressView({
   title,
+  description,
   themeName,
   variant,
   onAdd,
@@ -93,6 +95,7 @@ export function SearchAddressView({
             </Button>
           )}
         </Row>
+        {description && <Paragraph>{description}</Paragraph>}
       </Grid.Cell>
 
       <Grid.Cell span="all" appearance="transparent">
@@ -115,9 +118,9 @@ export function SearchAddressView({
         {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
         <Column>
           {!isBusy &&
-            cases?.map((caseData) => (
+            cases?.map((caseData, index) => (
               <ItineraryListItem
-                key={caseData.id}
+                key={`${caseData.id}-${index}`}
                 item={{ case: caseData } as ItineraryItem}
                 variant={variant}
                 onAdd={onAdd}

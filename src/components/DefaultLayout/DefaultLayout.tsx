@@ -39,7 +39,7 @@ export function DefaultLayout() {
       >
         <Menu>
           <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-            Home
+            Looplijst
           </Menu.Link>
           <Menu.Link
             href="/zoeken"
@@ -70,7 +70,7 @@ export function DefaultLayout() {
 
       <Menu className="ams-page__area--menu" inWideWindow>
         <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-          Home
+          Looplijst
         </Menu.Link>
         <Menu.Link
           href="/zoeken"
