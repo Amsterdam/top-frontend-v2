@@ -16,11 +16,9 @@ import { useAuth } from "react-oidc-context"
 
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
-import { useRedirectItinerary } from "@/hooks"
 
 export function DefaultLayout() {
   useRedirectFromState()
-  useRedirectItinerary()
   const auth = useAuth()
   const navigate = useNavigate()
 

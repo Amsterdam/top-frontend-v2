@@ -1,4 +1,5 @@
 import { DefaultLayout } from "@/components"
+import IndexRedirectPage from "@/pages/IndexRedirectPage/IndexRedirectPage"
 import ChooseThemePage from "@/pages/ChooseThemePage/ChooseThemePage"
 import ListCreatePage from "@/pages/ListCreatePage/ListCreatePage"
 import NotFound from "@/pages/NotFound/NotFound"
@@ -21,6 +22,7 @@ export const routes = [
     element: <DefaultLayout />,
     errorElement: <NotFound />,
     children: [
+      { index: true, element: <IndexRedirectPage /> },
       { path: "zaken/:caseId", element: <CaseDetailPage /> },
       { path: "kies-looplijst", element: <ChooseListPage /> },
       { path: "lijst", element: <UnderConstruction /> },
