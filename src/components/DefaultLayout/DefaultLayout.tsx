@@ -1,11 +1,6 @@
 import { type MouseEvent } from "react"
 import { Outlet, useNavigate } from "react-router"
-import {
-  Menu,
-  Page,
-  PageFooter,
-  PageHeader,
-} from "@amsterdam/design-system-react"
+import { Menu, Page, PageHeader } from "@amsterdam/design-system-react"
 import {
   HouseCanalIcon,
   LogOutIcon,
@@ -16,6 +11,7 @@ import { useAuth } from "react-oidc-context"
 
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
+import { Footer } from "./Footer"
 
 export function DefaultLayout() {
   useRedirectFromState()
@@ -100,17 +96,7 @@ export function DefaultLayout() {
         <Outlet />
       </main>
 
-      <PageFooter className="ams-page-footer ams-page__area--footer">
-        <PageFooter.Menu data-testid="app-footer-navigation">
-          <PageFooter.MenuLink
-            href="/support"
-            data-testid="app-footer-navigation-link-support"
-            onClick={navigateTo("/support")}
-          >
-            Ondersteuning
-          </PageFooter.MenuLink>
-        </PageFooter.Menu>
-      </PageFooter>
+      <Footer />
     </Page>
   )
 }

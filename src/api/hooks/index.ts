@@ -1,6 +1,7 @@
 export * from "./address"
 export * from "./cases"
 export * from "./daySettings"
+export * from "./feedback"
 export * from "./itineraries"
 export * from "./residents"
 export * from "./teamSettings"
