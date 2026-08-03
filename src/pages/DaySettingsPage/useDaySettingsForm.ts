@@ -106,7 +106,7 @@ export function useDaySettingsForm({
     } else if (values.housing_corporation_combiteam === "false") {
       payload.housing_corporation_combiteam = false
     } else {
-      delete payload.housing_corporation_combiteam
+      payload.housing_corporation_combiteam = null
     }
     if (values.postal_codes_type === "stadsdeel") {
       payload.postal_code_ranges = []

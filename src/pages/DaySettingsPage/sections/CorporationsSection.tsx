@@ -31,7 +31,7 @@ export function CorporationsSection() {
             name="housing_corporation_combiteam"
             label="Wil je deze looplijst samenlopen met een corporatie?"
             options={[
-              { label: "Alle opties", value: "" },
+              { label: "Geen voorkeur", value: "" },
               { label: "Ja", value: "true" },
               { label: "Nee", value: "false" },
             ]}

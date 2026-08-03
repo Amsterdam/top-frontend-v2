@@ -52,7 +52,7 @@ type DaySettingsPayload = Omit<
   case_count?: string[] | null
   day_segments?: string[] | null
   districts?: string[] | null
-  housing_corporation_combiteam?: string | boolean
+  housing_corporation_combiteam?: string | boolean | null
   housing_corporations?: string[] | null
   priorities?: string[] | null
   project_ids?: string[] | null

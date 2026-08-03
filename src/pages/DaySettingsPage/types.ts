@@ -1,7 +1,7 @@
 export type FormValues = {
   day_segments: string[]
   districts: string[]
-  housing_corporation_combiteam?: string
+  housing_corporation_combiteam?: string | null
   housing_corporations?: string[]
   // id?: number
   name: string
