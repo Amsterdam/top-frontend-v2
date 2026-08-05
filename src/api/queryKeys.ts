@@ -41,6 +41,10 @@ export const queryKeys = {
       ["itineraries", itineraryId, "suggestions", { lat, lng }] as const,
   },
 
+  permissions: {
+    all: ["permissions"] as const,
+  },
+
   teamSettings: {
     all: (teamId: string) => ["team-settings", teamId] as const,
     options: (teamId: string, weekday: number) =>

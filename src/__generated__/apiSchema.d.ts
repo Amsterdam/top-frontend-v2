@@ -226,6 +226,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/feedback/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Forwards feedback submissions to the Zaken backend. */
+        post: operations["feedback_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/is-authorized/": {
         parameters: {
             query?: never;
@@ -448,6 +465,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["oidc_authenticate_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/permissions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["permissions_retrieve"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -831,7 +864,7 @@ export interface components {
             tags?: number[] | null;
             districts?: number[] | null;
             housing_corporations?: number[] | null;
-            housing_corporation_combiteam?: boolean;
+            housing_corporation_combiteam?: boolean | null;
             readonly team_settings: components["schemas"]["TeamSettingsCompact"];
             readonly used_today_count: number;
             max_use_limit?: number;
@@ -842,6 +875,12 @@ export interface components {
         DaySettingsCompact: {
             readonly id: number;
             name: string;
+        };
+        Feedback: {
+            feedback: string;
+            url: string;
+            user_agent?: string;
+            screen?: string;
         };
         HousingCorporation: {
             readonly id: number;
@@ -950,7 +989,7 @@ export interface components {
             tags?: number[] | null;
             districts?: number[] | null;
             housing_corporations?: number[] | null;
-            housing_corporation_combiteam?: boolean;
+            housing_corporation_combiteam?: boolean | null;
             team_settings: string;
             readonly used_today_count: number;
             max_use_limit?: number;
@@ -1217,7 +1256,7 @@ export interface components {
             tags?: number[] | null;
             districts?: number[] | null;
             housing_corporations?: number[] | null;
-            housing_corporation_combiteam?: boolean;
+            housing_corporation_combiteam?: boolean | null;
             readonly team_settings?: components["schemas"]["TeamSettingsCompact"];
             readonly used_today_count?: number;
             max_use_limit?: number;
@@ -1779,6 +1818,31 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    feedback_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Feedback"];
+                "application/x-www-form-urlencoded": components["schemas"]["Feedback"];
+                "multipart/form-data": components["schemas"]["Feedback"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Feedback"];
                 };
             };
         };
@@ -2383,6 +2447,24 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OIDCAuthenticate"];
                 };
+            };
+        };
+    };
+    permissions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

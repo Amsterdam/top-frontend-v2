@@ -9,19 +9,56 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
+import { usePermissions } from "@/api/hooks"
 import { env } from "@/config/env"
 import { useRedirectFromState } from "@/hooks/useRedirectFromState"
+import {
+  APP_PERMISSIONS,
+  hasRequiredPermissions,
+  type PermissionRequirement,
+} from "@/shared/permissions"
 import { Footer } from "./Footer"
+
+type MenuItem = {
+  href: string
+  icon: typeof HouseCanalIcon
+  label: string
+  requiredPermissions?: PermissionRequirement
+}
+
+const menuItems: MenuItem[] = [
+  {
+    href: "/",
+    icon: HouseCanalIcon,
+    label: "Looplijst",
+  },
+  {
+    href: "/zoeken",
+    icon: SearchIcon,
+    label: "Zoeken",
+  },
+  {
+    href: "/team-instellingen",
+    icon: SettingsIcon,
+    label: "Instellingen",
+    requiredPermissions: APP_PERMISSIONS.manageSettings,
+  },
+]
 
 export function DefaultLayout() {
   useRedirectFromState()
   const auth = useAuth()
   const navigate = useNavigate()
+  const { data: permissions } = usePermissions()
 
   const navigateTo = (path: string) => (event: MouseEvent) => {
     event.preventDefault()
     navigate(path)
   }
+
+  const visibleMenuItems = menuItems.filter((item) =>
+    hasRequiredPermissions(permissions, item.requiredPermissions),
+  )
 
   return (
     <Page withMenu>
@@ -32,23 +69,16 @@ export function DefaultLayout() {
         className="ams-page__area--header"
       >
         <Menu>
-          <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-            Looplijst
-          </Menu.Link>
-          <Menu.Link
-            href="/zoeken"
-            icon={SearchIcon}
-            onClick={navigateTo("/zoeken")}
-          >
-            Zoeken
-          </Menu.Link>
-          <Menu.Link
-            href="/team-instellingen"
-            icon={SettingsIcon}
-            onClick={navigateTo("/team-instellingen")}
-          >
-            Instellingen
-          </Menu.Link>
+          {visibleMenuItems.map((item) => (
+            <Menu.Link
+              key={item.href}
+              href={item.href}
+              icon={item.icon}
+              onClick={navigateTo(item.href)}
+            >
+              {item.label}
+            </Menu.Link>
+          ))}
           <Menu.Link
             href="#"
             icon={LogOutIcon}
@@ -63,23 +93,16 @@ export function DefaultLayout() {
       </PageHeader>
 
       <Menu className="ams-page__area--menu" inWideWindow>
-        <Menu.Link href="/" icon={HouseCanalIcon} onClick={navigateTo("/")}>
-          Looplijst
-        </Menu.Link>
-        <Menu.Link
-          href="/zoeken"
-          icon={SearchIcon}
-          onClick={navigateTo("/zoeken")}
-        >
-          Zoeken
-        </Menu.Link>
-        <Menu.Link
-          href="/team-instellingen"
-          icon={SettingsIcon}
-          onClick={navigateTo("/team-instellingen")}
-        >
-          Instellingen
-        </Menu.Link>
+        {visibleMenuItems.map((item) => (
+          <Menu.Link
+            key={item.href}
+            href={item.href}
+            icon={item.icon}
+            onClick={navigateTo(item.href)}
+          >
+            {item.label}
+          </Menu.Link>
+        ))}
         <Menu.Link
           href="#"
           icon={LogOutIcon}

@@ -15,6 +15,8 @@ import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
 import ChooseTeamSettingsPage from "@/pages/ChooseTeamSettingsPage/ChooseTeamSettingsPage"
 import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
 import ChooseListPage from "@/pages/ChooseListPage/ChooseListPage"
+import RequirePermissions from "./RequirePermissions"
+import { APP_PERMISSIONS } from "@/shared/permissions"
 
 export const routes = [
   {
@@ -40,15 +42,24 @@ export const routes = [
         element: <SelectStartAddressPage />,
       },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
-      { path: "team-instellingen", element: <ChooseTeamSettingsPage /> },
-      { path: "team-instellingen/:themeId", element: <TeamSettingsPage /> },
       {
-        path: "team-instellingen/:themeId/:daySettingsId",
-        element: <DaySettingsPage />,
-      },
-      {
-        path: "team-instellingen/:themeId/nieuw/:dayOfWeek",
-        element: <DaySettingsPage />,
+        element: (
+          <RequirePermissions
+            requiredPermissions={APP_PERMISSIONS.manageSettings}
+          />
+        ),
+        children: [
+          { path: "team-instellingen", element: <ChooseTeamSettingsPage /> },
+          { path: "team-instellingen/:themeId", element: <TeamSettingsPage /> },
+          {
+            path: "team-instellingen/:themeId/:daySettingsId",
+            element: <DaySettingsPage />,
+          },
+          {
+            path: "team-instellingen/:themeId/nieuw/:dayOfWeek",
+            element: <DaySettingsPage />,
+          },
+        ],
       },
       { path: "zoeken", element: <SearchPage /> },
       { path: "bezoek/:itineraryId/:caseId", element: <VisitCreatePage /> }, // CREATE
