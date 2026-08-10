@@ -39,15 +39,13 @@ export function WeekDaySettings({
         <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
       ) : (
           daySettings.map((daySetting, index) => (
-            <Grid.Cell span="all">
-              <DaySettingsCard
-                key={daySetting.id}
-                daySetting={daySetting}
-                teamSettingsOptions={teamSettingsOptions}
-                teamId={teamId}
-                animationDelay={index * 0.2}
-              />
-            </Grid.Cell>
+            <DaySettingsCard
+              key={daySetting.id}
+              daySetting={daySetting}
+              teamSettingsOptions={teamSettingsOptions}
+              teamId={teamId}
+              animationDelay={index * 0.2}
+            />
         ))
       )}
     </>

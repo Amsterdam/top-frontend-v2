@@ -57,7 +57,7 @@ export function Card({
   )
 
   return (
-    <Column className={`${styles.card} ${className ?? ""}`} style={style}>
+    <Column className={`${className ?? ""}`} style={style}>
       <Row align="between" gap="small" wrap>
         <div className={styles.titleContent}>
           {icon && <Icon svg={icon} size="heading-3" />}

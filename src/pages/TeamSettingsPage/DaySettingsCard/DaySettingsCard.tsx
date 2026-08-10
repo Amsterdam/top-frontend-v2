@@ -1,4 +1,4 @@
-import { ActionGroup, IconButton } from "@amsterdam/design-system-react"
+import { ActionGroup, Grid, IconButton } from "@amsterdam/design-system-react"
 import { useNavigate } from "react-router"
 import { PencilIcon, SettingsIcon } from "@amsterdam/design-system-react-icons"
 import { Card } from "@/components"
@@ -20,36 +20,38 @@ export default function DaySettingsCard({
 }: Props) {
   const navigate = useNavigate()
   return (
-    <Card
-      title={daySetting.name}
-      style={{ marginBottom: "1rem" }}
-      icon={SettingsIcon}
-      actions={
-        <ActionGroup>
-          <IconButton
-            svg={PencilIcon}
-            label="Wijzigen"
-            title="Wijzigen"
-            size="heading-3"
-            onClick={(e) => {
-              e.stopPropagation()
-              navigate(`${daySetting.id}`)
-            }}
-          >
-            Wijzigen
-          </IconButton>
-          <DeleteDaySettingsButton
-            daySettingId={daySetting.id}
-            daySettingName={daySetting.name}
-            teamId={teamId}
-          />
-        </ActionGroup>
-      }
-    >
-      <DaySettingsContent
-        daySetting={daySetting}
-        teamSettingsOptions={teamSettingsOptions}
-      />
-    </Card>
+    <Grid.Cell span="all">
+      <Card
+        title={daySetting.name}
+        style={{ marginBottom: "1rem" }}
+        icon={SettingsIcon}
+        actions={
+          <ActionGroup>
+            <IconButton
+              svg={PencilIcon}
+              label="Wijzigen"
+              title="Wijzigen"
+              size="heading-3"
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate(`${daySetting.id}`)
+              }}
+            >
+              Wijzigen
+            </IconButton>
+            <DeleteDaySettingsButton
+              daySettingId={daySetting.id}
+              daySettingName={daySetting.name}
+              teamId={teamId}
+            />
+          </ActionGroup>
+        }
+      >
+        <DaySettingsContent
+          daySetting={daySetting}
+          teamSettingsOptions={teamSettingsOptions}
+        />
+      </Card>
+    </Grid.Cell>
   )
 }
