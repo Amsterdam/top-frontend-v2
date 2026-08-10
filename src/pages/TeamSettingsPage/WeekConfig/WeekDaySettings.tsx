@@ -1,4 +1,4 @@
-import { Button, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
+import { Button, Grid, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
 import { PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
@@ -23,7 +23,7 @@ export function WeekDaySettings({
   const navigate = useNavigate()
   return (
     <>
-      <div className={styles.dayHeader}>
+      <Grid.Cell span="all" className={styles.dayHeader}>
         <Row alignVertical="center" align="between" wrap>
           <Heading level={2}>{dayOfWeekName}</Heading>
           <Button
@@ -34,18 +34,20 @@ export function WeekDaySettings({
             Nieuwe instelling
           </Button>
         </Row>
-      </div>
+      </Grid.Cell>
       {daySettings.length === 0 ? (
         <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
       ) : (
-        daySettings.map((daySetting, index) => (
-          <DaySettingsCard
-            key={daySetting.id}
-            daySetting={daySetting}
-            teamSettingsOptions={teamSettingsOptions}
-            teamId={teamId}
-            animationDelay={index * 0.2}
-          />
+          daySettings.map((daySetting, index) => (
+            <Grid.Cell span="all">
+              <DaySettingsCard
+                key={daySetting.id}
+                daySetting={daySetting}
+                teamSettingsOptions={teamSettingsOptions}
+                teamId={teamId}
+                animationDelay={index * 0.2}
+              />
+            </Grid.Cell>
         ))
       )}
     </>

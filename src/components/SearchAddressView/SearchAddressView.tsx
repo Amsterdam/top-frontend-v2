@@ -110,7 +110,7 @@ export function SearchAddressView({
         </SearchField>
       </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
+      <Grid.Cell span="all">
         <Heading level={2} className="ams-mb-l">
           Adressen ({cases?.length || 0})
         </Heading>
