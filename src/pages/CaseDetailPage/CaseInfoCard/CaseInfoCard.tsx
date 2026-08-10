@@ -1,5 +1,6 @@
 import {
   Card,
+  CardDescriptionSkeleton,
   Description,
   GoogleMapsButton,
   PriorityBadge,
@@ -12,27 +13,33 @@ import { SuitcaseIcon } from "@amsterdam/design-system-react-icons"
 
 type Props = {
   data?: Case
+  loading?: boolean
 }
 
-export default function CaseInfoCard({ data }: Props) {
+export default function CaseInfoCard({ data, loading = false }: Props) {
   const housingCorporationName = useCorporationName(
     data?.address?.housing_corporation,
   )
   const priority = getSchedulePriority(data?.schedules)
 
-  if (!data) return null
+  if (!data && !loading) return null
 
   return (
     <Card
       title="Zaakinformatie"
       icon={SuitcaseIcon}
       actions={
-        <GoogleMapsButton
-          title="Bekijk op Google Maps"
-          addresses={[data?.address] as Address[]}
-          as="link"
-        />
+        !loading && data ? (
+          <GoogleMapsButton
+            title="Bekijk op Google Maps"
+            addresses={[data.address] as Address[]}
+            as="link"
+          />
+        ) : undefined
       }
+      loading={loading}
+      loadingLabel="Zaakinformatie"
+      loadingBody={<CardDescriptionSkeleton rows={7} />}
     >
       <Description
         termsWidth="narrow"

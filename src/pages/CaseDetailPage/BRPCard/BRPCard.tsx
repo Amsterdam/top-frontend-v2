@@ -1,6 +1,6 @@
 import { Paragraph } from "@amsterdam/design-system-react"
 import { PersonsIcon } from "@amsterdam/design-system-react-icons"
-import { Card, Table } from "@/components"
+import { Card, CardTableSkeleton, Table } from "@/components"
 import { useResidents } from "@/api/hooks"
 import type { Resident } from "./types"
 import { PersonHeader } from "./components/PersonHeader/PersonHeader"
@@ -11,6 +11,7 @@ import { getVisibleResidentsSortedByAge } from "./utils/getVisibleResidentsSorte
 
 type Props = {
   data?: Case
+  loading?: boolean
 }
 const columns = [
   {
@@ -23,7 +24,7 @@ const columns = [
   { title: "Leeftijd", dataIndex: "leeftijd", hideOnMobile: true },
 ] as const
 
-export function BRPCard({ data }: Props) {
+export function BRPCard({ data, loading = false }: Props) {
   const {
     data: residentsData,
     isPending,
@@ -38,12 +39,21 @@ export function BRPCard({ data }: Props) {
 
   const sortedResidents = getVisibleResidentsSortedByAge(persons)
 
-  if (!data || isPending) return null
+  const isLoading = loading || isPending
+
+  if (!data && !loading) return null
 
   return (
     <Card
-      title={`Ingeschreven personen (${sortedResidents.length})`}
+      title={
+        isLoading
+          ? "Ingeschreven personen"
+          : `Ingeschreven personen (${sortedResidents.length})`
+      }
       icon={PersonsIcon}
+      loading={isLoading}
+      loadingLabel="Ingeschreven personen"
+      loadingBody={<CardTableSkeleton rows={4} columns={2} />}
     >
       {isError && (
         <Paragraph>

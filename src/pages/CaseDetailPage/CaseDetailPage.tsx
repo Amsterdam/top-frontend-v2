@@ -4,6 +4,7 @@ import {
   Grid,
   Heading,
   Row,
+  Skeleton,
 } from "@amsterdam/design-system-react"
 import {
   DeleteIcon,
@@ -19,7 +20,7 @@ import {
   useMeldingen,
   useRegistrations,
 } from "@/api/hooks"
-import { AmsterdamCrossSpinner, StatusBadge } from "@/components"
+import { StatusBadge } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -88,8 +89,61 @@ export default function CaseDetailPage() {
     !meldingen.length
 
   if (isPending) {
-    return <AmsterdamCrossSpinner />
+    return (
+      <>
+        {dialog}
+        <Grid paddingVertical="large" gapVertical="large">
+          <Grid.Cell span="all" appearance="transparent">
+            <Row align="between" wrap>
+              <Row wrap alignVertical="center">
+                <Skeleton>
+                  <Skeleton.Heading lines={1} />
+                </Skeleton>
+              </Row>
+            </Row>
+          </Grid.Cell>
+
+          <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 8 }}>
+            <Grid.Cell span="all">
+              <CaseInfoCard loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <BAGCard data={undefined} loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <BRPCard loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <PermitsCard loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <PermitsCardDecos loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <VakantieverhuurCard loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <MeldingenCard startDate={startDate} loading />
+            </Grid.Cell>
+          </Grid.Subgrid>
+
+          <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 4 }}>
+            <Grid.Cell span="all">
+              <LogbookCard loading />
+            </Grid.Cell>
+            <Grid.Cell span="all">
+              <HistoryCard loading />
+            </Grid.Cell>
+          </Grid.Subgrid>
+        </Grid>
+      </>
+    )
   }
+
+  if (!data) {
+    return null
+  }
+
   return (
     <>
       {dialog}
@@ -173,6 +227,7 @@ export default function CaseDetailPage() {
             <VakantieverhuurCard
               registrations={registrations}
               showDummyData={showDummyVakantieverhuurData}
+              loading={isBusyRegistrations}
             />
           </Grid.Cell>
           <Grid.Cell span="all">
@@ -180,6 +235,7 @@ export default function CaseDetailPage() {
               meldingen={meldingen}
               startDate={startDate}
               showDummyData={showDummyVakantieverhuurData}
+              loading={isBusyMeldingen}
             />
           </Grid.Cell>
         </Grid.Subgrid>

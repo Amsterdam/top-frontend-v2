@@ -1,9 +1,3 @@
-/*.card {
-  background-color: var(--ams-grid-cell-background-color);
-  padding-block: var(--ams-grid-cell-padding-block);
-  padding-inline: var(--ams-grid-cell-padding-inline);
-}*/
-
 .titleContent {
   display: flex;
   align-items: center;
