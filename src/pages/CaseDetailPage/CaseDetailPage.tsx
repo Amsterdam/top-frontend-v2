@@ -1,7 +1,6 @@
 import {
   ActionGroup,
   Button,
-  Column,
   Grid,
   Heading,
   Row,
@@ -152,37 +151,49 @@ export default function CaseDetailPage() {
           </Row>
         </Grid.Cell>
 
-        <Grid.Cell
+        <Grid.Subgrid
           span={{ narrow: 4, medium: 8, wide: 8 }}
-          appearance="transparent"
         >
-          <Column gap="large">
+          <Grid.Cell span="all">
             <CaseInfoCard data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <BAGCard data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <BRPCard data={data} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <PermitsCard bagId={bagId} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <PermitsCardDecos bagId={bagId} />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <VakantieverhuurCard
               registrations={registrations}
               showDummyData={showDummyVakantieverhuurData}
             />
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <MeldingenCard
               meldingen={meldingen}
               startDate={startDate}
               showDummyData={showDummyVakantieverhuurData}
             />
-          </Column>
-        </Grid.Cell>
+          </Grid.Cell>
+        </Grid.Subgrid>
 
-        <Grid.Cell
+        <Grid.Subgrid
           span={{ narrow: 4, medium: 8, wide: 4 }}
-          appearance="transparent"
         >
-          <Column gap="large">
+        <Grid.Cell span="all">
             <LogbookCard caseId={data?.id} />
-            <HistoryCard caseId={data?.id} />
-          </Column>
         </Grid.Cell>
+        <Grid.Cell span="all">
+            <HistoryCard caseId={data?.id} />
+        </Grid.Cell>
+        </Grid.Subgrid>
       </Grid>
     </>
   )

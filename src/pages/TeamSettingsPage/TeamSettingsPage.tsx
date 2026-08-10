@@ -124,9 +124,8 @@ export default function TeamSettingsPage() {
       </Grid.Cell>
 
       {teamSettings && currentDayOfWeek && (
-        <Grid.Cell
+        <Grid.Subgrid
           span={{ narrow: 4, medium: 6, wide: 10 }}
-          appearance="transparent"
         >
           <WeekDaySettings
             key={currentDayOfWeek.id}
@@ -138,7 +137,7 @@ export default function TeamSettingsPage() {
             teamSettingsOptions={teamSettingsOptions}
             teamId={themeId!}
           />
-        </Grid.Cell>
+        </Grid.Subgrid>
       )}
     </Grid>
   )
