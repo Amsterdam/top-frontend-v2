@@ -1,13 +1,26 @@
-import { Card, CaseEventTimeline } from "@/components"
+import { Card, CardListSkeleton, CaseEventTimeline } from "@/components"
 import { useCaseEvents } from "@/api/hooks"
 import { HistoryIcon } from "@amsterdam/design-system-react-icons"
 
-export default function HistoryCard({ caseId }: { caseId?: number }) {
+type Props = {
+  caseId?: number
+  loading?: boolean
+}
+
+export default function HistoryCard({ caseId, loading = false }: Props) {
   const { data: events, isPending } = useCaseEvents(caseId)
-  if (!caseId || isPending) return null
+  const isLoading = loading || isPending
+
+  if (!caseId && !loading) return null
 
   return (
-    <Card title="Zaakhistorie" icon={HistoryIcon}>
+    <Card
+      title="Zaakhistorie"
+      icon={HistoryIcon}
+      loading={isLoading}
+      loadingLabel="Zaakhistorie"
+      loadingBody={<CardListSkeleton items={4} linesPerItem={2} />}
+    >
       <CaseEventTimeline data={events} />
     </Card>
   )

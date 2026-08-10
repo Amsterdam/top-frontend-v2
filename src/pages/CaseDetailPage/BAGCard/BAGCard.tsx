@@ -1,5 +1,5 @@
 import { StandaloneLink } from "@amsterdam/design-system-react"
-import { Card, Description } from "@/components"
+import { Card, CardDescriptionSkeleton, Description } from "@/components"
 import {
   LinkExternalIcon,
   MapMarkerIcon,
@@ -8,13 +8,13 @@ import { capitalize } from "@/shared"
 
 type Props = {
   data: Case | undefined
-  isBusy?: boolean
+  loading?: boolean
 }
 
-export default function BAGCard({ data }: Props) {
-  if (!data) return null
+export default function BAGCard({ data, loading = false }: Props) {
+  if (!data && !loading) return null
 
-  const bag = data.bag_data
+  const bag = data?.bag_data
   const hasBagData = bag && !("error" in bag)
   const isWoonboot = hasBagData && Boolean(bag?.ligplaatsIdentificatie)
   const isWoning = !isWoonboot
@@ -77,15 +77,20 @@ export default function BAGCard({ data }: Props) {
       title="BAG-gegevens"
       icon={MapMarkerIcon}
       actions={
-        <StandaloneLink
-          href={woningUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          icon={<LinkExternalIcon />}
-        >
-          Bekijk op Data en informatie
-        </StandaloneLink>
+        !loading && woningUrl ? (
+          <StandaloneLink
+            href={woningUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            icon={<LinkExternalIcon />}
+          >
+            Bekijk op Data en informatie
+          </StandaloneLink>
+        ) : undefined
       }
+      loading={loading}
+      loadingLabel="BAG-gegevens"
+      loadingBody={<CardDescriptionSkeleton rows={8} />}
     >
       <Description termsWidth="wide" data={dataFields} />
     </Card>

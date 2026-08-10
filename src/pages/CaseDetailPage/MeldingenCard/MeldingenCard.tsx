@@ -5,7 +5,7 @@ import {
   PencilIcon,
 } from "@amsterdam/design-system-react-icons"
 
-import { Card, Description, Table } from "@/components"
+import { Card, CardTableSkeleton, Description, Table } from "@/components"
 import { formatDate } from "@/shared/dateFormatters"
 
 import { dummyMeldingenResponse } from "./data/dummyMeldingenResponse"
@@ -14,6 +14,7 @@ type Props = {
   meldingen?: Melding[]
   startDate: string
   showDummyData?: boolean
+  loading?: boolean
 }
 
 function formatMeldingPeriod(melding: Melding) {
@@ -89,6 +90,7 @@ export default function MeldingenCard({
   meldingen,
   startDate,
   showDummyData = false,
+  loading = false,
 }: Props) {
   const meldingenToUse = showDummyData
     ? dummyMeldingenResponse
@@ -101,8 +103,11 @@ export default function MeldingenCard({
 
   return (
     <Card
-      title={`Meldingen (${meldingenToUse.length})`}
+      title={loading ? "Meldingen" : `Meldingen (${meldingenToUse.length})`}
       icon={NotificationIcon}
+      loading={loading}
+      loadingLabel="Meldingen"
+      loadingBody={<CardTableSkeleton rows={4} columns={3} />}
     >
       {meldingenToUse.length > 0 && (
         <div className="mb-2">

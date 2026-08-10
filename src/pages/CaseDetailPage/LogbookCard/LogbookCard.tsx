@@ -6,21 +6,33 @@ import {
   PersonsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useCaseVisits } from "@/api/hooks"
-import { Card, HeadingWithIcon, VisitBadge } from "@/components"
+import { Card, CardListSkeleton, HeadingWithIcon, VisitBadge } from "@/components"
 import { formatDate } from "@/shared"
 
-export function LogbookCard({ caseId }: { caseId?: number }) {
+type Props = {
+  caseId?: number
+  loading?: boolean
+}
+
+export function LogbookCard({ caseId, loading = false }: Props) {
   const { data: caseVisits, isPending } = useCaseVisits(caseId)
+  const isLoading = loading || isPending
 
-  if (!caseVisits || isPending) return null
+  if (!caseId && !loading) return null
 
-  const visits = caseVisits.sort(
+  const visits = [...(caseVisits ?? [])].sort(
     (a, b) =>
       new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
   )
 
   return (
-    <Card title={`Logboek (${visits?.length ?? 0})`} icon={ClockIcon}>
+    <Card
+      title={isLoading ? "Logboek" : `Logboek (${visits.length})`}
+      icon={ClockIcon}
+      loading={isLoading}
+      loadingLabel="Logboek"
+      loadingBody={<CardListSkeleton items={3} linesPerItem={3} />}
+    >
       {visits?.map((visit) => (
         <Column key={visit.id} gap="small">
           <Row>
@@ -61,7 +73,7 @@ export function LogbookCard({ caseId }: { caseId?: number }) {
           )}
         </Column>
       ))}
-      {visits?.length === 0 && <Paragraph>Geen notities gevonden.</Paragraph>}
+      {visits.length === 0 && <Paragraph>Geen notities gevonden.</Paragraph>}
     </Card>
   )
 }

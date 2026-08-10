@@ -2,7 +2,7 @@ import { Paragraph } from "@amsterdam/design-system-react"
 import { CertificateIcon } from "@amsterdam/design-system-react-icons"
 
 import { usePermits } from "@/api/hooks"
-import { Card, Description, Table } from "@/components"
+import { Card, CardTableSkeleton, Description, Table } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyPowerBrowserResponse from "./data/dummyPowerBrowserResponse"
@@ -12,6 +12,7 @@ import { PermitValidityLabel } from "./components/PermitValidityLabel"
 
 type Props = {
   bagId?: string
+  loading?: boolean
 }
 
 const columns = [
@@ -35,10 +36,11 @@ const columns = [
   },
 ] as const
 
-export default function PermitsCard({ bagId }: Props) {
+export default function PermitsCard({ bagId, loading = false }: Props) {
   const { data: permits, isPending } = usePermits(bagId)
+  const isLoading = loading || isPending
 
-  if (!bagId || isPending) return null
+  if (!bagId && !loading) return null
 
   const isDevOrAcc = isAcceptanceOrLocalEnvironment()
   // Show dummy data if we're in dev or acceptance environment, we have a valid address, we're not currently loading data, and we didn't get any residents back from the API
@@ -49,8 +51,15 @@ export default function PermitsCard({ bagId }: Props) {
 
   return (
     <Card
-      title={`Vergunningen PowerBrowser (${sortedPermits.length})`}
+      title={
+        isLoading
+          ? "Vergunningen PowerBrowser"
+          : `Vergunningen PowerBrowser (${sortedPermits.length})`
+      }
       icon={CertificateIcon}
+      loading={isLoading}
+      loadingLabel="Vergunningen PowerBrowser"
+      loadingBody={<CardTableSkeleton rows={4} columns={2} />}
     >
       {sortedPermits.length === 0 ? (
         <Paragraph>Geen vergunningen gevonden.</Paragraph>

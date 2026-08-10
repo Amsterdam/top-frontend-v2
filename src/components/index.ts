@@ -1,6 +1,7 @@
 export * from "./alerts/AlertProvider"
 export * from "./badges"
 export * from "./Card/Card"
+export * from "./Card/CardSkeletons"
 export * from "./CaseEventTimeline/CaseEventTimeline"
 export * from "./ChooseThemeBase/ChooseThemeBase"
 export * from "./ConfirmDialog/ConfirmDialog"

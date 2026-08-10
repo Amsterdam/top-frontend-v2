@@ -2,7 +2,7 @@ import { Badge, Paragraph } from "@amsterdam/design-system-react"
 import { CertificateIcon } from "@amsterdam/design-system-react-icons"
 
 import { usePermitsDecos } from "@/api/hooks"
-import { Card, Description, Table } from "@/components"
+import { Card, CardTableSkeleton, Description, Table } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyDecosResponse from "./data/dummyDecosResponse"
@@ -11,6 +11,7 @@ import { PermitValidityLabel } from "../PermitsCard/components/PermitValidityLab
 
 type Props = {
   bagId?: string
+  loading?: boolean
 }
 
 function renderPermitStatus(permit: PermitDecos) {
@@ -48,10 +49,14 @@ const columns = [
   },
 ] as const
 
-export default function PermitsCardDecos({ bagId }: Props) {
+export default function PermitsCardDecos({
+  bagId,
+  loading = false,
+}: Props) {
   const { data: permitsDecos, isPending } = usePermitsDecos(bagId)
+  const isLoading = loading || isPending
 
-  if (!bagId || isPending) return null
+  if (!bagId && !loading) return null
 
   const isDevOrAcc = isAcceptanceOrLocalEnvironment()
   // Show dummy data if we're in dev or acceptance environment, we have a valid address, we're not currently loading data, and we didn't get any residents back from the API
@@ -61,8 +66,15 @@ export default function PermitsCardDecos({ bagId }: Props) {
 
   return (
     <Card
-      title={`Vergunningen Decos (${knownPermits.length})`}
+      title={
+        isLoading
+          ? "Vergunningen Decos"
+          : `Vergunningen Decos (${knownPermits.length})`
+      }
       icon={CertificateIcon}
+      loading={isLoading}
+      loadingLabel="Vergunningen Decos"
+      loadingBody={<CardTableSkeleton rows={4} columns={2} />}
     >
       {knownPermits.length === 0 ? (
         <Paragraph>Geen Decos vergunningen gevonden.</Paragraph>

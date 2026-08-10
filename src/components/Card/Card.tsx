@@ -19,6 +19,9 @@ type Props = {
   style?: CSSProperties
   collapsible?: boolean
   defaultOpen?: boolean
+  loading?: boolean
+  loadingBody?: ReactNode
+  loadingLabel?: string
 }
 
 export function Card({
@@ -30,12 +33,28 @@ export function Card({
   style,
   collapsible = false,
   defaultOpen = false,
+  loading = false,
+  loadingBody,
+  loadingLabel,
 }: Props) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const collapsibleContentId = useId()
 
   const titleContent =
     typeof title === "string" ? <Heading level={3}>{title}</Heading> : title
+  const accessibleLoadingLabel =
+    loadingLabel ?? (typeof title === "string" ? title : "Kaart")
+  const content = loading ? (loadingBody ?? children) : children
+  const body = (
+    <>
+      {loading && (
+        <p className="ams-visually-hidden" role="status">
+          {accessibleLoadingLabel} wordt geladen.
+        </p>
+      )}
+      {content}
+    </>
+  )
 
   return (
     <Column className={`${styles.card} ${className ?? ""}`} style={style}>
@@ -67,13 +86,14 @@ export function Card({
         <div
           id={collapsibleContentId}
           className={`${styles.collapsibleContent} ${isOpen ? styles.collapsibleOpen : ""}`}
+          aria-busy={loading}
         >
           <div className={styles.collapsibleInner}>
-            <div>{children}</div>
+            <div>{body}</div>
           </div>
         </div>
       ) : (
-        <div>{children}</div>
+        <div aria-busy={loading}>{body}</div>
       )}
     </Column>
   )
