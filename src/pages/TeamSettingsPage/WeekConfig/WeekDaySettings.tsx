@@ -1,4 +1,10 @@
-import { Button, Grid, Heading, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  Button,
+  Grid,
+  Heading,
+  Paragraph,
+  Row,
+} from "@amsterdam/design-system-react"
 import { PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
@@ -38,14 +44,14 @@ export function WeekDaySettings({
       {daySettings.length === 0 ? (
         <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
       ) : (
-          daySettings.map((daySetting, index) => (
-            <DaySettingsCard
-              key={daySetting.id}
-              daySetting={daySetting}
-              teamSettingsOptions={teamSettingsOptions}
-              teamId={teamId}
-              animationDelay={index * 0.2}
-            />
+        daySettings.map((daySetting, index) => (
+          <DaySettingsCard
+            key={daySetting.id}
+            daySetting={daySetting}
+            teamSettingsOptions={teamSettingsOptions}
+            teamId={teamId}
+            animationDelay={index * 0.2}
+          />
         ))
       )}
     </>

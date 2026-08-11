@@ -41,8 +41,17 @@ export const queryKeys = {
       ["itineraries", itineraryId, "suggestions", { lat, lng }] as const,
   },
 
+  pdok: {
+    search: (q: string) => ["pdok", "search", q] as const,
+  },
+
   permissions: {
     all: ["permissions"] as const,
+  },
+
+  puntenteller: {
+    invoerwaarden: (bagId: string) =>
+      ["puntenteller", "invoerwaarden", bagId] as const,
   },
 
   teamSettings: {

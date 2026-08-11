@@ -32,7 +32,9 @@ describe("usePermissions", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/permissions"))
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/permissions"),
+    )
     expect(result.current.data).toEqual(["planner.manage_settings"])
   })
 })

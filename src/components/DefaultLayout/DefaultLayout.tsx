@@ -2,6 +2,7 @@ import { type MouseEvent } from "react"
 import { Outlet, useNavigate } from "react-router"
 import { Menu, Page, PageHeader } from "@amsterdam/design-system-react"
 import {
+  AwardRibbonIcon,
   HouseCanalIcon,
   LogOutIcon,
   SearchIcon,
@@ -36,6 +37,11 @@ const menuItems: MenuItem[] = [
     href: "/zoeken",
     icon: SearchIcon,
     label: "Zoeken",
+  },
+  {
+    href: "/puntenteller",
+    icon: AwardRibbonIcon,
+    label: "Puntenteller",
   },
   {
     href: "/team-instellingen",

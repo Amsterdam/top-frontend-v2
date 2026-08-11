@@ -20,6 +20,7 @@ const isValidSearchString = (s: string) => s.length >= MIN_CHARS
 
 type Props = {
   title: string
+  subTitle?: string
   description?: string
   themeName?: string
   variant: ItineraryListItemVariant
@@ -29,6 +30,7 @@ type Props = {
 
 export function SearchAddressView({
   title,
+  subTitle,
   description,
   themeName,
   variant,
@@ -70,7 +72,10 @@ export function SearchAddressView({
     setSearchParams(inputValue ? { q: inputValue } : {}, { replace: true })
   }
 
-  const noResults = !isBusy && isValid && cases && cases.length === 0
+  const hasResult = !isBusy && isValid
+  const noResults = hasResult && cases && cases.length === 0
+  const showResultsInfo = hasResult && !noResults
+  const resultCount = cases?.length ?? 0
 
   let statusMessage: string | null
 
@@ -85,7 +90,7 @@ export function SearchAddressView({
   }
 
   return (
-    <Grid paddingBottom="x-large" paddingTop="large">
+    <Grid paddingBottom="x-large" paddingTop="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
         <Row align="between" wrap>
           <Heading level={1}>{title}</Heading>
@@ -98,8 +103,15 @@ export function SearchAddressView({
         {description && <Paragraph>{description}</Paragraph>}
       </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
-        <SearchField onSubmit={onSubmit} style={{ maxWidth: 600 }}>
+      <Grid.Cell span="all">
+        <Heading level={2} className="ams-mb-m">
+          {subTitle}
+        </Heading>
+        <SearchField
+          onSubmit={onSubmit}
+          style={{ maxWidth: 600 }}
+          className="ams-mb-m"
+        >
           <SearchField.Input
             placeholder="Zoek een adres op basis van postcode en huisnummer of straatnaam."
             name="search-box"
@@ -108,16 +120,20 @@ export function SearchAddressView({
           />
           <SearchField.Button />
         </SearchField>
+
+        {showResultsInfo && (
+          <Paragraph>
+            <strong>{resultCount}</strong>{" "}
+            {resultCount === 1 ? "adres" : "adressen"} gevonden voor "
+            {debouncedSearchString}"
+          </Paragraph>
+        )}
+        {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
       </Grid.Cell>
 
-      <Grid.Cell span="all">
-        <Heading level={2} className="ams-mb-l">
-          Adressen ({cases?.length || 0})
-        </Heading>
-
-        {statusMessage && <Paragraph>{statusMessage}</Paragraph>}
+      <Grid.Cell span="all" appearance="transparent">
         <Column>
-          {!isBusy &&
+          {hasResult &&
             cases?.map((caseData, index) => (
               <ItineraryListItem
                 key={`${caseData.id}-${index}`}

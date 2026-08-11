@@ -11,7 +11,8 @@ export function SearchPage() {
 
   return (
     <SearchAddressView
-      title="Zoek adressen"
+      title="Zoeken"
+      subTitle="Bekijk een adres"
       description={description}
       variant={ItineraryListItemVariant.AddToItinerary}
     />

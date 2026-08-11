@@ -15,6 +15,8 @@ import TeamSettingsPage from "@/pages/TeamSettingsPage/TeamSettingsPage"
 import ChooseTeamSettingsPage from "@/pages/ChooseTeamSettingsPage/ChooseTeamSettingsPage"
 import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
 import ChooseListPage from "@/pages/ChooseListPage/ChooseListPage"
+import PuntentellerPage from "@/pages/PuntentellerPage/PuntentellerPage"
+import PuntentellerAdresPage from "@/pages/PuntentellerAdresPage/PuntentellerAdresPage"
 import RequirePermissions from "./RequirePermissions"
 import { APP_PERMISSIONS } from "@/shared/permissions"
 
@@ -42,6 +44,8 @@ export const routes = [
         element: <SelectStartAddressPage />,
       },
       { path: "lijst-instellingen", element: <ChooseThemePage /> },
+      { path: "puntenteller", element: <PuntentellerPage /> },
+      { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
       {
         element: (
           <RequirePermissions

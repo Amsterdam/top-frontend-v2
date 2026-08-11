@@ -49,10 +49,7 @@ const columns = [
   },
 ] as const
 
-export default function PermitsCardDecos({
-  bagId,
-  loading = false,
-}: Props) {
+export default function PermitsCardDecos({ bagId, loading = false }: Props) {
   const { data: permitsDecos, isPending } = usePermitsDecos(bagId)
   const isLoading = loading || isPending
 
