@@ -18,8 +18,12 @@ const renderWithRouter = () => {
     [
       { path: "/", element: <div>Home</div> },
       {
-        element: <RequirePermissions requiredPermissions="planner.manage_settings" />,
-        children: [{ path: "/team-instellingen", element: <div>Instellingen</div> }],
+        element: (
+          <RequirePermissions requiredPermissions="planner.manage_settings" />
+        ),
+        children: [
+          { path: "/team-instellingen", element: <div>Instellingen</div> },
+        ],
       },
     ],
     { initialEntries: ["/team-instellingen"] },

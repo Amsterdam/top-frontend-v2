@@ -6,6 +6,8 @@ import {
   Column,
   ActionGroup,
   Heading,
+  Breadcrumb,
+  Paragraph,
 } from "@amsterdam/design-system-react"
 import { useLocation, useNavigate, useParams } from "react-router"
 import {
@@ -155,11 +157,30 @@ export default function CreateListPage() {
       <FormProvider form={form} onSubmit={onSubmit}>
         <Grid paddingBottom="x-large" paddingTop="large">
           <Grid.Cell span="all" appearance="transparent">
+            <Breadcrumb accessibleName="Kruimelpad">
+              <Breadcrumb.Link
+                href="/lijst-instellingen"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate("/lijst-instellingen")
+                }}
+              >
+                Looplijst
+              </Breadcrumb.Link>
+              <Breadcrumb.Link aria-current="location">
+                {theme?.name ?? "Team"}
+              </Breadcrumb.Link>
+            </Breadcrumb>
             <Heading level={1}>
               Genereer looplijst
               {theme?.name && ` (${theme.name})`}
             </Heading>
+            <Paragraph>
+              Stel de toezichthouders, het aantal zaken en eventueel het
+              startadres voor de looplijst in.
+            </Paragraph>
           </Grid.Cell>
+
           <Grid.Cell span="all">
             <TeamMembersFields
               teamMembers={teamMembers}

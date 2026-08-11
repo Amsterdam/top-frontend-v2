@@ -205,9 +205,7 @@ export default function CaseDetailPage() {
           </Row>
         </Grid.Cell>
 
-        <Grid.Subgrid
-          span={{ narrow: 4, medium: 8, wide: 8 }}
-        >
+        <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 8 }}>
           <Grid.Cell span="all">
             <CaseInfoCard data={data} />
           </Grid.Cell>
@@ -240,15 +238,13 @@ export default function CaseDetailPage() {
           </Grid.Cell>
         </Grid.Subgrid>
 
-        <Grid.Subgrid
-          span={{ narrow: 4, medium: 8, wide: 4 }}
-        >
-        <Grid.Cell span="all">
+        <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 4 }}>
+          <Grid.Cell span="all">
             <LogbookCard caseId={data?.id} />
-        </Grid.Cell>
-        <Grid.Cell span="all">
+          </Grid.Cell>
+          <Grid.Cell span="all">
             <HistoryCard caseId={data?.id} />
-        </Grid.Cell>
+          </Grid.Cell>
         </Grid.Subgrid>
       </Grid>
     </>

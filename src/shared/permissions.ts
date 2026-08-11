@@ -6,9 +6,7 @@ export type AppPermission =
   (typeof APP_PERMISSIONS)[keyof typeof APP_PERMISSIONS]
 
 export type PermissionRequirement =
-  | AppPermission
-  | readonly AppPermission[]
-  | undefined
+  AppPermission | readonly AppPermission[] | undefined
 
 export const hasRequiredPermissions = (
   grantedPermissions: readonly string[] | undefined,

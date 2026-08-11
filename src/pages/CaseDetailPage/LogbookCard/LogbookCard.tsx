@@ -6,7 +6,12 @@ import {
   PersonsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useCaseVisits } from "@/api/hooks"
-import { Card, CardListSkeleton, HeadingWithIcon, VisitBadge } from "@/components"
+import {
+  Card,
+  CardListSkeleton,
+  HeadingWithIcon,
+  VisitBadge,
+} from "@/components"
 import { formatDate } from "@/shared"
 
 type Props = {

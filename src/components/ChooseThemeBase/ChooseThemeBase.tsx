@@ -36,9 +36,11 @@ export function ChooseThemeBase({
 
   return (
     <Grid paddingVertical="large">
+      <Grid.Cell span="all" appearance="transparent">
+        <Heading level={1}>{title}</Heading>
+      </Grid.Cell>
       <Grid.Cell span="all">
         <Column gap="small">
-          <Heading level={1}>{title}</Heading>
           <Heading level={2}>Selecteer een team</Heading>
           {currentUser?.first_name && (
             <>
