@@ -9,11 +9,9 @@ import {
   BedIcon,
   CalendarIcon,
   CertificateIcon,
-  DocumentCheckMarkIcon,
   MailIcon,
   PersonIcon,
 } from "@amsterdam/design-system-react-icons"
-import { HeadingWithIcon } from "@/components"
 import { formatDate } from "@/shared"
 
 type Props = {
