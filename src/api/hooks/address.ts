@@ -45,7 +45,7 @@ export const useRegistrations = (bagId?: string) => {
     queryFn: () =>
       fetch<Registration[]>(makeApiUrl("addresses", bagId, "registrations")),
     enabled: Boolean(bagId),
-    meta: { globalErrorAlert: false },
+    meta: { globalErrorToast: false },
   })
 }
 
@@ -62,7 +62,7 @@ export const useMeldingen = (bagId?: string, startDate?: string) => {
         makeApiUrl("addresses", bagId, "meldingen", queryString),
       ),
     enabled: Boolean(bagId),
-    meta: { globalErrorAlert: false },
+    meta: { globalErrorToast: false },
   })
 }
 
@@ -74,7 +74,7 @@ export const usePermits = (bagId?: string) => {
     queryFn: () =>
       fetch<Permit[]>(makeApiUrl("addresses", bagId, "permits-powerbrowser")),
     enabled: Boolean(bagId),
-    meta: { globalErrorAlert: false },
+    meta: { globalErrorToast: false },
   })
 }
 
@@ -86,6 +86,6 @@ export const usePermitsDecos = (bagId?: string) => {
     queryFn: () =>
       fetch<PermitDecos[]>(makeApiUrl("addresses", bagId, "decos")),
     enabled: Boolean(bagId),
-    meta: { globalErrorAlert: false },
+    meta: { globalErrorToast: false },
   })
 }

@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 import { useRemoveItineraryItem } from "@/api/hooks"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 import { useDialog } from "@/hooks/useDialog"
 import { ConfirmDialog } from "@/components"
 
@@ -17,7 +17,7 @@ export function useDeleteItineraryItem(
     itineraryId,
     itineraryItemId,
   })
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
   const dialogId = `delete-itinerary-item-${itineraryItemId ?? "unknown"}`
   const { openDialog, closeDialog } = useDialog(dialogId)
 
@@ -26,7 +26,7 @@ export function useDeleteItineraryItem(
 
     await removeItineraryItem.mutateAsync()
     closeDialog()
-    showAlert({
+    showToast({
       title: "Zaak verwijderd",
       description: "De zaak is succesvol uit je looplijst verwijderd.",
       severity: "success",

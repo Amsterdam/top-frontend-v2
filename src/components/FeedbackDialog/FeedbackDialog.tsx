@@ -8,7 +8,7 @@ import {
   TextArea,
 } from "@amsterdam/design-system-react"
 import { useSendFeedback } from "@/api/hooks"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 import { useDialog } from "@/hooks/useDialog"
 
 const FORM_ID = "feedback-form"
@@ -21,7 +21,7 @@ export function FeedbackDialog({ id }: Props) {
   const [feedback, setFeedback] = useState("")
   const sendFeedback = useSendFeedback()
   const { closeDialog } = useDialog(id)
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
 
   const onSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
@@ -31,7 +31,7 @@ export function FeedbackDialog({ id }: Props) {
       onSuccess: () => {
         setFeedback("")
         closeDialog()
-        showAlert({
+        showToast({
           title: "Bedankt voor je feedback",
           description: "We hebben je melding ontvangen.",
           severity: "success",

@@ -22,7 +22,7 @@ import StepNotesAndDescription from "./StepNotesAndDescription/StepNotesAndDescr
 import { mapValues } from "./helpers/mapValues"
 import { mapVisitToFormValues } from "./helpers/mapVisitToFormValues"
 import { useCurrentUser, useMoveItineraryItemToBottom } from "@/hooks"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 
 export default function CreateVisitPage() {
   const { itineraryId, caseId, visitId } = useParams<{
@@ -39,7 +39,7 @@ export default function CreateVisitPage() {
   const currentUser = useCurrentUser()
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
 
   const itineraryItem = itinerary?.items.find(
     (item) => item?.case.id === Number(caseId),
@@ -104,7 +104,7 @@ export default function CreateVisitPage() {
       onSuccess: async () => {
         await moveItineraryItemToBottom()
         navigate(`/lijst/${itineraryId}`)
-        showAlert({
+        showToast({
           title: "Bezoek succesvol verwerkt!",
           description:
             "Het bezoek is verwerkt en opgeslagen. Je wordt nu teruggestuurd naar de looplijst.",

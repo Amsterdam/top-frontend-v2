@@ -1,21 +1,21 @@
 import { QueryCache, QueryClient, MutationCache } from "@tanstack/react-query"
 import { normalizeApiError } from "@/api/utils/normalizeApiError"
-import { mapApiErrorToAlert } from "@/api/utils/mapApiErrorToAlert"
-import { showAlertOutsideReact } from "@/components/alerts/alertBridge"
+import { mapApiErrorToToast } from "@/api/utils/mapApiErrorToToast"
+import { showToastOutsideReact } from "@/components/toasts/toastBridge"
 
 /**
  * Meta options queries/mutations can pass to opt out of the global error
- * alert, e.g. `useQuery({ ..., meta: { globalErrorAlert: false } })`.
+ * toast, e.g. `useQuery({ ..., meta: { globalErrorToast: false } })`.
  * Use this for queries whose errors are already shown inline (e.g. in a
  * Card via its `error` prop) so the user doesn't see the same failure twice.
  */
 declare module "@tanstack/react-query" {
   interface Register {
     queryMeta: {
-      globalErrorAlert?: boolean
+      globalErrorToast?: boolean
     }
     mutationMeta: {
-      globalErrorAlert?: boolean
+      globalErrorToast?: boolean
     }
   }
 }
@@ -30,14 +30,14 @@ export const queryClient = new QueryClient({
   },
   queryCache: new QueryCache({
     onError: (error, query) => {
-      if (query.meta?.globalErrorAlert === false) return
-      showAlertOutsideReact(mapApiErrorToAlert(normalizeApiError(error)))
+      if (query.meta?.globalErrorToast === false) return
+      showToastOutsideReact(mapApiErrorToToast(normalizeApiError(error)))
     },
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {
-      if (mutation.meta?.globalErrorAlert === false) return
-      showAlertOutsideReact(mapApiErrorToAlert(normalizeApiError(error)))
+      if (mutation.meta?.globalErrorToast === false) return
+      showToastOutsideReact(mapApiErrorToToast(normalizeApiError(error)))
     },
   }),
 })

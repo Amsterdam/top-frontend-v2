@@ -11,7 +11,13 @@ export function ListCard({ itinerary }: Props) {
   const navigate = useNavigate()
 
   return (
-    <Card title={`${itinerary.theme} - ${itinerary.day_settings_name}`}>
+    <Card
+      title={`${itinerary.theme} - ${itinerary.day_settings_name}`}
+      style={{
+        backgroundColor: "var(--ams-color-background)",
+        padding: "var(--ams-space-m)",
+      }}
+    >
       <Row gap="small" alignVertical="end" align="between" wrap>
         <ItineraryTeamSummary
           teamMembers={itinerary.team_members ?? []}
