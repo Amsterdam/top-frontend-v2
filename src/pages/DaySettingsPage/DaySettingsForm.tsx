@@ -54,7 +54,7 @@ export default function DaySettingsForm({
         <ReasonsProjectsSection themeId={themeId} />
         <SubjectsTagsSection themeId={themeId} />
         <PlanningPrioritySection themeId={themeId} />
-        <Row wrap>
+        <Row wrap alignVertical="center">
           <ActionGroup>
             <Button
               type="submit"
