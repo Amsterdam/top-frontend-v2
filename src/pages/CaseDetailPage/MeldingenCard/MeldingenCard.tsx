@@ -15,6 +15,7 @@ type Props = {
   startDate: string
   showDummyData?: boolean
   loading?: boolean
+  isError?: boolean
 }
 
 function formatMeldingPeriod(melding: Melding) {
@@ -91,6 +92,7 @@ export default function MeldingenCard({
   startDate,
   showDummyData = false,
   loading = false,
+  isError = false,
 }: Props) {
   const meldingenToUse = showDummyData
     ? dummyMeldingenResponse
@@ -108,6 +110,7 @@ export default function MeldingenCard({
       loading={loading}
       loadingLabel="Meldingen"
       loadingBody={<CardTableSkeleton rows={4} columns={3} />}
+      error={isError ? "Meldingen konden niet worden opgehaald." : undefined}
     >
       {meldingenToUse.length > 0 && (
         <div className="mb-2">

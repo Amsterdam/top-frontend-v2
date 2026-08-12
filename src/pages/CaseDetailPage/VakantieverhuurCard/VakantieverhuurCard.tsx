@@ -9,12 +9,14 @@ type Props = {
   registrations?: Registration[]
   showDummyData?: boolean
   loading?: boolean
+  isError?: boolean
 }
 
 export default function VakantieverhuurCard({
   registrations,
   showDummyData = false,
   loading = false,
+  isError = false,
 }: Props) {
   const registrationsToUse = showDummyData
     ? dummyRegistrationsResponse
@@ -27,6 +29,7 @@ export default function VakantieverhuurCard({
       loading={loading}
       loadingLabel="Vakantieverhuur"
       loadingBody={<CardListSkeleton items={3} linesPerItem={2} />}
+      error={isError ? "Registraties konden niet worden opgehaald." : undefined}
     >
       <Registrations registrations={registrationsToUse} />
     </Card>

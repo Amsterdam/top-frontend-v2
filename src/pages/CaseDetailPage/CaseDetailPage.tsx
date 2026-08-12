@@ -71,12 +71,16 @@ export default function CaseDetailPage() {
 
   const bagId = data?.address?.bag_id
   const startDate = dayjs().subtract(1, "year").startOf("year").format()
-  const { data: registrationsData, isPending: isBusyRegistrations } =
-    useRegistrations(bagId)
-  const { data: meldingenData, isPending: isBusyMeldingen } = useMeldingen(
-    bagId,
-    startDate,
-  )
+  const {
+    data: registrationsData,
+    isPending: isBusyRegistrations,
+    isError: isErrorRegistrations,
+  } = useRegistrations(bagId)
+  const {
+    data: meldingenData,
+    isPending: isBusyMeldingen,
+    isError: isErrorMeldingen,
+  } = useMeldingen(bagId, startDate)
 
   const registrations = registrationsData || []
   const meldingen = (meldingenData?.data || []) as Melding[]
@@ -226,6 +230,7 @@ export default function CaseDetailPage() {
               registrations={registrations}
               showDummyData={showDummyVakantieverhuurData}
               loading={isBusyRegistrations}
+              isError={isErrorRegistrations}
             />
           </Grid.Cell>
           <Grid.Cell span="all">
@@ -234,6 +239,7 @@ export default function CaseDetailPage() {
               startDate={startDate}
               showDummyData={showDummyVakantieverhuurData}
               loading={isBusyMeldingen}
+              isError={isErrorMeldingen}
             />
           </Grid.Cell>
         </Grid.Subgrid>

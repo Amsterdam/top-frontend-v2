@@ -50,7 +50,7 @@ const columns = [
 ] as const
 
 export default function PermitsCardDecos({ bagId, loading = false }: Props) {
-  const { data: permitsDecos, isPending } = usePermitsDecos(bagId)
+  const { data: permitsDecos, isPending, isError } = usePermitsDecos(bagId)
   const isLoading = loading || isPending
 
   if (!bagId && !loading) return null
@@ -72,6 +72,7 @@ export default function PermitsCardDecos({ bagId, loading = false }: Props) {
       loading={isLoading}
       loadingLabel="Vergunningen Decos"
       loadingBody={<CardTableSkeleton rows={4} columns={2} />}
+      error={isError ? "Vergunningen konden niet worden opgehaald." : undefined}
     >
       {knownPermits.length === 0 ? (
         <Paragraph>Geen Decos vergunningen gevonden.</Paragraph>

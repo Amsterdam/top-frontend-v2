@@ -37,7 +37,7 @@ const columns = [
 ] as const
 
 export default function PermitsCard({ bagId, loading = false }: Props) {
-  const { data: permits, isPending } = usePermits(bagId)
+  const { data: permits, isPending, isError } = usePermits(bagId)
   const isLoading = loading || isPending
 
   if (!bagId && !loading) return null
@@ -60,6 +60,7 @@ export default function PermitsCard({ bagId, loading = false }: Props) {
       loading={isLoading}
       loadingLabel="Vergunningen PowerBrowser"
       loadingBody={<CardTableSkeleton rows={4} columns={2} />}
+      error={isError ? "Vergunningen konden niet worden opgehaald." : undefined}
     >
       {sortedPermits.length === 0 ? (
         <Paragraph>Geen vergunningen gevonden.</Paragraph>

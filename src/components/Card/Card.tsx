@@ -1,6 +1,7 @@
 import { useId, useState, type CSSProperties, type ReactNode } from "react"
 import {
   Column,
+  ErrorMessage,
   Heading,
   Icon,
   Row,
@@ -22,6 +23,7 @@ type Props = {
   loading?: boolean
   loadingBody?: ReactNode
   loadingLabel?: string
+  error?: ReactNode
 }
 
 export function Card({
@@ -36,6 +38,7 @@ export function Card({
   loading = false,
   loadingBody,
   loadingLabel,
+  error,
 }: Props) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const collapsibleContentId = useId()
@@ -52,7 +55,7 @@ export function Card({
           {accessibleLoadingLabel} wordt geladen.
         </p>
       )}
-      {content}
+      {error ? <ErrorMessage>{error}</ErrorMessage> : content}
     </>
   )
 
