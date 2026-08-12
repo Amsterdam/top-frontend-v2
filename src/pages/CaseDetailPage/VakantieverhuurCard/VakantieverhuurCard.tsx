@@ -22,10 +22,10 @@ export default function VakantieverhuurCard({
 
   return (
     <Card
-      title="Vakantieverhuur"
+      title={`Vakantieverhuur (${registrationsToUse?.length})`}
       icon={SunbedParasolIcon}
       loading={loading}
-      loadingLabel={`Vakantieverhuur (${registrationsToUse?.length})`}
+      loadingLabel="Vakantieverhuur"
       loadingBody={<CardListSkeleton items={3} linesPerItem={2} />}
     >
       <Registrations registrations={registrationsToUse} />
