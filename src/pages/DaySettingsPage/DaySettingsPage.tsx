@@ -4,7 +4,12 @@ import { useNavigate, useParams } from "react-router"
 
 import DaySettingsForm from "./DaySettingsForm"
 import { useDaySettingsForm } from "./useDaySettingsForm"
-import { Breadcrumb, Grid, Heading } from "@amsterdam/design-system-react"
+import {
+  Breadcrumb,
+  Grid,
+  Heading,
+  Paragraph,
+} from "@amsterdam/design-system-react"
 import { DAY_OF_WEEK_MAP } from "@/shared/constants/dayOfWeeks"
 
 export default function DaySettingsPage() {
@@ -52,11 +57,11 @@ export default function DaySettingsPage() {
         <Heading level={1}>
           {daySettingsId ? "Wijzig daginstelling" : "Nieuwe daginstelling"}
         </Heading>
-        <Heading level={2}>
+        <Paragraph size="large">
           {`${theme?.name} - ${nameDayOfWeek ?? "?"}`}
-        </Heading>
+        </Paragraph>
       </Grid.Cell>
-      <Grid.Cell span="all" appearance="transparent">
+      <Grid.Cell span="all">
         <DaySettingsForm
           form={form}
           themeName={theme?.name}

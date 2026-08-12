@@ -9,7 +9,6 @@ import { PlusIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
 import DaySettingsCard from "../DaySettingsCard/DaySettingsCard"
 import type { TeamSettingsOptions } from "../types"
-import styles from "./WeekDaySettings.module.css"
 
 type Props = {
   dayOfWeekId: number
@@ -29,7 +28,7 @@ export function WeekDaySettings({
   const navigate = useNavigate()
   return (
     <>
-      <Grid.Cell span="all" className={styles.dayHeader}>
+      <Grid.Cell span="all">
         <Row alignVertical="center" align="between" wrap>
           <Heading level={2}>{dayOfWeekName}</Heading>
           <Button
@@ -42,7 +41,9 @@ export function WeekDaySettings({
         </Row>
       </Grid.Cell>
       {daySettings.length === 0 ? (
-        <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
+        <Grid.Cell span="all">
+          <Paragraph>Er zijn nog geen instellingen voor deze dag.</Paragraph>
+        </Grid.Cell>
       ) : (
         daySettings.map((daySetting, index) => (
           <DaySettingsCard

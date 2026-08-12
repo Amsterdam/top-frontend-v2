@@ -17,7 +17,6 @@ import { SubjectsTagsSection } from "./sections/SubjectsTagsSection"
 import { PlanningPrioritySection } from "./sections/PlanningPrioritySection"
 import { hasPostalCodeOverlap } from "./form/postalCodeRangeValidation"
 import type { FormValues } from "./types"
-import styles from "./DaySettingsForm.module.css"
 
 type Props = {
   form: ReturnType<typeof useForm<FormValues>>
@@ -48,37 +47,31 @@ export default function DaySettingsForm({
 
   return (
     <FormProvider form={form} onSubmit={onSubmit}>
-      <Column>
+      <Column gap="large">
         <GeneralSettingsSection />
         <LocationSection />
         {isThemeOnderhuur && <CorporationsSection />}
         <ReasonsProjectsSection themeId={themeId} />
         <SubjectsTagsSection themeId={themeId} />
         <PlanningPrioritySection themeId={themeId} />
-        <div className={styles.stickyBar}>
-          <Row
-            align="end"
-            alignVertical="center"
-            className={styles.stickyBarContentRow}
-          >
-            {caseCount !== undefined && (
-              <Paragraph>Aantal mogelijke bezoeken: {caseCount}</Paragraph>
-            )}
-            <ActionGroup>
-              <Button
-                type="submit"
-                disabled={!formState.isValid || hasInvalidPostalRanges}
-                icon={SaveIcon}
-                iconBefore
-              >
-                Bereken en bewaar
-              </Button>
-              <Button variant="secondary" onClick={onCancel}>
-                Annuleren
-              </Button>
-            </ActionGroup>
-          </Row>
-        </div>
+        <Row wrap>
+          <ActionGroup>
+            <Button
+              type="submit"
+              disabled={!formState.isValid || hasInvalidPostalRanges}
+              icon={SaveIcon}
+              iconBefore
+            >
+              Bereken en bewaar
+            </Button>
+            <Button variant="secondary" onClick={onCancel}>
+              Annuleren
+            </Button>
+          </ActionGroup>
+          {caseCount !== undefined && (
+            <Paragraph>Aantal mogelijke bezoeken: {caseCount}</Paragraph>
+          )}
+        </Row>
       </Column>
     </FormProvider>
   )
