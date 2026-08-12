@@ -1,14 +1,18 @@
-import { Column, Icon, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  Column,
+  Heading,
+  Icon,
+  Paragraph,
+  Row,
+} from "@amsterdam/design-system-react"
 import {
   BedIcon,
   CalendarIcon,
-  DocumentCheckMarkIcon,
+  CertificateIcon,
   MailIcon,
   PersonIcon,
 } from "@amsterdam/design-system-react-icons"
-import { HeadingWithIcon } from "@/components"
 import { formatDate } from "@/shared"
-import styles from "./Registrations.module.css"
 
 type Props = {
   registrations?: Registration[]
@@ -28,24 +32,20 @@ function getFullName(
 
 function Registrations({ registrations }: Props) {
   return (
-    <div className="mb-4">
-      <Row wrap className="mb-2">
-        <HeadingWithIcon
-          label={`Registraties (${registrations?.length ?? 0})`}
-          svg={DocumentCheckMarkIcon}
-          level={4}
-        />
-      </Row>
+    <Column gap="large">
       {!registrations ||
         (registrations.length === 0 && (
           <Paragraph>Geen registraties gevonden.</Paragraph>
         ))}
       {registrations?.map((reg) => (
-        <Column key={reg.registrationNumber} gap="small" className="mb-4">
-          <Row wrap>
-            <span className={styles.registrationNumber}>
-              {reg.registrationNumber}
-            </span>
+        <Column as="article" key={reg.registrationNumber} gap="small">
+          <Row>
+            <Icon
+              svg={CertificateIcon}
+              size="heading-4"
+              title="Registratienummer"
+            />
+            <Heading level={4}>{reg.registrationNumber}</Heading>
           </Row>
           <Row>
             <Icon svg={PersonIcon} title="Volledige naam" />
@@ -73,7 +73,7 @@ function Registrations({ registrations }: Props) {
           </Row>
         </Column>
       ))}
-    </div>
+    </Column>
   )
 }
 
