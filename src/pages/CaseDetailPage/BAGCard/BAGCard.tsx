@@ -15,7 +15,9 @@ export default function BAGCard({ data, loading = false }: Props) {
   if (!data && !loading) return null
 
   const bag = data?.bag_data
-  const hasBagData = bag && !("error" in bag)
+  const hasBagData = !!bag && !("error" in bag)
+  const hasBagError = !loading && (!bag || "error" in bag)
+
   const isWoonboot = hasBagData && Boolean(bag?.ligplaatsIdentificatie)
   const isWoning = !isWoonboot
 
@@ -37,36 +39,29 @@ export default function BAGCard({ data, loading = false }: Props) {
   const oppervlakte = bag?.verblijfsobjectOppervlakte
   const aantalBouwlagen = bag?.verblijfsobjectAantalBouwlagen
 
-  const dataFields = hasBagData
-    ? isWoning
-      ? [
-          { label: "Type", value: woningTitle },
-          { label: "Gebruiksdoel", value: capitalize(woningBestemming) },
-          {
-            label: "Soort object (feitelijk gebruik) volgens de WOZ",
-            value: (
-              <div className="break-word-anywhere">
-                {wozSoortObjectOmschrijving}
-              </div>
-            ),
-          },
-          { label: "Status", value: capitalize(status) },
-          {
-            label: "Woonoppervlak",
-            value: oppervlakte ? `${oppervlakte} m²` : undefined,
-          },
-          { label: "Aantal kamers", value: aantalKamers },
-          { label: "Aantal bouwlagen", value: aantalBouwlagen },
-          { label: "Verdieping toegang", value: verdiepingToegang },
-          { label: "Toegang", value: toegang },
-        ]
-      : [{ label: "Status", value: capitalize(status) }]
-    : [
+  const dataFields = isWoning
+    ? [
+        { label: "Type", value: woningTitle },
+        { label: "Gebruiksdoel", value: capitalize(woningBestemming) },
         {
-          label: "Foutmelding",
-          value: "Er is iets fout gegaan bij het ophalen van de BAG-gegevens.",
+          label: "Soort object (feitelijk gebruik) volgens de WOZ",
+          value: (
+            <div className="break-word-anywhere">
+              {wozSoortObjectOmschrijving}
+            </div>
+          ),
         },
+        { label: "Status", value: capitalize(status) },
+        {
+          label: "Woonoppervlak",
+          value: oppervlakte ? `${oppervlakte} m²` : undefined,
+        },
+        { label: "Aantal kamers", value: aantalKamers },
+        { label: "Aantal bouwlagen", value: aantalBouwlagen },
+        { label: "Verdieping toegang", value: verdiepingToegang },
+        { label: "Toegang", value: toegang },
       ]
+    : [{ label: "Status", value: capitalize(status) }]
 
   const woningUrl = bag?.identificatie
     ? `https://data.amsterdam.nl/adressen/${bag.identificatie}/`
@@ -91,8 +86,11 @@ export default function BAGCard({ data, loading = false }: Props) {
       loading={loading}
       loadingLabel="BAG-gegevens"
       loadingBody={<CardDescriptionSkeleton rows={8} />}
+      error={
+        hasBagError ? "BAG-gegevens konden niet worden opgehaald." : undefined
+      }
     >
-      <Description termsWidth="wide" data={dataFields} />
+      {hasBagData && <Description termsWidth="wide" data={dataFields} />}
     </Card>
   )
 }

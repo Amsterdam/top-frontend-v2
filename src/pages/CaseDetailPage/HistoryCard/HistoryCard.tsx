@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function HistoryCard({ caseId, loading = false }: Props) {
-  const { data: events, isPending } = useCaseEvents(caseId)
+  const { data: events, isPending, isError } = useCaseEvents(caseId)
   const isLoading = loading || isPending
 
   if (!caseId && !loading) return null
@@ -20,6 +20,7 @@ export default function HistoryCard({ caseId, loading = false }: Props) {
       loading={isLoading}
       loadingLabel="Zaakhistorie"
       loadingBody={<CardListSkeleton items={4} linesPerItem={2} />}
+      error={isError ? "Zaakhistorie kon niet worden opgehaald." : undefined}
     >
       <CaseEventTimeline data={events} />
     </Card>

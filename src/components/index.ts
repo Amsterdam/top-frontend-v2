@@ -1,4 +1,4 @@
-export * from "./alerts/AlertProvider"
+export * from "./toasts/ToastProvider"
 export * from "./badges"
 export * from "./Card/Card"
 export * from "./Card/CardSkeletons"

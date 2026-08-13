@@ -1,7 +1,7 @@
 import { useParams } from "react-router"
 import { useCompleteVisit } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 import { Button } from "@amsterdam/design-system-react"
 import { CheckMarkIcon } from "@amsterdam/design-system-react-icons"
 import { useDialog } from "@/hooks/useDialog"
@@ -19,7 +19,7 @@ export function CompleteVisitButton({
     itineraryId,
     itineraryItemId,
   })
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
   const dialogId = `complete-visit-${visitId}`
   const { openDialog, closeDialog } = useDialog(dialogId)
 
@@ -28,7 +28,7 @@ export function CompleteVisitButton({
       { completed: true },
       {
         onSuccess: () => {
-          showAlert({
+          showToast({
             title: "Bezoek afgerond",
             description: "Het bezoek is succesvol afgerond.",
             severity: "success",

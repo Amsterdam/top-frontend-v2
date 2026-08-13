@@ -1,6 +1,6 @@
 import { useDeleteItinerary } from "@/api/hooks"
 import { ConfirmDialog } from "@/components"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 import { Button } from "@amsterdam/design-system-react"
 import { DeleteIcon } from "@amsterdam/design-system-react-icons"
 import { useNavigate } from "react-router"
@@ -13,14 +13,14 @@ export function DeleteItineraryButton({
 }) {
   const deleteItinerary = useDeleteItinerary(itineraryId)
   const navigate = useNavigate()
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
   const dialogId = `delete-itinerary-${itineraryId}`
   const { openDialog } = useDialog(dialogId)
 
   const handleDelete = () => {
     deleteItinerary.mutate(undefined, {
       onSuccess: () => {
-        showAlert({
+        showToast({
           title: "Looplijst verwijderd",
           description: "De looplijst is succesvol verwijderd.",
           severity: "success",

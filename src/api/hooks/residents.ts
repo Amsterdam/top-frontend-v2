@@ -16,5 +16,6 @@ export const useResidents = (bagId?: string) => {
     queryFn: () =>
       fetch<ResidentsResponse>(makeApiUrl("addresses", bagId, "residents")),
     enabled: Boolean(bagId),
+    meta: { globalErrorToast: false },
   })
 }

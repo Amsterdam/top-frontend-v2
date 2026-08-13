@@ -39,5 +39,6 @@ export const useCaseEvents = (caseId?: number) => {
     queryKey: queryKeys.cases.events(caseId ?? -1),
     queryFn: () => fetch<CaseEvent[]>(makeApiUrl("cases", caseId, "events")),
     enabled: Boolean(caseId),
+    meta: { globalErrorToast: false },
   })
 }

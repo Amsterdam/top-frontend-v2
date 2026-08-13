@@ -54,16 +54,15 @@ export function BRPCard({ data, loading = false }: Props) {
       loading={isLoading}
       loadingLabel="Ingeschreven personen"
       loadingBody={<CardTableSkeleton rows={4} columns={2} />}
+      error={
+        isError
+          ? "Ingeschreven personen konden niet worden opgehaald."
+          : undefined
+      }
     >
-      {isError && (
-        <Paragraph>
-          Er is iets misgegaan bij het ophalen van de BRP-gegevens. 😢
-        </Paragraph>
-      )}
-      {!isError && !sortedResidents.length && (
+      {!sortedResidents.length ? (
         <Paragraph>Geen ingeschreven personen gevonden.</Paragraph>
-      )}
-      {!isError && sortedResidents.length > 0 && (
+      ) : (
         <Table
           columns={columns}
           data={sortedResidents}

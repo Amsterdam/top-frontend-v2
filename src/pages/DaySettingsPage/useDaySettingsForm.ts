@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import dayjs from "dayjs"
 import { useDaySetting, useSaveDaySetting, useTheme } from "@/api/hooks"
-import { useAlert } from "@/components/alerts/useAlert"
+import { useToast } from "@/components/toasts/useToast"
 import {
   hasPostalCodeOverlap,
   ALLOWED_POSTAL_CODE_RANGES,
@@ -30,7 +30,7 @@ export function useDaySettingsForm({
     teamId: themeId,
   })
   const [isLoading, setIsLoading] = useState(false)
-  const { showAlert } = useAlert()
+  const { showToast } = useToast()
 
   const form = useForm<FormValues>({
     mode: "onChange",
@@ -117,7 +117,7 @@ export function useDaySettingsForm({
     saveDaySetting.mutate(payload, {
       onSuccess: (res) => {
         if (res?.id) {
-          showAlert({
+          showToast({
             title: "Daginstelling opgeslagen!",
             description: `De daginstelling is succesvol ${daySettingsId ? "bijgewerkt" : "aangemaakt"}.`,
             severity: "success",

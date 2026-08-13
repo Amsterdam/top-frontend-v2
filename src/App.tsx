@@ -7,7 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import dayjs from "dayjs"
 import { router } from "@/router"
 import { queryClient } from "@/api/queryClient"
-import { AlertProvider, AmsterdamCrossSpinner } from "@/components"
+import { ToastProvider, AmsterdamCrossSpinner } from "@/components"
 import "dayjs/locale/nl"
 
 dayjs.locale("nl")
@@ -46,9 +46,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AlertProvider>
+      <ToastProvider>
         <RouterProvider router={router} />
-      </AlertProvider>
+      </ToastProvider>
       {import.meta.env.DEV && <ReactQueryDevtools />}
     </QueryClientProvider>
   )
