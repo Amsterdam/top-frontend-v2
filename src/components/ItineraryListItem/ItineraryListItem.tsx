@@ -42,7 +42,7 @@ export function ItineraryListItem({
   const notes = mostRecentVisit?.personal_notes
 
   const onCardClick = () => {
-    navigate(`/zaken/${caseData.id}`)
+    navigate(`./zaken/${caseData.id}`)
   }
 
   return (

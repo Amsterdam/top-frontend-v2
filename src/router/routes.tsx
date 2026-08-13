@@ -27,7 +27,7 @@ export const routes = [
     errorElement: <NotFound />,
     children: [
       { index: true, element: <IndexRedirectPage /> },
-      { path: "zaken/:caseId", element: <CaseDetailPage /> },
+      // { path: "zaken/:caseId", element: <CaseDetailPage /> },
       { path: "kies-looplijst", element: <ChooseListPage /> },
       { path: "lijst", element: <UnderConstruction /> },
       { path: "lijst/:itineraryId", element: <ListPage /> },
