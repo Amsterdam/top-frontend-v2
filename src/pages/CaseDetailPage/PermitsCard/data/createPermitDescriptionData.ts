@@ -1,4 +1,4 @@
-import { formatDate } from "@/shared"
+import { formatDate, getStatusBadgeVariant, renderStatusBadge } from "@/shared"
 
 export function createPermitDescriptionData(permit: Permit) {
   return [
@@ -12,7 +12,11 @@ export function createPermitDescriptionData(permit: Permit) {
     },
     {
       label: "Status",
-      value: permit.status ?? "-",
+      value:
+        renderStatusBadge(
+          permit.status,
+          getStatusBadgeVariant(permit.status),
+        ) ?? "-",
     },
     {
       label: "Kenmerk",

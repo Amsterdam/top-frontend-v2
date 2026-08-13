@@ -1,4 +1,4 @@
-import { Badge, Paragraph, Row } from "@amsterdam/design-system-react"
+import { Paragraph, Row } from "@amsterdam/design-system-react"
 import {
   DeleteIcon,
   NotificationIcon,
@@ -6,6 +6,7 @@ import {
 } from "@amsterdam/design-system-react-icons"
 
 import { Card, CardTableSkeleton, Description, Table } from "@/components"
+import { renderStatusBadge } from "@/shared"
 import { formatDate } from "@/shared/dateFormatters"
 
 import { dummyMeldingenResponse } from "./data/dummyMeldingenResponse"
@@ -29,12 +30,10 @@ function renderMeldingStatus(melding: Melding) {
 
   return (
     <Row wrap>
-      {melding.isAangepast && (
-        <Badge label="Aangepast" color="orange" icon={PencilIcon} />
-      )}
-      {melding.isVerwijderd && (
-        <Badge label="Verwijderd" color="red" icon={DeleteIcon} />
-      )}
+      {melding.isAangepast &&
+        renderStatusBadge("Aangepast", "warning", PencilIcon)}
+      {melding.isVerwijderd &&
+        renderStatusBadge("Verwijderd", "error", DeleteIcon)}
     </Row>
   )
 }
