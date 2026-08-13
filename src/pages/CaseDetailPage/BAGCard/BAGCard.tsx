@@ -16,7 +16,7 @@ export default function BAGCard({ data, loading = false }: Props) {
 
   const bag = data?.bag_data
   const hasBagData = !!bag && !("error" in bag)
-  const hasBagError = !!bag && "error" in bag
+  const hasBagError = !loading && (!bag || "error" in bag)
 
   const isWoonboot = hasBagData && Boolean(bag?.ligplaatsIdentificatie)
   const isWoning = !isWoonboot

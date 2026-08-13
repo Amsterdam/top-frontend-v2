@@ -23,7 +23,7 @@ type Props = {
   loading?: boolean
   loadingBody?: ReactNode
   loadingLabel?: string
-  error?: ReactNode
+  error?: string
 }
 
 export function Card({

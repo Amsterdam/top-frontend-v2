@@ -1,5 +1,11 @@
 import { forwardRef } from "react"
-import { Heading, Icon, IconButton, Paragraph, Row } from "@amsterdam/design-system-react"
+import {
+  Heading,
+  Icon,
+  IconButton,
+  Paragraph,
+  Row,
+} from "@amsterdam/design-system-react"
 import {
   ErrorFillIcon,
   InfoFillIcon,
@@ -35,22 +41,15 @@ export const Toast = forwardRef<HTMLDivElement, Props>(function Toast(
       data-severity={severity}
       className={`${styles.toast} ${className ?? ""}`}
     >
-      <Icon svg={iconBySeverity[severity]} size="heading-2" className={styles.icon} />
+      <Icon svg={iconBySeverity[severity]} size="heading-3" />
       <div className={styles.content}>
-        <Row align="between" >
-          <Heading level={2} className={styles.title}>
+        <Row align="between">
+          <Heading level={3} className="ams-mb-xs">
             {toast.title}
           </Heading>
-          <IconButton
-            label="Sluiten"
-            size="heading-3"
-            onClick={onDismiss}
-            className={styles.closeButton}
-          />
+          <IconButton label="Sluiten" size="heading-3" onClick={onDismiss} />
         </Row>
-        {toast.description && (
-          <Paragraph className={styles.description}>{toast.description}</Paragraph>
-        )}
+        {toast.description && <Paragraph>{toast.description}</Paragraph>}
       </div>
     </div>
   )
