@@ -24,10 +24,11 @@ export function ChooseThemeBase({
   description,
   onThemeClick,
 }: ChooseThemeBaseProps) {
-  const { data: themesData } = useThemes()
+  const { data: themesData, isError: hasThemeError } = useThemes()
   const currentUser = useCurrentUser()
   const navigate = useNavigate()
   const themes = themesData?.results || []
+  const isOffline = !window.navigator.onLine
 
   const handleClick = (themeId: number) => {
     const path = onThemeClick?.(themeId) ?? `${themeId}`
@@ -67,6 +68,12 @@ export function ChooseThemeBase({
               </LinkList.Link>
             ))}
           </LinkList>
+          {hasThemeError && isOffline && (
+            <Paragraph>
+              Deze eerste stap is offline beschikbaar nadat je de app en deze
+              pagina minimaal één keer online hebt geopend.
+            </Paragraph>
+          )}
         </Column>
       </Grid.Cell>
     </Grid>
