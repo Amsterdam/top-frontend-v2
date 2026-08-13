@@ -40,6 +40,33 @@ type SaveVisitOptions = {
   itineraryId?: string
 }
 
+const upsertVisitInItinerary = (
+  current: Itinerary | undefined,
+  visit: Visit,
+) => {
+  if (!current || !visit.itinerary_item) return current
+
+  return {
+    ...current,
+    items: current.items.map((item) => {
+      if (item.id !== visit.itinerary_item) return item
+
+      const hasVisit = item.visits.some(
+        (existingVisit) => existingVisit.id === visit.id,
+      )
+
+      return {
+        ...item,
+        visits: hasVisit
+          ? item.visits.map((existingVisit) =>
+              existingVisit.id === visit.id ? visit : existingVisit,
+            )
+          : [...item.visits, visit],
+      }
+    }),
+  }
+}
+
 export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
@@ -50,7 +77,7 @@ export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
         method: visitId ? "PUT" : "POST",
         data: payload,
       }),
-    onSuccess: () => {
+    onSuccess: (savedVisit) => {
       if (visitId) {
         queryClient.invalidateQueries({
           queryKey: queryKeys.visits.detail(visitId),
@@ -60,9 +87,11 @@ export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
       }
 
       if (itineraryId) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.itineraries.detail(itineraryId),
-        })
+        queryClient.setQueryData(
+          queryKeys.itineraries.detail(itineraryId),
+          (current: Itinerary | undefined) =>
+            upsertVisitInItinerary(current, savedVisit),
+        )
       }
     },
   })

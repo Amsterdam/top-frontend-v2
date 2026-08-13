@@ -12,6 +12,7 @@ import {
   PencilIcon,
 } from "@amsterdam/design-system-react-icons"
 import dayjs from "dayjs"
+import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router"
 
 import {
@@ -20,7 +21,9 @@ import {
   useMeldingen,
   useRegistrations,
 } from "@/api/hooks"
+import { queryKeys } from "@/api/queryKeys"
 import { StatusBadge } from "@/components"
+import { AddToItineraryVariant } from "@/components/ItineraryListItem/variants"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -42,10 +45,22 @@ import CompleteVisitButton from "@/pages/ListPage/components/CompleteVisitButton
 import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
 
 export default function CaseDetailPage() {
-  const { itineraryId, caseId } = useParams<{
-    itineraryId: string
+  const { itineraryId: itineraryIdFromParams, caseId } = useParams<{
+    itineraryId?: string
     caseId: string
   }>()
+  const queryClient = useQueryClient()
+  const cachedItineraryId = queryClient
+    .getQueriesData<Itinerary>({ queryKey: queryKeys.itineraries.all })
+    .find(
+      ([queryKey, itinerary]) =>
+        queryKey.length === 2 &&
+        queryKey[0] === queryKeys.itineraries.all[0] &&
+        queryKey[1] !== "summary" &&
+        itinerary?.items.some((item) => item?.case.id === Number(caseId)),
+    )?.[1]
+    ?.id?.toString()
+  const itineraryId = itineraryIdFromParams ?? cachedItineraryId
   const { data, isPending } = useCase(Number(caseId))
   const { data: itinerary } = useItinerary(itineraryId)
   const statusName = getWorkflowName(data?.workflows)
@@ -57,6 +72,7 @@ export default function CaseDetailPage() {
   const { deleteItineraryItem, dialog } = useDeleteItineraryItem(
     itineraryItem?.id,
     {
+      itineraryId,
       onSuccess: () => {
         if (itineraryId) {
           navigate(`/lijst/${itineraryId}`)
@@ -205,6 +221,7 @@ export default function CaseDetailPage() {
                   </Button>
                 </>
               )}
+              {!itineraryItem && <AddToItineraryVariant caseData={data} />}
             </ActionGroup>
           </Row>
         </Grid.Cell>
