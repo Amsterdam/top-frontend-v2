@@ -1,7 +1,8 @@
-import { Badge, Heading, Icon, Row } from "@amsterdam/design-system-react"
+import { Heading, Icon, Row } from "@amsterdam/design-system-react"
 import { ErrorIcon, SuccessIcon } from "@amsterdam/design-system-react-icons"
 
 import { Description } from "@/components"
+import { renderStatusBadge } from "@/shared"
 import { createPermitDescriptionData } from "../data/createPermitDescriptionData"
 import { isDateValid } from "../data/utils"
 
@@ -39,7 +40,7 @@ export function DecosPermit({ permit }: Props) {
           />
           <Heading level={3}>{permit_type}</Heading>
         </Row>
-        {hasExpired && <Badge label="Verlopen" color="red" />}
+        {hasExpired && renderStatusBadge("Verlopen", { variant: "error" })}
       </Row>
       <Description termsWidth="narrow" data={data} />
     </>

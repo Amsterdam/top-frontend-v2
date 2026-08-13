@@ -3,8 +3,8 @@ import {
   ErrorIcon,
   InfoIcon,
 } from "@amsterdam/design-system-react-icons"
-import { Badge, type BadgeProps } from "@amsterdam/design-system-react"
 import { visitEventValuesMap } from "@/components/CaseEventTimeline/config/values"
+import { type StatusBadgeVariant, renderStatusBadge } from "@/shared"
 
 export function VisitBadge({ situation }: { situation?: string | null }) {
   if (!situation) return null
@@ -13,18 +13,19 @@ export function VisitBadge({ situation }: { situation?: string | null }) {
     visitEventValuesMap[situation as keyof typeof visitEventValuesMap] ??
     situation
 
-  let color: BadgeProps["color"] = "azure"
+  let variant: StatusBadgeVariant = "info"
   let svg
+
   if (situation === "access_granted") {
-    color = undefined // Badge's default resolves to the success (green) feedback color
+    variant = "success"
     svg = SuccessIcon
   } else if (situation === "nobody_present") {
-    color = "orange"
+    variant = "warning"
     svg = InfoIcon
   } else if (situation === "no_cooperation") {
-    color = "red"
+    variant = "error"
     svg = ErrorIcon
   }
 
-  return <Badge label={name} color={color} icon={svg} />
+  return renderStatusBadge(name, { variant, icon: svg })
 }

@@ -3,7 +3,8 @@ import {
   HouseIcon,
   DocumentCheckMarkIcon,
 } from "@amsterdam/design-system-react-icons"
-import { Badge, type BadgeProps } from "@amsterdam/design-system-react"
+import { type BadgeProps } from "@amsterdam/design-system-react"
+import { renderStatusBadge } from "@/shared"
 
 export function StatusBadge({ statusName }: { statusName?: string | null }) {
   if (!statusName) return null
@@ -19,5 +20,5 @@ export function StatusBadge({ statusName }: { statusName?: string | null }) {
     svg = DocumentCheckMarkIcon
   }
 
-  return <Badge label={statusName} color={color} icon={svg} />
+  return renderStatusBadge(statusName, { icon: svg, color })
 }

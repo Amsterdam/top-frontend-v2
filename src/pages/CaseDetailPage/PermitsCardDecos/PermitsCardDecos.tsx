@@ -1,9 +1,10 @@
-import { Badge, Paragraph } from "@amsterdam/design-system-react"
+import { Paragraph } from "@amsterdam/design-system-react"
 import { CertificateIcon } from "@amsterdam/design-system-react-icons"
 
 import { usePermitsDecos } from "@/api/hooks"
 import { Card, CardTableSkeleton, Description, Table } from "@/components"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
+import { renderStatusBadge } from "@/shared"
 import { createPermitDescriptionData } from "./data/createPermitDescriptionData"
 import dummyDecosResponse from "./data/dummyDecosResponse"
 import { filterKnownPermits, isDateValid } from "./data/utils"
@@ -16,15 +17,13 @@ type Props = {
 
 function renderPermitStatus(permit: PermitDecos) {
   if (permit.permit_granted === "GRANTED") {
-    return isDateValid(permit) ? (
-      <Badge label="Verleend" />
-    ) : (
-      <Badge label="Verlopen" color="red" />
-    )
+    return isDateValid(permit)
+      ? renderStatusBadge("Verleend", { variant: "success" })
+      : renderStatusBadge("Verlopen", { variant: "error" })
   }
 
   if (permit.permit_granted === "NOT_GRANTED") {
-    return <Badge label="Niet verleend" color="yellow" />
+    return renderStatusBadge("Niet verleend", { variant: "warning" })
   }
 
   return null

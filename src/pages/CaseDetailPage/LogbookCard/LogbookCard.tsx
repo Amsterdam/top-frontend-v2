@@ -38,46 +38,48 @@ export function LogbookCard({ caseId, loading = false }: Props) {
       loadingLabel="Logboek"
       loadingBody={<CardListSkeleton items={3} linesPerItem={3} />}
     >
-      {visits?.map((visit) => (
-        <Column key={visit.id} gap="small">
-          <Row>
-            <Icon svg={ClockIcon} title="Starttijd" />
-            <Paragraph className="text-bold">
-              {formatDate(visit.start_time, "dd DD MMM YYYY, HH:mm")}
-            </Paragraph>
-          </Row>
-
-          {visit.team_members?.slice(0, 3).map((member, idx) => (
-            <Row key={idx}>
-              <Icon
-                svg={idx < 2 ? PersonsIcon : PersonIcon}
-                title={idx < 2 ? "Toezichthouder" : "Handhaver"}
-              />
-              <Paragraph>{member?.user?.full_name ?? "Onbekend"}</Paragraph>
+      <Column gap="large">
+        {visits?.map((visit) => (
+          <Column key={visit.id} gap="small">
+            <Row>
+              <Icon svg={ClockIcon} title="Starttijd" />
+              <Paragraph className="text-bold">
+                {formatDate(visit.start_time, "dd DD MMM YYYY, HH:mm")}
+              </Paragraph>
             </Row>
-          ))}
 
-          <Row>
-            <VisitBadge situation={visit?.situation} />
-          </Row>
-          {visit.description && (
-            <Column gap="small" className="mt-3">
-              <Row>
-                <HeadingWithIcon
-                  label="Samenvatting"
-                  svg={DocumentIcon}
-                  level={4}
+            {visit.team_members?.slice(0, 3).map((member, idx) => (
+              <Row key={idx}>
+                <Icon
+                  svg={idx < 2 ? PersonsIcon : PersonIcon}
+                  title={idx < 2 ? "Toezichthouder" : "Handhaver"}
                 />
+                <Paragraph>{member?.user?.full_name ?? "Onbekend"}</Paragraph>
               </Row>
-              <Row>
-                <Paragraph className="preserve-lines text-italic">
-                  {visit.description}
-                </Paragraph>
-              </Row>
-            </Column>
-          )}
-        </Column>
-      ))}
+            ))}
+
+            <Row>
+              <VisitBadge situation={visit?.situation} />
+            </Row>
+            {visit.description && (
+              <Column gap="small" className="mt-3">
+                <Row>
+                  <HeadingWithIcon
+                    label="Samenvatting"
+                    svg={DocumentIcon}
+                    level={4}
+                  />
+                </Row>
+                <Row>
+                  <Paragraph className="preserve-lines text-italic">
+                    {visit.description}
+                  </Paragraph>
+                </Row>
+              </Column>
+            )}
+          </Column>
+        ))}
+      </Column>
       {visits.length === 0 && <Paragraph>Geen notities gevonden.</Paragraph>}
     </Card>
   )
