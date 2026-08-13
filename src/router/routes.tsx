@@ -36,7 +36,7 @@ export const routes = [
         element: <TeamMemberUpdatePage />,
       },
       { path: "lijst/:itineraryId/suggesties", element: <SuggestionPage /> },
-      { path: "lijst/:itineraryId/zaken/:caseId", element: <CaseDetailPage /> },
+      // { path: "lijst/:itineraryId/zaken/:caseId", element: <CaseDetailPage /> },
       { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
       { path: "lijst/nieuw/:themeId", element: <ListCreatePage /> },
       {
