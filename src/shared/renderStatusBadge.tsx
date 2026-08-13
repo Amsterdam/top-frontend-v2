@@ -2,6 +2,18 @@ import { Badge, type BadgeProps } from "@amsterdam/design-system-react"
 
 export type StatusBadgeVariant = "success" | "info" | "warning" | "error"
 
+type StatusBadgeOptions =
+  | {
+      variant?: StatusBadgeVariant
+      icon?: BadgeProps["icon"]
+      color?: never
+    }
+  | {
+      color?: BadgeProps["color"]
+      icon?: BadgeProps["icon"]
+      variant?: never
+    }
+
 export function getStatusBadgeColor(
   variant: StatusBadgeVariant,
 ): BadgeProps["color"] {
@@ -21,11 +33,11 @@ export function getStatusBadgeColor(
 
 export function renderStatusBadge(
   label?: string | null,
-  variant: StatusBadgeVariant = "info",
-  icon?: BadgeProps["icon"],
-  color = getStatusBadgeColor(variant),
+  options: StatusBadgeOptions = {},
 ) {
   if (!label) return null
 
-  return <Badge label={label} color={color} icon={icon} />
+  const color = options.color ?? getStatusBadgeColor(options.variant ?? "info")
+
+  return <Badge label={label} color={color} icon={options.icon} />
 }

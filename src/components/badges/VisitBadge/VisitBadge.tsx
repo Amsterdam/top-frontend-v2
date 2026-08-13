@@ -27,5 +27,5 @@ export function VisitBadge({ situation }: { situation?: string | null }) {
     svg = ErrorIcon
   }
 
-  return renderStatusBadge(name, variant, svg)
+  return renderStatusBadge(name, { variant, icon: svg })
 }

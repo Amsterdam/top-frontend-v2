@@ -31,9 +31,15 @@ function renderMeldingStatus(melding: Melding) {
   return (
     <Row wrap>
       {melding.isAangepast &&
-        renderStatusBadge("Aangepast", "warning", PencilIcon)}
+        renderStatusBadge("Aangepast", {
+          variant: "warning",
+          icon: PencilIcon,
+        })}
       {melding.isVerwijderd &&
-        renderStatusBadge("Verwijderd", "error", DeleteIcon)}
+        renderStatusBadge("Verwijderd", {
+          variant: "error",
+          icon: DeleteIcon,
+        })}
     </Row>
   )
 }

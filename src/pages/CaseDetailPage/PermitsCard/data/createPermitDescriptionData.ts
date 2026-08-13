@@ -14,10 +14,9 @@ export function createPermitDescriptionData(permit: Permit) {
     {
       label: "Status",
       value:
-        renderStatusBadge(
-          permit.status,
-          getPermitStatusBadgeVariant(permit.status),
-        ) ?? "-",
+        renderStatusBadge(permit.status, {
+          variant: getPermitStatusBadgeVariant(permit.status),
+        }) ?? "-",
     },
     {
       label: "Kenmerk",

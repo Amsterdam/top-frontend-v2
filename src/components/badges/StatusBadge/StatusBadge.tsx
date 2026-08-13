@@ -20,5 +20,5 @@ export function StatusBadge({ statusName }: { statusName?: string | null }) {
     svg = DocumentCheckMarkIcon
   }
 
-  return renderStatusBadge(statusName, "info", svg, color)
+  return renderStatusBadge(statusName, { icon: svg, color })
 }

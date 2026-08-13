@@ -40,7 +40,7 @@ export function DecosPermit({ permit }: Props) {
           />
           <Heading level={3}>{permit_type}</Heading>
         </Row>
-        {hasExpired && renderStatusBadge("Verlopen", "error")}
+        {hasExpired && renderStatusBadge("Verlopen", { variant: "error" })}
       </Row>
       <Description termsWidth="narrow" data={data} />
     </>

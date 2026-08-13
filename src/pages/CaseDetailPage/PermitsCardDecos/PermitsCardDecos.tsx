@@ -18,12 +18,12 @@ type Props = {
 function renderPermitStatus(permit: PermitDecos) {
   if (permit.permit_granted === "GRANTED") {
     return isDateValid(permit)
-      ? renderStatusBadge("Verleend", "success")
-      : renderStatusBadge("Verlopen", "error")
+      ? renderStatusBadge("Verleend", { variant: "success" })
+      : renderStatusBadge("Verlopen", { variant: "error" })
   }
 
   if (permit.permit_granted === "NOT_GRANTED") {
-    return renderStatusBadge("Niet verleend", "warning")
+    return renderStatusBadge("Niet verleend", { variant: "warning" })
   }
 
   return null
