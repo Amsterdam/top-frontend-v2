@@ -1,4 +1,5 @@
-import { formatDate, getStatusBadgeVariant, renderStatusBadge } from "@/shared"
+import { formatDate, renderStatusBadge } from "@/shared"
+import { getPermitStatusBadgeVariant } from "./getPermitStatusBadgeVariant"
 
 export function createPermitDescriptionData(permit: Permit) {
   return [
@@ -15,7 +16,7 @@ export function createPermitDescriptionData(permit: Permit) {
       value:
         renderStatusBadge(
           permit.status,
-          getStatusBadgeVariant(permit.status),
+          getPermitStatusBadgeVariant(permit.status),
         ) ?? "-",
     },
     {
