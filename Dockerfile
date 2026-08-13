@@ -15,7 +15,7 @@ RUN mkdir -p $DIR/builds/application/config
 
 WORKDIR $DIR
 COPY package*.json $DIR/
-RUN npm ci --production --unsafe-perm --ignore-scripts .
+RUN npm ci --unsafe-perm --ignore-scripts
 
 # global variables
 RUN echo "REACT_APP_GIT_COMMIT_HASH=$COMMIT_HASH" > .env.local
