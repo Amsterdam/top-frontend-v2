@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import styles from "./Table.module.css"
 import { getNestedValue } from "./utils"
-import { Icon } from "@amsterdam/design-system-react"
+import { Icon, Table as ADSTable } from "@amsterdam/design-system-react"
 import { ChevronDownIcon } from "@amsterdam/design-system-react-icons"
 
 type Column<T> = {
@@ -40,32 +40,34 @@ export function Table<T extends Record<string, unknown>>({
   const hasExpandable = Boolean(expandable)
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
+    <ADSTable className={styles.table}>
+      <ADSTable.Header>
+        <ADSTable.Row>
           {columns.map((column, index) => (
-            <th
+            <ADSTable.HeaderCell
               key={index}
               className={`${styles.tableTitleCell} ${
                 column.hideOnMobile ? styles.hideOnMobile : ""
               }`}
             >
               {column.title}
-            </th>
+            </ADSTable.HeaderCell>
           ))}
           {hasExpandable && (
-            <th className={styles.tableChevronCell}>Details</th>
+            <ADSTable.HeaderCell className={styles.tableChevronCell}>
+              Details
+            </ADSTable.HeaderCell>
           )}
-        </tr>
-      </thead>
+        </ADSTable.Row>
+      </ADSTable.Header>
 
-      <tbody>
+      <ADSTable.Body>
         {data.map((row, rowIndex) => {
           const isExpanded = expandedRows.has(rowIndex)
 
           return (
             <React.Fragment key={rowIndex}>
-              <tr
+              <ADSTable.Row
                 className={`${styles.tableRow} ${
                   hasExpandable ? styles.tableExpandableRow : ""
                 }`}
@@ -75,7 +77,7 @@ export function Table<T extends Record<string, unknown>>({
                 {columns.map((column, columnIndex) => {
                   const value = getNestedValue(row, column.dataIndex)
                   return (
-                    <td
+                    <ADSTable.Cell
                       key={columnIndex}
                       className={`${styles.tableCell} ${
                         column.hideOnMobile ? styles.hideOnMobile : ""
@@ -84,12 +86,12 @@ export function Table<T extends Record<string, unknown>>({
                       {column.render
                         ? column.render(value, row)
                         : ((value as React.ReactNode) ?? "")}
-                    </td>
+                    </ADSTable.Cell>
                   )
                 })}
 
                 {hasExpandable && (
-                  <td className={styles.tableChevronCell}>
+                  <ADSTable.Cell className={styles.tableChevronCell}>
                     <span
                       className={`${styles.chevron} ${
                         isExpanded ? styles.chevronOpen : ""
@@ -97,13 +99,13 @@ export function Table<T extends Record<string, unknown>>({
                     >
                       <Icon svg={ChevronDownIcon} size="heading-3" />
                     </span>
-                  </td>
+                  </ADSTable.Cell>
                 )}
-              </tr>
+              </ADSTable.Row>
 
               {hasExpandable && (
-                <tr className={styles.tableExpandedRow}>
-                  <td
+                <ADSTable.Row className={styles.tableExpandedRow}>
+                  <ADSTable.Cell
                     colSpan={columns.length + 1}
                     className={styles.tableExpandedCell}
                   >
@@ -118,13 +120,13 @@ export function Table<T extends Record<string, unknown>>({
                         </div>
                       </div>
                     </div>
-                  </td>
-                </tr>
+                  </ADSTable.Cell>
+                </ADSTable.Row>
               )}
             </React.Fragment>
           )
         })}
-      </tbody>
-    </table>
+      </ADSTable.Body>
+    </ADSTable>
   )
 }

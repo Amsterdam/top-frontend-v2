@@ -72,10 +72,6 @@ const columns = [
       <strong>{formatMeldingPeriod(melding)}</strong>
     ),
   },
-  // {
-  //   title: "Nachten",
-  //   dataIndex: "nachten",
-  // },
   {
     title: "Gasten",
     dataIndex: "gasten",
@@ -84,6 +80,7 @@ const columns = [
     title: "Status",
     dataIndex: "status",
     render: (_: unknown, melding: Melding) => renderMeldingStatus(melding),
+    hideOnMobile: true,
   },
 ] as const
 

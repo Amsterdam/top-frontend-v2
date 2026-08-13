@@ -6,8 +6,8 @@
 
 .tableTitleCell {
   text-align: left;
-  border-bottom: 1px solid var(--ams-color-separator);
-  padding: 8px 16px;
+  /*border-bottom: 1px solid var(--ams-color-separator);
+  padding: 8px 16px;*/
 }
 
 /* Hover alleen voor expandable rijen */
@@ -19,7 +19,7 @@
 .tableCell,
 .tableChevronCell {
   padding: 8px 16px;
-  border-bottom: 1px solid var(--ams-color-separator);
+  /*border-bottom: 1px solid var(--ams-color-separator);*/
 }
 
 @media (max-width: 576px) {
@@ -44,7 +44,9 @@
 }
 
 .tableExpandedCell {
-  padding: 0;
+  --ams-table-cell-border-block-end: 0;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
 }
 
 .tableCollapsibleContent {
