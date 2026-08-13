@@ -109,6 +109,7 @@ export function AddToItineraryVariant({ item }: Props) {
               title="Toevoegen aan looplijst"
               onClick={onAdd}
               disabled={status === "loading"}
+              variant="secondary"
             >
               {status === "loading" ? "Toevoegen..." : "Toevoegen"}
             </Button>

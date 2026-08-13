@@ -5,6 +5,7 @@ import { useDialog } from "@/hooks/useDialog"
 import { ConfirmDialog } from "@/components"
 
 type Options = {
+  itineraryId?: string
   onSuccess?: () => void
 }
 
@@ -12,7 +13,10 @@ export function useDeleteItineraryItem(
   itineraryItemId?: number,
   options?: Options,
 ) {
-  const { itineraryId } = useParams<{ itineraryId: string }>()
+  const { itineraryId: itineraryIdFromParams } = useParams<{
+    itineraryId: string
+  }>()
+  const itineraryId = options?.itineraryId ?? itineraryIdFromParams
   const removeItineraryItem = useRemoveItineraryItem({
     itineraryId,
     itineraryItemId,

@@ -26,6 +26,7 @@ export function DefaultVariant({ item }: Props) {
           <Button
             onClick={() => navigate(`/bezoek/${itineraryId}/${caseData?.id}`)}
             icon={HouseIcon}
+            variant="secondary"
           >
             Bezoek
           </Button>
