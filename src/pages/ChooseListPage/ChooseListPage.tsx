@@ -1,4 +1,4 @@
-import { Column, Grid, Heading } from "@amsterdam/design-system-react"
+import { Grid, Heading } from "@amsterdam/design-system-react"
 
 import { useItinerariesSummary } from "@/api/hooks/itineraries"
 import ListCard from "./ListCard"
@@ -13,13 +13,13 @@ export default function ChooseListPage() {
           {itineraries?.length ? `(${itineraries.length})` : ""}
         </Heading>
       </Grid.Cell>
-      <Grid.Cell span="all" appearance="transparent">
-        <Column gap="large">
-          {itineraries?.map((itinerary) => (
+      <Grid.Subgrid span="all">
+        {itineraries?.map((itinerary) => (
+          <Grid.Cell span="all">
             <ListCard key={itinerary.id} itinerary={itinerary} />
-          ))}
-        </Column>
-      </Grid.Cell>
+          </Grid.Cell>
+        ))}
+      </Grid.Subgrid>
     </Grid>
   )
 }

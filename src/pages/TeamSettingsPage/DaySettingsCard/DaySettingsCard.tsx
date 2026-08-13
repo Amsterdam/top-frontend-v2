@@ -23,7 +23,6 @@ export default function DaySettingsCard({
     <Grid.Cell span="all">
       <Card
         title={daySetting.name}
-        style={{ marginBottom: "1rem" }}
         icon={SettingsIcon}
         actions={
           <ActionGroup>
