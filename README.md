@@ -20,6 +20,30 @@ Using the acceptance backend is easiest:
 npm start
 ```
 
+## PWA
+
+The app now exposes a web app manifest and service worker so it can be
+installed as a PWA.
+
+- Installed launches open directly on `/lijst-instellingen`, the first step.
+- Offline support depends on having opened the app online at least once so the
+  shell and cached API responses are available.
+
+### Caching strategy
+
+- **App shell / static assets:** precached at build time by Workbox.
+- **Runtime config (`/config/env.js`):** `NetworkFirst`, so the app prefers the
+  latest environment config but can still boot from a cached copy offline.
+- **All API `GET` requests:** `NetworkFirst`.
+  - This applies to requests under `/api/v1/` on any host, including the main
+    backend and the separate puntenteller backend.
+  - PDOK search requests are also `NetworkFirst`.
+  - If the network is unavailable, the last successful cached `GET` response is
+    used when available.
+- **Mutating API requests (`POST`, `PUT`, `PATCH`, `DELETE`):** always network
+  only. They are not cached by the service worker.
+- **Retention:** runtime API caches are kept for up to 24 hours.
+
 ## Deploying
 
 The `main` branch is automatically deployed to [acceptance](https://acc.top.amsterdam.nl/).

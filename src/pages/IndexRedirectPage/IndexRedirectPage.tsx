@@ -5,10 +5,15 @@ import { AmsterdamCrossSpinner } from "@/components"
 
 export function IndexRedirectPage() {
   const navigate = useNavigate()
-  const { data: itineraries } = useItinerariesSummary()
+  const { data: itineraries, isError } = useItinerariesSummary()
 
   useEffect(() => {
-    if (!itineraries) return
+    if (!itineraries) {
+      if (isError && !window.navigator.onLine) {
+        navigate("/lijst-instellingen")
+      }
+      return
+    }
 
     if (itineraries.length === 1) {
       navigate(`/lijst/${itineraries[0].id}`)
@@ -21,7 +26,7 @@ export function IndexRedirectPage() {
     }
 
     navigate("/lijst-instellingen")
-  }, [itineraries, navigate])
+  }, [isError, itineraries, navigate])
 
   return <AmsterdamCrossSpinner />
 }
