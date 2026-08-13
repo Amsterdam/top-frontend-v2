@@ -18,12 +18,18 @@ import {
 } from "@/api/hooks"
 import { getTopPosition } from "@/shared"
 
-type Props = {
-  item: ItineraryItem
-}
+type Props =
+  | {
+      item: ItineraryItem
+      caseData?: never
+    }
+  | {
+      item?: never
+      caseData: Case
+    }
 
-export function AddToItineraryVariant({ item }: Props) {
-  const caseData = item.case
+export function AddToItineraryVariant(props: Props) {
+  const caseData = "caseData" in props ? props.caseData : props.item.case
   const { data: itineraries } = useItinerariesSummary()
   const createItineraryItem = useCreateItineraryItem()
   const [status, setStatus] = useState<"idle" | "loading" | "added" | "error">(
@@ -111,7 +117,9 @@ export function AddToItineraryVariant({ item }: Props) {
               disabled={status === "loading"}
               variant="secondary"
             >
-              {status === "loading" ? "Toevoegen..." : "Toevoegen"}
+              {status === "loading"
+                ? "Toevoegen aan looplijst..."
+                : "Toevoegen aan looplijst"}
             </Button>
           )}
           {status === "error" && (

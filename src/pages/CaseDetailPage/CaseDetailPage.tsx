@@ -23,6 +23,7 @@ import {
 } from "@/api/hooks"
 import { queryKeys } from "@/api/queryKeys"
 import { StatusBadge } from "@/components"
+import { AddToItineraryVariant } from "@/components/ItineraryListItem/variants"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { formatAddress, getWorkflowName } from "@/shared"
 
@@ -220,6 +221,7 @@ export default function CaseDetailPage() {
                   </Button>
                 </>
               )}
+              {!itineraryItem && <AddToItineraryVariant caseData={data} />}
             </ActionGroup>
           </Row>
         </Grid.Cell>
