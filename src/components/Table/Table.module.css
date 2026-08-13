@@ -78,7 +78,7 @@
 }
 
 .tableChevronCell {
-  text-align: right;
+  text-align: end !important;
 }
 
 .chevron {
