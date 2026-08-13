@@ -21,7 +21,6 @@ export function DefaultVariant({ item }: Props) {
 
   return (
     <Column alignHorizontal="end">
-      {/*{dialog}*/}
       {visitState === VisitState.Pending && (
         <>
           <Button
@@ -30,21 +29,6 @@ export function DefaultVariant({ item }: Props) {
           >
             Bezoek
           </Button>
-          {/*<EllipsisActionMenu
-            actions={[
-              {
-                label: "Bezoek",
-                onClick: () =>
-                  navigate(`/bezoek/${itineraryId}/${caseData?.id}`),
-                icon: HouseIcon,
-              },
-              {
-                label: "Verwijderen",
-                onClick: deleteItineraryItem,
-                icon: DeleteIcon,
-              },
-            ]}
-          />*/}
         </>
       )}
       {visitState === VisitState.InProgress && (
@@ -53,25 +37,6 @@ export function DefaultVariant({ item }: Props) {
             visitId={mostRecentVisit?.id}
             itineraryItemId={item.id}
           />
-          {/*<Row gap="small">
-            <EllipsisActionMenu
-              actions={[
-                {
-                  label: "Bewerken",
-                  onClick: () =>
-                    navigate(
-                      `/bezoek/${itineraryId}/${caseData?.id}/${mostRecentVisit?.id}`,
-                    ),
-                  icon: PencilIcon,
-                },
-                {
-                  label: "Verwijderen",
-                  onClick: deleteItineraryItem,
-                  icon: DeleteIcon,
-                },
-              ]}
-            />
-          </Row>*/}
         </>
       )}
     </Column>
