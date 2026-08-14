@@ -13,7 +13,7 @@ export default defineConfig({
     VitePWA({
       injectRegister: false,
       manifest: false,
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: [
         "favicon/favicon.ico",
         "favicon/icon.svg",
@@ -24,6 +24,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
         navigateFallback: "index.html",
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /\/config\/env\.js$/,

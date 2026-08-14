@@ -30,6 +30,8 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       const id = crypto.randomUUID()
       setToasts((current) => [...current, { ...toast, id, visible: true }])
 
+      if (toast.persistent || toast.action) return
+
       // Start fade-out
       setTimeout(() => {
         setToasts((current) =>

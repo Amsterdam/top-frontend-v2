@@ -1,5 +1,6 @@
 import { forwardRef } from "react"
 import {
+  Button,
   Heading,
   Icon,
   IconButton,
@@ -54,6 +55,15 @@ export const Toast = forwardRef<HTMLDivElement, Props>(function Toast(
           <IconButton label="Sluiten" size="heading-3" onClick={onDismiss} />
         </Row>
         {toast.description && <Paragraph>{toast.description}</Paragraph>}
+        {toast.action && (
+          <Button
+            variant="secondary"
+            style={{ marginTop: "var(--ams-space-s)" }}
+            onClick={toast.action.onClick}
+          >
+            {toast.action.label}
+          </Button>
+        )}
       </div>
     </div>
   )
