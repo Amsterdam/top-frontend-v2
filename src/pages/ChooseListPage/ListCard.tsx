@@ -19,7 +19,7 @@ export function ListCard({ itinerary }: Props) {
         />
         <Button
           icon={ArrowForwardIcon}
-          onClick={() => navigate(`/lijst/${itinerary.id}`)}
+          onClick={() => navigate(`/looplijsten/${itinerary.id}`)}
         >
           Naar lijst
         </Button>

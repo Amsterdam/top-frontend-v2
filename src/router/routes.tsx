@@ -3,7 +3,6 @@ import IndexRedirectPage from "@/pages/IndexRedirectPage/IndexRedirectPage"
 import ChooseThemePage from "@/pages/ChooseThemePage/ChooseThemePage"
 import ListCreatePage from "@/pages/ListCreatePage/ListCreatePage"
 import NotFound from "@/pages/NotFound/NotFound"
-import UnderConstruction from "@/pages/UnderConstruction/UnderConstruction"
 import ListPage from "@/pages/ListPage/ListPage"
 import TeamMemberUpdatePage from "@/pages/TeamMemberUpdatePage/TeamMemberUpdatePage"
 import SelectStartAddressPage from "@/pages/SelectStartAddressPage/SelectStartAddressPage"
@@ -28,22 +27,30 @@ export const routes = [
     children: [
       { index: true, element: <IndexRedirectPage /> },
       { path: "zaken/:caseId", element: <CaseDetailPage /> },
-      { path: "kies-looplijst", element: <ChooseListPage /> },
-      { path: "lijst", element: <UnderConstruction /> },
-      { path: "lijst/:itineraryId", element: <ListPage /> },
+      { path: "looplijsten", element: <ChooseListPage /> },
+      { path: "looplijsten/:itineraryId", element: <ListPage /> },
       {
-        path: "lijst/:itineraryId/wijzig-team",
+        path: "looplijsten/:itineraryId/team",
         element: <TeamMemberUpdatePage />,
       },
-      { path: "lijst/:itineraryId/suggesties", element: <SuggestionPage /> },
-      // { path: "lijst/:itineraryId/zaken/:caseId", element: <CaseDetailPage /> },
-      { path: "lijst/:itineraryId/zoeken", element: <UnderConstruction /> },
-      { path: "lijst/nieuw/:themeId", element: <ListCreatePage /> },
       {
-        path: "lijst/nieuw/:themeId/zoeken",
+        path: "looplijsten/:itineraryId/suggesties",
+        element: <SuggestionPage />,
+      },
+      {
+        path: "looplijsten/:itineraryId/zaken/:caseId/bezoek/nieuw",
+        element: <VisitCreatePage />,
+      },
+      {
+        path: "looplijsten/:itineraryId/zaken/:caseId/bezoek/:visitId",
+        element: <VisitCreatePage />,
+      },
+      { path: "looplijsten/nieuw/:themeId", element: <ListCreatePage /> },
+      {
+        path: "looplijsten/nieuw/:themeId/zoeken",
         element: <SelectStartAddressPage />,
       },
-      { path: "lijst-instellingen", element: <ChooseThemePage /> },
+      { path: "looplijsten/nieuw", element: <ChooseThemePage /> },
       { path: "puntenteller", element: <PuntentellerPage /> },
       { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
       {
@@ -66,11 +73,6 @@ export const routes = [
         ],
       },
       { path: "zoeken", element: <SearchPage /> },
-      { path: "bezoek/:itineraryId/:caseId", element: <VisitCreatePage /> }, // CREATE
-      {
-        path: "bezoek/:itineraryId/:caseId/:visitId", // EDIT
-        element: <VisitCreatePage />,
-      },
     ],
   },
 ]

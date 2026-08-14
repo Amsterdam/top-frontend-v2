@@ -75,7 +75,7 @@ export default function CaseDetailPage() {
       itineraryId,
       onSuccess: () => {
         if (itineraryId) {
-          navigate(`/lijst/${itineraryId}`)
+          navigate(`/looplijsten/${itineraryId}`)
         }
       },
     },
@@ -191,7 +191,7 @@ export default function CaseDetailPage() {
                       icon={PencilIcon}
                       onClick={() =>
                         navigate(
-                          `/bezoek/${itineraryId}/${itineraryItem.case?.id}/${mostRecentVisit.id}`,
+                          `/looplijsten/${itineraryId}/zaken/${itineraryItem.case?.id}/bezoek/${mostRecentVisit.id}`,
                         )
                       }
                     >
@@ -214,7 +214,11 @@ export default function CaseDetailPage() {
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={() => navigate(`/bezoek/${itineraryId}/${caseId}`)}
+                    onClick={() =>
+                      navigate(
+                        `/looplijsten/${itineraryId}/zaken/${caseId}/bezoek/nieuw`,
+                      )
+                    }
                     icon={HouseIcon}
                   >
                     Bezoek

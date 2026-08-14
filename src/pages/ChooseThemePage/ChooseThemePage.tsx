@@ -5,7 +5,7 @@ export default function ChooseThemePage() {
     <ChooseThemeBase
       title="Genereer looplijst"
       description="Welke zaken wil je vandaag in je looplijst?"
-      onThemeClick={(themeId) => `/lijst/nieuw/${themeId}`}
+      onThemeClick={(themeId) => `/looplijsten/nieuw/${themeId}`}
     />
   )
 }

@@ -103,7 +103,7 @@ export default function CreateVisitPage() {
     saveVisit.mutate(payload, {
       onSuccess: async () => {
         await moveItineraryItemToBottom()
-        navigate(`/lijst/${itineraryId}`)
+        navigate(`/looplijsten/${itineraryId}`)
         showToast({
           title: "Bezoek succesvol verwerkt!",
           description:
@@ -166,7 +166,7 @@ export default function CreateVisitPage() {
           <StandaloneLink
             href="#"
             icon={ChevronBackwardIcon}
-            onClick={() => navigate(`/lijst/${itineraryId}`)}
+            onClick={() => navigate(`/looplijsten/${itineraryId}`)}
           >
             Terug naar looplijst
           </StandaloneLink>

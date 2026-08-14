@@ -10,7 +10,7 @@ export function SelectStartAddressPage() {
   const currentFormValues = location.state?.formValues
 
   const onAddCase = (caseData: Case) => {
-    navigate(`/lijst/nieuw/${themeId}`, {
+    navigate(`/looplijsten/nieuw/${themeId}`, {
       replace: true,
       state: {
         formValues: { ...currentFormValues, startCase: caseData },
@@ -19,7 +19,7 @@ export function SelectStartAddressPage() {
   }
 
   const onCancel = () => {
-    navigate(`/lijst/nieuw/${themeId}`, {
+    navigate(`/looplijsten/nieuw/${themeId}`, {
       state: { formValues: currentFormValues },
     })
   }

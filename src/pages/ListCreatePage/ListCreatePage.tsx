@@ -137,7 +137,7 @@ export default function CreateListPage() {
     }
     createItinerary.mutate(payload, {
       onSuccess: (response) => {
-        navigate(`/lijst/${response?.id}`)
+        navigate(`/looplijsten/${response?.id}`)
       },
       onSettled: () => {
         // Add slight delay to improve UX by preventing flicker. Navigation takes more time.
@@ -159,10 +159,10 @@ export default function CreateListPage() {
           <Grid.Cell span="all" appearance="transparent">
             <Breadcrumb accessibleName="Kruimelpad">
               <Breadcrumb.Link
-                href="/lijst-instellingen"
+                href="/looplijsten/nieuw"
                 onClick={(e) => {
                   e.preventDefault()
-                  navigate("/lijst-instellingen")
+                  navigate("/looplijsten/nieuw")
                 }}
               >
                 Looplijst
@@ -251,7 +251,7 @@ export default function CreateListPage() {
               </Button>
               <Button
                 variant="secondary"
-                onClick={() => navigate("/lijst-instellingen")}
+                onClick={() => navigate("/looplijsten/nieuw")}
               >
                 Annuleren
               </Button>
