@@ -6,7 +6,7 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import { useNavigate } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusBadge, PriorityBadge, Note, Tag } from "@/components"
 import { VisitWrapper, getMostRecentVisit } from "./visit"
@@ -32,6 +32,7 @@ export function ItineraryListItem({
   status,
 }: Props) {
   const navigate = useNavigate()
+  const { itineraryId } = useParams<{ itineraryId?: string }>()
   const caseData = item.case
   const address = caseData?.address
 
@@ -42,13 +43,17 @@ export function ItineraryListItem({
   const notes = mostRecentVisit?.personal_notes
 
   const onCardClick = () => {
-    navigate(`/zaken/${caseData.id}`)
+    navigate(
+      itineraryId
+        ? `/looplijsten/${itineraryId}/zaken/${caseData.id}`
+        : `/zaken/${caseData.id}`,
+    )
   }
 
   return (
     <VisitWrapper variant={variant} item={item}>
       <Row>
-        <Column gap="x-small" style={{ flexGrow: 1 }}>
+        <Column gap="x-small" style={{ flexGrow: 1, flexShrink: 0 }}>
           <Heading level={3}>
             <Card.Link
               onClick={(e) => {
@@ -60,27 +65,30 @@ export function ItineraryListItem({
             </Card.Link>
           </Heading>
           <Paragraph>{address?.postal_code}</Paragraph>
-          {variant === ItineraryListItemVariant.AddToItinerary && (
-            <Paragraph>{caseData?.theme?.name}</Paragraph>
-          )}
           <Paragraph>{caseData?.reason?.name}</Paragraph>
           <Paragraph>{caseData?.project?.name}</Paragraph>
         </Column>
 
-        {variant === ItineraryListItemVariant.Default && (
-          <DefaultVariant item={item} />
-        )}
-        {variant === ItineraryListItemVariant.AddStartAddress && (
-          <AddStartAddressVariant item={item} onAdd={onAdd} />
-        )}
+        <div style={{ minWidth: 0 }}>
+          {variant === ItineraryListItemVariant.Default && (
+            <DefaultVariant item={item} />
+          )}
+          {variant === ItineraryListItemVariant.AddStartAddress && (
+            <AddStartAddressVariant item={item} onAdd={onAdd} />
+          )}
 
-        {variant === ItineraryListItemVariant.AddSuggestedCase && (
-          <AddSuggestedCaseVariant item={item} onAdd={onAdd} status={status} />
-        )}
+          {variant === ItineraryListItemVariant.AddSuggestedCase && (
+            <AddSuggestedCaseVariant
+              item={item}
+              onAdd={onAdd}
+              status={status}
+            />
+          )}
 
-        {variant === ItineraryListItemVariant.AddToItinerary && (
-          <AddToItineraryVariant item={item} />
-        )}
+          {variant === ItineraryListItemVariant.AddToItinerary && (
+            <AddToItineraryVariant item={item} />
+          )}
+        </div>
       </Row>
       <div>
         <Column>

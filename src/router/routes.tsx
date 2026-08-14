@@ -38,6 +38,10 @@ export const routes = [
         element: <SuggestionPage />,
       },
       {
+        path: "looplijsten/:itineraryId/zaken/:caseId",
+        element: <CaseDetailPage />,
+      },
+      {
         path: "looplijsten/:itineraryId/zaken/:caseId/bezoek/nieuw",
         element: <VisitCreatePage />,
       },

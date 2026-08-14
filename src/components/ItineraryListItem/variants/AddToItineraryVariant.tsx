@@ -8,6 +8,7 @@ import {
 } from "@amsterdam/design-system-react"
 import {
   CheckMarkIcon,
+  ErrorIcon,
   PlusIcon,
   SettingsIcon,
 } from "@amsterdam/design-system-react-icons"
@@ -94,16 +95,15 @@ export function AddToItineraryVariant(props: Props) {
 
   return (
     <Column alignHorizontal="end" gap="small">
-      {matchingItineraries.length > 0 && (
+      {matchingItineraries.length > 0 ? (
         <>
           {caseData.teams && caseData.teams.length > 0 ? (
-            <Row
-              align="center"
-              gap="x-small"
-              style={{ color: "var(--ams-color-interactive)" }}
-            >
-              <Icon svg={CheckMarkIcon} />
-              <Paragraph style={{ color: "inherit" }}>
+            <Row align="center" gap="x-small">
+              <Icon
+                svg={CheckMarkIcon}
+                style={{ color: "var(--ams-color-feedback-success)" }}
+              />
+              <Paragraph>
                 {`In looplijst van ${caseData.teams[0]
                   .map((t) => t.user.full_name)
                   .join(", ")}`}
@@ -128,6 +128,20 @@ export function AddToItineraryVariant(props: Props) {
             </Paragraph>
           )}
         </>
+      ) : (
+        <Row
+          align="center"
+          gap="x-small"
+          style={{ color: "var(--ams-color-interactive)" }}
+        >
+          <Icon
+            svg={ErrorIcon}
+            style={{ color: "var(--ams-color-feedback-error)" }}
+          />
+          <Paragraph>
+            {`Thema ${caseThemeName} kan niet aan deze looplijst worden toegevoegd.`}
+          </Paragraph>
+        </Row>
       )}
     </Column>
   )
