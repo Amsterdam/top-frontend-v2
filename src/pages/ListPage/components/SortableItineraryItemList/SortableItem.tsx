@@ -18,27 +18,20 @@ export function SortableItem({
     isDragging,
   } = useSortable({ id })
 
-  const scale = isDragging ? 1.025 : 1
   const translateY = transform?.y ?? 0
   const translateX = transform?.x ?? 0
 
+  // While dragging, this element stays in place as a dimmed placeholder -
+  // the DragOverlay renders the actual "lifted" clone that follows the
+  // pointer and animates smoothly to its final spot on drop.
   const style: React.CSSProperties = {
     position: "relative",
-    transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-    transformOrigin: "center",
+    transform: `translate3d(${translateX}px, ${translateY}px, 0)`,
     transition,
     userSelect: "none",
     touchAction: "manipulation",
     outline: 0,
-    backgroundColor: "#fff",
-    borderRadius: 0,
-    boxShadow: isDragging
-      ? `rgba(0, 0, 0, 0.14) 0px 8px 10px 1px,
-         rgba(0, 0, 0, 0.12) 0px 3px 14px 2px,
-         rgba(0, 0, 0, 0.2) 0px 5px 5px -3px`
-      : "none",
-    opacity: isDragging ? 0.85 : 1,
-    zIndex: isDragging ? 999 : "auto",
+    opacity: isDragging ? 0.4 : 1,
   }
 
   return (
