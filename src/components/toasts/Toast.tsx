@@ -41,7 +41,11 @@ export const Toast = forwardRef<HTMLDivElement, Props>(function Toast(
       data-severity={severity}
       className={`${styles.toast} ${className ?? ""}`}
     >
-      <Icon svg={iconBySeverity[severity]} size="heading-3" />
+      <Icon
+        svg={iconBySeverity[severity]}
+        size="heading-3"
+        className={styles.icon}
+      />
       <div className={styles.content}>
         <Row align="between">
           <Heading level={3} className="ams-mb-xs">

@@ -20,11 +20,17 @@ export function getPermitStatusBadgeVariant(
     return "error"
   }
 
-  if (normalizedStatus.includes("gereed") || normalizedStatus.includes("verleend")) {
+  if (
+    normalizedStatus.includes("gereed") ||
+    normalizedStatus.includes("verleend")
+  ) {
     return "success"
   }
 
-  if (normalizedStatus.includes("behandel") || normalizedStatus.includes("behandeling")) {
+  if (
+    normalizedStatus.includes("behandel") ||
+    normalizedStatus.includes("behandeling")
+  ) {
     return "warning"
   }
 
