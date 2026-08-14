@@ -24,7 +24,11 @@ export function DefaultVariant({ item }: Props) {
       {visitState === VisitState.Pending && (
         <>
           <Button
-            onClick={() => navigate(`/bezoek/${itineraryId}/${caseData?.id}`)}
+            onClick={() =>
+              navigate(
+                `/looplijsten/${itineraryId}/zaken/${caseData?.id}/bezoek/nieuw`,
+              )
+            }
             icon={HouseIcon}
             variant="secondary"
           >

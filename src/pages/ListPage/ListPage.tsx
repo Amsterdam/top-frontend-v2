@@ -44,10 +44,10 @@ export default function ListPage() {
         {itineraries && itineraries.length > 1 && (
           <Breadcrumb accessibleName="Kruimelpad">
             <Breadcrumb.Link
-              href="/kies-looplijst"
+              href="/looplijsten"
               onClick={(e) => {
                 e.preventDefault()
-                navigate("/kies-looplijst")
+                navigate("/looplijsten")
               }}
             >
               Alle looplijsten
@@ -95,7 +95,7 @@ export default function ListPage() {
           <Button
             variant="secondary"
             icon={PersonsIcon}
-            onClick={() => navigate("wijzig-team")}
+            onClick={() => navigate("team")}
           >
             Wijzig teamleden
           </Button>

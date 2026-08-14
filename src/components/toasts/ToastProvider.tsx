@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 import { ToastContext } from "./ToastContext"
 import { registerToastBridge } from "./toastBridge"
 import { Toast } from "./Toast"
@@ -124,7 +130,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             toast={toast}
             onDismiss={() => dismissToast(toast.id)}
             className={
-              toast.visible ? "animate-slide-in-bottom" : "animate-slide-out-bottom"
+              toast.visible
+                ? "animate-slide-in-bottom"
+                : "animate-slide-out-bottom"
             }
           />
         ))}

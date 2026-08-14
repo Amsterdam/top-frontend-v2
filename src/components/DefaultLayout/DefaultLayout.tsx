@@ -25,6 +25,7 @@ type MenuItem = {
   icon: typeof HouseCanalIcon
   label: string
   requiredPermissions?: PermissionRequirement
+  devOnly?: boolean
 }
 
 const menuItems: MenuItem[] = [
@@ -42,6 +43,7 @@ const menuItems: MenuItem[] = [
     href: "/puntenteller",
     icon: AwardRibbonIcon,
     label: "Puntenteller",
+    devOnly: true,
   },
   {
     href: "/team-instellingen",
@@ -62,8 +64,10 @@ export function DefaultLayout() {
     navigate(path)
   }
 
-  const visibleMenuItems = menuItems.filter((item) =>
-    hasRequiredPermissions(permissions, item.requiredPermissions),
+  const visibleMenuItems = menuItems.filter(
+    (item) =>
+      (!item.devOnly || import.meta.env.DEV) &&
+      hasRequiredPermissions(permissions, item.requiredPermissions),
   )
 
   return (

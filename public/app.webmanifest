@@ -3,7 +3,7 @@
   "name": "Toezicht op pad",
   "short_name": "TOP",
   "description": "TOP ondersteunt toezichthouders Wonen op straat met informatie over zaken, adressen en bewoners. Stel eenvoudig je eigen looplijst samen op basis van vooraf ingestelde configuraties.",
-  "start_url": "/lijst-instellingen",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",

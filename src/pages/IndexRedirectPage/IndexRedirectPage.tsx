@@ -10,22 +10,22 @@ export function IndexRedirectPage() {
   useEffect(() => {
     if (!itineraries) {
       if (isError && !window.navigator.onLine) {
-        navigate("/lijst-instellingen")
+        navigate("/looplijsten/nieuw")
       }
       return
     }
 
     if (itineraries.length === 1) {
-      navigate(`/lijst/${itineraries[0].id}`)
+      navigate(`/looplijsten/${itineraries[0].id}`)
       return
     }
 
     if (itineraries.length > 1) {
-      navigate("/kies-looplijst")
+      navigate("/looplijsten")
       return
     }
 
-    navigate("/lijst-instellingen")
+    navigate("/looplijsten/nieuw")
   }, [isError, itineraries, navigate])
 
   return <AmsterdamCrossSpinner />

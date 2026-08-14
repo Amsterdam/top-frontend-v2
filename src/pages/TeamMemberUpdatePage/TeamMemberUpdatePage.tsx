@@ -68,7 +68,7 @@ export default function TeamMemberUpdatePage() {
           queryClient.invalidateQueries({ queryKey: queryKeys.itineraries.all })
         }
         if (isCurrentUserInTeam) {
-          navigate(`/lijst/${itineraryId}`)
+          navigate(`/looplijsten/${itineraryId}`)
         } else {
           navigate("/")
         }

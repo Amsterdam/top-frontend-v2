@@ -1,19 +1,31 @@
 import { useMemo, useState } from "react"
+import { flushSync } from "react-dom"
 import {
   type DragStartEvent,
   type UniqueIdentifier,
   DndContext,
+  DragOverlay,
   closestCenter,
   TouchSensor,
   useSensor,
   useSensors,
   MouseSensor,
+  KeyboardSensor,
   type DragEndEvent,
 } from "@dnd-kit/core"
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
 
 import { useItinerary, useUpdateItineraryItemPosition } from "@/api/hooks"
-import { calculateNewPosition, itemsPositionSorter } from "./utils"
+import {
+  calculateNewPosition,
+  itemsPositionSorter,
+  liftedCardStyle,
+} from "./utils"
 import { SortableItem } from "./SortableItem"
 import { ItineraryListItem } from "@/components"
 import { Column } from "@amsterdam/design-system-react"
@@ -23,7 +35,7 @@ type Props = {
 }
 
 export function SortableItineraryItemList({ itineraryId }: Props) {
-  const [draggableId, setIsDragging] = useState<UniqueIdentifier>()
+  const [draggableId, setDraggableId] = useState<UniqueIdentifier>()
   const { data: itinerary } = useItinerary(itineraryId, { enabled: false })
   const updateItineraryItemPosition = useUpdateItineraryItemPosition({
     itineraryId,
@@ -34,6 +46,29 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
     const items = itinerary?.items ?? []
     return [...items].sort(itemsPositionSorter)
   }, [itinerary?.items])
+
+  // The order actually rendered. Reordering via the query cache (through
+  // the position mutation) goes through React Query's own subscription
+  // notification, whose timing we don't fully control relative to dnd-kit's
+  // own drop/DragOverlay lifecycle - that mismatch caused the dropped card
+  // to render at its old spot for a frame before hopping to its new one.
+  // Setting this synchronously (flushSync, in handleDragEnd) removes that
+  // race entirely; it's cleared again once the cache catches up to it.
+  const [displayOrder, setDisplayOrder] = useState<ItineraryItem[] | null>(null)
+  const [previousSortedItems, setPreviousSortedItems] = useState(sortedItems)
+
+  if (sortedItems !== previousSortedItems) {
+    setPreviousSortedItems(sortedItems)
+
+    if (
+      displayOrder &&
+      displayOrder.every((item, index) => item.id === sortedItems[index]?.id)
+    ) {
+      setDisplayOrder(null)
+    }
+  }
+
+  const displayedItems = displayOrder ?? sortedItems
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -48,10 +83,13 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
         tolerance: 10,
       },
     }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   )
 
   const handleDragStart = ({ active }: DragStartEvent) => {
-    setIsDragging(active.id)
+    setDraggableId(active.id)
   }
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -64,13 +102,22 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
 
     const newPosition = calculateNewPosition(sortedItems, oldIndex, newIndex)
 
+    // Reorder the rendered list ourselves, synchronously, so dnd-kit's
+    // DragOverlay always measures/animates to the correct final position
+    // (see the comment on displayOrder above).
+    flushSync(() => {
+      setDisplayOrder(arrayMove(sortedItems, oldIndex, newIndex))
+    })
+
     updateItineraryItemPosition.mutate({ position: newPosition })
   }
 
   const itemIds = useMemo(
-    () => sortedItems.map((item) => item.id),
-    [sortedItems],
+    () => displayedItems.map((item) => item.id),
+    [displayedItems],
   )
+
+  const activeItem = displayedItems.find((item) => item.id === draggableId)
 
   return (
     <DndContext
@@ -81,13 +128,20 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
     >
       <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
         <Column>
-          {sortedItems.map((item) => (
+          {displayedItems.map((item) => (
             <SortableItem key={item.id} id={item.id}>
               <ItineraryListItem item={item} />
             </SortableItem>
           ))}
         </Column>
       </SortableContext>
+      <DragOverlay>
+        {activeItem && (
+          <div style={liftedCardStyle}>
+            <ItineraryListItem item={activeItem} />
+          </div>
+        )}
+      </DragOverlay>
     </DndContext>
   )
 }

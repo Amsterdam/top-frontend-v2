@@ -25,7 +25,7 @@ export function DeleteItineraryButton({
           description: "De looplijst is succesvol verwijderd.",
           severity: "success",
         })
-        navigate("/lijst-instellingen")
+        navigate("/looplijsten/nieuw")
       },
     })
   }

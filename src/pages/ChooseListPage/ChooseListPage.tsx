@@ -15,7 +15,7 @@ export default function ChooseListPage() {
       </Grid.Cell>
       <Grid.Subgrid span="all">
         {itineraries?.map((itinerary) => (
-          <Grid.Cell span="all">
+          <Grid.Cell span="all" key={itinerary.id}>
             <ListCard key={itinerary.id} itinerary={itinerary} />
           </Grid.Cell>
         ))}
