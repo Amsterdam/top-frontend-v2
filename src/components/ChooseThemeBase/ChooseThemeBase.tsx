@@ -14,8 +14,6 @@ import { useCurrentUser } from "@/hooks/useCurrentUser"
 interface ChooseThemeBaseProps {
   title: string
   description?: string
-  icon?: React.ReactNode
-  settingsIllustration?: boolean
   onThemeClick?: (themeId: number) => void
 }
 
