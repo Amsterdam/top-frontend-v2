@@ -8,9 +8,14 @@ import {
   useSensor,
   useSensors,
   MouseSensor,
+  KeyboardSensor,
   type DragEndEvent,
 } from "@dnd-kit/core"
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
 
 import { useItinerary, useUpdateItineraryItemPosition } from "@/api/hooks"
 import { calculateNewPosition, itemsPositionSorter } from "./utils"
@@ -47,6 +52,9 @@ export function SortableItineraryItemList({ itineraryId }: Props) {
         delay: 150,
         tolerance: 10,
       },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     }),
   )
 

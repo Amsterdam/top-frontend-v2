@@ -51,7 +51,6 @@ export function ItineraryListItem({
         <Column gap="x-small" style={{ flexGrow: 1 }}>
           <Heading level={3}>
             <Card.Link
-              href="#"
               onClick={(e) => {
                 e.preventDefault()
                 onCardClick()
