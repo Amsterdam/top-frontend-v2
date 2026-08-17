@@ -14,6 +14,10 @@ export default defineConfig({
       injectRegister: false,
       manifest: false,
       registerType: "prompt",
+      devOptions: {
+        enabled: true,
+        navigateFallbackAllowlist: [/^\//],
+      },
       includeAssets: [
         "favicon/favicon.ico",
         "favicon/icon.svg",

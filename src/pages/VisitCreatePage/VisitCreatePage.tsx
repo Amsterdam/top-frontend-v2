@@ -31,11 +31,14 @@ export default function CreateVisitPage() {
     visitId?: string
   }>()
   const [isLoading, setIsLoading] = useState(false)
-  const { data: visit, refetch: execGet } = useVisit(visitId, {
+  const { data: visit, refetch: refetchVisit } = useVisit(visitId, {
     enabled: false,
   })
   const saveVisit = useSaveVisit({ visitId, itineraryId })
-  const { data: itinerary } = useItinerary(itineraryId, { enabled: false })
+  const { data: itinerary, refetch: refetchItinerary } = useItinerary(
+    itineraryId,
+    { enabled: false },
+  )
   const currentUser = useCurrentUser()
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
@@ -52,18 +55,16 @@ export default function CreateVisitPage() {
   useEffect(() => {
     // Navigation is taking time. Prevent automatic refetch after creating or updating a visit
     if (!visit && !isLoading && visitId) {
-      execGet()
+      refetchVisit()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visit, visitId, isLoading])
+  }, [visit, visitId, isLoading, refetchVisit])
 
   useEffect(() => {
     // Navigation is taking time. Prevent automatic refetch after creating or updating a visit
     if (!itinerary && !isLoading && itineraryId) {
-      execGet()
+      refetchItinerary()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itinerary, itineraryId, isLoading])
+  }, [itinerary, itineraryId, isLoading, refetchItinerary])
 
   const form = useForm<FormValuesVisit>({
     mode: "onChange",

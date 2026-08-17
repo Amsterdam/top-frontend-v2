@@ -79,6 +79,20 @@ export function DefaultLayout() {
         brandNameShort={`TOP  ${env.VITE_ENVIRONMENT_SHORT}`}
         noMenuButtonOnWideWindow
         className="ams-page__area--header"
+        menuItems={
+          !isOnline
+            ? [
+                <PageHeader.MenuLink
+                  key="offline"
+                  icon={WiFiIcon}
+                  href="#"
+                  onClick={(event) => event.preventDefault()}
+                >
+                  Offline
+                </PageHeader.MenuLink>,
+              ]
+            : undefined
+        }
       >
         <Menu>
           {visibleMenuItems.map((item) => (
@@ -91,15 +105,6 @@ export function DefaultLayout() {
               {item.label}
             </Menu.Link>
           ))}
-          {!isOnline && (
-            <Menu.Link
-              href="#"
-              icon={WiFiIcon}
-              onClick={(event) => event.preventDefault()}
-            >
-              Offline
-            </Menu.Link>
-          )}
           <Menu.Link
             href="#"
             icon={LogOutIcon}
@@ -124,15 +129,6 @@ export function DefaultLayout() {
             {item.label}
           </Menu.Link>
         ))}
-        {!isOnline && (
-          <Menu.Link
-            href="#"
-            icon={WiFiIcon}
-            onClick={(event) => event.preventDefault()}
-          >
-            Offline
-          </Menu.Link>
-        )}
         <Menu.Link
           href="#"
           icon={LogOutIcon}
