@@ -1,5 +1,5 @@
 // src/pages/DaySettingsPage/DaySettingsPage.tsx
-import { AmsterdamCrossSpinner } from "@/components"
+import { AmsterdamCrossSpinner, OfflineSettingsAlert } from "@/components"
 import { useNavigate, useParams } from "react-router"
 
 import DaySettingsForm from "./DaySettingsForm"
@@ -11,6 +11,7 @@ import {
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { DAY_OF_WEEK_MAP } from "@/shared/constants/dayOfWeeks"
+import { useOnlineStatus } from "@/hooks"
 
 export default function DaySettingsPage() {
   const { themeId, dayOfWeek, daySettingsId } = useParams()
@@ -22,6 +23,8 @@ export default function DaySettingsPage() {
     daySettingsId,
     onSuccess: (id) => navigate(`/team-instellingen/${themeId}/${id}`),
   })
+
+  const isOnline = useOnlineStatus()
 
   if (isLoading) return <AmsterdamCrossSpinner />
 
@@ -60,6 +63,7 @@ export default function DaySettingsPage() {
         <Paragraph size="large">
           {`${theme?.name} - ${nameDayOfWeek ?? "?"}`}
         </Paragraph>
+        {!isOnline && <OfflineSettingsAlert className="ams-mt-l" />}
       </Grid.Cell>
       <Grid.Cell span="all">
         <DaySettingsForm

@@ -7,7 +7,7 @@ import {
 } from "@amsterdam/design-system-react"
 import { type MouseEvent } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router"
-import { AmsterdamCrossSpinner } from "@/components"
+import { AmsterdamCrossSpinner, OfflineSettingsAlert } from "@/components"
 import { WeekDaySettings } from "./WeekConfig/WeekDaySettings"
 import {
   useTeamSettings,
@@ -22,6 +22,7 @@ import {
 } from "@/api/hooks"
 import { DAY_OF_WEEKS } from "@/shared/constants/dayOfWeeks"
 import type { TeamSettingsOptions } from "./types"
+import { useOnlineStatus } from "@/hooks"
 
 export default function TeamSettingsPage() {
   const navigate = useNavigate()
@@ -35,6 +36,7 @@ export default function TeamSettingsPage() {
   const { data: tags } = useTeamSettingsTags(themeId!)
   const { data: housingCorporations } = useCorporations()
   const { data: districts } = useDistricts()
+  const isOnline = useOnlineStatus()
 
   const teamSettingsOptions: TeamSettingsOptions = {
     reasons,
@@ -88,14 +90,15 @@ export default function TeamSettingsPage() {
             {teamSettings?.name ?? "Team"}
           </Breadcrumb.Link>
         </Breadcrumb>
-        <Heading level={1}>
+        <Heading level={1} className="ams-mb-m">
           Looplijst instellingen{" "}
           {teamSettings?.name && `(${teamSettings.name})`}
         </Heading>
-        <Paragraph>
+        <Paragraph className="ams-mb-m">
           Pas hier de instellingen aan die worden gebruikt om automatisch een
           looplijst te genereren.
         </Paragraph>
+        {!isOnline && <OfflineSettingsAlert className="ams-mt-l" />}
       </Grid.Cell>
 
       <Grid.Cell appearance="flush" span={{ narrow: 4, medium: 2, wide: 2 }}>
