@@ -8,7 +8,7 @@ import dayjs from "dayjs"
 import { router } from "@/router"
 import { queryClient } from "@/api/queryClient"
 import { ToastProvider, AmsterdamCrossSpinner } from "@/components"
-import { usePwaUpdatePrompt } from "@/hooks"
+import { usePwaUpdatePrompt, useOfflineVisitSync } from "@/hooks"
 import "dayjs/locale/nl"
 
 dayjs.locale("nl")
@@ -21,6 +21,8 @@ function PwaUpdatePrompt() {
 function App() {
   const auth = useAuth()
   const hasTriedSignin = useRef(false)
+
+  useOfflineVisitSync()
 
   // automatically sign-in
   useEffect(() => {

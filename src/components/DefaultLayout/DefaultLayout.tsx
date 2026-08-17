@@ -7,12 +7,13 @@ import {
   LogOutIcon,
   SearchIcon,
   SettingsIcon,
+  WiFiIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
 import { usePermissions } from "@/api/hooks"
 import { env } from "@/config/env"
-import { useRedirectFromState } from "@/hooks/useRedirectFromState"
+import { useOnlineStatus, useRedirectFromState } from "@/hooks"
 import {
   APP_PERMISSIONS,
   hasRequiredPermissions,
@@ -58,6 +59,7 @@ export function DefaultLayout() {
   const auth = useAuth()
   const navigate = useNavigate()
   const { data: permissions } = usePermissions()
+  const isOnline = useOnlineStatus()
 
   const navigateTo = (path: string) => (event: MouseEvent) => {
     event.preventDefault()
@@ -89,6 +91,15 @@ export function DefaultLayout() {
               {item.label}
             </Menu.Link>
           ))}
+          {!isOnline && (
+            <Menu.Link
+              href="#"
+              icon={WiFiIcon}
+              onClick={(event) => event.preventDefault()}
+            >
+              Offline
+            </Menu.Link>
+          )}
           <Menu.Link
             href="#"
             icon={LogOutIcon}
@@ -113,6 +124,15 @@ export function DefaultLayout() {
             {item.label}
           </Menu.Link>
         ))}
+        {!isOnline && (
+          <Menu.Link
+            href="#"
+            icon={WiFiIcon}
+            onClick={(event) => event.preventDefault()}
+          >
+            Offline
+          </Menu.Link>
+        )}
         <Menu.Link
           href="#"
           icon={LogOutIcon}

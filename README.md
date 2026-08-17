@@ -40,9 +40,18 @@ installed as a PWA.
   - PDOK search requests are also `NetworkFirst`.
   - If the network is unavailable, the last successful cached `GET` response is
     used when available.
-- **Mutating API requests (`POST`, `PUT`, `PATCH`, `DELETE`):** always network
-  only. They are not cached by the service worker.
+- **Mutating API requests (`POST`, `PUT`, `PATCH`, `DELETE`):** network only.
+  - Visit-related changes made while offline are stored in a local queue.
+  - The queue is replayed automatically when the app comes back online, or on
+    the next app launch while online.
 - **Retention:** runtime API caches are kept for up to 24 hours.
+
+### Offline UI
+
+- When the browser is offline, the page header menu shows `WiFiIcon` with the
+  label `Offline`.
+- Saving or completing a visit while offline shows a success toast explaining
+  that the change is queued and will sync automatically.
 
 ## Deploying
 

@@ -3,6 +3,11 @@ import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import { stringifyQueryParams } from "@/api/utils/stringifyQueryParams"
 import { queryKeys } from "@/api/queryKeys"
+import {
+  applyQueuedItineraryItemPositionToCache,
+  queueItineraryItemPositionUpdate,
+  type MutationResult,
+} from "@/offline/visitSync"
 
 type SuggestionsResponse = {
   cases: Case[]
@@ -242,11 +247,48 @@ export const useUpdateItineraryItemPosition = ({
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: { position: number }) =>
-      fetch<ItineraryItem>(makeApiUrl("itinerary-items", itineraryItemId), {
-        method: "PATCH",
-        data: payload,
-      }),
+    mutationFn: async (payload: {
+      position: number
+    }): Promise<MutationResult<ItineraryItem>> => {
+      try {
+        const updatedItem = await fetch<ItineraryItem>(
+          makeApiUrl("itinerary-items", itineraryItemId),
+          {
+            method: "PATCH",
+            data: payload,
+          },
+        )
+
+        return { data: updatedItem, queued: false }
+      } catch (error) {
+        if (window.navigator.onLine && !(error instanceof TypeError)) {
+          throw error
+        }
+
+        const normalizedItineraryItemId = Number(itineraryItemId)
+
+        if (!Number.isFinite(normalizedItineraryItemId)) {
+          throw error
+        }
+
+        queueItineraryItemPositionUpdate({
+          itineraryId,
+          itineraryItemId: normalizedItineraryItemId,
+          payload,
+        })
+
+        return {
+          data: {
+            id: normalizedItineraryItemId,
+            position: payload.position,
+            case: {} as Case,
+            notes: [],
+            visits: [],
+          } as ItineraryItem,
+          queued: true,
+        }
+      }
+    },
     onMutate: (payload) => {
       const queryKey = queryKeys.itineraries.detail(itineraryId ?? "")
       const previousItinerary = queryClient.getQueryData<Itinerary>(queryKey)
@@ -261,6 +303,15 @@ export const useUpdateItineraryItemPosition = ({
       })
 
       return { queryKey, previousItinerary }
+    },
+    onSuccess: ({ queued, data }) => {
+      if (queued) {
+        applyQueuedItineraryItemPositionToCache(
+          itineraryId,
+          Number(itineraryItemId),
+          data.position,
+        )
+      }
     },
     onError: (_error, _payload, context) => {
       if (context) {
