@@ -30,6 +30,16 @@ export const useApiFetch = () => {
         headers.Authorization = `Bearer ${token}`
       }
 
+      const isMutatingRequest = method !== "GET"
+
+      if (
+        isMutatingRequest &&
+        typeof navigator !== "undefined" &&
+        !navigator.onLine
+      ) {
+        throw new TypeError("Failed to fetch")
+      }
+
       const response = await fetch(url, {
         method,
         headers,

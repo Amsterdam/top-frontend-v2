@@ -94,6 +94,44 @@ describe("useApiFetch", () => {
     )
   })
 
+  it("skips mutating requests and throws immediately when offline", async () => {
+    mockAuth(undefined)
+    const fetchMock = vi.fn().mockResolvedValue(createResponse("null"))
+    vi.stubGlobal("fetch", fetchMock)
+    vi.stubGlobal("navigator", { onLine: false })
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await expect(
+      result.current("https://api.test/things", {
+        method: "PATCH",
+        data: { done: true },
+      }),
+    ).rejects.toBeInstanceOf(TypeError)
+
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it("still attempts GET requests when offline so cached responses can be served", async () => {
+    mockAuth(undefined)
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(createResponse(JSON.stringify({ hello: "offline" })))
+    vi.stubGlobal("fetch", fetchMock)
+    vi.stubGlobal("navigator", { onLine: false })
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    const data = await result.current<{ hello: string }>(
+      "https://api.test/things",
+    )
+
+    expect(data).toEqual({ hello: "offline" })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
   it("throws an ApiError built from the JSON error body on a non-ok response", async () => {
     mockAuth(undefined)
     const fetchMock = vi.fn().mockResolvedValue(
