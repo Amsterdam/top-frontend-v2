@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { useRegisterSW } from "virtual:pwa-register/react"
 import { useToast } from "@/components/toasts/useToast"
 
@@ -10,6 +10,19 @@ export function usePwaUpdatePrompt() {
   const { showToast } = useToast()
   const { needRefresh, updateServiceWorker } = useRegisterSW()
   const [isUpdateAvailable] = needRefresh
+  const isRefreshingRef = useRef(false)
+
+  const refreshToLatestVersion = useCallback(() => {
+    if (isRefreshingRef.current) return
+
+    isRefreshingRef.current = true
+
+    void updateServiceWorker(true).finally(() => {
+      window.setTimeout(() => {
+        isRefreshingRef.current = false
+      }, 3000)
+    })
+  }, [updateServiceWorker])
 
   useEffect(() => {
     if (!isUpdateAvailable) return
@@ -19,10 +32,8 @@ export function usePwaUpdatePrompt() {
       description: "Er is een update van TOP beschikbaar.",
       action: {
         label: "Vernieuwen",
-        onClick: () => {
-          void updateServiceWorker(true)
-        },
+        onClick: refreshToLatestVersion,
       },
     })
-  }, [isUpdateAvailable, showToast, updateServiceWorker])
+  }, [isUpdateAvailable, showToast, refreshToLatestVersion])
 }

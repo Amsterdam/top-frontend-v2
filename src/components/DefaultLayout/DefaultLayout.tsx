@@ -1,6 +1,6 @@
 import { type MouseEvent } from "react"
 import { Outlet, useNavigate } from "react-router"
-import { Menu, Page, PageHeader } from "@amsterdam/design-system-react"
+import { Button, Dialog, Menu, Page, PageHeader, Paragraph } from "@amsterdam/design-system-react"
 import {
   AwardRibbonIcon,
   HouseCanalIcon,
@@ -86,7 +86,10 @@ export function DefaultLayout() {
                   key="offline"
                   icon={WiFiIcon}
                   href="#"
-                  onClick={(event) => event.preventDefault()}
+                  onClick={(event) => {
+                    event.preventDefault()
+                    Dialog.open("#offline-dialog")
+                  }}
                 >
                   Offline
                 </PageHeader.MenuLink>,
@@ -146,6 +149,10 @@ export function DefaultLayout() {
       </main>
 
       <Footer />
+
+      <Dialog heading="Offline" id="offline-dialog" footer={<Button variant="secondary" onClick={(e) => Dialog.close(e)}>Sluiten</Button>}>
+        <Paragraph>Je bent momenteel offline. Sommige functionaliteiten zijn mogelijk beperkt.</Paragraph>
+      </Dialog>
     </Page>
   )
 }
