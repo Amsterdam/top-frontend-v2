@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/react"
+import { fireEvent, render, waitFor } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import VisitCreatePage from "../VisitCreatePage"
@@ -15,6 +15,8 @@ const mockMoveItineraryItemToBottom = vi.fn()
 const mockShowToast = vi.fn()
 const mockUseVisit = vi.fn()
 const mockUseItinerary = vi.fn()
+const mockUseCurrentUser = vi.fn()
+const mockUseTokenPayload = vi.fn()
 
 vi.mock("react-router", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-router")>()
@@ -33,7 +35,8 @@ vi.mock("@/api/hooks", () => ({
 }))
 
 vi.mock("@/hooks", () => ({
-  useCurrentUser: () => ({ id: "user-1" }),
+  useCurrentUser: () => mockUseCurrentUser(),
+  useTokenPayload: () => mockUseTokenPayload(),
   useMoveItineraryItemToBottom: () => ({
     moveItineraryItemToBottom: mockMoveItineraryItemToBottom,
   }),
@@ -48,7 +51,35 @@ vi.mock("@/components/toasts/useToast", () => ({
 }))
 
 vi.mock("@amsterdam/ee-ads-rhf", () => ({
-  FormProvider: ({ children }: { children: ReactNode }) => <form>{children}</form>,
+  FormProvider: ({
+    children,
+    onSubmit,
+  }: {
+    children: ReactNode
+    onSubmit: (values: Record<string, unknown>) => void
+  }) => (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit({
+          start_time: "",
+          start_time_other: "",
+          situation: "",
+          observations: [],
+          suggest_next_visit: "",
+          suggest_next_visit_description: "",
+          can_next_visit_go_ahead: "",
+          can_next_visit_go_ahead_description_yes: "",
+          can_next_visit_go_ahead_description_no: "",
+          personal_notes: "",
+          description: "",
+        })
+      }}
+    >
+      <button type="submit">Opslaan</button>
+      {children}
+    </form>
+  ),
 }))
 
 vi.mock("../StepSituation/StepSituation", () => ({
@@ -86,6 +117,9 @@ describe("VisitCreatePage", () => {
       data: undefined,
       refetch: mockRefetchItinerary,
     })
+    mockUseCurrentUser.mockReturnValue({ id: "user-1" })
+    mockUseTokenPayload.mockReturnValue(undefined)
+    mockMoveItineraryItemToBottom.mockResolvedValue(undefined)
   })
 
   it("refetches the itinerary when the cached itinerary is missing", async () => {
@@ -107,5 +141,44 @@ describe("VisitCreatePage", () => {
       expect(mockRefetchVisit).toHaveBeenCalledTimes(1)
       expect(mockRefetchItinerary).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it("uses token user id fallback when saving offline without a loaded current user", async () => {
+    mockUseCurrentUser.mockReturnValue(undefined)
+    mockUseTokenPayload.mockReturnValue({ oid: "token-user-id" })
+    mockUseItinerary.mockReturnValue({
+      data: {
+        items: [{ id: 123, case: { id: Number(mockParams.caseId) }, visits: [] }],
+      },
+      refetch: mockRefetchItinerary,
+    })
+    mockMutate.mockImplementation(
+      (_payload: unknown, options: { onSuccess: (value: { queued: boolean }) => void }) => {
+        options.onSuccess({ queued: true })
+      },
+    )
+
+    const { getAllByRole } = render(<VisitCreatePage />)
+
+    const submitButtons = getAllByRole("button", { name: "Opslaan" })
+    fireEvent.click(submitButtons[submitButtons.length - 1])
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          author: "token-user-id",
+          case_id: mockParams.caseId,
+          itinerary_item: 123,
+        }),
+        expect.any(Object),
+      )
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith("/looplijsten/1000")
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Bezoek offline opgeslagen",
+      }),
+    )
   })
 })

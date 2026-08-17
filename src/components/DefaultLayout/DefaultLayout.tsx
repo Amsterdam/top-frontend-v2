@@ -90,6 +90,7 @@ export function DefaultLayout() {
                     event.preventDefault()
                     Dialog.open("#offline-dialog")
                   }}
+                  fixed
                 >
                   Offline
                 </PageHeader.MenuLink>,
