@@ -1,18 +1,19 @@
 import { type MouseEvent } from "react"
 import { Outlet, useNavigate } from "react-router"
-import { Menu, Page, PageHeader } from "@amsterdam/design-system-react"
+import { Button, Dialog, Menu, Page, PageHeader, Paragraph } from "@amsterdam/design-system-react"
 import {
   AwardRibbonIcon,
   HouseCanalIcon,
   LogOutIcon,
   SearchIcon,
   SettingsIcon,
+  WiFiIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useAuth } from "react-oidc-context"
 
 import { usePermissions } from "@/api/hooks"
 import { env } from "@/config/env"
-import { useRedirectFromState } from "@/hooks/useRedirectFromState"
+import { useOnlineStatus, useRedirectFromState } from "@/hooks"
 import {
   APP_PERMISSIONS,
   hasRequiredPermissions,
@@ -58,6 +59,7 @@ export function DefaultLayout() {
   const auth = useAuth()
   const navigate = useNavigate()
   const { data: permissions } = usePermissions()
+  const isOnline = useOnlineStatus()
 
   const navigateTo = (path: string) => (event: MouseEvent) => {
     event.preventDefault()
@@ -77,6 +79,24 @@ export function DefaultLayout() {
         brandNameShort={`TOP  ${env.VITE_ENVIRONMENT_SHORT}`}
         noMenuButtonOnWideWindow
         className="ams-page__area--header"
+        menuItems={
+          !isOnline
+            ? [
+                <PageHeader.MenuLink
+                  key="offline"
+                  icon={WiFiIcon}
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    Dialog.open("#offline-dialog")
+                  }}
+                  fixed
+                >
+                  Offline
+                </PageHeader.MenuLink>,
+              ]
+            : undefined
+        }
       >
         <Menu>
           {visibleMenuItems.map((item) => (
@@ -130,6 +150,10 @@ export function DefaultLayout() {
       </main>
 
       <Footer />
+
+      <Dialog heading="Offline" id="offline-dialog" footer={<Button variant="secondary" onClick={(e) => Dialog.close(e)}>Sluiten</Button>}>
+        <Paragraph>Je bent momenteel offline. Sommige functionaliteiten zijn mogelijk beperkt.</Paragraph>
+      </Dialog>
     </Page>
   )
 }

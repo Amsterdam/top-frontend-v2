@@ -94,6 +94,7 @@ describe("useApiFetch", () => {
     )
   })
 
+
   it("throws an ApiError built from the JSON error body on a non-ok response", async () => {
     mockAuth(undefined)
     const fetchMock = vi.fn().mockResolvedValue(

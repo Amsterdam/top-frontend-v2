@@ -50,12 +50,17 @@ export function ItineraryListItem({
     )
   }
 
+  const cardLink = itineraryId
+    ? `/looplijsten/${itineraryId}/zaken/${caseData.id}`
+    : `/zaken/${caseData.id}`
+
   return (
     <VisitWrapper variant={variant} item={item}>
       <Row>
         <Column gap="x-small" style={{ flexGrow: 1, flexShrink: 0 }}>
           <Heading level={3}>
             <Card.Link
+              href={cardLink}
               onClick={(e) => {
                 e.preventDefault()
                 onCardClick()

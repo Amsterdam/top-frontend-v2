@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  type QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import { queryKeys } from "@/api/queryKeys"
@@ -67,6 +72,34 @@ const upsertVisitInItinerary = (
   }
 }
 
+const setVisitDetailCache = (
+  queryClient: QueryClient,
+  visit: Visit,
+  requestedVisitId?: string | number,
+) => {
+  queryClient.setQueryData(queryKeys.visits.detail(visit.id), visit)
+
+  if (requestedVisitId !== undefined && requestedVisitId !== visit.id) {
+    queryClient.setQueryData(queryKeys.visits.detail(requestedVisitId), visit)
+  }
+}
+
+const updateVisitCaches = (
+  queryClient: QueryClient,
+  itineraryId: string | undefined,
+  visit: Visit,
+  requestedVisitId?: string | number,
+) => {
+  setVisitDetailCache(queryClient, visit, requestedVisitId)
+
+  if (!itineraryId) return
+
+  queryClient.setQueryData(
+    queryKeys.itineraries.detail(itineraryId),
+    (current: Itinerary | undefined) => upsertVisitInItinerary(current, visit),
+  )
+}
+
 export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
@@ -78,20 +111,14 @@ export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
         data: payload,
       }),
     onSuccess: (savedVisit) => {
+      updateVisitCaches(queryClient, itineraryId, savedVisit, visitId)
+
       if (visitId) {
         queryClient.invalidateQueries({
           queryKey: queryKeys.visits.detail(visitId),
         })
       } else {
         queryClient.invalidateQueries({ queryKey: queryKeys.visits.all })
-      }
-
-      if (itineraryId) {
-        queryClient.setQueryData(
-          queryKeys.itineraries.detail(itineraryId),
-          (current: Itinerary | undefined) =>
-            upsertVisitInItinerary(current, savedVisit),
-        )
       }
     },
   })
@@ -112,37 +139,26 @@ export const useCompleteVisit = ({
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: { completed: boolean }) =>
-      fetch<Visit>(makeApiUrl("visits", visitId), {
+    mutationFn: (payload: { completed: boolean }) => {
+      if (visitId === undefined) {
+        throw new Error("Cannot complete a visit without a visit id.")
+      }
+
+      return fetch<Visit>(makeApiUrl("visits", visitId), {
         method: "PATCH",
         data: payload,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.visits.detail(visitId ?? ""),
       })
+    },
+    onSuccess: (savedVisit) => {
+      const visitToCache =
+        savedVisit.itinerary_item || itineraryItemId === undefined
+          ? savedVisit
+          : { ...savedVisit, itinerary_item: itineraryItemId }
 
-      queryClient.setQueryData(
-        queryKeys.itineraries.detail(itineraryId ?? ""),
-        (current: Itinerary | undefined) => {
-          if (!current) return current
-          return {
-            ...current,
-            items: current.items.map((item) =>
-              item.id === itineraryItemId
-                ? {
-                    ...item,
-                    visits: item.visits.map((visit) =>
-                      visit.id === visitId
-                        ? { ...visit, completed: true }
-                        : visit,
-                    ),
-                  }
-                : item,
-            ),
-          }
-        },
-      )
+      updateVisitCaches(queryClient, itineraryId, visitToCache, visitId)
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.visits.detail(visitId ?? visitToCache.id),
+      })
     },
   })
 }

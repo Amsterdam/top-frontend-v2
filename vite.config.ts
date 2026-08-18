@@ -11,10 +11,15 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      injectRegister: false,
+      injectRegister: "auto",
       manifest: false,
-      registerType: "prompt",
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+        navigateFallbackAllowlist: [/^\//],
+      },
       includeAssets: [
+        "favicon.ico",
         "favicon/favicon.ico",
         "favicon/icon.svg",
         "favicon/apple-touch-icon.png",
@@ -35,6 +40,21 @@ export default defineConfig({
               expiration: {
                 maxEntries: 1,
                 maxAgeSeconds: 24 * 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /\/favicon(?:\/.*)?\.(?:ico|svg)$/,
+            method: "GET",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "favicon-runtime",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60,
               },
               cacheableResponse: {
                 statuses: [0, 200],
