@@ -61,7 +61,7 @@ export default function ListPage() {
         <Row align="between" wrap>
           <Heading
             level={1}
-          >{`Looplijst ${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
+          >{`Looplijst 67${dayjs(itinerary?.created_at).format("dddd D MMMM")}`}</Heading>
 
           <ActionGroup>
             <GoogleMapsButton addresses={addresses} />
