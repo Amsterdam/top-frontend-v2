@@ -27,7 +27,7 @@ export default defineConfig({
         "app-icons/icon-512.png",
       ],
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,pngw,svg,webp,woff2}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
         navigateFallback: "index.html",
         cleanupOutdatedCaches: true,
         runtimeCaching: [
