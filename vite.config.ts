@@ -11,9 +11,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      injectRegister: false,
+      injectRegister: "auto",
       manifest: false,
-      registerType: "prompt",
+      registerType: "autoUpdate",
       devOptions: {
         enabled: true,
         navigateFallbackAllowlist: [/^\//],
@@ -74,7 +74,7 @@ export default defineConfig({
               },
               cacheableResponse: {
                 statuses: [0, 200],
-              },  
+              },
             },
           },
           {

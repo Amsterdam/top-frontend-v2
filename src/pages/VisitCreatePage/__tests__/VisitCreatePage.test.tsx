@@ -143,7 +143,7 @@ describe("VisitCreatePage", () => {
     })
   })
 
-  it("uses token user id fallback when saving offline without a loaded current user", async () => {
+  it("uses token user id fallback when saving without a loaded current user", async () => {
     mockUseCurrentUser.mockReturnValue(undefined)
     mockUseTokenPayload.mockReturnValue({ oid: "token-user-id" })
     mockUseItinerary.mockReturnValue({
@@ -153,8 +153,8 @@ describe("VisitCreatePage", () => {
       refetch: mockRefetchItinerary,
     })
     mockMutate.mockImplementation(
-      (_payload: unknown, options: { onSuccess: (value: { queued: boolean }) => void }) => {
-        options.onSuccess({ queued: true })
+      (_payload: unknown, options: { onSuccess: () => void }) => {
+        options.onSuccess()
       },
     )
 
@@ -177,7 +177,7 @@ describe("VisitCreatePage", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/looplijsten/1000")
     expect(mockShowToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Bezoek offline opgeslagen",
+        title: "Bezoek succesvol verwerkt!",
       }),
     )
   })

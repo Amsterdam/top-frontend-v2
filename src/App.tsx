@@ -8,21 +8,13 @@ import dayjs from "dayjs"
 import { router } from "@/router"
 import { queryClient } from "@/api/queryClient"
 import { ToastProvider, AmsterdamCrossSpinner } from "@/components"
-import { usePwaUpdatePrompt, useOfflineVisitSync } from "@/hooks"
 import "dayjs/locale/nl"
 
 dayjs.locale("nl")
 
-function PwaUpdatePrompt() {
-  usePwaUpdatePrompt()
-  return null
-}
-
 function App() {
   const auth = useAuth()
   const hasTriedSignin = useRef(false)
-
-  useOfflineVisitSync()
 
   // automatically sign-in
   useEffect(() => {
@@ -55,7 +47,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <PwaUpdatePrompt />
         <RouterProvider router={router} />
       </ToastProvider>
       {import.meta.env.DEV && <ReactQueryDevtools />}

@@ -27,12 +27,10 @@ export function CompleteVisitButton({
     completeVisit.mutate(
       { completed: true },
       {
-        onSuccess: ({ queued }) => {
+        onSuccess: () => {
           showToast({
-            title: queued ? "Bezoek offline afgerond" : "Bezoek afgerond",
-            description: queued
-              ? "De afronding is lokaal opgeslagen en wordt automatisch gesynchroniseerd zodra je weer online bent."
-              : "Het bezoek is succesvol afgerond.",
+            title: "Bezoek afgerond",
+            description: "Het bezoek is succesvol afgerond.",
             severity: "success",
           })
           closeDialog()

@@ -12,12 +12,12 @@ cd top-frontend-v2
 npm install
 ```
 
-## Running
+Then open `http://localhost:3000`
 
-Using the acceptance backend is easiest:
+## Run locally using node
 
 ```bash
-npm start
+npm start acc
 ```
 
 ## PWA
@@ -41,17 +41,14 @@ installed as a PWA.
   - If the network is unavailable, the last successful cached `GET` response is
     used when available.
 - **Mutating API requests (`POST`, `PUT`, `PATCH`, `DELETE`):** network only.
-  - Visit-related changes made while offline are stored in a local queue.
-  - The queue is replayed automatically when the app comes back online, or on
-    the next app launch while online.
+  - Creating, saving, completing, and reordering visits requires an active
+    network connection.
 - **Retention:** runtime API caches are kept for up to 24 hours.
 
 ### Offline UI
 
 - When the browser is offline, the page header menu shows `WiFiIcon` with the
   label `Offline`.
-- Saving or completing a visit while offline shows a success toast explaining
-  that the change is queued and will sync automatically.
 
 ## Deploying
 
@@ -78,9 +75,6 @@ tree -I "node_modules|.next|.git" -L 10 > directory-tree.txt
 
 1. Go to the ee-ads-rhf repo.
 2. Run `npm run build`
-3. Copy paste the .tgz file to this repo.
-4. Install:
-
-```typescript
-npm install ./amsterdam-ee-ads-rhf-lib-0.0.0.tgz
-```
+3. Run `npm link`
+4. Go back to this repo
+5. Run `npm link @amsterdam/ee-ads-rhf`

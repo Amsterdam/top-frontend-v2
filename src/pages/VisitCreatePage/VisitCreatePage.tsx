@@ -115,16 +115,13 @@ export default function CreateVisitPage() {
     const payload = mapValues({ ...values, ...initialValues })
 
     saveVisit.mutate(payload, {
-      onSuccess: async ({ queued }) => {
+      onSuccess: async () => {
         await moveItineraryItemToBottom()
         navigate(`/looplijsten/${itineraryId}`)
         showToast({
-          title: queued
-            ? "Bezoek offline opgeslagen"
-            : "Bezoek succesvol verwerkt!",
-          description: queued
-            ? "Het bezoek is lokaal opgeslagen en wordt automatisch gesynchroniseerd zodra je weer online bent."
-            : "Het bezoek is verwerkt en opgeslagen. Je wordt nu teruggestuurd naar de looplijst.",
+          title: "Bezoek succesvol verwerkt!",
+          description:
+            "Het bezoek is verwerkt en opgeslagen. Je wordt nu teruggestuurd naar de looplijst.",
           severity: "success",
         })
       },
