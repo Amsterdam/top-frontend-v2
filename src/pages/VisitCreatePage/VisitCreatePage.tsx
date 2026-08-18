@@ -21,15 +21,9 @@ import StepCanNextVisitGoAhead from "./StepCanNextVisitGoAhead/StepCanNextVisitG
 import StepNotesAndDescription from "./StepNotesAndDescription/StepNotesAndDescription"
 import { mapValues } from "./helpers/mapValues"
 import { mapVisitToFormValues } from "./helpers/mapVisitToFormValues"
-import {
-  useCurrentUser,
-  useMoveItineraryItemToBottom,
-  useTokenPayload,
-} from "@/hooks"
+import { useCurrentUser, useMoveItineraryItemToBottom } from "@/hooks"
 import { useToast } from "@/components/toasts/useToast"
 
-const getTokenClaimAsString = (claim: unknown) =>
-  typeof claim === "string" && claim.trim() ? claim : undefined
 
 export default function CreateVisitPage() {
   const { itineraryId, caseId, visitId } = useParams<{
@@ -47,7 +41,6 @@ export default function CreateVisitPage() {
     { enabled: false },
   )
   const currentUser = useCurrentUser()
-  const tokenPayload = useTokenPayload()
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
   const { showToast } = useToast()
@@ -98,17 +91,12 @@ export default function CreateVisitPage() {
   }, [visit, form])
 
   const onSubmit = async (values: FormValuesVisit) => {
-    const authorId =
-      currentUser?.id ??
-      getTokenClaimAsString(tokenPayload?.oid) ??
-      getTokenClaimAsString(tokenPayload?.sub)
-
-    if (!authorId || !caseId || !itineraryItem?.id) return
+    if (!currentUser?.id || !caseId || !itineraryItem?.id) return
 
     setIsLoading(true)
 
     const initialValues = {
-      author: authorId,
+      author: currentUser?.id,
       case_id: caseId,
       itinerary_item: itineraryItem?.id,
     }

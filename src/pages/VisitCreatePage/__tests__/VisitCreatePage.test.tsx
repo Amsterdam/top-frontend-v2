@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from "@testing-library/react"
+import { render, waitFor } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import VisitCreatePage from "../VisitCreatePage"
@@ -16,7 +16,6 @@ const mockShowToast = vi.fn()
 const mockUseVisit = vi.fn()
 const mockUseItinerary = vi.fn()
 const mockUseCurrentUser = vi.fn()
-const mockUseTokenPayload = vi.fn()
 
 vi.mock("react-router", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-router")>()
@@ -36,7 +35,6 @@ vi.mock("@/api/hooks", () => ({
 
 vi.mock("@/hooks", () => ({
   useCurrentUser: () => mockUseCurrentUser(),
-  useTokenPayload: () => mockUseTokenPayload(),
   useMoveItineraryItemToBottom: () => ({
     moveItineraryItemToBottom: mockMoveItineraryItemToBottom,
   }),
@@ -118,7 +116,6 @@ describe("VisitCreatePage", () => {
       refetch: mockRefetchItinerary,
     })
     mockUseCurrentUser.mockReturnValue({ id: "user-1" })
-    mockUseTokenPayload.mockReturnValue(undefined)
     mockMoveItineraryItemToBottom.mockResolvedValue(undefined)
   })
 
@@ -143,42 +140,5 @@ describe("VisitCreatePage", () => {
     })
   })
 
-  it("uses token user id fallback when saving without a loaded current user", async () => {
-    mockUseCurrentUser.mockReturnValue(undefined)
-    mockUseTokenPayload.mockReturnValue({ oid: "token-user-id" })
-    mockUseItinerary.mockReturnValue({
-      data: {
-        items: [{ id: 123, case: { id: Number(mockParams.caseId) }, visits: [] }],
-      },
-      refetch: mockRefetchItinerary,
-    })
-    mockMutate.mockImplementation(
-      (_payload: unknown, options: { onSuccess: () => void }) => {
-        options.onSuccess()
-      },
-    )
 
-    const { getAllByRole } = render(<VisitCreatePage />)
-
-    const submitButtons = getAllByRole("button", { name: "Opslaan" })
-    fireEvent.click(submitButtons[submitButtons.length - 1])
-
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          author: "token-user-id",
-          case_id: mockParams.caseId,
-          itinerary_item: 123,
-        }),
-        expect.any(Object),
-      )
-    })
-
-    expect(mockNavigate).toHaveBeenCalledWith("/looplijsten/1000")
-    expect(mockShowToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: "Bezoek succesvol verwerkt!",
-      }),
-    )
-  })
 })
