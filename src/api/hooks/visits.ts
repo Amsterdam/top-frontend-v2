@@ -120,6 +120,14 @@ export const useSaveVisit = ({ visitId, itineraryId }: SaveVisitOptions) => {
       } else {
         queryClient.invalidateQueries({ queryKey: queryKeys.visits.all })
       }
+      // The generated schema types `case_id` as a string, but the API
+      // actually returns the related case as `{ id, case_id }`.
+      const caseId = (
+        savedVisit.case_id as unknown as { id: number; case_id: string }
+      ).case_id
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.cases.visits(Number(caseId)),
+      })
     },
   })
 }
