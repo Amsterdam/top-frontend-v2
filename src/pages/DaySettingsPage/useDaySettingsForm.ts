@@ -117,7 +117,6 @@ export function useDaySettingsForm({
     saveDaySetting.mutate(payload, {
       onSuccess: (res) => {
         if (res?.id) {
-          console.log("RESPONSE => ", res)
           const count = res.case_count.count
           const action = daySettingsId ? "bijgewerkt" : "aangemaakt"
 
@@ -128,7 +127,7 @@ export function useDaySettingsForm({
                   count === 1 ? "beschikbaar bezoek" : "beschikbare bezoeken"
                 }.`
           }`
-          
+
           showToast({
             title: "Daginstelling opgeslagen!",
             description: description,
