@@ -117,9 +117,21 @@ export function useDaySettingsForm({
     saveDaySetting.mutate(payload, {
       onSuccess: (res) => {
         if (res?.id) {
+          console.log("RESPONSE => ", res)
+          const count = res.case_count.count
+          const action = daySettingsId ? "bijgewerkt" : "aangemaakt"
+
+          const description = `De daginstelling is succesvol ${action}. ${
+            count === 0
+              ? "Er zijn geen beschikbare bezoeken."
+              : `Er ${count === 1 ? "is" : "zijn"} ${count} ${
+                  count === 1 ? "beschikbaar bezoek" : "beschikbare bezoeken"
+                }.`
+          }`
+          
           showToast({
             title: "Daginstelling opgeslagen!",
-            description: `De daginstelling is succesvol ${daySettingsId ? "bijgewerkt" : "aangemaakt"}.`,
+            description: description,
             severity: "success",
           })
           onSuccess?.(res.id)
