@@ -52,6 +52,8 @@ export const queryKeys = {
   puntenteller: {
     invoerwaarden: (bagId: string) =>
       ["puntenteller", "invoerwaarden", bagId] as const,
+    gebruikersinvoer: (bagId: string) =>
+      ["puntenteller", "gebruikersinvoer", bagId] as const,
   },
 
   teamSettings: {

@@ -24,7 +24,6 @@ import { mapVisitToFormValues } from "./helpers/mapVisitToFormValues"
 import { useCurrentUser, useMoveItineraryItemToBottom } from "@/hooks"
 import { useToast } from "@/components/toasts/useToast"
 
-
 export default function CreateVisitPage() {
   const { itineraryId, caseId, visitId } = useParams<{
     itineraryId: string
