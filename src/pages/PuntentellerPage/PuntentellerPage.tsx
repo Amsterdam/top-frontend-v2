@@ -6,7 +6,7 @@ export default function PuntentellerPage() {
   const navigate = useNavigate()
 
   return (
-    <Grid paddingBottom="x-large" paddingTop="large">
+    <Grid paddingBottom="x-large" paddingTop="large" gapVertical="large">
       <Grid.Cell span="all" appearance="transparent">
         <Heading level={1}>Puntenteller</Heading>
       </Grid.Cell>

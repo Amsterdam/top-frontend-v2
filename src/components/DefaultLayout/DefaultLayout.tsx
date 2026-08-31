@@ -1,6 +1,13 @@
 import { type MouseEvent } from "react"
 import { Outlet, useNavigate } from "react-router"
-import { Button, Dialog, Menu, Page, PageHeader, Paragraph } from "@amsterdam/design-system-react"
+import {
+  Button,
+  Dialog,
+  Menu,
+  Page,
+  PageHeader,
+  Paragraph,
+} from "@amsterdam/design-system-react"
 import {
   AwardRibbonIcon,
   HouseCanalIcon,
@@ -151,8 +158,19 @@ export function DefaultLayout() {
 
       <Footer />
 
-      <Dialog heading="Offline" id="offline-dialog" footer={<Button variant="secondary" onClick={(e) => Dialog.close(e)}>Sluiten</Button>}>
-        <Paragraph>Je bent momenteel offline. Sommige functionaliteiten zijn mogelijk beperkt.</Paragraph>
+      <Dialog
+        heading="Offline"
+        id="offline-dialog"
+        footer={
+          <Button variant="secondary" onClick={(e) => Dialog.close(e)}>
+            Sluiten
+          </Button>
+        }
+      >
+        <Paragraph>
+          Je bent momenteel offline. Sommige functionaliteiten zijn mogelijk
+          beperkt.
+        </Paragraph>
       </Dialog>
     </Page>
   )

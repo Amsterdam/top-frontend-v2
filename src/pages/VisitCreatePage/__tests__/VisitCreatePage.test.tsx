@@ -139,6 +139,4 @@ describe("VisitCreatePage", () => {
       expect(mockRefetchItinerary).toHaveBeenCalledTimes(1)
     })
   })
-
-
 })

@@ -46,3 +46,7 @@ body {
   padding: 0;
   background-color: var(--ams-page-background-color);
 }
+
+.align-items-end {
+  align-items: flex-end;
+}
