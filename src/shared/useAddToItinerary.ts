@@ -8,6 +8,11 @@ import { getTopPosition } from "./getTopPosition"
 
 export type AddToItineraryStatus = "idle" | "loading" | "added" | "error"
 
+type StatusState = {
+  caseId?: string
+  value: AddToItineraryStatus
+}
+
 export type AddToItinerary = {
   caseData?: Case
   caseThemeName?: string
@@ -23,16 +28,20 @@ export type AddToItinerary = {
 export function useAddToItinerary(caseData?: Case): AddToItinerary {
   const { data: itineraries } = useItinerariesSummary()
   const { mutateAsync: createItineraryItem } = useCreateItineraryItem()
-  const [status, setStatus] = useState<AddToItineraryStatus>("idle")
+  const [statusState, setStatusState] = useState<StatusState>({
+    value: "idle",
+  })
 
+  const caseId = caseData ? String(caseData.id) : undefined
+  const status =
+    statusState.caseId === caseId ? statusState.value : ("idle" as const)
   const caseThemeName = caseData?.theme?.name
   const matchingItineraries = (itineraries ?? []).filter(
     (itinerary) => itinerary.theme === caseThemeName,
   )
   const targetItinerary = matchingItineraries[0]
-  const { data: targetItineraryDetail } = useItinerary(
-    targetItinerary ? String(targetItinerary.id) : undefined,
-  )
+  const { data: targetItineraryDetail, isSuccess: hasTargetItineraryDetail } =
+    useItinerary(targetItinerary ? String(targetItinerary.id) : undefined)
 
   // Case ids come back as numeric strings from some endpoints and numbers
   // from others (despite the shared Case type claiming number), so compare
@@ -43,14 +52,14 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
       ) ?? false)
     : false
   const canAdd =
-    Boolean(caseData && targetItinerary) &&
+    Boolean(caseData && targetItinerary && hasTargetItineraryDetail) &&
     !isAlreadyInTargetItinerary &&
     (!caseData?.teams || caseData.teams.length === 0)
 
   const onAdd = async () => {
     if (!caseData || !targetItinerary || isAlreadyInTargetItinerary) return
 
-    setStatus("loading")
+    setStatusState({ caseId, value: "loading" })
     try {
       await createItineraryItem({
         itinerary: targetItinerary.id,
@@ -58,9 +67,9 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
         position: getTopPosition(targetItineraryDetail?.items),
         case: caseData,
       })
-      setStatus("added")
+      setStatusState({ caseId, value: "added" })
     } catch {
-      setStatus("error")
+      setStatusState({ caseId, value: "error" })
     }
   }
 

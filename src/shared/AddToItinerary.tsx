@@ -68,7 +68,21 @@ export function AddToItineraryAlert({
     ) : null
   }
 
-  if (hasItineraries && !hasMatchingItinerary) {
+  if (!hasItineraries) {
+    return (
+      <Alert
+        closeable={false}
+        heading="Geen looplijst beschikbaar"
+        headingLevel={2}
+      >
+        <Paragraph>
+          Maak eerst een looplijst aan voordat je een zaak toevoegt.
+        </Paragraph>
+      </Alert>
+    )
+  }
+
+  if (!hasMatchingItinerary) {
     return (
       <Alert
         closeable={false}
