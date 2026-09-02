@@ -99,9 +99,7 @@ export function AddToItineraryAlert({
 
   return (
     <>
-      {!isAlreadyInTargetItinerary &&
-        caseData.teams &&
-        caseData.teams.length > 0 && (
+{caseData.teams && caseData.teams.length > 0 && (
           <Alert
             closeable={false}
             heading="In looplijst"
