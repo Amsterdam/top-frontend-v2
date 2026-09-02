@@ -159,7 +159,7 @@ export default function CaseDetailPage() {
   }
 
   const renderHeader = (addToItineraryButton?: ReactNode) => (
-    <Row align="between" wrap>
+    <Row align="between" alignVertical="center" wrap>
       <Row wrap alignVertical="center">
         <Heading level={1}>{formatAddress(data.address, true)}</Heading>
         <StatusBadge statusName={statusName} />

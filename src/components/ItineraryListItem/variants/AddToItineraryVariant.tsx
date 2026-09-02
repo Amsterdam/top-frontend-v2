@@ -50,7 +50,7 @@ export function AddToItineraryVariant({ item }: Props) {
 
     if (caseData.teams?.length) {
       visitWrapperNotification.pushNotification({
-        tone: "success",
+        tone: "info",
         label: `In looplijst van ${caseData.teams[0]
           .map((teamMember) => teamMember.user.full_name)
           .join(", ")}`,

@@ -100,12 +100,7 @@ export function AddToItineraryAlert({
   return (
     <>
       {caseData.teams && caseData.teams.length > 0 && (
-        <Alert
-          closeable={false}
-          heading="In looplijst"
-          headingLevel={2}
-          severity="success"
-        >
+        <Alert closeable={false} heading="In looplijst" headingLevel={2}>
           <Paragraph>
             {`In looplijst van ${caseData.teams[0]
               .map((teamMember) => teamMember.user.full_name)
