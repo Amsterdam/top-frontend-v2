@@ -48,6 +48,17 @@ export function AddToItineraryVariant({ item }: Props) {
       return
     }
 
+    if (caseData.teams?.length) {
+      visitWrapperNotification.pushNotification({
+        tone: "success",
+        label: `In looplijst van ${caseData.teams[0]
+          .map((teamMember) => teamMember.user.full_name)
+          .join(", ")}`,
+        icon: CheckMarkIcon,
+      })
+      return
+    }
+
     if (status === "error") {
       visitWrapperNotification.pushNotification({
         tone: "error",
