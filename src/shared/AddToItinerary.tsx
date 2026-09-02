@@ -97,27 +97,30 @@ export function AddToItineraryAlert({
     )
   }
 
-  return (
-    <>
-      {caseData.teams && caseData.teams.length > 0 && (
-        <Alert closeable={false} heading="In looplijst" headingLevel={2}>
-          <Paragraph>
-            {`In looplijst van ${caseData.teams[0]
-              .map((teamMember) => teamMember.user.full_name)
-              .join(", ")}`}
-          </Paragraph>
-        </Alert>
-      )}
-      {status === "error" && (
-        <Alert
-          closeable={false}
-          heading="Toevoegen mislukt"
-          headingLevel={2}
-          severity="error"
-        >
-          <Paragraph>Probeer het opnieuw.</Paragraph>
-        </Alert>
-      )}
-    </>
-  )
+  if (caseData.teams && caseData.teams.length > 0) {
+    return (
+      <Alert closeable={false} heading="In looplijst" headingLevel={2}>
+        <Paragraph>
+          {`In looplijst van ${caseData.teams[0]
+            .map((teamMember) => teamMember.user.full_name)
+            .join(", ")}`}
+        </Paragraph>
+      </Alert>
+    )
+  }
+
+  if (status === "error") {
+    return (
+      <Alert
+        closeable={false}
+        heading="Toevoegen mislukt"
+        headingLevel={2}
+        severity="error"
+      >
+        <Paragraph>Probeer het opnieuw.</Paragraph>
+      </Alert>
+    )
+  }
+
+  return null
 }
