@@ -20,7 +20,7 @@ import {
   VisitWrapperNotificationContext,
   type VisitWrapperNotification,
   type VisitWrapperNotificationTone,
-} from "./visit-notification"
+} from "./visit.notification"
 
 type Props = {
   item: ItineraryItem
@@ -108,11 +108,13 @@ export function VisitWrapper({ children, variant, item }: Props) {
   const notificationStyle = notification
     ? notificationToneConfig[notification.tone]
     : null
-  const cardStatusClassName = notificationStyle
-    ? `${styles.NotificationCard} ${notificationStyle.className}`
-    : isDefaultVariant
-      ? `${styles.StateCard} ${state.className}`
-      : ""
+  let cardStatusClassName = ""
+
+  if (notificationStyle) {
+    cardStatusClassName = `${styles.NotificationCard} ${notificationStyle.className}`
+  } else if (isDefaultVariant) {
+    cardStatusClassName = `${styles.StateCard} ${state.className}`
+  }
 
   return (
     <VisitWrapperNotificationContext.Provider value={notificationApi}>

@@ -48,15 +48,15 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
   // Case ids come back as numeric strings from some endpoints and numbers
   // from others (despite the shared Case type claiming number), so compare
   // as strings rather than risk a Number()/string mismatch that's always false.
-  const isAlreadyInTargetItinerary = caseData
-    ? (targetItineraryDetail?.items.some(
-        (item) => String(item.case.id) === String(caseData.id),
-      ) ?? false)
-    : false
+  const targetItineraryItems = targetItineraryDetail?.items ?? []
+  const isAlreadyInTargetItinerary = targetItineraryItems.some(
+    (item) => String(item.case.id) === caseId,
+  )
+  const hasNoTeams = !caseData?.teams?.length
   const canAdd =
     Boolean(caseData && targetItinerary && hasTargetItineraryDetail) &&
     !isAlreadyInTargetItinerary &&
-    (!caseData?.teams || caseData.teams.length === 0)
+    hasNoTeams
 
   const onAdd = async () => {
     if (!caseData || !targetItinerary || isAlreadyInTargetItinerary) return

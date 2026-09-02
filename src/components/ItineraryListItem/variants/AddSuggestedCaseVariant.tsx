@@ -63,18 +63,17 @@ export function AddSuggestedCaseVariant({ item, onAdd, status }: Props) {
 
   return (
     <Column alignHorizontal="end" align="between">
-      {status === "added" ? (
-        visitWrapperNotification ? null : (
-          <Row
-            align="center"
-            gap="x-small"
-            style={{ color: "var(--ams-color-feedback-success)" }}
-          >
-            <Icon svg={CheckMarkIcon} />
-            <Paragraph style={{ color: "inherit" }}>Toegevoegd</Paragraph>
-          </Row>
-        )
-      ) : (
+      {status === "added" && !visitWrapperNotification && (
+        <Row
+          align="center"
+          gap="x-small"
+          style={{ color: "var(--ams-color-feedback-success)" }}
+        >
+          <Icon svg={CheckMarkIcon} />
+          <Paragraph style={{ color: "inherit" }}>Toegevoegd</Paragraph>
+        </Row>
+      )}
+      {status !== "added" && (
         <Button
           icon={status === "loading" ? SettingsIcon : PlusIcon}
           variant="secondary"
