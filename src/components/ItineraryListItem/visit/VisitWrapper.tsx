@@ -139,6 +139,7 @@ export function VisitWrapper({ children, variant, item }: Props) {
 
         {notification && notificationStyle && (
           <Row
+            role="status"
             alignVertical="center"
             gap="small"
             className={`${styles.NotificationRow} ${notificationStyle.className}`}
