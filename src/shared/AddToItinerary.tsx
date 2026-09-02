@@ -42,8 +42,8 @@ export function AddToItineraryAlert({
     caseData,
     caseThemeName,
     hasItineraries,
+    hasItinerariesSummarySuccess,
     hasMatchingItinerary,
-    isAlreadyInTargetItinerary,
     status,
     targetItinerary,
   } = addToItinerary
@@ -68,7 +68,7 @@ export function AddToItineraryAlert({
     ) : null
   }
 
-  if (!hasItineraries) {
+  if (hasItinerariesSummarySuccess && !hasItineraries) {
     return (
       <Alert
         closeable={false}
@@ -82,7 +82,7 @@ export function AddToItineraryAlert({
     )
   }
 
-  if (!hasMatchingItinerary) {
+  if (hasItinerariesSummarySuccess && !hasMatchingItinerary) {
     return (
       <Alert
         closeable={false}
@@ -99,20 +99,20 @@ export function AddToItineraryAlert({
 
   return (
     <>
-{caseData.teams && caseData.teams.length > 0 && (
-          <Alert
-            closeable={false}
-            heading="In looplijst"
-            headingLevel={2}
-            severity="success"
-          >
-            <Paragraph>
-              {`In looplijst van ${caseData.teams[0]
-                .map((teamMember) => teamMember.user.full_name)
-                .join(", ")}`}
-            </Paragraph>
-          </Alert>
-        )}
+      {caseData.teams && caseData.teams.length > 0 && (
+        <Alert
+          closeable={false}
+          heading="In looplijst"
+          headingLevel={2}
+          severity="success"
+        >
+          <Paragraph>
+            {`In looplijst van ${caseData.teams[0]
+              .map((teamMember) => teamMember.user.full_name)
+              .join(", ")}`}
+          </Paragraph>
+        </Alert>
+      )}
       {status === "error" && (
         <Alert
           closeable={false}

@@ -18,6 +18,7 @@ export type AddToItinerary = {
   caseThemeName?: string
   canAdd: boolean
   hasItineraries: boolean
+  hasItinerariesSummarySuccess: boolean
   hasMatchingItinerary: boolean
   isAlreadyInTargetItinerary: boolean
   onAdd: () => Promise<void>
@@ -26,7 +27,8 @@ export type AddToItinerary = {
 }
 
 export function useAddToItinerary(caseData?: Case): AddToItinerary {
-  const { data: itineraries } = useItinerariesSummary()
+  const { data: itineraries, isSuccess: hasItinerariesSummarySuccess } =
+    useItinerariesSummary()
   const { mutateAsync: createItineraryItem } = useCreateItineraryItem()
   const [statusState, setStatusState] = useState<StatusState>({
     value: "idle",
@@ -78,6 +80,7 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
     caseThemeName,
     canAdd,
     hasItineraries: (itineraries?.length ?? 0) > 0,
+    hasItinerariesSummarySuccess,
     hasMatchingItinerary: matchingItineraries.length > 0,
     isAlreadyInTargetItinerary,
     onAdd,
