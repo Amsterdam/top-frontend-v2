@@ -1,6 +1,8 @@
+import { type ReactNode } from "react"
 import {
   ActionGroup,
   Button,
+  Column,
   Grid,
   Heading,
   Row,
@@ -21,9 +23,14 @@ import {
   useRegistrations,
 } from "@/api/hooks"
 import { StatusBadge } from "@/components"
-import { AddToItineraryVariant } from "@/components/ItineraryListItem/variants"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
-import { formatAddress, getWorkflowName } from "@/shared"
+import {
+  AddToItineraryAlert,
+  AddToItineraryButton,
+  formatAddress,
+  getWorkflowName,
+  useAddToItinerary,
+} from "@/shared"
 
 import CaseInfoCard from "./CaseInfoCard/CaseInfoCard"
 import HistoryCard from "./HistoryCard/HistoryCard"
@@ -93,6 +100,7 @@ export default function CaseDetailPage() {
     !isBusyVakantieverhuur &&
     !registrations.length &&
     !meldingen.length
+  const addToItinerary = useAddToItinerary(data)
 
   if (isPending) {
     return (
@@ -150,70 +158,89 @@ export default function CaseDetailPage() {
     return null
   }
 
+  const renderHeader = (addToItineraryButton?: ReactNode) => (
+    <Row align="between" wrap>
+      <Row wrap alignVertical="center">
+        <Heading level={1}>{formatAddress(data.address, true)}</Heading>
+        <StatusBadge statusName={statusName} />
+      </Row>
+      <ActionGroup>
+        {visitState === VisitState.InProgress &&
+          itineraryItem &&
+          mostRecentVisit && (
+            <>
+              <Button
+                variant="secondary"
+                icon={DeleteIcon}
+                onClick={deleteItineraryItem}
+              >
+                Verwijderen
+              </Button>
+              <Button
+                variant="secondary"
+                icon={PencilIcon}
+                onClick={() =>
+                  navigate(
+                    `/looplijsten/${itineraryId}/zaken/${itineraryItem.case?.id}/bezoek/${mostRecentVisit.id}`,
+                  )
+                }
+              >
+                Bewerken
+              </Button>
+              <CompleteVisitButton
+                visitId={mostRecentVisit.id}
+                itineraryItemId={itineraryItem.id}
+              />
+            </>
+          )}
+        {visitState === VisitState.Pending && itineraryItem && (
+          <>
+            <Button
+              variant="secondary"
+              icon={DeleteIcon}
+              onClick={deleteItineraryItem}
+            >
+              Verwijderen
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() =>
+                navigate(
+                  `/looplijsten/${itineraryId}/zaken/${caseId}/bezoek/nieuw`,
+                )
+              }
+              icon={HouseIcon}
+            >
+              Bezoek
+            </Button>
+          </>
+        )}
+        {addToItineraryButton}
+      </ActionGroup>
+    </Row>
+  )
+
   return (
     <>
       {dialog}
       <Grid paddingVertical="large" gapVertical="large">
         <Grid.Cell span="all" appearance="transparent">
-          <Row align="between" wrap>
-            <Row wrap alignVertical="center">
-              <Heading level={1}>{formatAddress(data?.address, true)}</Heading>
-              <StatusBadge statusName={statusName} />
-            </Row>
-            <ActionGroup>
-              {visitState === VisitState.InProgress &&
-                itineraryItem &&
-                mostRecentVisit && (
-                  <>
-                    <Button
-                      variant="secondary"
-                      icon={DeleteIcon}
-                      onClick={deleteItineraryItem}
-                    >
-                      Verwijderen
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      icon={PencilIcon}
-                      onClick={() =>
-                        navigate(
-                          `/looplijsten/${itineraryId}/zaken/${itineraryItem.case?.id}/bezoek/${mostRecentVisit.id}`,
-                        )
-                      }
-                    >
-                      Bewerken
-                    </Button>
-                    <CompleteVisitButton
-                      visitId={mostRecentVisit.id}
-                      itineraryItemId={itineraryItem.id}
-                    />
-                  </>
+          <Column gap="large">
+            {itineraryItem ? (
+              renderHeader()
+            ) : (
+              <>
+                {renderHeader(
+                  <AddToItineraryButton
+                    canAdd={addToItinerary.canAdd}
+                    onAdd={addToItinerary.onAdd}
+                    status={addToItinerary.status}
+                  />,
                 )}
-              {visitState === VisitState.Pending && itineraryItem && (
-                <>
-                  <Button
-                    variant="secondary"
-                    icon={DeleteIcon}
-                    onClick={deleteItineraryItem}
-                  >
-                    Verwijderen
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() =>
-                      navigate(
-                        `/looplijsten/${itineraryId}/zaken/${caseId}/bezoek/nieuw`,
-                      )
-                    }
-                    icon={HouseIcon}
-                  >
-                    Bezoek
-                  </Button>
-                </>
-              )}
-              {!itineraryItem && <AddToItineraryVariant caseData={data} />}
-            </ActionGroup>
-          </Row>
+                <AddToItineraryAlert addToItinerary={addToItinerary} />
+              </>
+            )}
+          </Column>
         </Grid.Cell>
 
         <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 8 }}>
