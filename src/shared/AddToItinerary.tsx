@@ -86,7 +86,7 @@ export function AddToItineraryAlert({
     return (
       <Alert
         closeable={false}
-        heading="Kan niet toevoegen aan looplijst"
+        heading="Toevoegen aan looplijst niet mogelijk"
         headingLevel={2}
         severity="error"
       >
