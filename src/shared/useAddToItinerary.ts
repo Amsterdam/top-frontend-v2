@@ -1,11 +1,9 @@
 import { useState } from "react"
 import {
-  useCasesSearch,
   useCreateItineraryItem,
   useItinerariesSummary,
   useItinerary,
 } from "@/api/hooks"
-import { formatAddress } from "./formatAddress"
 import { getTopPosition } from "./getTopPosition"
 
 export type AddToItineraryStatus = "idle" | "loading" | "added" | "error"
@@ -40,17 +38,6 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
   const status =
     statusState.caseId === caseId ? statusState.value : ("idle" as const)
   const caseThemeName = caseData?.theme?.name
-  const needsTeamsLookup = Boolean(caseData && caseData.teams === undefined)
-  const caseAddressSearch = needsTeamsLookup
-    ? formatAddress(caseData?.address)
-    : ""
-  const { data: casesWithTeams } = useCasesSearch(caseAddressSearch, undefined, {
-    lazy: !caseAddressSearch,
-  })
-  const caseWithTeams = casesWithTeams?.find(
-    (searchCase) => String(searchCase.id) === caseId,
-  )
-  const teams = caseData?.teams ?? caseWithTeams?.teams
   const matchingItineraries = (itineraries ?? []).filter(
     (itinerary) => itinerary.theme === caseThemeName,
   )
@@ -65,13 +52,11 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
   const isAlreadyInTargetItinerary = targetItineraryItems.some(
     (item) => String(item.case.id) === caseId,
   )
-  const hasNoTeams = !teams?.length
-  const hasCheckedTeams = !needsTeamsLookup || Boolean(caseWithTeams)
+  const hasNoTeams = !caseData?.teams?.length
   const canAdd =
     Boolean(caseData && targetItinerary && hasTargetItineraryDetail) &&
     !isAlreadyInTargetItinerary &&
-    hasNoTeams &&
-    hasCheckedTeams
+    hasNoTeams
 
   const onAdd = async () => {
     if (!caseData || !targetItinerary || isAlreadyInTargetItinerary) return
@@ -91,7 +76,7 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
   }
 
   return {
-    caseData: caseData && teams ? { ...caseData, teams } : caseData,
+    caseData,
     caseThemeName,
     canAdd,
     hasItineraries: (itineraries?.length ?? 0) > 0,
