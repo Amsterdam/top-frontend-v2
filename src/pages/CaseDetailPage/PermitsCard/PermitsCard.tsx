@@ -47,7 +47,9 @@ export default function PermitsCard({ bagId, loading = false }: Props) {
   const showDummyData = isDevOrAcc && !permits?.length
   const permitsToUse = showDummyData ? dummyPowerBrowserResponse : permits
 
-  const sortedPermits = (permitsToUse ?? []).sort(sortPermits)
+  const sortedPermits = (Array.isArray(permitsToUse) ? permitsToUse : []).sort(
+    sortPermits,
+  )
 
   return (
     <Card
