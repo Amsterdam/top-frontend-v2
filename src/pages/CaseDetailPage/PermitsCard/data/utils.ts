@@ -44,7 +44,7 @@ export const isValidPermit = (permit: Permit): boolean => {
  * Filters only valid permits from a list
  */
 export const getValidPermits = (permits: Permit[]): Permit[] => {
-  return permits.filter(isValidPermit)
+  return Array.isArray(permits) ? permits.filter(isValidPermit) : []
 }
 
 /**
