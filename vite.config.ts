@@ -63,6 +63,36 @@ export default defineConfig({
             },
           },
           {
+            urlPattern: /^https?:\/\/.*\/api\/v1\/cases\/\d+\/$/,
+            method: "GET",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "case-detail-runtime",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 24 * 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /^https?:\/\/.*\/api\/v1\/search-v2\/.*$/,
+            method: "GET",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "case-search-runtime",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 24 * 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
             urlPattern: /^https?:\/\/.*\/api\/v1\/.*$/,
             method: "GET",
             handler: "NetworkFirst",

@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import {
   Column,
   Button,
@@ -7,10 +8,12 @@ import {
 } from "@amsterdam/design-system-react"
 import {
   CheckMarkIcon,
+  ErrorIcon,
   PlusIcon,
   SettingsIcon,
 } from "@amsterdam/design-system-react-icons"
 import { Distance } from "@/components/Distance/Distance"
+import { useVisitWrapperNotification } from "../visit"
 
 type Props = {
   item: ItineraryItem
@@ -20,10 +23,47 @@ type Props = {
 
 export function AddSuggestedCaseVariant({ item, onAdd, status }: Props) {
   const caseData = item.case
+  const visitWrapperNotification = useVisitWrapperNotification()
+
+  useEffect(() => {
+    if (!visitWrapperNotification) {
+      return
+    }
+
+    if (status === "added") {
+      visitWrapperNotification.pushNotification({
+        tone: "success",
+        label: "Toegevoegd",
+        icon: CheckMarkIcon,
+      })
+      return
+    }
+
+    if (status === "error") {
+      visitWrapperNotification.pushNotification({
+        tone: "error",
+        label: "Toevoegen mislukt, probeer het opnieuw.",
+        icon: ErrorIcon,
+      })
+      return
+    }
+
+    visitWrapperNotification.clearNotification()
+  }, [status, visitWrapperNotification])
+
+  useEffect(() => {
+    if (!visitWrapperNotification) {
+      return
+    }
+
+    return () => {
+      visitWrapperNotification.clearNotification()
+    }
+  }, [visitWrapperNotification])
 
   return (
     <Column alignHorizontal="end" align="between">
-      {status === "added" ? (
+      {status === "added" && !visitWrapperNotification && (
         <Row
           align="center"
           gap="x-small"
@@ -32,7 +72,8 @@ export function AddSuggestedCaseVariant({ item, onAdd, status }: Props) {
           <Icon svg={CheckMarkIcon} />
           <Paragraph style={{ color: "inherit" }}>Toegevoegd</Paragraph>
         </Row>
-      ) : (
+      )}
+      {status !== "added" && (
         <Button
           icon={status === "loading" ? SettingsIcon : PlusIcon}
           variant="secondary"
@@ -42,6 +83,11 @@ export function AddSuggestedCaseVariant({ item, onAdd, status }: Props) {
         >
           {status === "loading" ? "Toevoegen..." : "Toevoegen"}
         </Button>
+      )}
+      {status === "error" && !visitWrapperNotification && (
+        <Paragraph style={{ color: "var(--ams-color-feedback-error)" }}>
+          Toevoegen mislukt, probeer het opnieuw.
+        </Paragraph>
       )}
       <Distance distance={caseData?.distance} />
     </Column>
