@@ -3,8 +3,9 @@ import dayjs from "dayjs"
 export function filterKnownPermits(
   permits?: PermitDecos[],
 ): PermitDecos[] | undefined {
-  const result =
-    permits?.filter(({ permit_granted }) => permit_granted !== "UNKNOWN") || []
+  const result = Array.isArray(permits)
+    ? permits.filter(({ permit_granted }) => permit_granted !== "UNKNOWN")
+    : []
   return result.length === 0 ? undefined : result
 }
 

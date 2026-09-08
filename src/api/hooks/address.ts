@@ -78,13 +78,23 @@ export const usePermits = (bagId?: string) => {
   })
 }
 
+// The decos endpoint returns the permits wrapped in an object.
+type DecosResponse = {
+  permits?: PermitDecos[] | null
+  decos_folders?: boolean
+}
+
 export const usePermitsDecos = (bagId?: string) => {
   const fetch = useApiFetch()
 
   return useQuery({
     queryKey: queryKeys.addresses.permitsDecos(bagId ?? ""),
-    queryFn: () =>
-      fetch<PermitDecos[]>(makeApiUrl("addresses", bagId, "decos")),
+    queryFn: async () => {
+      const { permits } = await fetch<DecosResponse>(
+        makeApiUrl("addresses", bagId, "decos"),
+      )
+      return Array.isArray(permits) ? permits : []
+    },
     enabled: Boolean(bagId),
     meta: { globalErrorToast: false },
   })
