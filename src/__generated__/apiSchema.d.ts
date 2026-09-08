@@ -494,25 +494,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Legacy search endpoint */
+        /** @description Search endpoint for cases */
         get: operations["search_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/search-v2/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Search v2 endpoint for cases */
-        get: operations["search_v2_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2469,25 +2452,6 @@ export interface operations {
         };
     };
     search_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CaseSearch"][];
-                };
-            };
-        };
-    };
-    search_v2_list: {
         parameters: {
             query?: never;
             header?: never;
