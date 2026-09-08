@@ -5,7 +5,11 @@
   padding-block: var(--ams-grid-cell-padding-block);
   padding-inline: var(--ams-grid-cell-padding-inline);
   background-color: var(--ams-color-background);
+}
+
+.ContentCard {
   button {
+    position: relative;
     z-index: 999;
   }
 }
@@ -14,14 +18,41 @@
   border-left: 4px solid var(--state-color);
 }
 
+.NotificationCard {
+  border-left: 4px solid var(--notification-color);
+}
+
 .StateRow {
   align-items: center;
-  background-color: color-mix(in srgb, var(--state-color) 10%, white);
+  /*background-color: color-mix(in srgb, var(--state-color) 10%, white);*/
   margin-block-end: var(--ams-space-s);
 }
 
 .StateIcon {
   color: var(--state-color);
+}
+
+.NotificationRow {
+  align-items: center;
+  margin-block-end: var(--ams-space-s);
+  color: var(--notification-color);
+  /*background-color: color-mix(in srgb, var(--notification-color) 10%, white);*/
+}
+
+.NotificationIcon {
+  color: var(--notification-color);
+}
+
+.NotificationSuccess {
+  --notification-color: var(--ams-color-feedback-success);
+}
+
+.NotificationError {
+  --notification-color: var(--ams-color-feedback-error);
+}
+
+.NotificationInfo {
+  --notification-color: var(--ams-color-feedback-info);
 }
 
 /* specifieke states */
