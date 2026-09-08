@@ -78,7 +78,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https?:\/\/.*\/api\/v1\/search-v2\/.*$/,
+            urlPattern: /^https?:\/\/.*\/api\/v1\/search\/.*$/,
             method: "GET",
             handler: "NetworkFirst",
             options: {

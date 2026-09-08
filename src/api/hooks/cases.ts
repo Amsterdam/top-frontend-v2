@@ -17,7 +17,7 @@ export const useCasesSearch = (
 
   return useQuery({
     queryKey: queryKeys.cases.search(addressSearch, themeName),
-    queryFn: () => fetch<Case[]>(makeApiUrl("search-v2", queryString)),
+    queryFn: () => fetch<Case[]>(makeApiUrl("search", queryString)),
     enabled: !(options?.lazy ?? false),
   })
 }

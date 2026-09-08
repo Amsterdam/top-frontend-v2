@@ -55,7 +55,8 @@ export default function CaseDetailPage() {
     caseId: string
   }>()
   const { data, isPending } = useCase(Number(caseId))
-  const { data: itinerary } = useItinerary(itineraryId)
+  const { data: itinerary, isLoading: isItineraryLoading } =
+    useItinerary(itineraryId)
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
 
@@ -226,7 +227,7 @@ export default function CaseDetailPage() {
       <Grid paddingVertical="large" gapVertical="large">
         <Grid.Cell span="all" appearance="transparent">
           <Column gap="large">
-            {itineraryItem ? (
+            {itineraryItem || isItineraryLoading ? (
               renderHeader()
             ) : (
               <>
