@@ -8,7 +8,7 @@ import {
   Row,
   SearchField,
 } from "@amsterdam/design-system-react"
-import { useSearchParams } from "react-router"
+import { useLocation, useSearchParams } from "react-router"
 import debounce from "lodash.debounce"
 import { useCasesSearch } from "@/api/hooks"
 import { ItineraryListItem, ItineraryListItemVariant } from "@/components"
@@ -38,6 +38,7 @@ export function SearchAddressView({
   onCancel,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
   const initialSearchString = searchParams.get("q") ?? ""
   const [debouncedSearchString, setDebouncedSearchString] =
     useState<string>(initialSearchString)
@@ -54,9 +55,12 @@ export function SearchAddressView({
     () =>
       debounce((value: string) => {
         setDebouncedSearchString(value)
-        setSearchParams(value ? { q: value } : {}, { replace: true })
+        setSearchParams(value ? { q: value } : {}, {
+          replace: true,
+          state: location.state,
+        })
       }, DELAY),
-    [setSearchParams],
+    [setSearchParams, location.state],
   )
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +73,10 @@ export function SearchAddressView({
     e.preventDefault()
     debouncedSetValue.cancel()
     setDebouncedSearchString(inputValue)
-    setSearchParams(inputValue ? { q: inputValue } : {}, { replace: true })
+    setSearchParams(inputValue ? { q: inputValue } : {}, {
+      replace: true,
+      state: location.state,
+    })
   }
 
   const hasResult = !isBusy && isValid

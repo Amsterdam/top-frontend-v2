@@ -113,13 +113,10 @@ export default function CreateListPage() {
     const formValues = location.state?.formValues
 
     if (formValues) {
-      // Reset het formulier met alle bestaande values
-      form.reset(formValues)
-
-      // Indien startAddress aanwezig, zet het als startAddress
-      if (formValues.startAddress) {
-        form.setValue("startCase", formValues.startCase)
-      }
+      // Reset the form with the returned values. Merge with the current
+      // values so that an (unexpectedly) incomplete state does not wipe the rest of the
+      // form.
+      form.reset({ ...form.getValues(), ...formValues })
     }
   }, [location.state, form])
 

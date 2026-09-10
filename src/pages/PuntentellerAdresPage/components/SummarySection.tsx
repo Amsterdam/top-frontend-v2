@@ -1,4 +1,9 @@
-import { Heading, Icon, Row, type IconProps } from "@amsterdam/design-system-react"
+import {
+  Heading,
+  Icon,
+  Row,
+  type IconProps,
+} from "@amsterdam/design-system-react"
 import { Description } from "@/components"
 
 type Field = {

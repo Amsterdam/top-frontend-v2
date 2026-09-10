@@ -1,7 +1,15 @@
 .
+├── dev-dist
+│   ├── registerSW.js
+│   ├── sw.js
+│   └── workbox-8d0d8005.js
 ├── directory-prompt.txt
 ├── directory-tree.txt
 ├── dist
+│   ├── app-icons
+│   │   ├── icon-192.png
+│   │   └── icon-512.png
+│   ├── app.webmanifest
 │   ├── assets
 │   │   ├── AmsterdamSans-Black-CPolvDGu.woff2
 │   │   ├── AmsterdamSans-BoldItalic-DGVdd_B4.woff2
@@ -10,16 +18,16 @@
 │   │   ├── AmsterdamSans-Italic-DW94SgHh.woff2
 │   │   ├── AmsterdamSans-Light-D_AncfMf.woff2
 │   │   ├── AmsterdamSans-Regular-QnM7etvR.woff2
-│   │   ├── index-B0mIiN3j.css
-│   │   └── index-RJtvkhVY.js
+│   │   ├── index-CAKAlM-p.css
+│   │   ├── index-CmbUqCwd.js
+│   │   └── workbox-window.prod.es5-Bd17z0YL.js
 │   ├── favicon
 │   │   ├── apple-touch-icon.png
 │   │   ├── favicon.ico
 │   │   └── icon.svg
-│   ├── images
-│   │   ├── background-settings.webp
-│   │   └── background.webp
-│   └── index.html
+│   ├── index.html
+│   ├── sw.js
+│   └── workbox-7c24d614.js
 ├── docker-compose.yml
 ├── Dockerfile
 ├── entrypoint.sh
@@ -31,10 +39,17 @@
 ├── package.json
 ├── package-lock.json
 ├── public
+│   ├── app-icons
+│   │   ├── icon-192.png
+│   │   └── icon-512.png
+│   ├── app.webmanifest
+│   ├── config
+│   │   └── env.js
 │   ├── favicon -> ../node_modules/@amsterdam/design-system-assets/favicon
-│   └── images
-│       ├── background-settings.webp
-│       └── background.webp
+│   ├── favicon.ico
+│   └── screenshots
+│       ├── install-desktop-wide.png
+│       └── install-mobile.png
 ├── README.md
 ├── src
 │   ├── api
@@ -42,12 +57,18 @@
 │   │   │   ├── address.ts
 │   │   │   ├── cases.ts
 │   │   │   ├── daySettings.ts
+│   │   │   ├── feedback.ts
 │   │   │   ├── index.ts
 │   │   │   ├── itineraries.ts
+│   │   │   ├── pdok.ts
+│   │   │   ├── permissions.ts
+│   │   │   ├── puntenteller.ts
 │   │   │   ├── residents.ts
 │   │   │   ├── teamSettings.ts
 │   │   │   ├── __tests__
-│   │   │   │   └── itineraries.test.tsx
+│   │   │   │   ├── itineraries.test.tsx
+│   │   │   │   ├── permissions.test.tsx
+│   │   │   │   └── visits.test.tsx
 │   │   │   ├── themes.ts
 │   │   │   ├── users.ts
 │   │   │   └── visits.ts
@@ -60,7 +81,7 @@
 │   │   ├── useApiFetch.ts
 │   │   └── utils
 │   │       ├── makeApiUrl.ts
-│   │       ├── mapApiErrorToAlert.ts
+│   │       ├── mapApiErrorToToast.ts
 │   │       ├── normalizeApiError.ts
 │   │       ├── slashSandwich.ts
 │   │       ├── stringifyQueryParams.ts
@@ -70,12 +91,6 @@
 │   │           └── stringifyQueryParams.test.ts
 │   ├── App.tsx
 │   ├── components
-│   │   ├── alerts
-│   │   │   ├── alertBridge.ts
-│   │   │   ├── AlertContext.ts
-│   │   │   ├── AlertProvider.tsx
-│   │   │   ├── types.ts
-│   │   │   └── useAlert.ts
 │   │   ├── badges
 │   │   │   ├── index.ts
 │   │   │   ├── PriorityBadge
@@ -88,9 +103,9 @@
 │   │   │       └── VisitBadge.tsx
 │   │   ├── Card
 │   │   │   ├── Card.module.css
+│   │   │   ├── CardSkeletons.tsx
 │   │   │   └── Card.tsx
 │   │   ├── CaseEventTimeline
-│   │   │   ├── CaseEventTimeline.module.css
 │   │   │   ├── CaseEventTimeline.tsx
 │   │   │   ├── config
 │   │   │   │   ├── eventConfig.ts
@@ -103,15 +118,13 @@
 │   │   │       ├── renderValue.formatters.ts.ts
 │   │   │       └── renderValue.ts
 │   │   ├── ChooseThemeBase
-│   │   │   ├── ChooseThemeBase.module.css
 │   │   │   └── ChooseThemeBase.tsx
 │   │   ├── ConfirmDialog
 │   │   │   └── ConfirmDialog.tsx
 │   │   ├── DefaultLayout
-│   │   │   ├── DefaultLayout.module.css
 │   │   │   ├── DefaultLayout.tsx
-│   │   │   ├── navigation
-│   │   │   └── usePageHeaderOverlay.ts
+│   │   │   ├── Footer.tsx
+│   │   │   └── navigation
 │   │   ├── Description
 │   │   │   └── Description.tsx
 │   │   ├── Distance
@@ -122,6 +135,8 @@
 │   │   ├── EllipsisActionMenu
 │   │   │   ├── EllipsisActionMenu.module.css
 │   │   │   └── EllipsisActionMenu.tsx
+│   │   ├── FeedbackDialog
+│   │   │   └── FeedbackDialog.tsx
 │   │   ├── GoogleMapsButton
 │   │   │   └── GoogleMapsButton.tsx
 │   │   ├── Greeting
@@ -146,6 +161,7 @@
 │   │   │   │   └── index.ts
 │   │   │   └── visit
 │   │   │       ├── index.ts
+│   │   │       ├── visit.notification.ts
 │   │   │       ├── visit.selectors.ts
 │   │   │       ├── visit.types.ts
 │   │   │       ├── VisitWrapper.module.css
@@ -163,6 +179,8 @@
 │   │   ├── Note
 │   │   │   ├── Note.module.css
 │   │   │   └── Note.tsx
+│   │   ├── OfflineSettingsAlert
+│   │   │   └── OfflineSettingsAlert.tsx
 │   │   ├── SearchAddressView
 │   │   │   └── SearchAddressView.tsx
 │   │   ├── SmallCaseCard
@@ -178,10 +196,22 @@
 │   │   │   └── WritingLoader
 │   │   │       ├── WritingLoader.module.css
 │   │   │       └── WritingLoader.tsx
-│   │   └── Table
-│   │       ├── Table.module.css
-│   │       ├── Table.tsx
-│   │       └── utils.ts
+│   │   ├── StepProgress
+│   │   │   ├── StepProgress.module.css
+│   │   │   └── StepProgress.tsx
+│   │   ├── Table
+│   │   │   ├── Table.module.css
+│   │   │   ├── Table.tsx
+│   │   │   └── utils.ts
+│   │   └── toasts
+│   │       ├── toastBridge.ts
+│   │       ├── ToastContext.ts
+│   │       ├── Toast.module.css
+│   │       ├── ToastProvider.module.css
+│   │       ├── ToastProvider.tsx
+│   │       ├── Toast.tsx
+│   │       ├── types.ts
+│   │       └── useToast.ts
 │   ├── config
 │   │   ├── env.ts
 │   │   ├── isAcceptanceOrLocalEnvironment.ts
@@ -208,6 +238,7 @@
 │   │   ├── useGeolocation.ts
 │   │   ├── useMediaQuery.ts
 │   │   ├── useMoveItineraryItemToBottom.ts
+│   │   ├── useOnlineStatus.ts
 │   │   ├── useRedirectFromState.ts
 │   │   ├── useTokenPayload.ts
 │   │   └── useUserOptions.ts
@@ -257,16 +288,14 @@
 │   │   │   ├── PermitsCard
 │   │   │   │   ├── components
 │   │   │   │   │   ├── PermitBadge.tsx
-│   │   │   │   │   ├── Permit.tsx
 │   │   │   │   │   └── PermitValidityLabel.tsx
 │   │   │   │   ├── data
 │   │   │   │   │   ├── createPermitDescriptionData.ts
 │   │   │   │   │   ├── dummyPowerBrowserResponse.ts
+│   │   │   │   │   ├── getPermitStatusBadgeVariant.ts
 │   │   │   │   │   └── utils.ts
 │   │   │   │   └── PermitsCard.tsx
 │   │   │   ├── PermitsCardDecos
-│   │   │   │   ├── components
-│   │   │   │   │   └── DecosPermit.tsx
 │   │   │   │   ├── data
 │   │   │   │   │   ├── createPermitDescriptionData.ts
 │   │   │   │   │   ├── dummyDecosResponse.ts
@@ -276,7 +305,6 @@
 │   │   │       ├── data
 │   │   │       │   └── dummyRegistrationsResponse.ts
 │   │   │       ├── Registrations
-│   │   │       │   ├── Registrations.module.css
 │   │   │       │   └── Registrations.tsx
 │   │   │       └── VakantieverhuurCard.tsx
 │   │   ├── ChooseListPage
@@ -287,7 +315,6 @@
 │   │   ├── ChooseThemePage
 │   │   │   └── ChooseThemePage.tsx
 │   │   ├── DaySettingsPage
-│   │   │   ├── DaySettingsForm.module.css
 │   │   │   ├── DaySettingsForm.tsx
 │   │   │   ├── DaySettingsPage.tsx
 │   │   │   ├── form
@@ -325,6 +352,40 @@
 │   │   │   └── ListPage.tsx
 │   │   ├── NotFound
 │   │   │   └── NotFound.tsx
+│   │   ├── PuntentellerAdresPage
+│   │   │   ├── components
+│   │   │   │   ├── NumberFieldGrid.tsx
+│   │   │   │   ├── StepActions.tsx
+│   │   │   │   └── SummarySection.tsx
+│   │   │   ├── fieldDefinitions.ts
+│   │   │   ├── helpers
+│   │   │   │   ├── mapInvoerwaardenToFormValues.ts
+│   │   │   │   └── __tests__
+│   │   │   │       └── mapInvoerwaardenToFormValues.test.ts
+│   │   │   ├── PuntentellerAdresPage.tsx
+│   │   │   ├── StepBijzonderheden
+│   │   │   │   └── StepBijzonderheden.tsx
+│   │   │   ├── StepKeuken
+│   │   │   │   └── StepKeuken.tsx
+│   │   │   ├── StepKlimaatBuitenParkeren
+│   │   │   │   └── StepKlimaatBuitenParkeren.tsx
+│   │   │   ├── StepOverigeRuimtes
+│   │   │   │   └── StepOverigeRuimtes.tsx
+│   │   │   ├── StepOverzicht
+│   │   │   │   └── StepOverzicht.tsx
+│   │   │   ├── StepSanitair
+│   │   │   │   └── StepSanitair.tsx
+│   │   │   ├── StepVertrekken
+│   │   │   │   └── StepVertrekken.tsx
+│   │   │   ├── StepWoninggegevens
+│   │   │   │   └── StepWoninggegevens.tsx
+│   │   │   ├── __tests__
+│   │   │   │   └── PuntentellerAdresPage.test.tsx
+│   │   │   └── useGebruikersinvoerForm.ts
+│   │   ├── PuntentellerPage
+│   │   │   ├── PuntentellerPage.tsx
+│   │   │   └── StepAddressSearch
+│   │   │       └── StepAddressSearch.tsx
 │   │   ├── SearchPage
 │   │   │   └── SearchPage.tsx
 │   │   ├── SelectStartAddressPage
@@ -345,7 +406,6 @@
 │   │   │   ├── TeamSettingsPage.tsx
 │   │   │   ├── types.ts
 │   │   │   └── WeekConfig
-│   │   │       ├── WeekDaySettings.module.css
 │   │   │       └── WeekDaySettings.tsx
 │   │   ├── UnderConstruction
 │   │   │   └── UnderConstruction.tsx
@@ -364,11 +424,17 @@
 │   │       │   └── StepObservations.tsx
 │   │       ├── StepSituation
 │   │       │   └── StepSituation.tsx
+│   │       ├── __tests__
+│   │       │   └── VisitCreatePage.test.tsx
 │   │       └── VisitCreatePage.tsx
 │   ├── router
 │   │   ├── index.tsx
-│   │   └── routes.tsx
+│   │   ├── RequirePermissions.tsx
+│   │   ├── routes.tsx
+│   │   └── __tests__
+│   │       └── RequirePermissions.test.tsx
 │   ├── shared
+│   │   ├── AddToItinerary.tsx
 │   │   ├── constants
 │   │   │   └── dayOfWeeks.ts
 │   │   ├── dateFormatters.ts
@@ -377,7 +443,12 @@
 │   │   ├── getTopPosition.ts
 │   │   ├── getWorkflowName.ts
 │   │   ├── index.ts
-│   │   └── textFormatters.ts
+│   │   ├── permissions.ts
+│   │   ├── renderStatusBadge.tsx
+│   │   ├── __tests__
+│   │   │   └── permissions.test.ts
+│   │   ├── textFormatters.ts
+│   │   └── useAddToItinerary.ts
 │   ├── styles
 │   │   ├── animations.css
 │   │   ├── design-system-overrides.css
@@ -388,10 +459,13 @@
 │   └── types
 │       ├── Address.d.ts
 │       ├── api.d.ts
+│       ├── BAGPdok.d.ts
 │       ├── Case.d.ts
 │       ├── CaseEvent.d.ts
 │       ├── DaySettings.d.ts
+│       ├── Gebruikersinvoer.d.ts
 │       ├── Itinerary.d.ts
+│       ├── Puntenteller.d.ts
 │       └── Visit.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
@@ -400,4 +474,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-128 directories, 273 files
+151 directories, 324 files
