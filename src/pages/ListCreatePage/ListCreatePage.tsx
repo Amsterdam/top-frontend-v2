@@ -23,7 +23,11 @@ import {
   useTheme,
 } from "@/api/hooks"
 import { mapToOptions } from "@/forms/utils/mapToOptions"
-import { useCurrentUser, useUserOptions } from "@/hooks"
+import {
+  useCurrentUser,
+  useRedirectToExistingItinerary,
+  useUserOptions,
+} from "@/hooks"
 import {
   AmsterdamCrossSpinner,
   ReactRouterLink,
@@ -43,6 +47,8 @@ export default function CreateListPage() {
   const { themeId } = useParams<{ themeId: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  const { isPending: isPendingExistingItinerary, hasExistingItinerary } =
+    useRedirectToExistingItinerary()
 
   const { data: theme } = useTheme(themeId!)
   const currentUser = useCurrentUser()
@@ -147,7 +153,8 @@ export default function CreateListPage() {
 
   const { formState } = form
 
-  if (isLoading) return <AmsterdamCrossSpinner />
+  if (isLoading || isPendingExistingItinerary || hasExistingItinerary)
+    return <AmsterdamCrossSpinner />
 
   return (
     <>
