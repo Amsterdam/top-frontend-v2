@@ -79,6 +79,19 @@ export const dummyMeldingenResponse: Melding[] = [
       .set("minute", 7)
       .format(),
   },
+  {
+    startDatum: dayjs().subtract(360, "day").format(),
+    eindDatum: dayjs().subtract(355, "day").format(),
+    nachten: 5,
+    gasten: 4,
+    isAangepast: true,
+    isVerwijderd: false,
+    gemaaktOp: dayjs()
+      .subtract(360, "day")
+      .set("hour", 18)
+      .set("minute", 7)
+      .format(),
+  },
 ]
 
 export default dummyMeldingenResponse

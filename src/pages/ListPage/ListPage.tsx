@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import dayjs from "dayjs"
 import {
   ActionGroup,
@@ -25,14 +25,22 @@ import {
 
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  const { data: itinerary, isPending } = useItinerary(itineraryId)
+  const { data: itinerary, isPending, isError } = useItinerary(itineraryId)
   const { data: itineraries } = useItinerariesSummary()
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
-    return (itinerary?.items?.map((item) => item?.case?.address) ??
-      []) as Address[]
+    return (itinerary?.items
+      ?.filter((item) => !item?.visits?.length)
+      .map((item) => item?.case?.address) ?? []) as Address[]
   }, [itinerary?.items])
+
+  // If the looplijst (itinerary) is not found, send the user back to the main page.
+  useEffect(() => {
+    if (isError) {
+      navigate("/")
+    }
+  }, [isError, navigate])
 
   if (isPending || !itinerary) {
     return <AmsterdamCrossSpinner />

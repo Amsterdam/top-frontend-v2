@@ -1,9 +1,11 @@
 import { useNavigate, useParams } from "react-router"
-import { Button, Column } from "@amsterdam/design-system-react"
-import { HouseIcon } from "@amsterdam/design-system-react-icons"
-// import { EllipsisActionMenu } from "@/components/EllipsisActionMenu/EllipsisActionMenu"
+import {
+  Button,
+  Column,
+} from "@amsterdam/design-system-react"
+import { DeleteIcon, HouseIcon } from "@amsterdam/design-system-react-icons"
 import { CompleteVisitButton } from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
-// import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
+import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
 import { getMostRecentVisit, getVisitState, VisitState } from "../visit"
 
 type Props = {
@@ -12,7 +14,7 @@ type Props = {
 
 export function DefaultVariant({ item }: Props) {
   const { itineraryId } = useParams<{ itineraryId: string }>()
-  // const { deleteItineraryItem, dialog } = useDeleteItineraryItem(item.id)
+  const { deleteItineraryItem, dialog } = useDeleteItineraryItem(item)
   const navigate = useNavigate()
 
   const caseData = item.case
@@ -22,7 +24,7 @@ export function DefaultVariant({ item }: Props) {
   return (
     <Column alignHorizontal="end">
       {visitState === VisitState.Pending && (
-        <>
+        <Column alignHorizontal="end">
           <Button
             onClick={() =>
               navigate(
@@ -34,7 +36,18 @@ export function DefaultVariant({ item }: Props) {
           >
             Bezoek
           </Button>
-        </>
+          <Button
+            icon={DeleteIcon}
+            iconOnly
+            variant="secondary"
+            onClick={(e) => {
+              e.stopPropagation()
+              deleteItineraryItem()
+            }}
+          >
+            Adres verwijderen
+          </Button>
+        </Column>
       )}
       {visitState === VisitState.InProgress && (
         <>
@@ -44,6 +57,7 @@ export function DefaultVariant({ item }: Props) {
           />
         </>
       )}
+      {dialog}
     </Column>
   )
 }
