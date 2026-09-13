@@ -64,7 +64,7 @@ export default function CaseDetailPage() {
     (item) => item?.case.id === Number(caseId),
   )
   const { deleteItineraryItem, dialog } = useDeleteItineraryItem(
-    itineraryItem?.id,
+    itineraryItem,
     {
       itineraryId,
       onSuccess: () => {
@@ -170,13 +170,6 @@ export default function CaseDetailPage() {
           itineraryItem &&
           mostRecentVisit && (
             <>
-              <Button
-                variant="secondary"
-                icon={DeleteIcon}
-                onClick={deleteItineraryItem}
-              >
-                Verwijderen
-              </Button>
               <Button
                 variant="secondary"
                 icon={PencilIcon}

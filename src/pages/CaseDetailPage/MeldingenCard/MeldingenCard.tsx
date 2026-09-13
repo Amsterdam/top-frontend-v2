@@ -1,4 +1,5 @@
 import { Paragraph, Row } from "@amsterdam/design-system-react"
+import { useMemo } from "react"
 import {
   DeleteIcon,
   NotificationIcon,
@@ -10,6 +11,7 @@ import { renderStatusBadge } from "@/shared"
 import { formatDate } from "@/shared/dateFormatters"
 
 import { dummyMeldingenResponse } from "./data/dummyMeldingenResponse"
+import dayjs from "dayjs"
 
 type Props = {
   meldingen?: Melding[]
@@ -20,7 +22,17 @@ type Props = {
 }
 
 function formatMeldingPeriod(melding: Melding) {
-  return `${formatDate(melding.startDatum, "D MMM", "-")} - ${formatDate(melding.eindDatum, "D MMM", "-")}`
+  /*
+  Format the period of a melding, taking into account different years for start and end dates.
+  */
+  const currentYear = dayjs().year()
+  const startYear = dayjs(melding.startDatum).year()
+  const endYear = dayjs(melding.eindDatum).year()
+
+  const startFormat = startYear !== endYear ? "D MMM [']YY" : "D MMM"
+  const endFormat = endYear !== currentYear ? "D MMM [']YY" : "D MMM"
+
+  return `${formatDate(melding.startDatum, startFormat, "-")} - ${formatDate(melding.eindDatum, endFormat, "-")}`
 }
 
 function renderMeldingStatus(melding: Melding) {
@@ -64,7 +76,7 @@ function createMeldingDescriptionData(melding: Melding) {
     },
     {
       label: "Gemaakt op",
-      value: formatDate(melding.gemaaktOp, "DD MMM, HH:mm", "-"),
+      value: formatDate(melding.gemaaktOp, "DD MMM YYYY, HH:mm", "-"),
     },
   ]
 }
@@ -90,15 +102,21 @@ const columns = [
 ] as const
 
 export default function MeldingenCard({
-  meldingen,
+  meldingen = [],
   startDate,
   showDummyData = false,
   loading = false,
   isError = false,
 }: Props) {
-  const meldingenToUse = showDummyData
-    ? dummyMeldingenResponse
-    : (meldingen ?? [])
+  const meldingenSource = showDummyData ? dummyMeldingenResponse : meldingen
+
+  const meldingenToUse = useMemo(
+    () =>
+      [...meldingenSource].sort((a, b) =>
+        dayjs(b.eindDatum).diff(dayjs(a.eindDatum)),
+      ),
+    [meldingenSource],
+  )
 
   const totalNights = meldingenToUse.reduce(
     (total, { nachten }) => total + nachten,

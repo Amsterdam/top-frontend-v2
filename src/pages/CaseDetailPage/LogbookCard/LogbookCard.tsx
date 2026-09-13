@@ -5,6 +5,7 @@ import {
   PersonIcon,
   PersonsIcon,
 } from "@amsterdam/design-system-react-icons"
+import dayjs from "dayjs"
 import { useCaseVisits } from "@/api/hooks"
 import {
   Card,
@@ -25,9 +26,8 @@ export function LogbookCard({ caseId, loading = false }: Props) {
 
   if (!caseId && !loading) return null
 
-  const visits = [...(caseVisits ?? [])].sort(
-    (a, b) =>
-      new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
+  const visits = [...(caseVisits ?? [])].sort((a, b) =>
+    dayjs(b.start_time).diff(dayjs(a.start_time)),
   )
 
   return (
