@@ -10,7 +10,7 @@ type Options = {
 }
 
 export function useDeleteItineraryItem(
-  itineraryItemId?: number,
+  itineraryItem?: ItineraryItem,
   options?: Options,
 ) {
   const { itineraryId: itineraryIdFromParams } = useParams<{
@@ -19,14 +19,14 @@ export function useDeleteItineraryItem(
   const itineraryId = options?.itineraryId ?? itineraryIdFromParams
   const removeItineraryItem = useRemoveItineraryItem({
     itineraryId,
-    itineraryItemId,
+    itineraryItemId: itineraryItem?.id,
   })
   const { showToast } = useToast()
-  const dialogId = `delete-itinerary-item-${itineraryItemId ?? "unknown"}`
+  const dialogId = `delete-itinerary-item-${itineraryItem?.id ?? "unknown"}`
   const { openDialog, closeDialog } = useDialog(dialogId)
 
   const deleteItineraryItem = async () => {
-    if (!itineraryItemId) return
+    if (!itineraryItem?.id) return
 
     await removeItineraryItem.mutateAsync()
     closeDialog()
@@ -42,7 +42,17 @@ export function useDeleteItineraryItem(
     <ConfirmDialog
       id={dialogId}
       title="Zaak verwijderen"
-      content="Weet je zeker dat je deze zaak uit je looplijst wilt verwijderen?"
+      content={
+        <span>
+          Weet je zeker dat je{" "}
+          {itineraryItem?.case?.address.full_address ? (
+            <strong>{itineraryItem?.case?.address.full_address}</strong>
+          ) : (
+            "deze zaak"
+          )}{" "}
+          uit je looplijst wilt verwijderen?
+        </span>
+      }
       onOk={deleteItineraryItem}
       onOkText="Verwijderen"
       loading={removeItineraryItem.isPending}
