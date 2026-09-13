@@ -33,6 +33,7 @@ export const useGeolocation = (): GeolocationState => {
       (error) => {
         setState({ isLoading: false, error: error.message })
       },
+      { timeout: 10000, maximumAge: 0 },
     )
   }, [])
 
