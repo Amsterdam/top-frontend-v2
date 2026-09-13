@@ -32,14 +32,14 @@ export function GoogleMapsButton({
 
     if (uniqueAddresses.length === 1) {
       const place = encodeURIComponent(uniqueAddresses[0])
-      return `https://www.google.nl/maps/place/${place}`
+      return `https://www.google.com/maps/place/${place}`
     }
 
     const path = uniqueAddresses
       .map((address) => encodeURIComponent(address))
       .join("/")
 
-    return `https://www.google.nl/maps/dir/${path}`
+    return `https://www.google.com/maps/dir/${path}`
   }
 
   const url = buildMapsUrl()

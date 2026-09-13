@@ -30,8 +30,9 @@ export default function ListPage() {
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
-    return (itinerary?.items?.map((item) => item?.case?.address) ??
-      []) as Address[]
+    return (itinerary?.items
+      ?.filter((item) => !item?.visits?.length)
+      .map((item) => item?.case?.address) ?? []) as Address[]
   }, [itinerary?.items])
 
   // If the looplijst (itinerary) is not found, send the user back to the main page.
