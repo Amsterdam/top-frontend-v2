@@ -31,7 +31,7 @@
     "lodash.debounce": "^4.0.8",
     "oidc-client-ts": "^3.5.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "react-dom": "^19.3.0",
     "react-oidc-context": "^3.3.0",
     "react-router": "^8.3.0"
   },
@@ -43,7 +43,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^26.0.0",
     "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
