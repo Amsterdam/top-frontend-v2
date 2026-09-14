@@ -26,7 +26,8 @@ import {
 export default function ListPage() {
   const { itineraryId } = useParams<{ itineraryId: string }>()
   const { data: itinerary, isPending, isError } = useItinerary(itineraryId)
-  const { data: itineraries } = useItinerariesSummary()
+  const { data: itineraries, isFetching: isFetchingItineraries } =
+    useItinerariesSummary()
   const navigate = useNavigate()
 
   const addresses = useMemo(() => {
@@ -35,12 +36,20 @@ export default function ListPage() {
       .map((item) => item?.case?.address) ?? []) as Address[]
   }, [itinerary?.items])
 
-  // If the looplijst (itinerary) is not found, send the user back to the main page.
+  // Redirect to the main page if the looplijst (itinerary) doesn't exist,
+  // or if it's from the past (i.e., yesterday or earlier). Skip while the
+  // summary is (re)fetching, e.g. right after creating a looplijst, so we
+  // don't act on a stale list that doesn't include it yet.
   useEffect(() => {
-    if (isError) {
+    if (isFetchingItineraries) return
+
+    if (
+      isError ||
+      (itineraries && !itineraries.some((i) => i.id === Number(itineraryId)))
+    ) {
       navigate("/")
     }
-  }, [isError, navigate])
+  }, [isError, itineraries, isFetchingItineraries, itineraryId, navigate])
 
   if (isPending || !itinerary) {
     return <AmsterdamCrossSpinner />
