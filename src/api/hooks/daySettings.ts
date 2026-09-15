@@ -49,6 +49,7 @@ export const useSaveDaySetting = ({
     onSuccess: (_data, variables) => {
       const weekday = variables.week_days?.[0]
       if (weekday !== undefined) {
+        // Invalidate the query for the specific team and weekday to ensure fresh data is fetched
         queryClient.invalidateQueries({
           queryKey: queryKeys.teamSettings.options(teamId, weekday),
         })
