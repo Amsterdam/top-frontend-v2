@@ -69,11 +69,7 @@ export default function DaySettingsForm({
             >
               Bereken en bewaar
             </Button>
-            <Button
-              variant="secondary"
-              onClick={onCancel}
-              disabled={isLoading}
-            >
+            <Button variant="secondary" onClick={onCancel} disabled={isLoading}>
               Annuleren
             </Button>
           </ActionGroup>
