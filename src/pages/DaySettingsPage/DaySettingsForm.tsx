@@ -24,6 +24,7 @@ type Props = {
   themeId: string
   dayOfWeek?: string | number
   caseCount?: number
+  isLoading?: boolean
   onSubmit: (values: FormValues) => void
   onCancel: () => void
 }
@@ -33,6 +34,7 @@ export default function DaySettingsForm({
   themeName,
   themeId,
   caseCount,
+  isLoading,
   onSubmit,
   onCancel,
 }: Props) {
@@ -58,13 +60,20 @@ export default function DaySettingsForm({
           <ActionGroup>
             <Button
               type="submit"
-              disabled={!formState.isValid || hasInvalidPostalRanges}
+              disabled={
+                !formState.isValid || hasInvalidPostalRanges || isLoading
+              }
+              aria-busy={isLoading}
               icon={SaveIcon}
               iconBefore
             >
               Bereken en bewaar
             </Button>
-            <Button variant="secondary" onClick={onCancel}>
+            <Button
+              variant="secondary"
+              onClick={onCancel}
+              disabled={isLoading}
+            >
               Annuleren
             </Button>
           </ActionGroup>

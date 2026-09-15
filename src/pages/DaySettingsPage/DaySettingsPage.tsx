@@ -72,6 +72,7 @@ export default function DaySettingsPage() {
           themeId={themeId!}
           dayOfWeek={daySetting?.week_days?.[0] ?? dayOfWeek}
           caseCount={daySetting?.case_count?.count}
+          isLoading={isLoading}
           onSubmit={onSubmit}
           onCancel={() => navigate(`/team-instellingen/${themeId}`)}
         />
