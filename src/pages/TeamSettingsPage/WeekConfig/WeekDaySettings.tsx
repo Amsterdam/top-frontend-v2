@@ -51,6 +51,7 @@ export function WeekDaySettings({
             daySetting={daySetting}
             teamSettingsOptions={teamSettingsOptions}
             teamId={teamId}
+            weekday={dayOfWeekId}
             animationDelay={index * 0.2}
           />
         ))

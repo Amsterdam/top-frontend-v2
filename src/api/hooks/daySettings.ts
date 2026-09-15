@@ -46,11 +46,14 @@ export const useSaveDaySetting = ({
           data: payload,
         },
       ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.teamSettings.all(teamId),
-        exact: true,
-      })
+    onSuccess: (_data, variables) => {
+      const weekday = variables.week_days?.[0]
+      if (weekday !== undefined) {
+        // Invalidate the query for the specific team and weekday to ensure fresh data is fetched
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.teamSettings.options(teamId, weekday),
+        })
+      }
     },
   })
 }
@@ -58,11 +61,13 @@ export const useSaveDaySetting = ({
 type DeleteDaySettingOptions = {
   daySettingId: number
   teamId: string
+  weekday?: number
 }
 
 export const useDeleteDaySetting = ({
   daySettingId,
   teamId,
+  weekday,
 }: DeleteDaySettingOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
@@ -73,10 +78,11 @@ export const useDeleteDaySetting = ({
         method: "DELETE",
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.teamSettings.all(teamId),
-        exact: true,
-      })
+      if (weekday !== undefined) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.teamSettings.options(teamId, weekday),
+        })
+      }
     },
   })
 }

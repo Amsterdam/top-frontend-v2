@@ -1,8 +1,5 @@
 import { useNavigate, useParams } from "react-router"
-import {
-  Button,
-  Column,
-} from "@amsterdam/design-system-react"
+import { Button, Column } from "@amsterdam/design-system-react"
 import { DeleteIcon, HouseIcon } from "@amsterdam/design-system-react-icons"
 import { CompleteVisitButton } from "@/pages/ListPage/components/CompleteVisitButton/CompleteVisitButton"
 import { useDeleteItineraryItem } from "@/pages/ListPage/hooks/useDeleteItineraryItem"
