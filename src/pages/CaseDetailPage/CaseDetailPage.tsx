@@ -7,14 +7,16 @@ import {
   Heading,
   Row,
   Skeleton,
+  StandaloneLink,
 } from "@amsterdam/design-system-react"
 import {
+  ChevronBackwardIcon,
   DeleteIcon,
   HouseIcon,
   PencilIcon,
 } from "@amsterdam/design-system-react-icons"
 import dayjs from "dayjs"
-import { useNavigate, useParams } from "react-router"
+import { useLocation, useNavigate, useParams } from "react-router"
 
 import {
   useCase,
@@ -59,6 +61,11 @@ export default function CaseDetailPage() {
     useItinerary(itineraryId)
   const statusName = getWorkflowName(data?.workflows)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const backTo = itineraryId
+    ? `/looplijsten/${itineraryId}`
+    : ((location.state as { back?: string } | null)?.back ?? "/zoeken")
 
   const itineraryItem = itinerary?.items.find(
     (item) => item?.case.id === Number(caseId),
@@ -103,19 +110,32 @@ export default function CaseDetailPage() {
     !meldingen.length
   const addToItinerary = useAddToItinerary(data)
 
+  const backLink = (
+    <StandaloneLink
+      href="#"
+      icon={ChevronBackwardIcon}
+      onClick={() => navigate(backTo)}
+    >
+      {itineraryId ? "Terug naar looplijst" : "Terug naar zoeken"}
+    </StandaloneLink>
+  )
+
   if (isPending) {
     return (
       <>
         {dialog}
         <Grid paddingVertical="large" gapVertical="large">
           <Grid.Cell span="all" appearance="transparent">
-            <Row align="between" wrap>
-              <Row wrap alignVertical="center">
-                <Skeleton>
-                  <Skeleton.Heading lines={1} />
-                </Skeleton>
+            <Column gap="small">
+              {backLink}
+              <Row align="between" wrap>
+                <Row wrap alignVertical="center">
+                  <Skeleton>
+                    <Skeleton.Heading lines={1} />
+                  </Skeleton>
+                </Row>
               </Row>
-            </Row>
+            </Column>
           </Grid.Cell>
 
           <Grid.Subgrid span={{ narrow: 4, medium: 8, wide: 8 }}>
@@ -220,6 +240,7 @@ export default function CaseDetailPage() {
       <Grid paddingVertical="large" gapVertical="large">
         <Grid.Cell span="all" appearance="transparent">
           <Column gap="large">
+            {backLink}
             {itineraryItem || isItineraryLoading ? (
               renderHeader()
             ) : (
