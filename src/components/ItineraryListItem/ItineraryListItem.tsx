@@ -6,7 +6,7 @@ import {
   Paragraph,
   Row,
 } from "@amsterdam/design-system-react"
-import { useNavigate, useParams } from "react-router"
+import { useLocation, useNavigate, useParams } from "react-router"
 import { formatAddress, getSchedulePriority, getWorkflowName } from "@/shared"
 import { StatusBadge, PriorityBadge, Note, Tag } from "@/components"
 import { VisitWrapper, getMostRecentVisit } from "./visit"
@@ -32,6 +32,7 @@ export function ItineraryListItem({
   status,
 }: Props) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { itineraryId } = useParams<{ itineraryId?: string }>()
   const caseData = item.case
   const address = caseData?.address
@@ -47,6 +48,12 @@ export function ItineraryListItem({
       itineraryId
         ? `/looplijsten/${itineraryId}/zaken/${caseData.id}`
         : `/zaken/${caseData.id}`,
+      // Outside of an itinerary this list is the search results (/zoeken?q=...),
+      // which has no other state of its own - pass its URL along so the case
+      // detail page can navigate back to these exact results.
+      itineraryId
+        ? undefined
+        : { state: { back: `${location.pathname}${location.search}` } },
     )
   }
 

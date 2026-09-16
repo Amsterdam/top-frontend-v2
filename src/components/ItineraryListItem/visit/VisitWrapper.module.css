@@ -5,6 +5,18 @@
   padding-block: var(--ams-grid-cell-padding-block);
   padding-inline: var(--ams-grid-cell-padding-inline);
   background-color: var(--ams-color-background);
+  /* Without this, a long-press anywhere on the card (which is fully covered by 
+     Card.Link's stretched ::after) triggers iOS Safari's link callout menu instead 
+     of the drag-and-drop gesture. -webkit-touch-callout is inherited, so it 
+     also suppresses the callout on the Card.Link anchor itself. 
+    */
+  -webkit-touch-callout: none;
+  /* iOS Safari needs the -webkit-prefixed property to suppress its native 
+     text-selection highlight/loupe during a long-press; the unprefixed 
+     user-select set inline on the drag wrapper isn't enough on its own. 
+    */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .ContentCard {
