@@ -117,24 +117,36 @@ export function useDaySettingsForm({
     saveDaySetting.mutate(payload, {
       onSuccess: (res) => {
         if (res?.id) {
-          const count = res.case_count.count
+          const count = res.case_count?.count
           const action = daySettingsId ? "bijgewerkt" : "aangemaakt"
 
-          const description = `De daginstelling is succesvol ${action}. ${
-            count === 0
-              ? "Er zijn geen beschikbare bezoeken."
-              : `Er ${count === 1 ? "is" : "zijn"} ${count} ${
-                  count === 1 ? "beschikbaar bezoek" : "beschikbare bezoeken"
-                }.`
-          }`
+          let countText = ""
+          if (count !== undefined) {
+            if (count === 0) {
+              countText = " Er zijn geen beschikbare bezoeken."
+            } else {
+              const noun =
+                count === 1 ? "beschikbaar bezoek" : "beschikbare bezoeken"
+              const verb = count === 1 ? "is" : "zijn"
+              countText = ` Er ${verb} ${count} ${noun}.`
+            }
+          }
 
           showToast({
             title: "Daginstelling opgeslagen!",
-            description: description,
+            description: `De daginstelling is succesvol ${action}.${countText}`,
             severity: "success",
           })
           onSuccess?.(res.id)
         }
+      },
+      onError: () => {
+        showToast({
+          title: "Opslaan mislukt",
+          description:
+            "De daginstelling kon niet worden opgeslagen. Probeer het opnieuw.",
+          severity: "error",
+        })
       },
       onSettled: () => {
         setTimeout(() => setIsLoading(false), 350)

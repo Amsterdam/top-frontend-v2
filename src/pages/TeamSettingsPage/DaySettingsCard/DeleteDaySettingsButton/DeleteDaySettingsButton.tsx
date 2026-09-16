@@ -9,12 +9,18 @@ export function DeleteDaySettingsButton({
   daySettingId,
   daySettingName,
   teamId,
+  weekday,
 }: {
   daySettingId: number
   daySettingName: string
   teamId: string
+  weekday: number
 }) {
-  const deleteDaySetting = useDeleteDaySetting({ daySettingId, teamId })
+  const deleteDaySetting = useDeleteDaySetting({
+    daySettingId,
+    teamId,
+    weekday,
+  })
   const { showToast } = useToast()
   const dialogId = `delete-day-setting-${daySettingId}`
   const { openDialog } = useDialog(dialogId)
