@@ -1,3 +1,6 @@
+import { Column, StandaloneLink } from "@amsterdam/design-system-react"
+import { LinkExternalIcon } from "@amsterdam/design-system-react-icons"
+
 export function formatCurrencyEUR(value: unknown) {
   if (typeof value !== "number") return value
 
@@ -50,4 +53,36 @@ export function formatPersons(value: unknown) {
     })
     .filter(Boolean)
     .join(" en ")
+}
+
+function getLinkLabel(url: string, index: number) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return `Advertentie ${index + 1}`
+  }
+}
+
+export function formatLinklist(value: unknown) {
+  const urls = Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : []
+
+  if (urls.length === 0) return undefined
+
+  return (
+    <Column gap="x-small">
+      {urls.map((url, index) => (
+        <StandaloneLink
+          key={url}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          icon={<LinkExternalIcon />}
+        >
+          {getLinkLabel(url, index)}
+        </StandaloneLink>
+      ))}
+    </Column>
+  )
 }
