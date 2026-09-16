@@ -1,3 +1,4 @@
+import { isValidElement } from "react"
 import { type DescriptionItem } from "@/components"
 import { renderValue } from "./renderValue"
 import { EVENT_CONFIG } from "../config/eventConfig"
@@ -8,9 +9,16 @@ export function buildDescriptionData(
 ): DescriptionItem[] {
   const baseData = config.fields
     .map((field) => {
-      const key = field.label.toLowerCase()
       const rawValue = field.value(event)
 
+      // A field formatter can already return a fully rendered element (e.g.
+      // clickable links); pass it through as-is instead of letting the
+      // generic text renderer flatten it back into a string.
+      if (isValidElement(rawValue)) {
+        return { label: field.label, value: rawValue }
+      }
+
+      const key = field.label.toLowerCase()
       let type: "time" | "date" | undefined
       if (key.includes("datum")) type = "date"
       else if (key.includes("starttijd")) type = "time"

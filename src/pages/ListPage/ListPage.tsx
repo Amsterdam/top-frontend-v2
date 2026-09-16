@@ -9,10 +9,15 @@ import {
   Heading,
   Row,
 } from "@amsterdam/design-system-react"
-import { PersonsIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
+import {
+  ChevronBackwardIcon,
+  PersonsIcon,
+  PlusIcon,
+} from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import {
   AmsterdamCrossSpinner,
+  ErrorState,
   GoogleMapsButton,
   ItineraryTeamSummary,
 } from "@/components"
@@ -39,17 +44,29 @@ export default function ListPage() {
   // Redirect to the main page if the looplijst (itinerary) doesn't exist,
   // or if it's from the past (i.e., yesterday or earlier). Skip while the
   // summary is (re)fetching, e.g. right after creating a looplijst, so we
-  // don't act on a stale list that doesn't include it yet.
+  // don't act on a stale list that doesn't include it yet. Don't redirect on
+  // isError: the itinerary summary would just route us straight back to
+  // this same itineraryId, causing an infinite redirect loop against a
+  // failing endpoint.
   useEffect(() => {
     if (isFetchingItineraries) return
 
-    if (
-      isError ||
-      (itineraries && !itineraries.some((i) => i.id === Number(itineraryId)))
-    ) {
+    if (itineraries && !itineraries.some((i) => i.id === Number(itineraryId))) {
       navigate("/")
     }
-  }, [isError, itineraries, isFetchingItineraries, itineraryId, navigate])
+  }, [itineraries, isFetchingItineraries, itineraryId, navigate])
+
+  if (isError) {
+    return (
+      <ErrorState
+        title="Deze looplijst kon niet worden opgehaald"
+        description="Er is iets misgegaan bij het ophalen van deze looplijst. Probeer het later opnieuw."
+        actionLabel="Terug naar alle looplijsten"
+        actionIcon={ChevronBackwardIcon}
+        onAction={() => navigate("/looplijsten")}
+      />
+    )
+  }
 
   if (isPending || !itinerary) {
     return <AmsterdamCrossSpinner />

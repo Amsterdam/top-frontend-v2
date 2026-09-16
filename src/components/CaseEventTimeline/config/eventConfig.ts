@@ -22,8 +22,9 @@ import {
 } from "../utils/eventConfig.helpers"
 import {
   formatCurrencyEUR,
+  formatLinklist,
   formatPersons,
-} from "../utils/renderValue.formatters.ts"
+} from "../utils/renderValue.formatters"
 
 type EventFieldConfig = {
   label: string
@@ -42,7 +43,9 @@ const eventTypeTitle = (event: CaseEvent) =>
 export const EVENT_CONFIG: Record<string, EventConfig> = {
   CASE: {
     title: eventTypeTitle,
-    fields: mapFields(reasonLabelsMap),
+    fields: mapFields(reasonLabelsMap, {
+      advertisement_linklist: formatLinklist,
+    }),
   },
 
   CASE_CLOSE: {
@@ -52,7 +55,9 @@ export const EVENT_CONFIG: Record<string, EventConfig> = {
 
   CITIZEN_REPORT: {
     title: eventTypeTitle,
-    fields: mapFields(citizenReportLabelsMap),
+    fields: mapFields(citizenReportLabelsMap, {
+      advertisement_linklist: formatLinklist,
+    }),
   },
 
   DECISION: {
