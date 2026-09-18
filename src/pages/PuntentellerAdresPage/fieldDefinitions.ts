@@ -1,6 +1,6 @@
 /**
- * Field labels per Gebruikersinvoer-groep, gedeeld tussen de wizard-stappen (invoer) en
- * StepOverzicht (samenvatting), zodat labels maar op één plek onderhouden hoeven te worden.
+ * Field labels per Gebruikersinvoer group, shared between the wizard steps (input) and
+ * StepOverzicht (summary), so labels only need to be maintained in one place.
  */
 
 export const WONINGGEGEVENS_FIELDS = [
@@ -8,6 +8,16 @@ export const WONINGGEGEVENS_FIELDS = [
   { name: "woz_waarde", label: "WOZ-waarde (€)" },
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
   { name: "energielabel_klasse", label: "Energielabel" },
+  { name: "type_woning", label: "Woonvorm" },
+  { name: "gemeenschappelijke_binnenruimtes", label: "Gemeenschappelijke binnenruimtes" },
+] as const
+
+export const BINNENRUIMTES_FIELDS = [
+  {
+    name: "bad_douche_wastafel_andere_ruimte",
+    label: "Bad, douche of wastafel in andere ruimte",
+  },
+  { name: "keuken_andere_ruimte", label: "Keuken in andere ruimte" },
 ] as const
 
 export const BADKAMER_FIELDS = [

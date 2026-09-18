@@ -1,18 +1,16 @@
-import { Grid } from "@amsterdam/design-system-react"
-
-import { NumberFieldGrid } from "../components/NumberFieldGrid"
+import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
 import { StepActions } from "../components/StepActions"
-import { VERTREKKEN_FIELDS } from "../fieldDefinitions"
 
 type Props = {
   onNextStep: () => void
 }
 
-export function StepVertrekken({ onNextStep }: Props) {
+export function StepBuitenruimtes({ onNextStep }: Props) {
   return (
     <Grid gapVertical="large" style={{ paddingInlineStart: 0 }}>
       <Grid.Cell span="all" appearance="transparent">
-        <NumberFieldGrid fields={[...VERTREKKEN_FIELDS]} />
+        <Heading level={2}>Buitenruimtes</Heading>
+        <Paragraph>Deze stap volgt nog.</Paragraph>
       </Grid.Cell>
 
       <Grid.Cell span="all" appearance="transparent">
@@ -22,4 +20,4 @@ export function StepVertrekken({ onNextStep }: Props) {
   )
 }
 
-export default StepVertrekken
+export default StepBuitenruimtes

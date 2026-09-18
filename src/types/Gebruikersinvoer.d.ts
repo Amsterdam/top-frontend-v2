@@ -54,6 +54,10 @@ type GebruikersinvoerFormValues = {
   overige_ruimte_4: number
   overige_ruimte_5: number
 
+  // Binnenruimtes (speciale kenmerken)
+  bad_douche_wastafel_andere_ruimte: string | null
+  keuken_andere_ruimte: string | null
+
   // Klimaat
   verwarming_aantal_vertrekken: number
   verwarming_aantal_overige_ruimten: number
@@ -71,6 +75,8 @@ type GebruikersinvoerFormValues = {
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
+  type_woning: string | null
+  gemeenschappelijke_binnenruimtes: string | null
 
   // Bijzonderheden
   monument: boolean

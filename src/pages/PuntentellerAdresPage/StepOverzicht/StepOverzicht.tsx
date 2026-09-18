@@ -15,6 +15,7 @@ import {
   APART_TOILET_FIELDS,
   BADKAMER_FIELDS,
   BIJZONDERE_VOORZIENING_FIELDS,
+  BINNENRUIMTES_FIELDS,
   BUITEN_PARKEREN_FIELDS,
   KEUKEN_FIELDS,
   KLIMAAT_FIELDS,
@@ -68,6 +69,12 @@ export function StepOverzicht({ isSubmitting }: Props) {
           title="Overige ruimtes"
           icon={BuildingIcon}
           fields={OVERIGE_RUIMTE_FIELDS}
+          values={values as GebruikersinvoerFormValues}
+        />
+        <SummarySection
+          title="Binnenruimtes"
+          icon={BedIcon}
+          fields={BINNENRUIMTES_FIELDS}
           values={values as GebruikersinvoerFormValues}
         />
         <SummarySection

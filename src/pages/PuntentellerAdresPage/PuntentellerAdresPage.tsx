@@ -4,43 +4,51 @@ import {
   Grid,
   Heading,
   Paragraph,
+  TabNavigation,
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
-  BuildingIcon,
   DocumentCheckMarkIcon,
-  ForkAndKnifeIcon,
   HouseIcon,
   ParkingIcon,
   StarIcon,
-  WaterLadderIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
-import {
-  AmsterdamCrossSpinner,
-  StepProgress,
-  type StepItem,
-} from "@/components"
+import { AmsterdamCrossSpinner } from "@/components"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
 import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
-import { StepSanitair } from "./StepSanitair/StepSanitair"
-import { StepKeuken } from "./StepKeuken/StepKeuken"
-import { StepVertrekken } from "./StepVertrekken/StepVertrekken"
-import { StepOverigeRuimtes } from "./StepOverigeRuimtes/StepOverigeRuimtes"
-import { StepKlimaatBuitenParkeren } from "./StepKlimaatBuitenParkeren/StepKlimaatBuitenParkeren"
+import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
+import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
 import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
 
-const STEP_ITEMS: StepItem[] = [
-  { title: "Woninggegevens", icon: HouseIcon },
-  { title: "Sanitair", icon: WaterLadderIcon },
-  { title: "Keuken", icon: ForkAndKnifeIcon },
-  { title: "Vertrekken", icon: BedIcon },
-  { title: "Overige ruimtes", icon: BuildingIcon },
-  { title: "Klimaat, buitenruimte & parkeren", icon: ParkingIcon },
-  { title: "Bijzonderheden", icon: StarIcon },
-  { title: "Overzicht", icon: DocumentCheckMarkIcon },
+const TAB_ITEMS = [
+  { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
+  {
+    title: "Binnenruimtes",
+    firstStep: 1,
+    lastStep: 1,
+    icon: BedIcon,
+  },
+  {
+    title: "Buitenruimtes",
+    firstStep: 2,
+    lastStep: 2,
+    icon: ParkingIcon,
+  },
+  {
+    title: "Bijzonderheden",
+    firstStep: 3,
+    lastStep: 3,
+    icon: StarIcon,
+  },
+  {
+    title: "Resultaat",
+    firstStep: 4,
+    lastStep: 4,
+    icon: DocumentCheckMarkIcon,
+  },
 ]
 
 export default function PuntentellerAdresPage() {
@@ -49,6 +57,10 @@ export default function PuntentellerAdresPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const { form, invoerwaarden, isPending, isError, onSubmit, isSubmitting } =
     useGebruikersinvoerForm(bagId)
+  const currentTabIndex = TAB_ITEMS.findIndex(
+    ({ firstStep, lastStep }) =>
+      currentStep >= firstStep && currentStep <= lastStep,
+  )
 
   if (isPending) return <AmsterdamCrossSpinner />
 
@@ -58,16 +70,10 @@ export default function PuntentellerAdresPage() {
       invoerwaarden={invoerwaarden}
       onNextStep={() => setCurrentStep(1)}
     />,
-    <StepSanitair key="step-1" onNextStep={() => setCurrentStep(2)} />,
-    <StepKeuken key="step-2" onNextStep={() => setCurrentStep(3)} />,
-    <StepVertrekken key="step-3" onNextStep={() => setCurrentStep(4)} />,
-    <StepOverigeRuimtes key="step-4" onNextStep={() => setCurrentStep(5)} />,
-    <StepKlimaatBuitenParkeren
-      key="step-5"
-      onNextStep={() => setCurrentStep(6)}
-    />,
-    <StepBijzonderheden key="step-6" onNextStep={() => setCurrentStep(7)} />,
-    <StepOverzicht key="step-7" isSubmitting={isSubmitting} />,
+    <StepBinnenruimtes key="step-1" onNextStep={() => setCurrentStep(2)} />,
+    <StepBuitenruimtes key="step-2" onNextStep={() => setCurrentStep(3)} />,
+    <StepBijzonderheden key="step-3" onNextStep={() => setCurrentStep(4)} />,
+    <StepOverzicht key="step-4" isSubmitting={isSubmitting} />,
   ]
 
   return (
@@ -106,14 +112,30 @@ export default function PuntentellerAdresPage() {
         </Grid.Cell>
       )}
 
+      <Grid.Cell appearance="flush" span="all">
+        <TabNavigation accessibleName="Subnavigatie voor dit project">
+          <TabNavigation.List>
+            {TAB_ITEMS.map(({ title, firstStep, icon }, index) => (
+              <TabNavigation.Link
+                aria-current={currentTabIndex === index ? "page" : undefined}
+                href="#"
+                icon={icon}
+                key={title}
+                onClick={(e) => {
+                  e.preventDefault()
+                  setCurrentStep(firstStep)
+                }}
+              >
+                {title}
+              </TabNavigation.Link>
+            ))}
+          </TabNavigation.List>
+        </TabNavigation>
+      </Grid.Cell>
+
       {!isError && (
         <>
           <Grid.Cell span="all">
-            <StepProgress
-              steps={STEP_ITEMS}
-              currentStep={currentStep + 1}
-              onPrevious={() => setCurrentStep((step) => Math.max(step - 1, 0))}
-            />
             <FormProvider form={form} onSubmit={onSubmit}>
               {steps[currentStep]}
             </FormProvider>
