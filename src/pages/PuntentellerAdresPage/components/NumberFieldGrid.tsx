@@ -51,7 +51,6 @@ export function NumberFieldGrid({ fields }: Props) {
     <Grid
       gapVertical="large"
       className="align-items-end padding-Inline-start"
-      className="align-items-end"
     >
       {fields.map((field) => (
         <NumberFieldCell key={field.name} {...field} />
