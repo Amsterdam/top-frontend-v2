@@ -61,7 +61,7 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
   return (
     <Grid gapVertical="large" className="align-items-end padding-Inline-start">
       <Grid.Cell span="all" appearance="transparent">
-        <Heading level={4}>Oppervlakte</Heading>
+        <Heading level={3}>Oppervlakte</Heading>
         <Paragraph>
           Geef aan wat de oppervlakte is van de ruimte. Je mag de lengte en
           breedte invullen. Je kunt ook direct de oppervlakte invullen. Ruimte

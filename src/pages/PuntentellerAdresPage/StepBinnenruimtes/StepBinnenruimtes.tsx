@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import {
   Button,
+  Column,
   Grid,
   Heading,
   Paragraph,
@@ -78,76 +79,80 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
 
   return (
     <Grid gapVertical="large" className="align-items-end padding-Inline-start">
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={2}>Binnenruimtes</Heading>
-        <Paragraph>
-          Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte per
-          ruimte in. Doe dit voor alle binnenruimtes in de woning. Alle ruimtes
-          in de woning tellen mee in de puntentelling.
-        </Paragraph>
-      </Grid.Cell>
+      <Grid.Cell span="all">
+        <Column gap="large">
+          <Column gap="small">
+            <Heading level={2}>Binnenruimtes</Heading>
+            <Paragraph>
+              Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte
+              per ruimte in. Doe dit voor alle binnenruimtes in de woning.
+              Alle ruimtes in de woning tellen mee in de puntentelling.
+            </Paragraph>
+          </Column>
 
-      {fields.some((_, index) => index !== openIndex) && (
-        <Grid.Cell span="all" appearance="transparent">
-          <Heading level={3}>Toegevoegde binnenruimtes</Heading>
-          <UnorderedList>
-            {fields.map(
-              (field, index) =>
-                index !== openIndex && (
-                  <UnorderedList.Item key={field.id}>
-                    <Row alignVertical="center">
-                      {roomLabels[index]}
-                      <Button
-                        type="button"
-                        variant="tertiary"
-                        icon={PencilIcon}
-                        iconBefore
-                        onClick={() => setOpenIndex(index)}
-                      >
-                        Wijzigen
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="tertiary"
-                        icon={DeleteIcon}
-                        iconBefore
-                        onClick={() => handleRemove(index)}
-                      >
-                        Wissen
-                      </Button>
-                    </Row>
-                  </UnorderedList.Item>
-                ),
-            )}
-          </UnorderedList>
-        </Grid.Cell>
-      )}
+          {fields.some((_, index) => index !== openIndex) && (
+            <Column gap="small">
+              <Heading level={3}>Toegevoegde binnenruimtes</Heading>
+              <UnorderedList>
+                {fields.map(
+                  (field, index) =>
+                    index !== openIndex && (
+                      <UnorderedList.Item key={field.id}>
+                        <Row alignVertical="center">
+                          {roomLabels[index]}
+                          <Button
+                            type="button"
+                            variant="tertiary"
+                            icon={PencilIcon}
+                            iconBefore
+                            onClick={() => setOpenIndex(index)}
+                          >
+                            Wijzigen
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="tertiary"
+                            icon={DeleteIcon}
+                            iconBefore
+                            onClick={() => handleRemove(index)}
+                          >
+                            Wissen
+                          </Button>
+                        </Row>
+                      </UnorderedList.Item>
+                    ),
+                )}
+              </UnorderedList>
+            </Column>
+          )}
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Kies een binnenruimte</Heading>
-        <Paragraph className="ams-mb-m">
-          Welke binnenruimtes zijn er voor eigen gebruik? Vul ze één voor één
-          in.
-        </Paragraph>
-        <Row wrap>
-          {BINNENRUIMTE_TYPES.map((type) => (
-            <Button
-              key={type}
-              type="button"
-              variant="secondary"
-              icon={PlusIcon}
-              iconBefore
-              onClick={() => handleAdd(type)}
-            >
-              {type}
-            </Button>
-          ))}
-        </Row>
+          <Column gap="small">
+            <Heading level={3}>Kies een binnenruimte</Heading>
+            <Paragraph className="ams-mb-m">
+              Welke binnenruimtes zijn er voor eigen gebruik? Vul ze één voor
+              één in.
+            </Paragraph>
+            <Row wrap>
+              {BINNENRUIMTE_TYPES.map((type) => (
+                <Button
+                  key={type}
+                  type="button"
+                  variant="secondary"
+                  icon={PlusIcon}
+                  iconBefore
+                  onClick={() => handleAdd(type)}
+                >
+                  {type}
+                </Button>
+              ))}
+            </Row>
+          </Column>
+        </Column>
       </Grid.Cell>
 
       {openIndex !== null && (
-        <Grid.Cell span="all" appearance="transparent">
-          <Heading level={3}>{roomLabels[openIndex]}</Heading>
+        <Grid.Cell span="all">
+          <Heading level={2} className="ams-mb-m">{roomLabels[openIndex]}</Heading>
           <BinnenruimteFields
             index={openIndex}
             label={roomLabels[openIndex]}

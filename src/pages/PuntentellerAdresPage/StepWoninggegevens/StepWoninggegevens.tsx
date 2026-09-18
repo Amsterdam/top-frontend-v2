@@ -77,7 +77,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
         <Heading level={2}>Over de woning</Heading>
       </Grid.Cell>
 
-      <Grid.Cell span="all" >
+      <Grid.Cell span="all" appearance="transparent">
         <Heading level={3}>WOZ-waarde gegevens</Heading>
       </Grid.Cell>
       {wozPeildatumOptions.length > 0 && (

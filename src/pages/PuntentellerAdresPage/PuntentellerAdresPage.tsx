@@ -23,6 +23,11 @@ import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
 import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
 
+// StepBinnenruimtes shows each added room on its own Grid.Cell, without appearance, so it
+// reads as a white block against the page background. That only works if the wrapping
+// Grid.Cell below isn't itself a card, unlike for the other steps.
+const BINNENRUIMTES_STEP = 1
+
 const TAB_ITEMS = [
   { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
   {
@@ -135,7 +140,12 @@ export default function PuntentellerAdresPage() {
 
       {!isError && (
         <>
-          <Grid.Cell span="all">
+          <Grid.Cell
+            span="all"
+            appearance={
+              currentStep === BINNENRUIMTES_STEP ? "transparent" : undefined
+            }
+          >
             <FormProvider form={form} onSubmit={onSubmit}>
               {steps[currentStep]}
             </FormProvider>
