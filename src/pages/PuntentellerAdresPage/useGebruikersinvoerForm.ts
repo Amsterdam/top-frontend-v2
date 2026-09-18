@@ -41,24 +41,9 @@ const defaultValues: GebruikersinvoerFormValues = {
   keuken_thermostatische_mengkraan: 0,
   keuken_kokendwaterfunctie: 0,
 
-  vertrekken_oppervlakte: null,
-  vertrekken_1: 0,
-  vertrekken_2: 0,
-  vertrekken_3: 0,
-  vertrekken_4: 0,
-  vertrekken_5: 0,
-  vertrekken_6: 0,
-
-  overige_ruimte_oppervlakte: null,
-  overige_ruimte_1: 0,
-  overige_ruimte_2: 0,
-  overige_ruimte_3: 0,
-  overige_ruimte_4: 0,
-  overige_ruimte_5: 0,
-
-  verwarming_aantal_vertrekken: 0,
-  verwarming_aantal_overige_ruimten: 0,
-  verkoeling_aantal_vertrekken: 0,
+  binnenruimtes: [],
+  bad_douche_wastafel_andere_ruimte: null,
+  keuken_andere_ruimte: null,
 
   buitenruimte_prive_buitenruimte: 0,
   buitenruimte_gemeenschappelijke_buitenruimte: 0,
@@ -70,6 +55,8 @@ const defaultValues: GebruikersinvoerFormValues = {
   gebruiksoppervlakte: 0,
   woz_waarde: 0,
   woz_peildatum_jaar: new Date().getFullYear(),
+  type_woning: null,
+  gemeenschappelijke_binnenruimtes: null,
 
   monument: false,
   monument_soort: null,
@@ -91,8 +78,8 @@ export function useGebruikersinvoerForm(bagId?: string) {
     defaultValues,
   })
 
-  // Vul de velden die overlappen met de vooraf ingevulde invoerwaarden (stap 0) zodra
-  // die binnen zijn, zonder al ingevulde wizard-voortgang op andere velden te resetten.
+  // Fill in the fields that overlap with the prefilled invoerwaarden (step 0) once they
+  // arrive, without resetting wizard progress already filled in on other fields.
   useEffect(() => {
     if (!invoerwaarden) return
 

@@ -1,3 +1,20 @@
+type BinnenruimteType =
+  | "Woonkamer"
+  | "Keuken"
+  | "Woonkamer met open keuken"
+  | "Slaapkamer"
+  | "Badkamer"
+  | "Toiletruimte"
+
+type Binnenruimte = {
+  type: BinnenruimteType
+  lengte: number | null
+  breedte: number | null
+  oppervlakte: number | null
+  verwarmd: string | null
+  verkoeld: string | null
+}
+
 type GebruikersinvoerFormValues = {
   // Sanitair
   badkamer_aantal_adressen: number
@@ -37,27 +54,10 @@ type GebruikersinvoerFormValues = {
   keuken_thermostatische_mengkraan: number
   keuken_kokendwaterfunctie: number
 
-  // Vertrekken
-  vertrekken_oppervlakte: number | null
-  vertrekken_1: number
-  vertrekken_2: number
-  vertrekken_3: number
-  vertrekken_4: number
-  vertrekken_5: number
-  vertrekken_6: number
-
-  // Overige ruimtes
-  overige_ruimte_oppervlakte: number | null
-  overige_ruimte_1: number
-  overige_ruimte_2: number
-  overige_ruimte_3: number
-  overige_ruimte_4: number
-  overige_ruimte_5: number
-
-  // Klimaat
-  verwarming_aantal_vertrekken: number
-  verwarming_aantal_overige_ruimten: number
-  verkoeling_aantal_vertrekken: number
+  // Binnenruimtes
+  binnenruimtes: Binnenruimte[]
+  bad_douche_wastafel_andere_ruimte: string | null
+  keuken_andere_ruimte: string | null
 
   // Buitenruimte & parkeren
   buitenruimte_prive_buitenruimte: number
@@ -71,6 +71,8 @@ type GebruikersinvoerFormValues = {
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
+  type_woning: string | null
+  gemeenschappelijke_binnenruimtes: string | null
 
   // Bijzonderheden
   monument: boolean

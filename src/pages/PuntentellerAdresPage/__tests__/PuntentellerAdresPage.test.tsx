@@ -100,20 +100,11 @@ const { stepPlaceholder } = vi.hoisted(() => ({
 vi.mock("../StepWoninggegevens/StepWoninggegevens", () => ({
   StepWoninggegevens: stepPlaceholder("Stap woninggegevens"),
 }))
-vi.mock("../StepSanitair/StepSanitair", () => ({
-  StepSanitair: stepPlaceholder("Stap sanitair"),
+vi.mock("../StepBinnenruimtes/StepBinnenruimtes", () => ({
+  StepBinnenruimtes: stepPlaceholder("Stap binnenruimtes"),
 }))
-vi.mock("../StepKeuken/StepKeuken", () => ({
-  StepKeuken: stepPlaceholder("Stap keuken"),
-}))
-vi.mock("../StepVertrekken/StepVertrekken", () => ({
-  StepVertrekken: stepPlaceholder("Stap vertrekken"),
-}))
-vi.mock("../StepOverigeRuimtes/StepOverigeRuimtes", () => ({
-  StepOverigeRuimtes: stepPlaceholder("Stap overige ruimtes"),
-}))
-vi.mock("../StepKlimaatBuitenParkeren/StepKlimaatBuitenParkeren", () => ({
-  StepKlimaatBuitenParkeren: stepPlaceholder("Stap klimaat"),
+vi.mock("../StepBuitenruimtes/StepBuitenruimtes", () => ({
+  StepBuitenruimtes: stepPlaceholder("Stap buitenruimtes"),
 }))
 vi.mock("../StepBijzonderheden/StepBijzonderheden", () => ({
   StepBijzonderheden: stepPlaceholder("Stap bijzonderheden"),
@@ -139,17 +130,14 @@ describe("PuntentellerAdresPage", () => {
     ).toBeDefined()
   })
 
-  it("walks through all 8 steps and submits on the overzicht-stap", async () => {
+  it("walks through all 5 steps and submits on the overzicht-stap", async () => {
     render(<PuntentellerAdresPage />)
 
     await screen.findByText("Stap woninggegevens")
 
     for (const label of [
-      "Stap sanitair",
-      "Stap keuken",
-      "Stap vertrekken",
-      "Stap overige ruimtes",
-      "Stap klimaat",
+      "Stap binnenruimtes",
+      "Stap buitenruimtes",
       "Stap bijzonderheden",
       "Stap overzicht",
     ]) {

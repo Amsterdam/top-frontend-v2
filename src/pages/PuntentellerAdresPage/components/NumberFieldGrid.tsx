@@ -43,15 +43,14 @@ function NumberFieldCell({ name, label, step = 1 }: NumberField) {
 
 /**
  * Renders a responsive grid of numeric TextInputControls, one per field. Most Puntenteller
- * invoervelden are near-identical numeric counts, so this avoids ~60 repeated JSX blocks
+ * input fields are near-identical numeric counts, so this avoids ~60 repeated JSX blocks
  * across the wizard steps.
  */
 export function NumberFieldGrid({ fields }: Props) {
   return (
     <Grid
       gapVertical="large"
-      style={{ paddingInlineStart: 0 }}
-      className="align-items-end"
+      className="align-items-end padding-Inline-start"
     >
       {fields.map((field) => (
         <NumberFieldCell key={field.name} {...field} />

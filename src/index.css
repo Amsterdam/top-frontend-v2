@@ -50,3 +50,19 @@ body {
 .align-items-end {
   align-items: flex-end;
 }
+
+.padding-Inline-start {
+  padding-inline-start: 0;
+}
+
+.table--borderless .ams-table__cell,
+.table--borderless .ams-table__header-cell {
+  border-block-end: none;
+  vertical-align: middle;
+}
+
+.table--borderless .bullet-cell::before {
+  content: var(--ams-unordered-list-list-style-type);
+  color: var(--ams-unordered-list-color);
+  margin-inline-end: 0.5em;
+}

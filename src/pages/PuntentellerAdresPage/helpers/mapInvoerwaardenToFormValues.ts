@@ -1,11 +1,11 @@
-/** Sorteert woz_waarden aflopend op peildatum (meest recente eerst). */
+/** Sorts woz_waarden descending by peildatum (most recent first). */
 export function sortWozWaardenByPeildatum(
   wozWaarden: WozWaarde[],
 ): WozWaarde[] {
   return [...wozWaarden].sort((a, b) => b.peildatum.localeCompare(a.peildatum))
 }
 
-/** De WOZ-waarde die als default gebruikt wordt zolang de gebruiker geen peildatum kiest. */
+/** The WOZ-waarde used as default as long as the user hasn't chosen a peildatum. */
 export function selectDefaultWozWaarde(
   wozWaarden: WozWaarde[],
 ): WozWaarde | undefined {
@@ -17,10 +17,10 @@ export function peildatumToJaar(peildatum: string): number {
 }
 
 /**
- * Maps de prefilled invoerwaarden (stap 0) onto the overlapping subset of
+ * Maps the prefilled invoerwaarden (step 0) onto the overlapping subset of
  * GebruikersinvoerFormValues fields, so form.reset()/setValue() can seed the wizard once the
- * invoerwaarden query resolves. Van de meerdere WOZ-waarden (per peildatum) wordt standaard de
- * meest recente gekozen; de gebruiker kan dit in StepWoninggegevens nog aanpassen.
+ * invoerwaarden query resolves. Of the multiple WOZ-waarden (per peildatum), the most recent
+ * one is chosen by default; the user can still adjust this in StepWoninggegevens.
  */
 export function mapInvoerwaardenToFormValues(
   invoerwaarden: PuntentellerInvoerwaarden,
