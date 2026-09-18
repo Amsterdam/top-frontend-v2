@@ -3,17 +3,20 @@ import { useFieldArray, useFormContext } from "react-hook-form"
 import {
   Button,
   Column,
+  Dialog,
   Grid,
   Heading,
   Paragraph,
   Row,
-  UnorderedList,
+  Table,
 } from "@amsterdam/design-system-react"
 import {
+  CheckMarkIcon,
   DeleteIcon,
   PencilIcon,
   PlusIcon,
 } from "@amsterdam/design-system-react-icons"
+import { ConfirmDialog } from "@/components"
 import { StepActions } from "../components/StepActions"
 import { BinnenruimteFields } from "./BinnenruimteFields"
 
@@ -63,10 +66,30 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
   const roomLabels = getRoomLabels(fields)
   // The room currently shown as an editable form, as opposed to a row in the list below.
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  // Whether that open room has never been saved yet. Clicking another type while it's still
+  // an unsaved draft replaces it, so repeatedly clicking a type button can't pile up unsaved
+  // rooms; only rooms that were actually saved end up in the list.
+  const [isDraftOpen, setIsDraftOpen] = useState(false)
+  const openType = openIndex !== null ? fields[openIndex]?.type : undefined
 
   const handleAdd = (type: BinnenruimteType) => {
+    const replacesDraft = openIndex !== null && isDraftOpen
+    if (replacesDraft) {
+      remove(openIndex)
+    }
     append(emptyBinnenruimte(type))
-    setOpenIndex(fields.length)
+    setOpenIndex(replacesDraft ? fields.length - 1 : fields.length)
+    setIsDraftOpen(true)
+  }
+
+  const handleEdit = (index: number) => {
+    setOpenIndex(index)
+    setIsDraftOpen(false)
+  }
+
+  const handleSave = () => {
+    setOpenIndex(null)
+    setIsDraftOpen(false)
   }
 
   const handleRemove = (index: number) => {
@@ -93,36 +116,60 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
           {fields.some((_, index) => index !== openIndex) && (
             <Column gap="small">
               <Heading level={3}>Toegevoegde binnenruimtes</Heading>
-              <UnorderedList>
-                {fields.map(
-                  (field, index) =>
-                    index !== openIndex && (
-                      <UnorderedList.Item key={field.id}>
-                        <Row alignVertical="center">
+              <Table className="table--borderless">
+                <Table.Caption className="ams-visually-hidden">
+                  Toegevoegde binnenruimtes
+                </Table.Caption>
+                <Table.Body>
+                  {fields.map((field, index) => {
+                    if (index === openIndex) return null
+
+                    const dialogId = `wissen-binnenruimte-${field.id}`
+                    return (
+                      <Table.Row key={field.id}>
+                        <Table.Cell className="bullet-cell">
                           {roomLabels[index]}
-                          <Button
-                            type="button"
-                            variant="tertiary"
-                            icon={PencilIcon}
-                            iconBefore
-                            onClick={() => setOpenIndex(index)}
-                          >
-                            Wijzigen
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="tertiary"
-                            icon={DeleteIcon}
-                            iconBefore
-                            onClick={() => handleRemove(index)}
-                          >
-                            Wissen
-                          </Button>
-                        </Row>
-                      </UnorderedList.Item>
-                    ),
-                )}
-              </UnorderedList>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Row gap="small">
+                            <Button
+                              type="button"
+                              variant="tertiary"
+                              icon={PencilIcon}
+                              iconBefore
+                              onClick={() => handleEdit(index)}
+                            >
+                              Wijzigen
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="tertiary"
+                              icon={DeleteIcon}
+                              iconBefore
+                              onClick={() => Dialog.open(`#${dialogId}`)}
+                            >
+                              Wissen
+                            </Button>
+                          </Row>
+                          <ConfirmDialog
+                            id={dialogId}
+                            title="Binnenruimte verwijderen"
+                            content={
+                              <span>
+                                Weet je zeker dat je{" "}
+                                <strong>{roomLabels[index]}</strong> wilt
+                                verwijderen?
+                              </span>
+                            }
+                            onOk={() => handleRemove(index)}
+                            onOkText="Verwijderen"
+                          />
+                        </Table.Cell>
+                      </Table.Row>
+                    )
+                  })}
+                </Table.Body>
+              </Table>
             </Column>
           )}
 
@@ -133,18 +180,21 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
               één in.
             </Paragraph>
             <Row wrap>
-              {BINNENRUIMTE_TYPES.map((type) => (
-                <Button
-                  key={type}
-                  type="button"
-                  variant="secondary"
-                  icon={PlusIcon}
-                  iconBefore
-                  onClick={() => handleAdd(type)}
-                >
-                  {type}
-                </Button>
-              ))}
+              {BINNENRUIMTE_TYPES.map((type) => {
+                const isOpen = type === openType
+                return (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={isOpen ? "primary" : "secondary"}
+                    icon={isOpen ? CheckMarkIcon : PlusIcon}
+                    iconBefore
+                    onClick={() => handleAdd(type)}
+                  >
+                    {type}
+                  </Button>
+                )
+              })}
             </Row>
           </Column>
         </Column>
@@ -156,7 +206,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
           <BinnenruimteFields
             index={openIndex}
             label={roomLabels[openIndex]}
-            onSave={() => setOpenIndex(null)}
+            onSave={handleSave}
           />
         </Grid.Cell>
       )}

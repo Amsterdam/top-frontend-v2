@@ -20,7 +20,7 @@ const GRID_CELL_SPAN_OPPERVLAKTE = { narrow: 2, medium: 2, wide: 2 } as const
 const GRID_CELL_SPAN_VERWARMD_VERKOELD = {
   narrow: 4,
   medium: 4,
-  wide: 3,
+  wide: 5,
 } as const
 
 /** An empty `<input type="number">` must not receive `null`/`NaN` as its `value`. */
@@ -44,6 +44,22 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
     control,
     name: `binnenruimtes.${index}.oppervlakte` as const,
   })
+  const verwarmd = useWatch({
+    control,
+    name: `binnenruimtes.${index}.verwarmd` as const,
+  })
+  const verkoeld = useWatch({
+    control,
+    name: `binnenruimtes.${index}.verkoeld` as const,
+  })
+
+  // Mirrors the registerOptions below: oppervlakte, verwarmd and verkoeld are the required
+  // fields for a room, lengte/breedte stay optional since oppervlakte can be filled directly.
+  const canSave =
+    oppervlakte != null &&
+    !Number.isNaN(oppervlakte) &&
+    verwarmd != null &&
+    verkoeld != null
 
   // Lengte x breedte drive the oppervlakte, but it remains directly editable afterwards
   // for rooms where only the oppervlakte itself is known.
@@ -153,7 +169,13 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
 
       <Grid.Cell span="all" appearance="transparent">
         <ActionGroup>
-          <Button type="button" icon={SaveIcon} iconBefore onClick={onSave}>
+          <Button
+            type="button"
+            icon={SaveIcon}
+            iconBefore
+            disabled={!canSave}
+            onClick={onSave}
+          >
             {label} opslaan
           </Button>
         </ActionGroup>
