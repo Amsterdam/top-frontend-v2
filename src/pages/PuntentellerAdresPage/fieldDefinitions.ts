@@ -9,7 +9,10 @@ export const WONINGGEGEVENS_FIELDS = [
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
   { name: "energielabel_klasse", label: "Energielabel" },
   { name: "type_woning", label: "Woonvorm" },
-  { name: "gemeenschappelijke_binnenruimtes", label: "Gemeenschappelijke binnenruimtes" },
+  {
+    name: "gemeenschappelijke_binnenruimtes",
+    label: "Gemeenschappelijke binnenruimtes",
+  },
 ] as const
 
 export const BINNENRUIMTES_FIELDS = [
@@ -83,68 +86,6 @@ export const KEUKEN_FIELDS = [
     label: "Thermostatische mengkraan",
   },
   { name: "keuken_kokendwaterfunctie", label: "Kokendwaterfunctie" },
-] as const
-
-export const VERTREKKEN_FIELDS = [
-  {
-    name: "vertrekken_oppervlakte",
-    label: "Totale oppervlakte vertrekken (m²)",
-    step: 0.01,
-  },
-  { name: "vertrekken_1", label: "Oppervlakte vertrek 1 (m²)", step: 0.01 },
-  { name: "vertrekken_2", label: "Oppervlakte vertrek 2 (m²)", step: 0.01 },
-  { name: "vertrekken_3", label: "Oppervlakte vertrek 3 (m²)", step: 0.01 },
-  { name: "vertrekken_4", label: "Oppervlakte vertrek 4 (m²)", step: 0.01 },
-  { name: "vertrekken_5", label: "Oppervlakte vertrek 5 (m²)", step: 0.01 },
-  { name: "vertrekken_6", label: "Oppervlakte vertrek 6 (m²)", step: 0.01 },
-] as const
-
-export const OVERIGE_RUIMTE_FIELDS = [
-  {
-    name: "overige_ruimte_oppervlakte",
-    label: "Totale oppervlakte overige ruimtes (m²)",
-    step: 0.01,
-  },
-  {
-    name: "overige_ruimte_1",
-    label: "Oppervlakte overige ruimte 1 (m²)",
-    step: 0.01,
-  },
-  {
-    name: "overige_ruimte_2",
-    label: "Oppervlakte overige ruimte 2 (m²)",
-    step: 0.01,
-  },
-  {
-    name: "overige_ruimte_3",
-    label: "Oppervlakte overige ruimte 3 (m²)",
-    step: 0.01,
-  },
-  {
-    name: "overige_ruimte_4",
-    label: "Oppervlakte overige ruimte 4 (m²)",
-    step: 0.01,
-  },
-  {
-    name: "overige_ruimte_5",
-    label: "Oppervlakte overige ruimte 5 (m²)",
-    step: 0.01,
-  },
-] as const
-
-export const KLIMAAT_FIELDS = [
-  {
-    name: "verwarming_aantal_vertrekken",
-    label: "Verwarming, aantal vertrekken",
-  },
-  {
-    name: "verwarming_aantal_overige_ruimten",
-    label: "Verwarming, aantal overige ruimtes",
-  },
-  {
-    name: "verkoeling_aantal_vertrekken",
-    label: "Verkoeling, aantal vertrekken",
-  },
 ] as const
 
 export const BUITEN_PARKEREN_FIELDS = [

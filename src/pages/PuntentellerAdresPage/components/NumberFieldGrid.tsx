@@ -50,7 +50,7 @@ export function NumberFieldGrid({ fields }: Props) {
   return (
     <Grid
       gapVertical="large"
-      style={{ paddingInlineStart: 0 }}
+      className="align-items-end padding-Inline-start"
       className="align-items-end"
     >
       {fields.map((field) => (

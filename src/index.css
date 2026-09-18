@@ -50,3 +50,7 @@ body {
 .align-items-end {
   align-items: flex-end;
 }
+
+.padding-Inline-start {
+  padding-inline-start: 0;
+}

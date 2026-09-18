@@ -7,7 +7,7 @@ type Props = {
 
 export function StepBuitenruimtes({ onNextStep }: Props) {
   return (
-    <Grid gapVertical="large" style={{ paddingInlineStart: 0 }}>
+    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
       <Grid.Cell span="all" appearance="transparent">
         <Heading level={2}>Buitenruimtes</Heading>
         <Paragraph>Deze stap volgt nog.</Paragraph>
