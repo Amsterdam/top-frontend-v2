@@ -13,9 +13,9 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
         <Grid.Cell span="all" appearance="transparent">
           <Heading level={2}>Binnenruimtes</Heading>
           <Paragraph>
-            Sommige voorzieningen staan niet in de ruimte waar u ze zou
-            verwachten. Geef hieronder aan of dat bij deze woning het geval
-            is.
+            Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte per
+            ruimte in. Doe dit voor alle binnenruimtes in de woning. Alle
+            ruimtes in de woning tellen mee in de puntentelling.
           </Paragraph>
         </Grid.Cell>
 
