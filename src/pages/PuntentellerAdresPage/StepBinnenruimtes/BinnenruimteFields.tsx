@@ -74,6 +74,18 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lengte, breedte])
 
+  const verwarmdIsJa = verwarmd === "true"
+
+  // Verkoeld can only be "ja" when the room is also verwarmd; otherwise it's forced to "nee".
+  useEffect(() => {
+    if (verwarmdIsJa) return
+
+    setValue(`binnenruimtes.${index}.verkoeld`, "false", {
+      shouldValidate: true,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verwarmdIsJa])
+
   return (
     <Grid gapVertical="large" className="align-items-end padding-Inline-start">
       <Grid.Cell span="all" appearance="transparent">
@@ -163,6 +175,7 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
             { label: "Ja", value: "true" },
           ]}
           registerOptions={{ required: "Deze vraag is verplicht" }}
+          disabled={!verwarmdIsJa}
           inFieldSet
         />
       </Grid.Cell>
