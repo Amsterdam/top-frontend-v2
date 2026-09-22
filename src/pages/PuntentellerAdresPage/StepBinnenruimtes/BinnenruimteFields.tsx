@@ -28,21 +28,27 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
     trigger,
     formState: { errors },
   } = useFormContext<GebruikersinvoerFormValues>()
-  const { hasVerkoeld, extra } = BINNENRUIMTE_CONFIG[type]
+  const {
+    hasVerwarmd = true,
+    hasVerkoeld = true,
+    hasOppervlakte = true,
+    extra,
+  } = BINNENRUIMTE_CONFIG[type]
 
   // Mirrors the registerOptions in OppervlakteFields/VerwarmdVerkoeldFields: oppervlakte,
   // verwarmd and verkoeld are the required fields for a room, lengte/breedte stay optional
-  // since oppervlakte can be filled directly. Verkoeld is always forced to a value (see
-  // VerwarmdVerkoeldFields), even for types without the question, so this list needs no
-  // extra case for hasVerkoeld. Required extra fields (e.g. aanrechtlengte) mirror the
-  // `required` set on them in fieldDefinitions.ts.
+  // since oppervlakte can be filled directly. Verwarmd and verkoeld are always forced to a
+  // value (see VerwarmdVerkoeldFields), even for types without the question, so this list
+  // needs no extra case for hasVerwarmd/hasVerkoeld. Oppervlakte isn't asked at all for types
+  // with hasOppervlakte: false (e.g. overloop), so it's skipped there too. Required extra
+  // fields (e.g. aanrechtlengte) mirror the `required` set on them in fieldDefinitions.ts.
   const requiredExtraFieldNames = (extra ?? [])
     .flatMap((section) => section.fields)
     .filter((field) => field.required)
     .map((field) => field.name as Path<GebruikersinvoerFormValues>)
 
   const requiredFieldNames = [
-    `binnenruimtes.${index}.oppervlakte` as const,
+    ...(hasOppervlakte ? [`binnenruimtes.${index}.oppervlakte` as const] : []),
     `binnenruimtes.${index}.verwarmd` as const,
     `binnenruimtes.${index}.verkoeld` as const,
     ...requiredExtraFieldNames,
@@ -77,7 +83,10 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
   return (
     <Grid gapVertical="large" className="align-items-end padding-Inline-start">
       {showErrors && (
-        <Grid.Cell span={{ narrow: 4, medium: 6, wide: 7 }} appearance="transparent">
+        <Grid.Cell
+          span={{ narrow: 4, medium: 6, wide: 7 }}
+          appearance="transparent"
+        >
           <InvalidFormAlert
             errors={alertErrors}
             headingLevel={4}
@@ -86,12 +95,13 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
           />
         </Grid.Cell>
       )}
-      <OppervlakteFields index={index} />
+      {hasOppervlakte && <OppervlakteFields index={index} />}
 
       <VerwarmdVerkoeldFields
         index={index}
         label={label}
         hasVerkoeld={hasVerkoeld}
+        hasVerwarmd={hasVerwarmd}
       />
 
       {extra?.map((section) => (
@@ -116,7 +126,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             iconBefore
             onClick={handleSaveClick}
           >
-            {label} opslaan
+            {label} toevoegen
           </Button>
         </ActionGroup>
       </Grid.Cell>

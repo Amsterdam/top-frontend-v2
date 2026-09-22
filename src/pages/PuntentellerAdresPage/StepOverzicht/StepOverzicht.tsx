@@ -77,8 +77,10 @@ export function StepOverzicht({ isSubmitting }: Props) {
             <UnorderedList className="ams-mb-xl">
               {binnenruimtes.map((ruimte, index) => (
                 <UnorderedList.Item key={index}>
-                  {ruimte.type} — {ruimte.oppervlakte ?? 0} m², verwarmd:{" "}
-                  {jaNee(ruimte.verwarmd)}, verkoeld: {jaNee(ruimte.verkoeld)}
+                  {ruimte.type}
+                  {ruimte.oppervlakte != null && ` — ${ruimte.oppervlakte} m²`},
+                  verwarmd: {jaNee(ruimte.verwarmd)}, verkoeld:{" "}
+                  {jaNee(ruimte.verkoeld)}
                 </UnorderedList.Item>
               ))}
             </UnorderedList>

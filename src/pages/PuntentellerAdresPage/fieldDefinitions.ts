@@ -157,6 +157,38 @@ export const BADKAMER_FIELDS = (
   BADKAMER_SECTIONS as readonly FieldSection[]
 ).flatMap((section) => section.fields)
 
+/** Subset of BADKAMER_SECTIONS shown for a "Slaapkamer met wastafel, douche of bad" binnenruimte. */
+export const SLAAPKAMER_SANITAIR_SECTIONS = [
+  {
+    heading: "Douche, bad of combinatie",
+    fields: [
+      {
+        name: "badkamer_douche",
+        label: "Is er een douche, een bad of een combinatie van beide?",
+        options: [
+          { label: "Maak een keuze", value: "" },
+          { label: "Douche", value: "badkamer_douche" },
+          { label: "Bad (met handdouche)", value: "badkamer_bad" },
+          { label: "Bad en aparte douche", value: "badkamer_baddouche" },
+        ],
+        inFieldSet: true,
+        required: "Een douche of bad is verplicht",
+      },
+    ],
+  },
+  {
+    heading: "Wastafelvoorzieningen",
+    fields: [
+      { name: "badkamer_wastafel", label: "Wastafel", inFieldSet: true },
+      {
+        name: "badkamer_meerpersoons_wastafel",
+        label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
+        inFieldSet: true,
+      },
+    ],
+  },
+] as const satisfies readonly FieldSection[]
+
 export const TOILETRUIMTE_SECTIONS = [
   {
     heading: "Voorzieningen",

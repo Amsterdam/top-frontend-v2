@@ -43,6 +43,7 @@ export function BinnenruimteTable({
               <Table.Row key={room.id}>
                 <Table.Cell className="bullet-cell">
                   {roomLabels[index]}
+                  {room.oppervlakte != null && ` (${room.oppervlakte} m²)`}
                 </Table.Cell>
                 <Table.Cell>
                   <Row gap="small">

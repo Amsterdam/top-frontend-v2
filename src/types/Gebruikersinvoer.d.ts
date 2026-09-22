@@ -5,6 +5,20 @@ type BinnenruimteType =
   | "Slaapkamer"
   | "Badkamer"
   | "Toiletruimte"
+  | "Woon- en slaapkamer"
+  | "Slaapkamer met wastafel, douche of bad"
+  | "Woon- en slaapkamer met keuken"
+  | "Overloop"
+  | "Kleine kamer (kleiner dan 4 m²)"
+  | "Wasruimte / bijkeuken"
+  | "Berging"
+  | "Garage"
+  | "Kelder"
+  | "Zolder"
+  | "Zolderberging met vaste trap"
+  | "Zolderberging zonder vaste trap"
+  | "Bad, douche of wastafel in andere ruimte"
+  | "Keuken in andere ruimte"
 
 type Binnenruimte = {
   type: BinnenruimteType
