@@ -107,9 +107,9 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
           <Column gap="small">
             <Heading level={2}>Binnenruimtes</Heading>
             <Paragraph>
-              Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte
-              per ruimte in. Doe dit voor alle binnenruimtes in de woning.
-              Alle ruimtes in de woning tellen mee in de puntentelling.
+              Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte per
+              ruimte in. Doe dit voor alle binnenruimtes in de woning. Alle
+              ruimtes in de woning tellen mee in de puntentelling.
             </Paragraph>
           </Column>
 
@@ -202,10 +202,13 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
 
       {openIndex !== null && (
         <Grid.Cell span="all">
-          <Heading level={2} className="ams-mb-m">{roomLabels[openIndex]}</Heading>
+          <Heading level={2} className="ams-mb-m">
+            {roomLabels[openIndex]}
+          </Heading>
           <BinnenruimteFields
             index={openIndex}
             label={roomLabels[openIndex]}
+            type={fields[openIndex].type}
             onSave={handleSave}
           />
         </Grid.Cell>

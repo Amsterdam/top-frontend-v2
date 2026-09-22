@@ -21,7 +21,6 @@ import {
   APART_TOILET_FIELDS,
   BADKAMER_FIELDS,
   BIJZONDERE_VOORZIENING_FIELDS,
-  BINNENRUIMTES_FIELDS,
   BUITEN_PARKEREN_FIELDS,
   KEUKEN_FIELDS,
   WONINGGEGEVENS_FIELDS,
@@ -85,11 +84,6 @@ export function StepOverzicht({ isSubmitting }: Props) {
             </UnorderedList>
           )}
         </Grid.Cell>
-        <SummarySection
-          title="Overige kenmerken binnenruimtes"
-          fields={BINNENRUIMTES_FIELDS}
-          values={values as GebruikersinvoerFormValues}
-        />
         <SummarySection
           title="Buitenruimte & parkeren"
           icon={ParkingIcon}
