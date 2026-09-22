@@ -96,7 +96,7 @@ export function OppervlakteFields({ index }: Props) {
           }}
           registerOptions={{
             valueAsNumber: true,
-            required: "Oppervlakte is verplicht",
+            required: "Vul de oppervlakte in.",
             min: 0,
           }}
           inFieldSet

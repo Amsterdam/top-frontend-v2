@@ -58,7 +58,7 @@ export function VerwarmdVerkoeldFields({ index, label, hasVerkoeld }: Props) {
             { label: "Nee", value: "false" },
             { label: "Ja", value: "true" },
           ]}
-          registerOptions={{ required: "Deze vraag is verplicht" }}
+          registerOptions={{ required: "Geef aan of de ruimte verwarmd is" }}
           inFieldSet
         />
       </Grid.Cell>
@@ -75,7 +75,7 @@ export function VerwarmdVerkoeldFields({ index, label, hasVerkoeld }: Props) {
               { label: "Nee", value: "false" },
               { label: "Ja", value: "true" },
             ]}
-            registerOptions={{ required: "Deze vraag is verplicht" }}
+            registerOptions={{ required: "Geef aan of de ruimte verkoeld is" }}
             disabled={!verwarmdIsJa}
             inFieldSet
           />

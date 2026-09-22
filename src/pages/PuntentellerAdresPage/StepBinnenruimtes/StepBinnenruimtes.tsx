@@ -3,22 +3,18 @@ import { useFieldArray, useFormContext } from "react-hook-form"
 import {
   Button,
   Column,
-  Dialog,
   Grid,
   Heading,
   Paragraph,
   Row,
-  Table,
 } from "@amsterdam/design-system-react"
 import {
   CheckMarkIcon,
-  DeleteIcon,
-  PencilIcon,
   PlusIcon,
 } from "@amsterdam/design-system-react-icons"
-import { ConfirmDialog } from "@/components"
 import { StepActions } from "../components/StepActions"
 import { BinnenruimteFields } from "./BinnenruimteFields"
+import { BinnenruimteTable } from "./BinnenruimteTable"
 
 const BINNENRUIMTE_TYPES: BinnenruimteType[] = [
   "Woonkamer",
@@ -113,65 +109,13 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
             </Paragraph>
           </Column>
 
-          {fields.some((_, index) => index !== openIndex) && (
-            <Column gap="small">
-              <Heading level={3}>Toegevoegde binnenruimtes</Heading>
-              <Table className="table--borderless">
-                <Table.Caption className="ams-visually-hidden">
-                  Toegevoegde binnenruimtes
-                </Table.Caption>
-                <Table.Body>
-                  {fields.map((field, index) => {
-                    if (index === openIndex) return null
-
-                    const dialogId = `wissen-binnenruimte-${field.id}`
-                    return (
-                      <Table.Row key={field.id}>
-                        <Table.Cell className="bullet-cell">
-                          {roomLabels[index]}
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Row gap="small">
-                            <Button
-                              type="button"
-                              variant="tertiary"
-                              icon={PencilIcon}
-                              iconBefore
-                              onClick={() => handleEdit(index)}
-                            >
-                              Wijzigen
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="tertiary"
-                              icon={DeleteIcon}
-                              iconBefore
-                              onClick={() => Dialog.open(`#${dialogId}`)}
-                            >
-                              Wissen
-                            </Button>
-                          </Row>
-                          <ConfirmDialog
-                            id={dialogId}
-                            title="Binnenruimte verwijderen"
-                            content={
-                              <span>
-                                Weet je zeker dat je{" "}
-                                <strong>{roomLabels[index]}</strong> wilt
-                                verwijderen?
-                              </span>
-                            }
-                            onOk={() => handleRemove(index)}
-                            onOkText="Verwijderen"
-                          />
-                        </Table.Cell>
-                      </Table.Row>
-                    )
-                  })}
-                </Table.Body>
-              </Table>
-            </Column>
-          )}
+          <BinnenruimteTable
+            rooms={fields}
+            roomLabels={roomLabels}
+            openIndex={openIndex}
+            onEdit={handleEdit}
+            onRemove={handleRemove}
+          />
 
           <Column gap="small">
             <Heading level={3}>Kies een binnenruimte</Heading>

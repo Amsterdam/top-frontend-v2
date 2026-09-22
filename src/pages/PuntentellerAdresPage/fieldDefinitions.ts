@@ -197,7 +197,7 @@ export const KEUKEN_SECTIONS = [
           { label: "1 tot 2 meter", value: "1_tot_2_meter" },
           { label: "Langer dan 2 meter", value: "langer_dan_2_meter" },
         ],
-        required: "Aanrechtlengte is verplicht",
+        required: "Geef aan wat de lengte van het aanrecht is",
         inFieldSet: true,
       },
     ],
