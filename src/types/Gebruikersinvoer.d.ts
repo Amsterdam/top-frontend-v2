@@ -5,6 +5,20 @@ type BinnenruimteType =
   | "Slaapkamer"
   | "Badkamer"
   | "Toiletruimte"
+  | "Woon- en slaapkamer"
+  | "Slaapkamer met wastafel, douche of bad"
+  | "Woon- en slaapkamer met keuken"
+  | "Overloop"
+  | "Kleine kamer (kleiner dan 4 m²)"
+  | "Wasruimte / bijkeuken"
+  | "Berging"
+  | "Garage"
+  | "Kelder"
+  | "Zolder"
+  | "Zolderberging met vaste trap"
+  | "Zolderberging zonder vaste trap"
+  | "Bad, douche of wastafel in andere ruimte"
+  | "Keuken in andere ruimte"
 
 type Binnenruimte = {
   type: BinnenruimteType
@@ -16,43 +30,45 @@ type Binnenruimte = {
 }
 
 type GebruikersinvoerFormValues = {
-  // Sanitair
-  badkamer_aantal_adressen: number
-  badkamer_toilet_hangend: number
-  badkamer_toilet_normaal: number
-  badkamer_wastafel: number
-  badkamer_meerpersoons_wastafel: number
-  badkamer_douche: number
-  badkamer_bad: number
-  badkamer_baddouche: number
-  badkamer_bubbelfunctie_bad: number
-  badkamer_volledige_afscheiding_douche: number
-  badkamer_handdoekenradiator: number
-  badkamer_kast_bij_wastafel: number
-  badkamer_kastruimte: number
-  badkamer_stopcontacten: number
-  badkamer_eenhandsmengkraan: number
-  badkamer_thermostatische_mengkraan: number
-  apart_toilet_staand: number
-  apart_toilet_hangend: number
+  // Sanitair (select "0".."5", zie BADKAMER_FIELDS in fieldDefinitions.ts)
+  badkamer_toilet_hangend: string
+  badkamer_toilet_normaal: string
+  badkamer_wastafel: string
+  badkamer_meerpersoons_wastafel: string
+  badkamer_douche: string
+  badkamer_bad: string
+  badkamer_baddouche: string
+  badkamer_bubbelfunctie_bad: string
+  badkamer_volledige_afscheiding_douche: string
+  badkamer_handdoekenradiator: string
+  badkamer_kast_bij_wastafel: string
+  badkamer_kastruimte: string
+  badkamer_stopcontacten: string
+  badkamer_eenhandsmengkraan: string
+  badkamer_thermostatische_mengkraan: string
 
-  // Keuken
-  keuken_aantal_adressen: number
-  keuken_aanrechtlengte_meters: number | null
-  keuken_inbouw_afzuiginstallatie: number
-  keuken_inbouw_kookplaat_inductie: number
-  keuken_inbouw_kookplaat_keramisch: number
-  keuken_inbouw_kookplaat_gas: number
-  keuken_inbouw_koelkast: number
-  keuken_inbouw_vrieskast: number
-  keuken_inbouw_oven_elektrisch: number
-  keuken_inbouw_oven_gas: number
-  keuken_inbouw_magnetron: number
-  keuken_inbouw_vaatwasmachine: number
-  keuken_extra_kastruimte: number
-  keuken_eenhandsmengkraan: number
-  keuken_thermostatische_mengkraan: number
-  keuken_kokendwaterfunctie: number
+  // Toiletruimte (select "0".."5", zie APART_TOILET_FIELDS in fieldDefinitions.ts)
+  apart_toilet_hangend: string
+  apart_toilet_wastafel: string
+
+  // Keuken (select "0".."5", zie KEUKEN_FIELDS in fieldDefinitions.ts)
+  keuken_aanrechtlengte_meters: string | null
+  keuken_inbouw_afzuiginstallatie: string
+  keuken_inbouw_kookplaat_inductie: string
+  keuken_inbouw_kookplaat_keramisch: string
+  keuken_inbouw_kookplaat_gas: string
+  keuken_inbouw_koelkast: string
+  keuken_inbouw_vrieskast: string
+  keuken_inbouw_oven_elektrisch: string
+  keuken_inbouw_oven_gas: string
+  keuken_inbouw_magnetron: string
+  keuken_inbouw_vaatwasmachine: string
+  keuken_extra_kastruimte: string
+  keuken_eenhandsmengkraan: string
+  keuken_thermostatische_mengkraan: string
+  keuken_eenhandsmengkraan_kookfunctie: string
+  keuken_thermostatische_mengkraan_kookfunctie: string
+  keuken_kokendwaterfunctie: string
 
   // Binnenruimtes
   binnenruimtes: Binnenruimte[]

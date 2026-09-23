@@ -1,171 +1,122 @@
-import { useEffect } from "react"
-import { useFormContext, useWatch } from "react-hook-form"
+import { Fragment } from "react"
+import { useFormContext, type FieldError, type Path } from "react-hook-form"
 import {
   ActionGroup,
   Button,
   Grid,
   Heading,
+  InvalidFormAlert,
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
-import { RadioControl, TextInputControl } from "@amsterdam/ee-ads-rhf"
+import { SectionFields } from "../components/SectionFields"
+import { BINNENRUIMTE_CONFIG } from "./binnenruimteConfig"
+import { OppervlakteFields } from "./OppervlakteFields"
+import { VerwarmdVerkoeldFields } from "./VerwarmdVerkoeldFields"
+import { mapErrorsToAlert } from "@amsterdam/ee-ads-rhf"
 
 type Props = {
   index: number
   label: string
+  type: BinnenruimteType
   onSave: () => void
 }
 
-const GRID_CELL_SPAN_OPPERVLAKTE = { narrow: 2, medium: 2, wide: 2 } as const
-const GRID_CELL_SPAN_VERWARMD_VERKOELD = {
-  narrow: 4,
-  medium: 4,
-  wide: 5,
-} as const
-
-/** An empty `<input type="number">` must not receive `null`/`NaN` as its `value`. */
-function toInputValue(value: number | null | undefined) {
-  return value == null || Number.isNaN(value) ? "" : value
-}
-
 /** The oppervlakte calculator + verwarmd/verkoeld questions for one added binnenruimte. */
-export function BinnenruimteFields({ index, label, onSave }: Props) {
-  const { control, setValue } = useFormContext<GebruikersinvoerFormValues>()
+export function BinnenruimteFields({ index, label, type, onSave }: Props) {
+  const {
+    trigger,
+    formState: { errors },
+  } = useFormContext<GebruikersinvoerFormValues>()
+  const {
+    hasVerwarmd = true,
+    hasVerkoeld = true,
+    hasOppervlakte = true,
+    extra,
+  } = BINNENRUIMTE_CONFIG[type]
 
-  const lengte = useWatch({
-    control,
-    name: `binnenruimtes.${index}.lengte` as const,
-  })
-  const breedte = useWatch({
-    control,
-    name: `binnenruimtes.${index}.breedte` as const,
-  })
-  const oppervlakte = useWatch({
-    control,
-    name: `binnenruimtes.${index}.oppervlakte` as const,
-  })
-  const verwarmd = useWatch({
-    control,
-    name: `binnenruimtes.${index}.verwarmd` as const,
-  })
-  const verkoeld = useWatch({
-    control,
-    name: `binnenruimtes.${index}.verkoeld` as const,
-  })
+  // Mirrors the registerOptions in OppervlakteFields/VerwarmdVerkoeldFields: oppervlakte,
+  // verwarmd and verkoeld are the required fields for a room, lengte/breedte stay optional
+  // since oppervlakte can be filled directly. Verwarmd and verkoeld are always forced to a
+  // value (see VerwarmdVerkoeldFields), even for types without the question, so this list
+  // needs no extra case for hasVerwarmd/hasVerkoeld. Oppervlakte isn't asked at all for types
+  // with hasOppervlakte: false (e.g. overloop), so it's skipped there too. Required extra
+  // fields (e.g. aanrechtlengte) mirror the `required` set on them in fieldDefinitions.ts.
+  const requiredExtraFieldNames = (extra ?? [])
+    .flatMap((section) => section.fields)
+    .filter((field) => field.required)
+    .map((field) => field.name as Path<GebruikersinvoerFormValues>)
 
-  // Mirrors the registerOptions below: oppervlakte, verwarmd and verkoeld are the required
-  // fields for a room, lengte/breedte stay optional since oppervlakte can be filled directly.
-  const canSave =
-    oppervlakte != null &&
-    !Number.isNaN(oppervlakte) &&
-    verwarmd != null &&
-    verkoeld != null
+  const requiredFieldNames = [
+    ...(hasOppervlakte ? [`binnenruimtes.${index}.oppervlakte` as const] : []),
+    `binnenruimtes.${index}.verwarmd` as const,
+    `binnenruimtes.${index}.verkoeld` as const,
+    ...requiredExtraFieldNames,
+  ]
 
-  // Lengte x breedte drive the oppervlakte, but it remains directly editable afterwards
-  // for rooms where only the oppervlakte itself is known.
-  useEffect(() => {
-    if (lengte == null || breedte == null) return
+  // mapErrorsToAlert only reads the top-level keys of the errors object, so the nested
+  // binnenruimtes.<index>.* errors need to be flattened to their input `name` first.
+  const roomErrors = errors.binnenruimtes?.[index]
+  const topLevelErrors = errors as Record<string, FieldError | undefined>
+  const alertErrors = mapErrorsToAlert({
+    ...(roomErrors?.oppervlakte && {
+      [`binnenruimtes.${index}.oppervlakte`]: roomErrors.oppervlakte,
+    }),
+    ...(roomErrors?.verwarmd && {
+      [`binnenruimtes.${index}.verwarmd`]: roomErrors.verwarmd,
+    }),
+    ...(roomErrors?.verkoeld && {
+      [`binnenruimtes.${index}.verkoeld`]: roomErrors.verkoeld,
+    }),
+    ...Object.fromEntries(
+      requiredExtraFieldNames
+        .filter((name) => topLevelErrors[name])
+        .map((name) => [name, topLevelErrors[name]]),
+    ),
+  })
+  const showErrors = alertErrors.length > 0
 
-    setValue(
-      `binnenruimtes.${index}.oppervlakte`,
-      Math.round(lengte * breedte * 100) / 100,
-      { shouldValidate: true },
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lengte, breedte])
+  const handleSaveClick = async () => {
+    if (await trigger(requiredFieldNames)) onSave()
+  }
 
   return (
     <Grid gapVertical="large" className="align-items-end padding-Inline-start">
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Oppervlakte</Heading>
-        <Paragraph>
-          Geef aan wat de oppervlakte is van de ruimte. Je mag de lengte en
-          breedte invullen. Je kunt ook direct de oppervlakte invullen. Ruimte
-          onder een schuin dak lager dan 1,5 meter telt niet mee in de
-          oppervlakte.
-        </Paragraph>
-      </Grid.Cell>
+      {showErrors && (
+        <Grid.Cell
+          span={{ narrow: 4, medium: 6, wide: 7 }}
+          appearance="transparent"
+        >
+          <InvalidFormAlert
+            errors={alertErrors}
+            headingLevel={4}
+            className="ams-mb-m"
+            data-testid="error-alert"
+          />
+        </Grid.Cell>
+      )}
+      {hasOppervlakte && <OppervlakteFields index={index} />}
 
-      <Grid.Cell span={GRID_CELL_SPAN_OPPERVLAKTE} appearance="transparent">
-        <TextInputControl<GebruikersinvoerFormValues>
-          label="Lengte (m)"
-          name={`binnenruimtes.${index}.lengte` as const}
-          attributes={{
-            type: "number",
-            min: 0,
-            step: 0.01,
-            value: toInputValue(lengte),
-          }}
-          registerOptions={{ valueAsNumber: true, min: 0 }}
-          inFieldSet
-        />
-      </Grid.Cell>
-      <Grid.Cell span={GRID_CELL_SPAN_OPPERVLAKTE} appearance="transparent">
-        <TextInputControl<GebruikersinvoerFormValues>
-          label="Breedte (m)"
-          name={`binnenruimtes.${index}.breedte` as const}
-          attributes={{
-            type: "number",
-            min: 0,
-            step: 0.01,
-            value: toInputValue(breedte),
-          }}
-          registerOptions={{ valueAsNumber: true, min: 0 }}
-          inFieldSet
-        />
-      </Grid.Cell>
-      <Grid.Cell span={GRID_CELL_SPAN_OPPERVLAKTE} appearance="transparent">
-        <TextInputControl<GebruikersinvoerFormValues>
-          label="Oppervlakte (m²)"
-          name={`binnenruimtes.${index}.oppervlakte` as const}
-          attributes={{
-            type: "number",
-            min: 0,
-            step: 0.01,
-            value: toInputValue(oppervlakte),
-          }}
-          registerOptions={{
-            valueAsNumber: true,
-            required: "Oppervlakte is verplicht",
-            min: 0,
-          }}
-          inFieldSet
-        />
-      </Grid.Cell>
+      <VerwarmdVerkoeldFields
+        index={index}
+        label={label}
+        hasVerkoeld={hasVerkoeld}
+        hasVerwarmd={hasVerwarmd}
+      />
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Verwarmde ruimte</Heading>
-        <Paragraph>
-          Een airco of ander koelsysteem moet minimaal energielabel A+ hebben om
-          mee te tellen voor de puntentelling. Daarvoor moet het vermogen
-          minimaal 100 W/m2 zijn bij een werkingstemperatuur tot 35 °C.
-        </Paragraph>
-      </Grid.Cell>
-      <Grid.Cell span={GRID_CELL_SPAN_VERWARMD_VERKOELD} appearance="transparent">
-        <RadioControl<GebruikersinvoerFormValues>
-          label={`${label} verwarmd?`}
-          name={`binnenruimtes.${index}.verwarmd` as const}
-          options={[
-            { label: "Nee", value: "false" },
-            { label: "Ja", value: "true" },
-          ]}
-          registerOptions={{ required: "Deze vraag is verplicht" }}
-          inFieldSet
-        />
-      </Grid.Cell>
-
-      <Grid.Cell span={GRID_CELL_SPAN_VERWARMD_VERKOELD} appearance="transparent">
-        <RadioControl<GebruikersinvoerFormValues>
-          label={`${label} verkoeld?`}
-          name={`binnenruimtes.${index}.verkoeld` as const}
-          options={[
-            { label: "Nee", value: "false" },
-            { label: "Ja", value: "true" },
-          ]}
-          registerOptions={{ required: "Deze vraag is verplicht" }}
-          inFieldSet
-        />
-      </Grid.Cell>
+      {extra?.map((section) => (
+        <Fragment key={section.heading}>
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={3}>{section.heading}</Heading>
+            {section.description && (
+              <Paragraph>{section.description}</Paragraph>
+            )}
+          </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <SectionFields fields={section.fields} />
+          </Grid.Cell>
+        </Fragment>
+      ))}
 
       <Grid.Cell span="all" appearance="transparent">
         <ActionGroup>
@@ -173,10 +124,10 @@ export function BinnenruimteFields({ index, label, onSave }: Props) {
             type="button"
             icon={SaveIcon}
             iconBefore
-            disabled={!canSave}
-            onClick={onSave}
+            onClick={handleSaveClick}
+            variant="secondary"
           >
-            {label} opslaan
+            {label} toevoegen
           </Button>
         </ActionGroup>
       </Grid.Cell>

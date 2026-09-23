@@ -1,0 +1,12 @@
+/* Buttons and input keep their ADS sizes: both use the inputs padding, line-height and border
+   tokens, so they're equally high by themselves (≈2.8rem at the smallest, above the 44px
+   minimum target size). QuantityCheckbox.module.css reserves that height for its rows. */
+.stepper {
+  display: flex;
+  gap: var(--ams-space-xs);
+}
+
+.input {
+  padding-inline: var(--ams-space-xs);
+  text-align: center;
+}

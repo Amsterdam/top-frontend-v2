@@ -159,12 +159,12 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
           name="gemeenschappelijke_binnenruimtes"
           options={[
             {
-              label: "Nee",
-              value: "false",
-            },
-            {
               label: "Ja",
               value: "true",
+            },
+            {
+              label: "Nee",
+              value: "false",
             },
           ]}
           registerOptions={{
