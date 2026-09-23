@@ -102,10 +102,7 @@ export function BuitenruimteFields({ index, label, type, onSave }: Props) {
           </Paragraph>
         </Grid.Cell>
       )}
-      <Grid.Cell
-        span={{ narrow: 3, medium: 3, wide: 3 }}
-        appearance="transparent"
-      >
+      <Grid.Cell span="all" appearance="transparent">
         <TextInputControl<GebruikersinvoerFormValues>
           label={
             isParkeerruimte
@@ -114,10 +111,15 @@ export function BuitenruimteFields({ index, label, type, onSave }: Props) {
           }
           name={aantalAdressenName}
           attributes={{ type: "number", min: 1, step: 1 }}
+          size={2}
           registerOptions={{
             valueAsNumber: true,
             required: "Vul het aantal adressen in.",
             min: { value: 1, message: "Het aantal adressen is minimaal 1." },
+            // TextInputControl renders a Controller, which ignores valueAsNumber, so the value
+            // arrives as the input's string ("2") and needs converting first.
+            validate: (value) =>
+              Number.isInteger(Number(value)) || "Vul een heel getal in.",
           }}
           inFieldSet
         />
