@@ -21,7 +21,12 @@ type BinnenruimteType =
   | "Keuken in andere ruimte"
 
 type BuitenruimteType =
-  "Balkon" | "Dakterras" | "Voortuin / zijtuin" | "Achtertuin" | "Loggia"
+  | "Balkon"
+  | "Dakterras"
+  | "Voortuin / zijtuin"
+  | "Achtertuin"
+  | "Loggia"
+  | "Parkeerruimte"
 
 type Buitenruimte = {
   type: BuitenruimteType
@@ -30,6 +35,12 @@ type Buitenruimte = {
   oppervlakte: number | null
   /** How many addresses use this buitenruimte; 1 means it's privé. */
   aantal_adressen: number | null
+  // Parkeerruimte only (instead of lengte/breedte/oppervlakte): parkeerplekken "0".."50",
+  // laadpaal "0".."5"
+  parkeerplekken_afgesloten_parkeergarage?: string
+  parkeerplekken_buiten_met_dak?: string
+  parkeerplekken_buiten_zonder_dak?: string
+  laadpaal?: string
 }
 
 type Binnenruimte = {

@@ -10,22 +10,47 @@ import {
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
 import { mapErrorsToAlert, TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { OppervlakteFields } from "../components/OppervlakteFields"
+import { QuantityCheckboxList } from "../components/QuantityCheckbox"
+import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
+
+const MAX_PARKEERPLEKKEN = 50
+
+const PARKEERPLEK_FIELDS = [
+  {
+    name: "parkeerplekken_afgesloten_parkeergarage",
+    label: "In afgesloten parkeergarage behorende tot het complex",
+  },
+  {
+    name: "parkeerplekken_buiten_met_dak",
+    label: "Buiten met dak behorend bij het complex",
+  },
+  {
+    name: "parkeerplekken_buiten_zonder_dak",
+    label: "Buiten zonder dak behorend tot het complex",
+  },
+] as const
 
 type Props = {
   index: number
   label: string
+  type: BuitenruimteType
   onSave: () => void
 }
 
-/** The oppervlakte and gemeenschappelijk questions for one added buitenruimte. */
-export function BuitenruimteFields({ index, label, onSave }: Props) {
+/**
+ * The questions for one added buitenruimte: oppervlakte and aantal adressen, or for a
+ * parkeerruimte aantal adressen, the parkeerplekken per soort and laadpalen instead of the
+ * oppervlakte.
+ */
+export function BuitenruimteFields({ index, label, type, onSave }: Props) {
+  const isParkeerruimte = type === "Parkeerruimte"
   const {
     trigger,
     formState: { errors },
   } = useFormContext<GebruikersinvoerFormValues>()
 
-  // The required fields: oppervlakte (see the registerOptions in OppervlakteFields) and
-  // aantal_adressen below.
+  // The required fields: oppervlakte (see the registerOptions in OppervlakteFields, not asked
+  // for a parkeerruimte) and aantal_adressen below.
   const oppervlakteName = `buitenruimtes.${index}.oppervlakte` as const
   const aantalAdressenName = `buitenruimtes.${index}.aantal_adressen` as const
 
@@ -42,7 +67,10 @@ export function BuitenruimteFields({ index, label, onSave }: Props) {
   })
 
   const handleSaveClick = async () => {
-    if (await trigger([oppervlakteName, aantalAdressenName])) onSave()
+    const requiredFieldNames = isParkeerruimte
+      ? [aantalAdressenName]
+      : [oppervlakteName, aantalAdressenName]
+    if (await trigger(requiredFieldNames)) onSave()
   }
 
   return (
@@ -60,22 +88,30 @@ export function BuitenruimteFields({ index, label, onSave }: Props) {
           />
         </Grid.Cell>
       )}
-      <OppervlakteFields name="buitenruimtes" index={index} />
+      {!isParkeerruimte && (
+        <OppervlakteFields name="buitenruimtes" index={index} />
+      )}
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Gemeenschappelijke buitenruimte</Heading>
-        <Paragraph>
-          Geef hier op hoeveel adressen gebruik maken van deze buitenruimte. Is
-          de ruimte privé? Dan is 1 het juiste getal. Let op: het gaat hier om
-          het aantal adressen, niet om het aantal bewoners.
-        </Paragraph>
-      </Grid.Cell>
+      {!isParkeerruimte && (
+        <Grid.Cell span="all" appearance="transparent">
+          <Heading level={3}>Gemeenschappelijke buitenruimte</Heading>
+          <Paragraph>
+            Geef hier op hoeveel adressen gebruik maken van deze buitenruimte.
+            Is de ruimte privé? Dan is 1 het juiste getal. Let op: het gaat hier
+            om het aantal adressen, niet om het aantal bewoners.
+          </Paragraph>
+        </Grid.Cell>
+      )}
       <Grid.Cell
         span={{ narrow: 3, medium: 3, wide: 3 }}
         appearance="transparent"
       >
         <TextInputControl<GebruikersinvoerFormValues>
-          label="Aantal adressen"
+          label={
+            isParkeerruimte
+              ? "Hoeveel adressen kunnen gebruik maken van de parkeerruimte?"
+              : "Aantal adressen"
+          }
           name={aantalAdressenName}
           attributes={{ type: "number", min: 1, step: 1 }}
           registerOptions={{
@@ -86,6 +122,39 @@ export function BuitenruimteFields({ index, label, onSave }: Props) {
           inFieldSet
         />
       </Grid.Cell>
+
+      {isParkeerruimte && (
+        <>
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={3}>Parkeerplekken</Heading>
+            <Paragraph className="ams-mb-m">
+              Geef aan hoeveel parkeerplekken er zijn.
+            </Paragraph>
+            <QuantityCheckboxList>
+              {PARKEERPLEK_FIELDS.map((field) => (
+                <QuantityCheckboxField
+                  key={field.name}
+                  name={`buitenruimtes.${index}.${field.name}`}
+                  label={field.label}
+                  max={MAX_PARKEERPLEKKEN}
+                />
+              ))}
+            </QuantityCheckboxList>
+          </Grid.Cell>
+
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={3} className="ams-mb-m">
+              Laadpaal
+            </Heading>
+            <QuantityCheckboxList>
+              <QuantityCheckboxField
+                name={`buitenruimtes.${index}.laadpaal`}
+                label="Laadpaal"
+              />
+            </QuantityCheckboxList>
+          </Grid.Cell>
+        </>
+      )}
 
       <Grid.Cell span="all" appearance="transparent">
         <ActionGroup>
