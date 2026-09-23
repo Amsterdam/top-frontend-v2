@@ -1,0 +1,39 @@
+.list {
+  display: grid;
+  gap: var(--ams-space-s);
+  max-inline-size: 40rem;
+}
+
+/* Narrow screens: the stepper goes below the checkbox, indented to line up with the label text
+   (past the checkbox icon and its gap). */
+.item {
+  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--ams-space-xs);
+}
+
+.stepper {
+  margin-inline-start: calc(
+    var(--ams-checkbox-icon-container-inline-size) + var(--ams-checkbox-gap)
+  );
+}
+
+/* From the ADS medium breakpoint: checkbox + label take the remaining width and may wrap, the
+   stepper keeps its own width on the right, so all steppers line up. min-block-size is the
+   NumberStepper's natural height (padding, line-height and border of an ADS input, which scale
+   with the viewport) so a row doesn't grow when it's checked. */
+@media (min-width: 37.5rem) {
+  .item {
+    column-gap: var(--ams-space-m);
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-block-size: calc(
+      2 * var(--ams-inputs-padding-block) + var(--ams-inputs-line-height) *
+        var(--ams-inputs-font-size) + 2 * var(--ams-inputs-border-width)
+    );
+  }
+
+  .stepper {
+    margin-inline-start: 0;
+  }
+}

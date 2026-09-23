@@ -3,41 +3,42 @@
  * StepOverzicht (summary), so labels only need to be maintained in one place.
  */
 
-type SelectFieldBase = {
+type FieldBase = {
   name: keyof GebruikersinvoerFormValues
   label: string
-  /** Most select fields default to "0" and don't need an answer; pass a message to require one. */
+  /** Most fields default to "0" and don't need an answer; pass a message to require one. */
   required?: string
+}
+
+/**
+ * The default: a count field rendered as a QuantityCheckbox (checkbox with an aantal stepper,
+ * 1 through `max`, which defaults to 5). The stored value is the "0".."max" string the
+ * puntenberekening expects. The count fields of a section are shown together as a single-column
+ * QuantityCheckboxList.
+ */
+export type CountField = FieldBase & {
+  max?: number
+}
+
+/** A field with its own fixed, non-numeric options (e.g. a size bucket), rendered as a select. */
+export type OptionsSelectField = FieldBase & {
+  options: { label: string; value: string }[]
   /** Styles the label as nested under a fieldset legend; passed straight to SelectControl. */
   inFieldSet?: boolean
 }
 
-/** A count field rendered as a select, "0" through `max` (defaults to 5). */
-type CountSelectField = SelectFieldBase & {
-  max?: number
-}
+export type FieldDefinition = CountField | OptionsSelectField
 
-/** A select field with its own fixed, non-numeric options (e.g. a size bucket). */
-type OptionsSelectField = SelectFieldBase & {
-  options: { label: string; value: string }[]
-}
-
-export type SelectField = CountSelectField | OptionsSelectField
-
-/** A labeled group of select fields shown together under their own heading/description. */
+/** A labeled group of fields shown together under their own heading/description. */
 export type FieldSection = {
   heading: string
   description?: string
-  fields: readonly SelectField[]
+  fields: readonly FieldDefinition[]
 }
 
-/** "0".."max" as select options, e.g. for max=5: "0", "1", "2", "3", "4", "5". */
-export function countOptions(max = 5) {
-  return Array.from({ length: max + 1 }, (_, value) => ({
-    label: String(value),
-    value: String(value),
-  }))
-}
+/** Flat view of a room's sections for StepOverzicht's summary, which doesn't care about grouping. */
+const flattenSections = (sections: readonly FieldSection[]) =>
+  sections.flatMap((section) => section.fields)
 
 export const WONINGGEGEVENS_FIELDS = [
   { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte (m²)" },
@@ -51,141 +52,111 @@ export const WONINGGEGEVENS_FIELDS = [
   },
 ] as const
 
-/** BADKAMER_FIELDS as the single section shown for a Badkamer binnenruimte in the wizard. */
-export const BADKAMER_SECTIONS = [
-  {
-    heading: "Douche, bad of combinatie",
+// Shared between BADKAMER_SECTIONS and SLAAPKAMER_SANITAIR_SECTIONS, which write to the same
+// badkamer_* fields.
+const DOUCHE_BAD_SECTION = {
+  heading: "Douche, bad of combinatie",
+  fields: [
+    {
+      name: "badkamer_douche",
+      label: "Is er een douche, een bad of een combinatie van beide?",
+      options: [
+        { label: "Maak een keuze", value: "" },
+        { label: "Douche", value: "badkamer_douche" },
+        { label: "Bad (met handdouche)", value: "badkamer_bad" },
+        { label: "Bad en aparte douche", value: "badkamer_baddouche" },
+      ],
+      inFieldSet: true,
+      required: "Een douche of bad is verplicht",
+    },
+  ],
+} as const satisfies FieldSection
 
-    fields: [
-      {
-        name: "badkamer_douche",
-        label: "Is er een douche, een bad of een combinatie van beide?",
-        options: [
-          { label: "Maak een keuze", value: "" },
-          { label: "Douche", value: "badkamer_douche" },
-          { label: "Bad (met handdouche)", value: "badkamer_bad" },
-          { label: "Bad en aparte douche", value: "badkamer_baddouche" },
-        ],
-        inFieldSet: true,
-        required: "Een douche of bad is verplicht",
-      },
-    ],
-  },
+const WASTAFEL_FIELD = {
+  name: "badkamer_wastafel",
+  label: "Wastafel",
+} as const satisfies FieldDefinition
+
+const MEERPERSOONS_WASTAFEL_FIELD = {
+  name: "badkamer_meerpersoons_wastafel",
+  label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
+} as const satisfies FieldDefinition
+
+/** The sections shown for a Badkamer binnenruimte in the wizard. */
+export const BADKAMER_SECTIONS = [
+  DOUCHE_BAD_SECTION,
   {
     heading: "Toiletvoorzieningen in de badkamer",
     fields: [
       {
         name: "badkamer_toilet_hangend",
         label: "Hangend toilet",
-        inFieldSet: true,
       },
       {
         name: "badkamer_toilet_normaal",
         label: "Normaal toilet",
-        inFieldSet: true,
       },
     ],
   },
   {
     heading: "Bad- en douchevoorzieningen",
-
     fields: [
       {
         name: "badkamer_volledige_afscheiding_douche",
         label: "Volledige afscheiding van de douche",
-        inFieldSet: true,
       },
       {
         name: "badkamer_bubbelfunctie_bad",
         label: "Bubbelfunctie bad",
-        inFieldSet: true,
       },
     ],
   },
   {
     heading: "Wastafelvoorzieningen",
     fields: [
-      { name: "badkamer_wastafel", label: "Wastafel", inFieldSet: true },
+      WASTAFEL_FIELD,
       {
         name: "badkamer_eenhandsmengkraan",
-        label: "Eenhandsmengkraan",
-        inFieldSet: true,
+        label: "Eénhandsmengkraan",
       },
       {
         name: "badkamer_stopcontacten",
         label: "Stopcontacten",
-        inFieldSet: true,
       },
       {
         name: "badkamer_thermostatische_mengkraan",
         label: "Thermostatische mengkraan",
-        inFieldSet: true,
       },
-
-      {
-        name: "badkamer_meerpersoons_wastafel",
-        label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
-        inFieldSet: true,
-      },
+      MEERPERSOONS_WASTAFEL_FIELD,
     ],
   },
   {
     heading: "Extra voorzieningen",
-
     fields: [
       {
         name: "badkamer_kast_bij_wastafel",
         label: "Wastafelkast- of meubel voor een wastafel",
-        inFieldSet: true,
       },
       {
         name: "badkamer_kastruimte",
         label: "Kastruimte (min. 40 x 40 cm)",
-        inFieldSet: true,
       },
       {
         name: "badkamer_handdoekenradiator",
         label: "Handdoekenradiator",
-        inFieldSet: true,
       },
     ],
   },
 ] as const satisfies readonly FieldSection[]
 
-/** Flat view of BADKAMER_SECTIONS for StepOverzicht's summary, which doesn't care about grouping. */
-export const BADKAMER_FIELDS = (
-  BADKAMER_SECTIONS as readonly FieldSection[]
-).flatMap((section) => section.fields)
+export const BADKAMER_FIELDS = flattenSections(BADKAMER_SECTIONS)
 
 /** Subset of BADKAMER_SECTIONS shown for a "Slaapkamer met wastafel, douche of bad" binnenruimte. */
 export const SLAAPKAMER_SANITAIR_SECTIONS = [
-  {
-    heading: "Douche, bad of combinatie",
-    fields: [
-      {
-        name: "badkamer_douche",
-        label: "Is er een douche, een bad of een combinatie van beide?",
-        options: [
-          { label: "Maak een keuze", value: "" },
-          { label: "Douche", value: "badkamer_douche" },
-          { label: "Bad (met handdouche)", value: "badkamer_bad" },
-          { label: "Bad en aparte douche", value: "badkamer_baddouche" },
-        ],
-        inFieldSet: true,
-        required: "Een douche of bad is verplicht",
-      },
-    ],
-  },
+  DOUCHE_BAD_SECTION,
   {
     heading: "Wastafelvoorzieningen",
-    fields: [
-      { name: "badkamer_wastafel", label: "Wastafel", inFieldSet: true },
-      {
-        name: "badkamer_meerpersoons_wastafel",
-        label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
-        inFieldSet: true,
-      },
-    ],
+    fields: [WASTAFEL_FIELD, MEERPERSOONS_WASTAFEL_FIELD],
   },
 ] as const satisfies readonly FieldSection[]
 
@@ -197,22 +168,17 @@ export const TOILETRUIMTE_SECTIONS = [
       {
         name: "apart_toilet_hangend",
         label: "Hangend toilet",
-        inFieldSet: true,
       },
       {
         name: "apart_toilet_wastafel",
         label: "Wastafel (fonteintje)",
         max: 1,
-        inFieldSet: true,
       },
     ],
   },
 ] as const satisfies readonly FieldSection[]
 
-/** Flat view of TOILETRUIMTE_SECTIONS for StepOverzicht's summary, which doesn't care about grouping. */
-export const APART_TOILET_FIELDS = (
-  TOILETRUIMTE_SECTIONS as readonly FieldSection[]
-).flatMap((section) => section.fields)
+export const APART_TOILET_FIELDS = flattenSections(TOILETRUIMTE_SECTIONS)
 
 export const KEUKEN_SECTIONS = [
   {
@@ -242,22 +208,18 @@ export const KEUKEN_SECTIONS = [
       {
         name: "keuken_inbouw_afzuiginstallatie",
         label: "Inbouw afzuiginstallatie",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_kookplaat_inductie",
         label: "Inbouw kookplaat inductie",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_kookplaat_keramisch",
         label: "Inbouw kookplaat keramisch",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_kookplaat_gas",
         label: "Inbouw kookplaat, gas",
-        inFieldSet: true,
       },
     ],
   },
@@ -269,27 +231,22 @@ export const KEUKEN_SECTIONS = [
       {
         name: "keuken_eenhandsmengkraan",
         label: "Eénhandsmengkraan",
-        inFieldSet: true,
       },
       {
         name: "keuken_thermostatische_mengkraan",
         label: "Thermostatische mengkraan",
-        inFieldSet: true,
       },
       {
         name: "keuken_eenhandsmengkraan_kookfunctie",
         label: "Eénhandsmengkraan met kookfunctie",
-        inFieldSet: true,
       },
       {
         name: "keuken_thermostatische_mengkraan_kookfunctie",
         label: "Thermostatische mengkraan met kookfunctie",
-        inFieldSet: true,
       },
       {
         name: "keuken_kokendwaterfunctie",
         label: "Kraan met kookfunctie",
-        inFieldSet: true,
         max: 2,
       },
     ],
@@ -302,12 +259,10 @@ export const KEUKEN_SECTIONS = [
       {
         name: "keuken_inbouw_koelkast",
         label: "Inbouw koelkast",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_vrieskast",
         label: "Inbouw vrieskast",
-        inFieldSet: true,
       },
     ],
   },
@@ -319,17 +274,14 @@ export const KEUKEN_SECTIONS = [
       {
         name: "keuken_inbouw_magnetron",
         label: "Inbouw magnetron",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_oven_gas",
         label: "Inbouw oven gas",
-        inFieldSet: true,
       },
       {
         name: "keuken_inbouw_oven_elektrisch",
         label: "Inbouw oven elektrisch",
-        inFieldSet: true,
       },
     ],
   },
@@ -341,22 +293,17 @@ export const KEUKEN_SECTIONS = [
       {
         name: "keuken_inbouw_vaatwasmachine",
         label: "Inbouw vaatwasmachine",
-        inFieldSet: true,
       },
       {
         name: "keuken_extra_kastruimte",
         label: "Extra kastruimte (per strekkende 60 cm)",
-        inFieldSet: true,
         max: 10,
       },
     ],
   },
 ] as const satisfies readonly FieldSection[]
 
-/** Flat view of KEUKEN_SECTIONS for StepOverzicht's summary, which doesn't care about grouping. */
-export const KEUKEN_FIELDS = (
-  KEUKEN_SECTIONS as readonly FieldSection[]
-).flatMap((section) => section.fields)
+export const KEUKEN_FIELDS = flattenSections(KEUKEN_SECTIONS)
 
 export const BUITEN_PARKEREN_FIELDS = [
   {

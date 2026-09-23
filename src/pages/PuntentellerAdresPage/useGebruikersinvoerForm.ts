@@ -9,7 +9,9 @@ const defaultValues: GebruikersinvoerFormValues = {
   badkamer_toilet_normaal: "0",
   badkamer_wastafel: "0",
   badkamer_meerpersoons_wastafel: "0",
-  badkamer_douche: "0",
+  // Required, like keuken_aanrechtlengte_meters below, so this starts unanswered: with "0" the
+  // required check would pass without a choice ("0" isn't one of its options).
+  badkamer_douche: "",
   badkamer_bad: "0",
   badkamer_baddouche: "0",
   badkamer_bubbelfunctie_bad: "0",
@@ -23,8 +25,8 @@ const defaultValues: GebruikersinvoerFormValues = {
   apart_toilet_hangend: "0",
   apart_toilet_wastafel: "0",
 
-  // Required (unlike the "0"-defaulted count selects), so this starts unanswered, same as
-  // energielabel_klasse/type_woning below.
+  // Required (unlike the "0"-defaulted count fields), so this starts unanswered, same as
+  // badkamer_douche above and energielabel_klasse/type_woning below.
   keuken_aanrechtlengte_meters: "",
   keuken_inbouw_afzuiginstallatie: "0",
   keuken_inbouw_kookplaat_inductie: "0",

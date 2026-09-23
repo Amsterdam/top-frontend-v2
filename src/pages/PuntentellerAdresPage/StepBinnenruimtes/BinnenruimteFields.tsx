@@ -9,7 +9,7 @@ import {
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
-import { SelectFieldGrid } from "../components/SelectFieldGrid"
+import { SectionFields } from "../components/SectionFields"
 import { BINNENRUIMTE_CONFIG } from "./binnenruimteConfig"
 import { OppervlakteFields } from "./OppervlakteFields"
 import { VerwarmdVerkoeldFields } from "./VerwarmdVerkoeldFields"
@@ -113,7 +113,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             )}
           </Grid.Cell>
           <Grid.Cell span="all" appearance="transparent">
-            <SelectFieldGrid fields={section.fields} />
+            <SectionFields fields={section.fields} />
           </Grid.Cell>
         </Fragment>
       ))}
