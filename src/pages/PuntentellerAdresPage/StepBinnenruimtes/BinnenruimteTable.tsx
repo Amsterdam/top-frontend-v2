@@ -3,11 +3,13 @@ import {
   Column,
   Dialog,
   Heading,
+  IconButton,
   Row,
   Table,
 } from "@amsterdam/design-system-react"
 import { DeleteIcon, PencilIcon } from "@amsterdam/design-system-react-icons"
 import { ConfirmDialog } from "@/components"
+import { useMediaQuery, BREAKPOINTS } from "@/hooks"
 
 type Props = {
   rooms: (Binnenruimte & { id: string })[]
@@ -25,6 +27,8 @@ export function BinnenruimteTable({
   onEdit,
   onRemove,
 }: Props) {
+  const isMobile = useMediaQuery(BREAKPOINTS.sm)
+
   if (!rooms.some((_, index) => index !== openIndex)) return null
 
   return (
@@ -46,25 +50,41 @@ export function BinnenruimteTable({
                   {room.oppervlakte != null && ` (${room.oppervlakte} m²)`}
                 </Table.Cell>
                 <Table.Cell>
-                  <Row gap="small">
-                    <Button
-                      type="button"
-                      variant="tertiary"
-                      icon={PencilIcon}
-                      iconBefore
-                      onClick={() => onEdit(index)}
-                    >
-                      Wijzigen
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="tertiary"
-                      icon={DeleteIcon}
-                      iconBefore
-                      onClick={() => Dialog.open(`#${dialogId}`)}
-                    >
-                      Wissen
-                    </Button>
+                  <Row>
+                    {isMobile ? (
+                      <IconButton
+                        label="Wijzigen"
+                        svg={PencilIcon}
+                        onClick={() => onEdit(index)}
+                      />
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="tertiary"
+                        icon={PencilIcon}
+                        iconBefore
+                        onClick={() => onEdit(index)}
+                      >
+                        Wijzigen
+                      </Button>
+                    )}
+                    {isMobile ? (
+                      <IconButton
+                        label="Wissen"
+                        svg={DeleteIcon}
+                        onClick={() => Dialog.open(`#${dialogId}`)}
+                      />
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="tertiary"
+                        icon={DeleteIcon}
+                        iconBefore
+                        onClick={() => Dialog.open(`#${dialogId}`)}
+                      >
+                        Wissen
+                      </Button>
+                    )}
                   </Row>
                   <ConfirmDialog
                     id={dialogId}
