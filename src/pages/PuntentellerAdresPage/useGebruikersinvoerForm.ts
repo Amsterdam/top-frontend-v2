@@ -46,6 +46,7 @@ const defaultValues: GebruikersinvoerFormValues = {
   keuken_kokendwaterfunctie: "0",
 
   binnenruimtes: [],
+  buitenruimtes: [],
   bad_douche_wastafel_andere_ruimte: null,
   keuken_andere_ruimte: null,
 

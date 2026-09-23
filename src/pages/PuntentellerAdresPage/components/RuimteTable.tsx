@@ -12,15 +12,18 @@ import { ConfirmDialog } from "@/components"
 import { useMediaQuery, BREAKPOINTS } from "@/hooks"
 
 type Props = {
-  rooms: (Binnenruimte & { id: string })[]
+  /** "Binnenruimte" or "Buitenruimte", used in the heading and the delete dialog. */
+  soort: string
+  rooms: { id: string; oppervlakte: number | null }[]
   roomLabels: string[]
   openIndex: number | null
   onEdit: (index: number) => void
   onRemove: (index: number) => void
 }
 
-/** The list of already-saved binnenruimtes, excluding the one currently open for editing. */
-export function BinnenruimteTable({
+/** The list of already-saved binnen- or buitenruimtes, excluding the one currently open for editing. */
+export function RuimteTable({
+  soort,
   rooms,
   roomLabels,
   openIndex,
@@ -33,16 +36,16 @@ export function BinnenruimteTable({
 
   return (
     <Column gap="small">
-      <Heading level={3}>Toegevoegde binnenruimtes</Heading>
+      <Heading level={3}>Toegevoegde {soort.toLowerCase()}s</Heading>
       <Table className="table--borderless">
         <Table.Caption className="ams-visually-hidden">
-          Toegevoegde binnenruimtes
+          Toegevoegde {soort.toLowerCase()}s
         </Table.Caption>
         <Table.Body>
           {rooms.map((room, index) => {
             if (index === openIndex) return null
 
-            const dialogId = `wissen-binnenruimte-${room.id}`
+            const dialogId = `wissen-${soort.toLowerCase()}-${room.id}`
             return (
               <Table.Row key={room.id}>
                 <Table.Cell className="bullet-cell">
@@ -88,7 +91,7 @@ export function BinnenruimteTable({
                   </Row>
                   <ConfirmDialog
                     id={dialogId}
-                    title="Binnenruimte verwijderen"
+                    title={`${soort} verwijderen`}
                     content={
                       <span>
                         Weet je zeker dat je{" "}
