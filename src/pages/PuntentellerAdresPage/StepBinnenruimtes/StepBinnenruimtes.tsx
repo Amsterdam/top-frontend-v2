@@ -2,14 +2,12 @@ import { useState } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import {
   Accordion,
-  Button,
   Column,
   Grid,
   Heading,
   Paragraph,
-  Row,
 } from "@amsterdam/design-system-react"
-import { CheckMarkIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
+import { RuimteTypeButtons } from "../components/RuimteTypeButtons"
 import { StepActions } from "../components/StepActions"
 import { BinnenruimteFields } from "./BinnenruimteFields"
 import { BinnenruimteTable } from "./BinnenruimteTable"
@@ -67,37 +65,6 @@ function getRoomLabels(rooms: { type: BinnenruimteType }[]) {
   })
 }
 
-/** A row of buttons, one per binnenruimte type, that add/open that type when clicked. */
-function BinnenruimteTypeButtons({
-  types,
-  openType,
-  onAdd,
-}: {
-  types: BinnenruimteType[]
-  openType?: BinnenruimteType
-  onAdd: (type: BinnenruimteType) => void
-}) {
-  return (
-    <Row wrap>
-      {types.map((type) => {
-        const isOpen = type === openType
-        return (
-          <Button
-            key={type}
-            type="button"
-            variant={isOpen ? "primary" : "secondary"}
-            icon={isOpen ? CheckMarkIcon : PlusIcon}
-            iconBefore
-            onClick={() => onAdd(type)}
-          >
-            {type}
-          </Button>
-        )
-      })}
-    </Row>
-  )
-}
-
 type Props = {
   onNextStep: () => void
 }
@@ -153,7 +120,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
   }
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
+    <>
       <Grid.Cell span="all">
         <Column gap="large">
           <Column gap="small">
@@ -179,7 +146,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
               Welke binnenruimtes zijn er voor eigen gebruik? Vul ze één voor
               één in.
             </Paragraph>
-            <BinnenruimteTypeButtons
+            <RuimteTypeButtons
               types={BINNENRUIMTE_TYPES}
               openType={openType}
               onAdd={handleAdd}
@@ -188,14 +155,14 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
 
           <Accordion headingLevel={3}>
             <Accordion.Section label="Andere binnenruimtes">
-              <BinnenruimteTypeButtons
+              <RuimteTypeButtons
                 types={ANDERE_BINNENRUIMTE_TYPES}
                 openType={openType}
                 onAdd={handleAdd}
               />
             </Accordion.Section>
             <Accordion.Section label="Keuken, bad, douche of wastafel in andere ruimte">
-              <BinnenruimteTypeButtons
+              <RuimteTypeButtons
                 types={KEUKEN_BAD_ANDERE_RUIMTE_TYPES}
                 openType={openType}
                 onAdd={handleAdd}
@@ -222,7 +189,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
       <Grid.Cell span="all" appearance="transparent">
         <StepActions onNextStep={onNextStep} />
       </Grid.Cell>
-    </Grid>
+    </>
   )
 }
 

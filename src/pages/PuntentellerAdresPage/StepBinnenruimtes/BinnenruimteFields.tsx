@@ -81,7 +81,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
   }
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
+    <Grid gapVertical="large" className="align-items-end grid-in-cell">
       {showErrors && (
         <Grid.Cell
           span={{ narrow: 4, medium: 6, wide: 7 }}

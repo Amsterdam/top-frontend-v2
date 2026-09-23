@@ -20,6 +20,9 @@ type BinnenruimteType =
   | "Bad, douche of wastafel in andere ruimte"
   | "Keuken in andere ruimte"
 
+type BuitenruimteType =
+  "Balkon" | "Dakterras" | "Voortuin / zijtuin" | "Achtertuin" | "Loggia"
+
 type Binnenruimte = {
   type: BinnenruimteType
   lengte: number | null

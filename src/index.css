@@ -55,6 +55,12 @@ body {
   padding-inline-start: 0;
 }
 
+/* A Grid inside a Grid.Cell, for columns within a white block: the cell already has its own
+   padding, so the Grid's page gutters would double it. */
+.grid-in-cell {
+  padding-inline: 0;
+}
+
 .table--borderless .ams-table__cell,
 .table--borderless .ams-table__header-cell {
   border-block-end: none;

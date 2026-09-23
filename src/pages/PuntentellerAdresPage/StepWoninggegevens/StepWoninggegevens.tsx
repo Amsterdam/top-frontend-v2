@@ -72,111 +72,115 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
   }, [wozPeildatumJaar])
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={2}>Over de woning</Heading>
-      </Grid.Cell>
+    <>
+      <Grid.Cell span="all">
+        <Grid gapVertical="large" className="align-items-end grid-in-cell">
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={2}>Over de woning</Heading>
+          </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>WOZ-waarde gegevens</Heading>
-      </Grid.Cell>
-      {wozPeildatumOptions.length > 0 && (
-        <Grid.Cell
-          span={{ narrow: 4, medium: 4, wide: 4 }}
-          appearance="transparent"
-        >
-          <SelectControl<GebruikersinvoerFormValues>
-            label="WOZ-peildatum"
-            name="woz_peildatum_jaar"
-            options={wozPeildatumOptions}
-            registerOptions={{
-              required: "WOZ-peildatum is verplicht",
-            }}
-            style={{ width: "100%" }}
-            inFieldSet
-          />
-        </Grid.Cell>
-      )}
-      <Grid.Cell
-        span={{ narrow: 4, medium: 4, wide: 4 }}
-        appearance="transparent"
-      >
-        <TextInputControl<GebruikersinvoerFormValues>
-          label="WOZ-waarde (€)"
-          name="woz_waarde"
-          attributes={{ type: "number", min: 0, step: 1 }}
-          registerOptions={{
-            valueAsNumber: true,
-            required: "WOZ-waarde is verplicht",
-            min: 0,
-          }}
-          inFieldSet
-        />
-      </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={3}>WOZ-waarde gegevens</Heading>
+          </Grid.Cell>
+          {wozPeildatumOptions.length > 0 && (
+            <Grid.Cell
+              span={{ narrow: 4, medium: 4, wide: 4 }}
+              appearance="transparent"
+            >
+              <SelectControl<GebruikersinvoerFormValues>
+                label="WOZ-peildatum"
+                name="woz_peildatum_jaar"
+                options={wozPeildatumOptions}
+                registerOptions={{
+                  required: "WOZ-peildatum is verplicht",
+                }}
+                style={{ width: "100%" }}
+                inFieldSet
+              />
+            </Grid.Cell>
+          )}
+          <Grid.Cell
+            span={{ narrow: 4, medium: 4, wide: 4 }}
+            appearance="transparent"
+          >
+            <TextInputControl<GebruikersinvoerFormValues>
+              label="WOZ-waarde (€)"
+              name="woz_waarde"
+              attributes={{ type: "number", min: 0, step: 1 }}
+              registerOptions={{
+                valueAsNumber: true,
+                required: "WOZ-waarde is verplicht",
+                min: 0,
+              }}
+              inFieldSet
+            />
+          </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Energielabel gegevens</Heading>
-      </Grid.Cell>
-      <Grid.Cell
-        span={{ narrow: 4, medium: 4, wide: 4 }}
-        appearance="transparent"
-      >
-        <SelectControl<GebruikersinvoerFormValues>
-          label="Energielabel"
-          name="energielabel_klasse"
-          options={ENERGIELABEL_OPTIONS}
-          registerOptions={{ required: "Energielabel is verplicht" }}
-          style={{ width: "100%" }}
-          inFieldSet
-        />
-      </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <Heading level={3}>Energielabel gegevens</Heading>
+          </Grid.Cell>
+          <Grid.Cell
+            span={{ narrow: 4, medium: 4, wide: 4 }}
+            appearance="transparent"
+          >
+            <SelectControl<GebruikersinvoerFormValues>
+              label="Energielabel"
+              name="energielabel_klasse"
+              options={ENERGIELABEL_OPTIONS}
+              registerOptions={{ required: "Energielabel is verplicht" }}
+              style={{ width: "100%" }}
+              inFieldSet
+            />
+          </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
-        <RadioControl<GebruikersinvoerFormValues>
-          label="Wat voor type woning betreft het?"
-          description="Een eengezinswoning heeft een eigen voordeur aan de straat of tuin, zoals een rijtjeshuis, hoekwoning, twee-onder-een-kapwoning of vrijstaand huis. Een meergezinswoning maakt onderdeel uit van een gebouw met meerdere woningen, zoals een appartement, flat, etagewoning, maisonette of portiekwoning."
-          name="type_woning"
-          options={[
-            {
-              label: "Eengezinswoning",
-              value: "Eengezinswoning",
-            },
-            {
-              label: "Meergezinswoning",
-              value: "Meergezinswoning",
-            },
-          ]}
-          registerOptions={{
-            required: "Type woning is verplicht",
-          }}
-        />
-      </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <RadioControl<GebruikersinvoerFormValues>
+              label="Wat voor type woning betreft het?"
+              description="Een eengezinswoning heeft een eigen voordeur aan de straat of tuin, zoals een rijtjeshuis, hoekwoning, twee-onder-een-kapwoning of vrijstaand huis. Een meergezinswoning maakt onderdeel uit van een gebouw met meerdere woningen, zoals een appartement, flat, etagewoning, maisonette of portiekwoning."
+              name="type_woning"
+              options={[
+                {
+                  label: "Eengezinswoning",
+                  value: "Eengezinswoning",
+                },
+                {
+                  label: "Meergezinswoning",
+                  value: "Meergezinswoning",
+                },
+              ]}
+              registerOptions={{
+                required: "Type woning is verplicht",
+              }}
+            />
+          </Grid.Cell>
 
-      <Grid.Cell span="all" appearance="transparent">
-        <RadioControl<GebruikersinvoerFormValues>
-          label="Heeft de woning toegang tot binnenruimtes die worden gedeeld met andere adressen?"
-          description="Binnenruimtes die door minimaal twee adressen worden gedeeld tellen mee in de puntentelling. Voorbeelden zijn een gemeenschappelijke (fietsen)berging of een keuken."
-          name="gemeenschappelijke_binnenruimtes"
-          options={[
-            {
-              label: "Ja",
-              value: "true",
-            },
-            {
-              label: "Nee",
-              value: "false",
-            },
-          ]}
-          registerOptions={{
-            required: "Gemeenschappelijke binnenruimtes is verplicht",
-          }}
-        />
+          <Grid.Cell span="all" appearance="transparent">
+            <RadioControl<GebruikersinvoerFormValues>
+              label="Heeft de woning toegang tot binnenruimtes die worden gedeeld met andere adressen?"
+              description="Binnenruimtes die door minimaal twee adressen worden gedeeld tellen mee in de puntentelling. Voorbeelden zijn een gemeenschappelijke (fietsen)berging of een keuken."
+              name="gemeenschappelijke_binnenruimtes"
+              options={[
+                {
+                  label: "Ja",
+                  value: "true",
+                },
+                {
+                  label: "Nee",
+                  value: "false",
+                },
+              ]}
+              registerOptions={{
+                required: "Gemeenschappelijke binnenruimtes is verplicht",
+              }}
+            />
+          </Grid.Cell>
+        </Grid>
       </Grid.Cell>
 
       <Grid.Cell span="all" appearance="transparent">
         <StepActions onNextStep={onNextStep} />
       </Grid.Cell>
-    </Grid>
+    </>
   )
 }
 

@@ -23,11 +23,6 @@ import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
 import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
 
-// StepBinnenruimtes shows each added room on its own Grid.Cell, without appearance, so it
-// reads as a white block against the page background. That only works if the wrapping
-// Grid.Cell below isn't itself a card, unlike for the other steps.
-const BINNENRUIMTES_STEP = 1
-
 const TAB_ITEMS = [
   { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
   {
@@ -81,77 +76,69 @@ export default function PuntentellerAdresPage() {
     <StepOverzicht key="step-4" isSubmitting={isSubmitting} />,
   ]
 
+  // The form wraps the whole Grid rather than sitting in a Grid.Cell, so each step can render
+  // its own Grid.Cells (white blocks, StepActions outside them) straight into this Grid.
   return (
-    <Grid paddingBottom="x-large" paddingTop="large" gapVertical="large">
-      <Grid.Cell span="all" appearance="transparent">
-        <Breadcrumb accessibleName="Kruimelpad">
-          <Breadcrumb.Link
-            href="/puntenteller"
-            onClick={(e) => {
-              e.preventDefault()
-              navigate("/puntenteller")
-            }}
-          >
-            Puntenteller
-          </Breadcrumb.Link>
-          <Breadcrumb.Link aria-current="location">
+    <FormProvider form={form} onSubmit={onSubmit}>
+      <Grid paddingBottom="x-large" paddingTop="large" gapVertical="large">
+        <Grid.Cell span="all" appearance="transparent">
+          <Breadcrumb accessibleName="Kruimelpad">
+            <Breadcrumb.Link
+              href="/puntenteller"
+              onClick={(e) => {
+                e.preventDefault()
+                navigate("/puntenteller")
+              }}
+            >
+              Puntenteller
+            </Breadcrumb.Link>
+            <Breadcrumb.Link aria-current="location">
+              {invoerwaarden
+                ? `${invoerwaarden.straat} ${invoerwaarden.huisnummer}`
+                : "Gegevens woning"}
+            </Breadcrumb.Link>
+          </Breadcrumb>
+
+          <Heading level={1}>
+            Puntenteller{" "}
             {invoerwaarden
-              ? `${invoerwaarden.straat} ${invoerwaarden.huisnummer}`
-              : "Gegevens woning"}
-          </Breadcrumb.Link>
-        </Breadcrumb>
-
-        <Heading level={1}>
-          Puntenteller{" "}
-          {invoerwaarden
-            ? `(${invoerwaarden.straat} ${invoerwaarden.huisnummer})`
-            : ""}
-        </Heading>
-      </Grid.Cell>
-
-      {isError && (
-        <Grid.Cell span="all">
-          <Paragraph>
-            Er is iets misgegaan bij het ophalen van de gegevens voor dit adres.
-          </Paragraph>
+              ? `(${invoerwaarden.straat} ${invoerwaarden.huisnummer})`
+              : ""}
+          </Heading>
         </Grid.Cell>
-      )}
 
-      <Grid.Cell appearance="flush" span="all">
-        <TabNavigation accessibleName="Subnavigatie voor dit project">
-          <TabNavigation.List>
-            {TAB_ITEMS.map(({ title, firstStep, icon }, index) => (
-              <TabNavigation.Link
-                aria-current={currentTabIndex === index ? "page" : undefined}
-                href="#"
-                icon={icon}
-                key={title}
-                onClick={(e) => {
-                  e.preventDefault()
-                  setCurrentStep(firstStep)
-                }}
-              >
-                {title}
-              </TabNavigation.Link>
-            ))}
-          </TabNavigation.List>
-        </TabNavigation>
-      </Grid.Cell>
-
-      {!isError && (
-        <>
-          <Grid.Cell
-            span="all"
-            appearance={
-              currentStep === BINNENRUIMTES_STEP ? "transparent" : undefined
-            }
-          >
-            <FormProvider form={form} onSubmit={onSubmit}>
-              {steps[currentStep]}
-            </FormProvider>
+        {isError && (
+          <Grid.Cell span="all">
+            <Paragraph>
+              Er is iets misgegaan bij het ophalen van de gegevens voor dit
+              adres.
+            </Paragraph>
           </Grid.Cell>
-        </>
-      )}
-    </Grid>
+        )}
+
+        <Grid.Cell appearance="flush" span="all">
+          <TabNavigation accessibleName="Subnavigatie voor dit project">
+            <TabNavigation.List>
+              {TAB_ITEMS.map(({ title, firstStep, icon }, index) => (
+                <TabNavigation.Link
+                  aria-current={currentTabIndex === index ? "page" : undefined}
+                  href="#"
+                  icon={icon}
+                  key={title}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCurrentStep(firstStep)
+                  }}
+                >
+                  {title}
+                </TabNavigation.Link>
+              ))}
+            </TabNavigation.List>
+          </TabNavigation>
+        </Grid.Cell>
+
+        {!isError && steps[currentStep]}
+      </Grid>
+    </FormProvider>
   )
 }
