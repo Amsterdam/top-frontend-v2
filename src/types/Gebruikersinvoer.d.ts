@@ -108,7 +108,13 @@ type GebruikersinvoerFormValues = {
   // Bijzonderheden
   monument: boolean
   monument_soort: string | null
-  bijzondere_voorziening_intercom_met_beeld: number
+  // Ja/nee-vragen ("true"/"false"), zie JA_NEE_VRAGEN in StepBijzonderheden.tsx
+  zorgwoning: string
+  voorzieningen_voor_mensen_met_handicap: string
+  opgeleverd_2015_tot_en_met_2019: string
+  in_gebruik_genomen_na_1_juli_2024: string
+  kleiner_dan_40_m2_opgeleverd_2018_2022: string
+  bijzondere_voorziening_intercom_met_beeld: string
   bijzondere_voorziening_laadpaal: number
 }
 

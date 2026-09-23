@@ -66,7 +66,8 @@ export function BuitenruimteFields({ index, label, onSave }: Props) {
         <Heading level={3}>Gemeenschappelijke buitenruimte</Heading>
         <Paragraph>
           Geef hier op hoeveel adressen gebruik maken van deze buitenruimte. Is
-          de ruimte privé? Dan is 1 het juiste getal. Let op: het gaat hier om het aantal adressen, niet om het aantal bewoners.
+          de ruimte privé? Dan is 1 het juiste getal. Let op: het gaat hier om
+          het aantal adressen, niet om het aantal bewoners.
         </Paragraph>
       </Grid.Cell>
       <Grid.Cell

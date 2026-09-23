@@ -22,15 +22,26 @@ import {
   BADKAMER_FIELDS,
   BIJZONDERE_VOORZIENING_FIELDS,
   BUITEN_PARKEREN_FIELDS,
+  JA_NEE_VRAGEN,
   KEUKEN_FIELDS,
+  MONUMENT_SOORT_OPTIONS,
   WONINGGEGEVENS_FIELDS,
 } from "../fieldDefinitions"
 
-const jaNee = (value: string | null) => (value === "true" ? "ja" : "nee")
+const jaNee = (value: unknown) =>
+  value === true || value === "true" ? "ja" : "nee"
+
+const monumentSoortLabel = (value: unknown) =>
+  MONUMENT_SOORT_OPTIONS.find((option) => option.value === value)?.label ?? null
 
 const BIJZONDERHEDEN_FIELDS = [
-  { name: "monument", label: "Monument" },
-  { name: "monument_soort", label: "Soort monument" },
+  { name: "monument", label: "Monument", format: jaNee },
+  {
+    name: "monument_soort",
+    label: "Soort monument",
+    format: monumentSoortLabel,
+  },
+  ...JA_NEE_VRAGEN.map(({ name, label }) => ({ name, label, format: jaNee })),
   ...BIJZONDERE_VOORZIENING_FIELDS,
 ] as const
 

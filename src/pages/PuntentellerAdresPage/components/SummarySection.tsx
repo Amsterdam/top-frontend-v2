@@ -4,11 +4,14 @@ import {
   Row,
   type IconProps,
 } from "@amsterdam/design-system-react"
+import type { ReactNode } from "react"
 import { Description } from "@/components"
 
 type Field = {
   name: keyof GebruikersinvoerFormValues
   label: string
+  /** Turns the stored value into something readable, e.g. "true" into "ja". */
+  format?: (value: unknown) => ReactNode
 }
 
 type Props = {
@@ -20,9 +23,11 @@ type Props = {
 
 /** Renders a read-only Description list for one wizard step's fields, for the overzicht-stap. */
 export function SummarySection({ title, fields, values, icon }: Props) {
-  const data = fields.map(({ name, label }) => ({
+  const data = fields.map(({ name, label, format }) => ({
     label,
-    value: values[name] as string | number | boolean | null,
+    value: format
+      ? format(values[name])
+      : (values[name] as string | number | null),
   }))
 
   return (

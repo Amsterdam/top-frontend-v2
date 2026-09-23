@@ -65,7 +65,12 @@ const defaultValues: GebruikersinvoerFormValues = {
 
   monument: false,
   monument_soort: null,
-  bijzondere_voorziening_intercom_met_beeld: 0,
+  zorgwoning: "false",
+  voorzieningen_voor_mensen_met_handicap: "false",
+  opgeleverd_2015_tot_en_met_2019: "false",
+  in_gebruik_genomen_na_1_juli_2024: "false",
+  kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
+  bijzondere_voorziening_intercom_met_beeld: "false",
   bijzondere_voorziening_laadpaal: 0,
 }
 
