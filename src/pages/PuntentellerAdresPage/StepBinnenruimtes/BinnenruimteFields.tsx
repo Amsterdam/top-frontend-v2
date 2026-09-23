@@ -11,7 +11,7 @@ import {
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
 import { SectionFields } from "../components/SectionFields"
 import { BINNENRUIMTE_CONFIG } from "./binnenruimteConfig"
-import { OppervlakteFields } from "./OppervlakteFields"
+import { OppervlakteFields } from "../components/OppervlakteFields"
 import { VerwarmdVerkoeldFields } from "./VerwarmdVerkoeldFields"
 import { mapErrorsToAlert } from "@amsterdam/ee-ads-rhf"
 
@@ -81,7 +81,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
   }
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
+    <Grid gapVertical="large" className="align-items-end grid-in-cell">
       {showErrors && (
         <Grid.Cell
           span={{ narrow: 4, medium: 6, wide: 7 }}
@@ -95,7 +95,9 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
           />
         </Grid.Cell>
       )}
-      {hasOppervlakte && <OppervlakteFields index={index} />}
+      {hasOppervlakte && (
+        <OppervlakteFields name="binnenruimtes" index={index} />
+      )}
 
       <VerwarmdVerkoeldFields
         index={index}

@@ -20,6 +20,18 @@ type BinnenruimteType =
   | "Bad, douche of wastafel in andere ruimte"
   | "Keuken in andere ruimte"
 
+type BuitenruimteType =
+  "Balkon" | "Dakterras" | "Voortuin / zijtuin" | "Achtertuin" | "Loggia"
+
+type Buitenruimte = {
+  type: BuitenruimteType
+  lengte: number | null
+  breedte: number | null
+  oppervlakte: number | null
+  /** How many addresses use this buitenruimte; 1 means it's privé. */
+  aantal_adressen: number | null
+}
+
 type Binnenruimte = {
   type: BinnenruimteType
   lengte: number | null
@@ -74,6 +86,9 @@ type GebruikersinvoerFormValues = {
   binnenruimtes: Binnenruimte[]
   bad_douche_wastafel_andere_ruimte: string | null
   keuken_andere_ruimte: string | null
+
+  // Buitenruimtes
+  buitenruimtes: Buitenruimte[]
 
   // Buitenruimte & parkeren
   buitenruimte_prive_buitenruimte: number

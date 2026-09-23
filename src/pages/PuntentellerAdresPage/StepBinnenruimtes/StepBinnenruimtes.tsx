@@ -1,18 +1,17 @@
-import { useState } from "react"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import {
   Accordion,
-  Button,
   Column,
   Grid,
   Heading,
   Paragraph,
-  Row,
 } from "@amsterdam/design-system-react"
-import { CheckMarkIcon, PlusIcon } from "@amsterdam/design-system-react-icons"
+import { RuimteTable } from "../components/RuimteTable"
+import { RuimteTypeButtons } from "../components/RuimteTypeButtons"
 import { StepActions } from "../components/StepActions"
+import { getRoomLabels } from "../helpers/getRoomLabels"
+import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BinnenruimteFields } from "./BinnenruimteFields"
-import { BinnenruimteTable } from "./BinnenruimteTable"
 
 const BINNENRUIMTE_TYPES: BinnenruimteType[] = [
   "Woonkamer",
@@ -52,52 +51,6 @@ const emptyBinnenruimte = (type: BinnenruimteType): Binnenruimte => ({
   verkoeld: null,
 })
 
-/** "Slaapkamer" becomes "Slaapkamer 1", "Slaapkamer 2", ... only when a type occurs more than once. */
-function getRoomLabels(rooms: { type: BinnenruimteType }[]) {
-  const seen: Partial<Record<BinnenruimteType, number>> = {}
-  const totals: Partial<Record<BinnenruimteType, number>> = {}
-  for (const room of rooms) {
-    totals[room.type] = (totals[room.type] ?? 0) + 1
-  }
-  return rooms.map((room) => {
-    seen[room.type] = (seen[room.type] ?? 0) + 1
-    return (totals[room.type] ?? 0) > 1
-      ? `${room.type} ${seen[room.type]}`
-      : room.type
-  })
-}
-
-/** A row of buttons, one per binnenruimte type, that add/open that type when clicked. */
-function BinnenruimteTypeButtons({
-  types,
-  openType,
-  onAdd,
-}: {
-  types: BinnenruimteType[]
-  openType?: BinnenruimteType
-  onAdd: (type: BinnenruimteType) => void
-}) {
-  return (
-    <Row wrap>
-      {types.map((type) => {
-        const isOpen = type === openType
-        return (
-          <Button
-            key={type}
-            type="button"
-            variant={isOpen ? "primary" : "secondary"}
-            icon={isOpen ? CheckMarkIcon : PlusIcon}
-            iconBefore
-            onClick={() => onAdd(type)}
-          >
-            {type}
-          </Button>
-        )
-      })}
-    </Row>
-  )
-}
-
 type Props = {
   onNextStep: () => void
 }
@@ -116,61 +69,38 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
     ...watchedRooms[index],
   }))
   const roomLabels = getRoomLabels(fields)
-  // The room currently shown as an editable form, as opposed to a row in the list below.
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-  // Whether that open room has never been saved yet. Clicking another type while it's still
-  // an unsaved draft replaces it, so repeatedly clicking a type button can't pile up unsaved
-  // rooms; only rooms that were actually saved end up in the list.
-  const [isDraftOpen, setIsDraftOpen] = useState(false)
+  const {
+    openIndex,
+    add,
+    edit,
+    save,
+    remove: removeRoom,
+  } = useOpenRoom({
+    count: fields.length,
+    append,
+    remove,
+  })
   const openType = openIndex !== null ? fields[openIndex]?.type : undefined
-
-  const handleAdd = (type: BinnenruimteType) => {
-    const replacesDraft = openIndex !== null && isDraftOpen
-    if (replacesDraft) {
-      remove(openIndex)
-    }
-    append(emptyBinnenruimte(type))
-    setOpenIndex(replacesDraft ? fields.length - 1 : fields.length)
-    setIsDraftOpen(true)
-  }
-
-  const handleEdit = (index: number) => {
-    setOpenIndex(index)
-    setIsDraftOpen(false)
-  }
-
-  const handleSave = () => {
-    setOpenIndex(null)
-    setIsDraftOpen(false)
-  }
-
-  const handleRemove = (index: number) => {
-    remove(index)
-    setOpenIndex((current) => {
-      if (current === null || index === current) return null
-      return index < current ? current - 1 : current
-    })
-  }
+  const handleAdd = (type: BinnenruimteType) => add(emptyBinnenruimte(type))
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
+    <>
       <Grid.Cell span="all">
         <Column gap="large">
-          <Column gap="small">
-            <Heading level={2}>Binnenruimtes</Heading>
-            <Paragraph>
-              Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte per
-              ruimte in. Doe dit voor alle binnenruimtes in de woning. Alle
-              ruimtes in de woning tellen mee in de puntentelling.
-            </Paragraph>
-          </Column>
+          <Heading level={2}>Binnenruimtes</Heading>
+          <Paragraph>
+            Uit welke binnenruimtes bestaat de woning? Vul de oppervlakte per
+            ruimte in. Doe dit voor alle binnenruimtes in de woning. Alle
+            ruimtes in de woning tellen mee in de puntentelling.
+          </Paragraph>
 
-          <BinnenruimteTable
+          <RuimteTable
+            soort="Binnenruimte"
             rooms={rooms}
             roomLabels={roomLabels}
             openIndex={openIndex}
-            onEdit={handleEdit}
-            onRemove={handleRemove}
+            onEdit={edit}
+            onRemove={removeRoom}
           />
 
           <Column gap="small">
@@ -179,7 +109,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
               Welke binnenruimtes zijn er voor eigen gebruik? Vul ze één voor
               één in.
             </Paragraph>
-            <BinnenruimteTypeButtons
+            <RuimteTypeButtons
               types={BINNENRUIMTE_TYPES}
               openType={openType}
               onAdd={handleAdd}
@@ -188,14 +118,14 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
 
           <Accordion headingLevel={3}>
             <Accordion.Section label="Andere binnenruimtes">
-              <BinnenruimteTypeButtons
+              <RuimteTypeButtons
                 types={ANDERE_BINNENRUIMTE_TYPES}
                 openType={openType}
                 onAdd={handleAdd}
               />
             </Accordion.Section>
             <Accordion.Section label="Keuken, bad, douche of wastafel in andere ruimte">
-              <BinnenruimteTypeButtons
+              <RuimteTypeButtons
                 types={KEUKEN_BAD_ANDERE_RUIMTE_TYPES}
                 openType={openType}
                 onAdd={handleAdd}
@@ -214,7 +144,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
             index={openIndex}
             label={roomLabels[openIndex]}
             type={fields[openIndex].type}
-            onSave={handleSave}
+            onSave={save}
           />
         </Grid.Cell>
       )}
@@ -222,7 +152,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
       <Grid.Cell span="all" appearance="transparent">
         <StepActions onNextStep={onNextStep} />
       </Grid.Cell>
-    </Grid>
+    </>
   )
 }
 

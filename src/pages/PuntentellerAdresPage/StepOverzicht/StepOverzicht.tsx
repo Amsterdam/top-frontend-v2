@@ -44,8 +44,8 @@ export function StepOverzicht({ isSubmitting }: Props) {
   const binnenruimtes = (values.binnenruimtes ?? []) as Binnenruimte[]
 
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
-      <Grid.Cell span="all" appearance="transparent">
+    <>
+      <Grid.Cell span="all">
         <SummarySection
           title="Woninggegevens"
           icon={HouseIcon}
@@ -64,28 +64,26 @@ export function StepOverzicht({ isSubmitting }: Props) {
           fields={KEUKEN_FIELDS}
           values={values as GebruikersinvoerFormValues}
         />
-        <Grid.Cell span="all" appearance="transparent">
-          <Row alignVertical="center" gap="small" className="ams-mb-l">
-            <Icon svg={BedIcon} size="heading-3" />
-            <Heading level={3}>Binnenruimtes</Heading>
-          </Row>
-          {binnenruimtes.length === 0 ? (
-            <Paragraph className="ams-mb-xl">
-              Geen binnenruimtes toegevoegd.
-            </Paragraph>
-          ) : (
-            <UnorderedList className="ams-mb-xl">
-              {binnenruimtes.map((ruimte, index) => (
-                <UnorderedList.Item key={index}>
-                  {ruimte.type}
-                  {ruimte.oppervlakte != null && ` — ${ruimte.oppervlakte} m²`},
-                  verwarmd: {jaNee(ruimte.verwarmd)}, verkoeld:{" "}
-                  {jaNee(ruimte.verkoeld)}
-                </UnorderedList.Item>
-              ))}
-            </UnorderedList>
-          )}
-        </Grid.Cell>
+        <Row alignVertical="center" gap="small" className="ams-mb-l">
+          <Icon svg={BedIcon} size="heading-3" />
+          <Heading level={3}>Binnenruimtes</Heading>
+        </Row>
+        {binnenruimtes.length === 0 ? (
+          <Paragraph className="ams-mb-xl">
+            Geen binnenruimtes toegevoegd.
+          </Paragraph>
+        ) : (
+          <UnorderedList className="ams-mb-xl">
+            {binnenruimtes.map((ruimte, index) => (
+              <UnorderedList.Item key={index}>
+                {ruimte.type}
+                {ruimte.oppervlakte != null && ` — ${ruimte.oppervlakte} m²`},
+                verwarmd: {jaNee(ruimte.verwarmd)}, verkoeld:{" "}
+                {jaNee(ruimte.verkoeld)}
+              </UnorderedList.Item>
+            ))}
+          </UnorderedList>
+        )}
         <SummarySection
           title="Buitenruimte & parkeren"
           icon={ParkingIcon}
@@ -103,7 +101,7 @@ export function StepOverzicht({ isSubmitting }: Props) {
       <Grid.Cell span="all" appearance="transparent">
         <StepActions isLastStep isSubmitting={isSubmitting} />
       </Grid.Cell>
-    </Grid>
+    </>
   )
 }
 

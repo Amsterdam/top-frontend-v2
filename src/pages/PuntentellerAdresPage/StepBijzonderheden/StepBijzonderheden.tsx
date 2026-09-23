@@ -7,8 +7,8 @@ type Props = {
 
 export function StepBijzonderheden({ onNextStep }: Props) {
   return (
-    <Grid gapVertical="large" className="align-items-end padding-Inline-start">
-      <Grid.Cell span="all" appearance="transparent">
+    <>
+      <Grid.Cell span="all">
         <Heading level={2}>Bijzonderheden</Heading>
         <Paragraph>Deze stap volgt nog.</Paragraph>
       </Grid.Cell>
@@ -16,7 +16,7 @@ export function StepBijzonderheden({ onNextStep }: Props) {
       <Grid.Cell span="all" appearance="transparent">
         <StepActions onNextStep={onNextStep} />
       </Grid.Cell>
-    </Grid>
+    </>
   )
 }
 
