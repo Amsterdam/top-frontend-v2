@@ -7,7 +7,8 @@ type Props = {
   index: number
 }
 
-const GRID_CELL_SPAN_OPPERVLAKTE = { narrow: 2, medium: 2, wide: 2 } as const
+const GRID_CELL_SPAN_LENGTE_BREEDTE = { narrow: 2, medium: 2, wide: 2 } as const
+const GRID_CELL_SPAN_OPPERVLAKTE = { narrow: 3, medium: 3, wide: 2 } as const
 
 /** An empty `<input type="number">` must not receive `null`/`NaN` as its `value`. */
 function toInputValue(value: number | null | undefined) {
@@ -56,7 +57,11 @@ export function OppervlakteFields({ index }: Props) {
         </Paragraph>
       </Grid.Cell>
 
-      <Grid.Cell span={GRID_CELL_SPAN_OPPERVLAKTE} appearance="transparent">
+      <Grid.Cell
+        span={GRID_CELL_SPAN_LENGTE_BREEDTE}
+        appearance="transparent"
+        style={{ position: "relative" }}
+      >
         <TextInputControl<GebruikersinvoerFormValues>
           label="Lengte (m)"
           name={`binnenruimtes.${index}.lengte` as const}
@@ -69,8 +74,23 @@ export function OppervlakteFields({ index }: Props) {
           registerOptions={{ valueAsNumber: true, min: 0 }}
           inFieldSet
         />
+        {/* Absolutely positioned so it doesn't take a grid column itself, which would push
+            breedte onto the next row at the narrow breakpoint (4 columns: 2 + 1 + 2 > 4). */}
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            insetInlineEnd: "calc(-1 * var(--ams-grid-column-gap) / 2)",
+            insetBlockEnd: "0.75rem",
+            transform: "translateX(50%)",
+            fontFamily: "var(--ams-inputs-font-family)",
+            fontSize: "var(--ams-inputs-font-size)",
+          }}
+        >
+          x
+        </span>
       </Grid.Cell>
-      <Grid.Cell span={GRID_CELL_SPAN_OPPERVLAKTE} appearance="transparent">
+      <Grid.Cell span={GRID_CELL_SPAN_LENGTE_BREEDTE} appearance="transparent">
         <TextInputControl<GebruikersinvoerFormValues>
           label="Breedte (m)"
           name={`binnenruimtes.${index}.breedte` as const}

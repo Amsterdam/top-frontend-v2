@@ -125,6 +125,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             icon={SaveIcon}
             iconBefore
             onClick={handleSaveClick}
+            variant="secondary"
           >
             {label} toevoegen
           </Button>

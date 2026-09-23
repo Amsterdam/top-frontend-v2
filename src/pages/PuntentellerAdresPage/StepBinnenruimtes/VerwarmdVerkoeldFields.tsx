@@ -78,8 +78,8 @@ export function VerwarmdVerkoeldFields({
             label={`${label} verwarmd?`}
             name={`binnenruimtes.${index}.verwarmd` as const}
             options={[
-              { label: "Nee", value: "false" },
               { label: "Ja", value: "true" },
+              { label: "Nee", value: "false" },
             ]}
             registerOptions={{ required: "Geef aan of de ruimte verwarmd is" }}
             inFieldSet
@@ -96,8 +96,8 @@ export function VerwarmdVerkoeldFields({
             label={`${label} verkoeld?`}
             name={`binnenruimtes.${index}.verkoeld` as const}
             options={[
-              { label: "Nee", value: "false" },
               { label: "Ja", value: "true" },
+              { label: "Nee", value: "false" },
             ]}
             registerOptions={{ required: "Geef aan of de ruimte verkoeld is" }}
             disabled={!verwarmdIsJa}
