@@ -8,6 +8,7 @@ import {
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
+  ClipboardIcon,
   DocumentCheckMarkIcon,
   HouseIcon,
   ParkingIcon,
@@ -22,6 +23,7 @@ import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
 import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
 import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
+import { StepResultaat } from "./StepResultaat/StepResultaat"
 
 const TAB_ITEMS = [
   { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
@@ -44,9 +46,15 @@ const TAB_ITEMS = [
     icon: StarIcon,
   },
   {
-    title: "Resultaat",
+    title: "Overzicht",
     firstStep: 4,
     lastStep: 4,
+    icon: ClipboardIcon,
+  },
+  {
+    title: "Resultaat",
+    firstStep: 5,
+    lastStep: 5,
     icon: DocumentCheckMarkIcon,
   },
 ]
@@ -55,8 +63,15 @@ export default function PuntentellerAdresPage() {
   const { bagId } = useParams<{ bagId: string }>()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
-  const { form, invoerwaarden, isPending, isError, onSubmit, isSubmitting } =
-    useGebruikersinvoerForm(bagId)
+  const {
+    form,
+    invoerwaarden,
+    isPending,
+    isError,
+    onSubmit,
+    isSubmitting,
+    resultaat,
+  } = useGebruikersinvoerForm(bagId, { onCalculated: () => setCurrentStep(5) })
   const currentTabIndex = TAB_ITEMS.findIndex(
     ({ firstStep, lastStep }) =>
       currentStep >= firstStep && currentStep <= lastStep,
@@ -74,6 +89,11 @@ export default function PuntentellerAdresPage() {
     <StepBuitenruimtes key="step-2" onNextStep={() => setCurrentStep(3)} />,
     <StepBijzonderheden key="step-3" onNextStep={() => setCurrentStep(4)} />,
     <StepOverzicht key="step-4" isSubmitting={isSubmitting} />,
+    <StepResultaat
+      key="step-5"
+      resultaat={resultaat}
+      onPreviousStep={() => setCurrentStep(4)}
+    />,
   ]
 
   // The form wraps the whole Grid rather than sitting in a Grid.Cell, so each step can render

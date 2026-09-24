@@ -12,23 +12,9 @@ import { mapErrorsToAlert, TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { OppervlakteFields } from "../components/OppervlakteFields"
 import { QuantityCheckboxList } from "../components/QuantityCheckbox"
 import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
+import { PARKEERPLEK_FIELDS } from "../fieldDefinitions"
 
 const MAX_PARKEERPLEKKEN = 50
-
-const PARKEERPLEK_FIELDS = [
-  {
-    name: "parkeerplekken_afgesloten_parkeergarage",
-    label: "In afgesloten parkeergarage behorende tot het complex",
-  },
-  {
-    name: "parkeerplekken_buiten_met_dak",
-    label: "Buiten met dak behorend bij het complex",
-  },
-  {
-    name: "parkeerplekken_buiten_zonder_dak",
-    label: "Buiten zonder dak behorend tot het complex",
-  },
-] as const
 
 type Props = {
   index: number

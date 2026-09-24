@@ -12,6 +12,7 @@ import { StepActions } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
 import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BinnenruimteFields } from "./BinnenruimteFields"
+import { emptyVoorzieningen } from "./binnenruimteConfig"
 
 const BINNENRUIMTE_TYPES: BinnenruimteType[] = [
   "Woonkamer",
@@ -49,6 +50,7 @@ const emptyBinnenruimte = (type: BinnenruimteType): Binnenruimte => ({
   oppervlakte: null,
   verwarmd: null,
   verkoeld: null,
+  ...emptyVoorzieningen(type),
 })
 
 type Props = {

@@ -86,7 +86,7 @@ const { stepPlaceholder } = vi.hoisted(() => ({
         <div>
           <p>{label}</p>
           {isLastStep ? (
-            <button type="submit">Opslaan</button>
+            <button type="submit">Sla op en bereken</button>
           ) : (
             <button type="button" onClick={onNextStep}>
               Volgende stap
@@ -112,10 +112,13 @@ vi.mock("../StepBijzonderheden/StepBijzonderheden", () => ({
 vi.mock("../StepOverzicht/StepOverzicht", () => ({
   StepOverzicht: stepPlaceholder("Stap overzicht", true),
 }))
+vi.mock("../StepResultaat/StepResultaat", () => ({
+  StepResultaat: () => <p>Stap resultaat</p>,
+}))
 
 describe("PuntentellerAdresPage", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
 
   afterEach(() => {
@@ -130,7 +133,7 @@ describe("PuntentellerAdresPage", () => {
     ).toBeDefined()
   })
 
-  it("walks through all 5 steps and submits on the overzicht-stap", async () => {
+  it("walks through the steps and submits on the overzicht-stap", async () => {
     render(<PuntentellerAdresPage />)
 
     await screen.findByText("Stap woninggegevens")
@@ -145,10 +148,47 @@ describe("PuntentellerAdresPage", () => {
       expect(await screen.findByText(label)).toBeDefined()
     }
 
-    fireEvent.click(screen.getByRole("button", { name: "Opslaan" }))
+    fireEvent.click(screen.getByRole("button", { name: "Sla op en bereken" }))
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it("shows the resultaat-stap once the berekening has succeeded", async () => {
+    mockMutate.mockImplementation(
+      (_values: unknown, { onSuccess }: { onSuccess: () => void }) =>
+        onSuccess(),
+    )
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    expect(await screen.findByText("Stap resultaat")).toBeDefined()
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: "success" }),
+    )
+  })
+
+  it("shows an error toast and stays on the overzicht-stap when the berekening fails", async () => {
+    mockMutate.mockImplementation(
+      (_values: unknown, { onError }: { onError: () => void }) => onError(),
+    )
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({ severity: "error" }),
+      )
+    })
+    expect(screen.getByText("Stap overzicht")).toBeDefined()
   })
 })

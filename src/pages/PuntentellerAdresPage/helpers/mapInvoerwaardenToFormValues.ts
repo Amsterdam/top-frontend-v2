@@ -26,6 +26,7 @@ export function mapInvoerwaardenToFormValues(
   invoerwaarden: PuntentellerInvoerwaarden,
 ): Pick<
   GebruikersinvoerFormValues,
+  | "bouwjaar"
   | "gebruiksoppervlakte"
   | "woz_waarde"
   | "woz_peildatum_jaar"
@@ -34,6 +35,7 @@ export function mapInvoerwaardenToFormValues(
   const wozWaarde = selectDefaultWozWaarde(invoerwaarden.woz_waarden)
 
   return {
+    bouwjaar: invoerwaarden.bouwjaar,
     gebruiksoppervlakte: invoerwaarden.gebruiksoppervlakte,
     woz_waarde: wozWaarde?.vastgestelde_waarde ?? 0,
     woz_peildatum_jaar: wozWaarde

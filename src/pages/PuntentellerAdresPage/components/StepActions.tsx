@@ -24,7 +24,7 @@ export function StepActions({
           iconBefore
           disabled={isSubmitting}
         >
-          Opslaan
+          Sla op en bereken
         </Button>
       ) : (
         <Button type="button" onClick={onNextStep} icon={ChevronForwardIcon}>

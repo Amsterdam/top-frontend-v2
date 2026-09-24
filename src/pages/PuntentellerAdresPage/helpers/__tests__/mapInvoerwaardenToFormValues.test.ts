@@ -41,6 +41,7 @@ describe("selectDefaultWozWaarde", () => {
 describe("mapInvoerwaardenToFormValues", () => {
   it("maps the overlapping invoerwaarden fields, using the most recent wozWaarde as default", () => {
     expect(mapInvoerwaardenToFormValues(invoerwaarden)).toEqual({
+      bouwjaar: 1970,
       gebruiksoppervlakte: 90,
       woz_waarde: 374000,
       woz_peildatum_jaar: 2025,

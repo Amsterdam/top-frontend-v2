@@ -1,4 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useApiFetch } from "@/api/useApiFetch"
+import { slashSandwich } from "@/api/utils/slashSandwich"
+import { env } from "@/config/env"
 import { queryKeys } from "@/api/queryKeys"
 
 /**
@@ -43,25 +46,40 @@ type SaveGebruikersinvoerOptions = {
 }
 
 /**
- * TODO(puntenteller-backend): vervang mutationFn door een echte
- * fetch<Gebruikersinvoer>(makeApiUrl(...), { method: "POST", data: payload }) zodra het
- * endpoint bestaat. Voor nu wordt alleen de React Query cache bijgewerkt (geen persistentie).
+ * TODO(puntenteller-backend): voorlopig een eigen basis-URL, omdat de puntenteller-backend
+ * lokaal naast de TOP-API draait. Weghalen zodra de endpoints via VITE_API_URL bereikbaar zijn.
+ */
+const PUNTENTELLER_API_URL =
+  env.VITE_PUNTENTELLER_API_URL ?? "http://localhost:8080/api/v1/"
+
+/**
+ * Slaat de gebruikersinvoer op; de backend berekent in hetzelfde request de punten en geeft
+ * alleen het resultaat terug ("Sla op en bereken" in de overzicht-stap).
  */
 export const useSaveGebruikersinvoer = ({
   bagId,
 }: SaveGebruikersinvoerOptions) => {
+  const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (
-      payload: GebruikersinvoerFormValues,
-    ): Promise<Gebruikersinvoer> =>
-      Promise.resolve({ id: 1, ...payload, completed: true }),
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        queryKeys.puntenteller.gebruikersinvoer(bagId ?? ""),
-        data,
-      )
-    },
+    mutationFn: (payload: GebruikersinvoerPayload) =>
+      fetch<PuntentellerResultaat>(
+        slashSandwich([
+          PUNTENTELLER_API_URL,
+          "puntenteller",
+          "adressen",
+          bagId,
+        ]),
+        { method: "POST", data: payload },
+      ),
+    // The response is only the berekening (the resultaat-stap reads it from the mutation), so
+    // the address's list of gebruikersinvoer is refetched to include the new one. `exact`
+    // leaves the invoerwaarden, which sit under the same address key, alone.
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
+        exact: true,
+      }),
   })
 }
