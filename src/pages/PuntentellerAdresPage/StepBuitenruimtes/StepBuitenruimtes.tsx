@@ -18,6 +18,7 @@ const BUITENRUIMTE_TYPES: BuitenruimteType[] = [
   "Voortuin / zijtuin",
   "Achtertuin",
   "Loggia",
+  "Parkeerruimte",
 ]
 
 const emptyBuitenruimte = (type: BuitenruimteType): Buitenruimte => ({
@@ -26,6 +27,12 @@ const emptyBuitenruimte = (type: BuitenruimteType): Buitenruimte => ({
   breedte: null,
   oppervlakte: null,
   aantal_adressen: 1,
+  ...(type === "Parkeerruimte" && {
+    parkeerplekken_afgesloten_parkeergarage: "0",
+    parkeerplekken_buiten_met_dak: "0",
+    parkeerplekken_buiten_zonder_dak: "0",
+    laadpaal: "0",
+  }),
 })
 
 type Props = {
@@ -102,6 +109,7 @@ export function StepBuitenruimtes({ onNextStep }: Props) {
           </Heading>
           <BuitenruimteFields
             index={openIndex}
+            type={fields[openIndex].type}
             label={roomLabels[openIndex]}
             onSave={save}
           />

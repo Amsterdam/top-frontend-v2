@@ -328,10 +328,79 @@ export const BUITEN_PARKEREN_FIELDS = [
   },
 ] as const
 
+/** Bijzondere voorzieningen without a question in the wizard yet; the intercom is in
+ * JA_NEE_VRAGEN. */
 export const BIJZONDERE_VOORZIENING_FIELDS = [
-  {
-    name: "bijzondere_voorziening_intercom_met_beeld",
-    label: "Intercom met beeld",
-  },
   { name: "bijzondere_voorziening_laadpaal", label: "Laadpaal" },
 ] as const
+
+export const GEEN_MONUMENT = "geen_monument"
+
+export const MONUMENT_SOORT_OPTIONS = [
+  {
+    label: "Gemeentelijk of provinciaal monument",
+    value: "gemeentelijk_of_provinciaal_monument",
+  },
+  {
+    label: "Beschermd stads- en dorpsgezicht",
+    value: "beschermd_stads_en_dorpsgezicht",
+  },
+  {
+    label: "Rijksmonument (contract vóór 1 juli 2024)",
+    value: "rijksmonument_contract_voor_1_juli_2024",
+  },
+  {
+    label: "Rijksmonument (contract na 1 juli 2024)",
+    value: "rijksmonument_contract_na_1_juli_2024",
+  },
+  { label: "Geen monument", value: GEEN_MONUMENT },
+]
+
+export const JA_NEE_OPTIONS = [
+  { label: "Ja", value: "true" },
+  { label: "Nee", value: "false" },
+]
+
+/** Ja/nee questions asked in StepBijzonderheden, all required and defaulting to nee (see
+ * useGebruikersinvoerForm). */
+export const JA_NEE_VRAGEN: {
+  name: keyof GebruikersinvoerFormValues
+  label: string
+  required: string
+}[] = [
+  {
+    name: "zorgwoning",
+    label: "Is de woning een zorgwoning?",
+    required: "Geef aan of de woning een zorgwoning is",
+  },
+  {
+    name: "voorzieningen_voor_mensen_met_handicap",
+    label: "Heeft de woning voorzieningen voor mensen met een handicap?",
+    required:
+      "Geef aan of de woning voorzieningen heeft voor mensen met een handicap",
+  },
+  {
+    name: "opgeleverd_2015_tot_en_met_2019",
+    label: "Is de woning opgeleverd in de periode 2015 tot en met 2019?",
+    required: "Geef aan of de woning is opgeleverd in 2015 tot en met 2019",
+  },
+  {
+    name: "in_gebruik_genomen_na_1_juli_2024",
+    label: "Is de woning voor het eerst in gebruik genomen na 1 juli 2024?",
+    required:
+      "Geef aan of de woning na 1 juli 2024 voor het eerst in gebruik is genomen",
+  },
+  {
+    name: "bijzondere_voorziening_intercom_met_beeld",
+    label:
+      "Heeft de woning een intercom met beeld, waarmee je kunt zien wie er voor de deur staat?",
+    required: "Geef aan of de woning een intercom met beeld heeft",
+  },
+  {
+    name: "kleiner_dan_40_m2_opgeleverd_2018_2022",
+    label:
+      "Is de totale oppervlakte van alle ruimtes samen kleiner dan 40 m² en is de woning opgeleverd in de periode 2018-2022?",
+    required:
+      "Geef aan of de woning kleiner is dan 40 m² en is opgeleverd in 2018-2022",
+  },
+]
