@@ -33,7 +33,7 @@ import {
 } from "../fieldDefinitions"
 
 const jaNee = (value: unknown) =>
-  value === true || value === "true" ? "ja" : "nee"
+  value === true || value === "true" ? "Ja" : "Nee"
 
 const monumentSoortLabel = (value: unknown) =>
   MONUMENT_SOORT_OPTIONS.find((option) => option.value === value)?.label ?? null
