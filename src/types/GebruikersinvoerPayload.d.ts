@@ -4,7 +4,7 @@
  * (ruimte_m2, aanrechtlengte_meters) are strings, as DRF's DecimalField expects.
  */
 
-type PayloadEnergie = { type: "label"; label: string } | { type: "bouwjaar" }
+type PayloadEnergie = { type: "label"; waarde: string } | { type: "bouwjaar" }
 
 type PayloadSanitair = {
   wastafel: number
@@ -103,18 +103,26 @@ type PayloadBuitenruimte =
       aantal_adressen_met_toegang_en_gebruiksrecht: number
     }
 
+/** One parkeerplek (ParkeerruimteSerializer). */
+type PayloadParkeerruimte = {
+  naam: "buitenruimte_parkeerplaats"
+  type:
+    | "gesloten_garage_bij_complex"
+    | "buiten_bij_complex_met_dak"
+    | "buiten_bij_complex_zonder_dak"
+  aantal_adressen_met_toegang_en_gebruiksrecht: number
+  laadpaal: boolean
+}
+
 type GebruikersinvoerPayload = {
   energie: PayloadEnergie
   is_eengezinswoning: boolean | null
-  individuele_woonruimte: boolean
   vertrekken: PayloadVertrek[]
   overige_ruimten: PayloadOverigeRuimte[]
   verkeersruimten: PayloadVerkeersruimte[]
   buitenruimten: PayloadBuitenruimte[]
+  parkeerruimten: PayloadParkeerruimte[]
   completed: boolean
-  parkeerruimte_gesloten_garage_bij_complex: number
-  parkeerruimte_buiten_bij_complex_met_dak: number
-  parkeerruimte_buiten_bij_complex_zonder_dak: number
   bouwjaar: number | null
   gebruiksoppervlakte: number
   woz_waarde: number
@@ -123,7 +131,17 @@ type GebruikersinvoerPayload = {
   woz_nieuwbouw_2015_2019: boolean
   woonvoorziening_handicap: boolean
   monument: boolean
-  monument_soort: string | null
-  bijzondere_voorziening_intercom_met_beeld: number
-  bijzondere_voorziening_laadpaal: number
+  monument_soort:
+    | "gemeentelijk_monument"
+    | "provinciaal_monument"
+    | "beschermd_stads_of_dorpsgezicht"
+    | "rijksmonument"
+    | null
+  /** ISO date; for a rijksmonument it decides between extra punten and a huurprijsopslag. */
+  huurovereenkomst_afgesloten_op: string | null
+  zorgwoning: boolean
+  nieuwbouw: boolean
+  bijzondere_voorziening_intercom_met_beeld: boolean
+  /** Laadpalen not tied to a parkeerplek (those are on the parkeerruimte itself). */
+  bijzondere_voorziening_laadpalen: number
 }

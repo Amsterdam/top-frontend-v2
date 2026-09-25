@@ -1,23 +1,28 @@
-import type { ReactNode } from "react"
+import type { MouseEvent, ReactNode } from "react"
 import {
   Column,
   Grid,
   Heading,
+  Link,
   Paragraph,
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
   HouseIcon,
   ParkingIcon,
-  RulerIcon,
   StarIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Description, type DescriptionItem } from "@/components"
 import { OverzichtSection } from "../components/OverzichtSection"
-import { StepActions } from "../components/StepActions"
+import { StepActions, SUBMIT_BUTTON_ID } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
-import { formatM2, formatMeters, sumOppervlakte } from "../helpers/oppervlakte"
+import {
+  formatM2,
+  formatMeters,
+  sumOppervlakte,
+  toNumber,
+} from "../helpers/oppervlakte"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import {
   JA_NEE_VRAGEN,
@@ -89,7 +94,6 @@ function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
       ? [
           { label: "Lengte", value: formatMeters(ruimte.lengte) },
           { label: "Breedte", value: formatMeters(ruimte.breedte) },
-          { label: "Oppervlakte", value: formatM2(ruimte.oppervlakte) },
         ]
       : []),
     ...(hasVerwarmd
@@ -129,19 +133,23 @@ function buitenruimteSpecs(ruimte: Buitenruimte): DescriptionItem[] {
   return [
     { label: "Lengte", value: formatMeters(ruimte.lengte) },
     { label: "Breedte", value: formatMeters(ruimte.breedte) },
-    { label: "Oppervlakte", value: formatM2(ruimte.oppervlakte) },
     aantalAdressen,
   ]
 }
 
-type RuimteSpecsProps<T extends { type: string }> = {
+/** "Slaapkamer 1 (12,5 m²)", or just the title when there's no oppervlakte (e.g. an overloop)
+ * or it's 0. */
+const metOppervlakte = (title: string, m2: unknown) =>
+  toNumber(m2) ? `${title} (${formatM2(m2)})` : title
+
+type RuimteSpecsProps<T extends { type: string; oppervlakte: unknown }> = {
   ruimtes: T[]
   emptyText: string
   specs: (ruimte: T) => DescriptionItem[]
 }
 
 /** Every added room of one step under its own heading, with its specificaties. */
-function RuimteSpecs<T extends { type: string }>({
+function RuimteSpecs<T extends { type: string; oppervlakte: unknown }>({
   ruimtes,
   emptyText,
   specs,
@@ -152,9 +160,16 @@ function RuimteSpecs<T extends { type: string }>({
 
   return ruimtes.map((ruimte, index) => {
     const items = specs(ruimte).filter((item) => item.value != null)
+    const isLast = index === ruimtes.length - 1
     return (
-      <Column gap="small" key={index}>
-        <Heading level={3}>{labels[index]}</Heading>
+      <Column
+        gap="small"
+        key={index}
+        className={isLast ? undefined : "ams-mb-m"}
+      >
+        <Heading level={3}>
+          {metOppervlakte(labels[index], ruimte.oppervlakte)}
+        </Heading>
         {items.length > 0 ? (
           <Description termsWidth="wide" data={items} />
         ) : (
@@ -165,9 +180,23 @@ function RuimteSpecs<T extends { type: string }>({
   })
 }
 
-const TotaalOppervlakte = ({ label, m2 }: { label: string; m2: number }) => (
-  <Description termsWidth="wide" data={[{ label, value: formatM2(m2) }]} />
-)
+/**
+ * Scrolls to the "Sla op en bereken" button and focuses it, so keyboard users continue from
+ * there too; a plain #anchor only scrolls. The scroll is smooth, unless the user asked for
+ * reduced motion.
+ */
+function focusSubmitButton(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault()
+  const button = document.getElementById(SUBMIT_BUTTON_ID)
+  const reduceMotion = window.matchMedia?.(
+    "(prefers-reduced-motion: reduce)",
+  ).matches
+  button?.scrollIntoView({
+    block: "center",
+    behavior: reduceMotion ? "auto" : "smooth",
+  })
+  button?.focus({ preventScroll: true })
+}
 
 type Props = {
   isSubmitting?: boolean
@@ -188,8 +217,11 @@ export function StepOverzicht({ isSubmitting }: Props) {
           Overzicht
         </Heading>
         <Paragraph>
-          Controleer de ingevoerde gegevens. Klopt alles? Kies dan &quot;Sla op
-          en bereken&quot; om de punten voor deze woning te berekenen.
+          Controleer de ingevoerde gegevens. Klopt alles? Kies dan{" "}
+          <Link href={`#${SUBMIT_BUTTON_ID}`} onClick={focusSubmitButton}>
+            Sla op en bereken
+          </Link>{" "}
+          om de punten voor deze woning te berekenen.
         </Paragraph>
       </Grid.Cell>
 
@@ -197,48 +229,33 @@ export function StepOverzicht({ isSubmitting }: Props) {
         <Description termsWidth="wide" data={toItems(WONING_FIELDS, values)} />
       </OverzichtSection>
 
-      <OverzichtSection title="Binnenruimtes" icon={BedIcon}>
+      <OverzichtSection
+        title={metOppervlakte("Binnenruimtes", totaalBinnen)}
+        icon={BedIcon}
+      >
         <RuimteSpecs
           ruimtes={binnenruimtes}
           emptyText="Geen binnenruimtes toegevoegd."
           specs={binnenruimteSpecs}
         />
-        <TotaalOppervlakte
-          label="Totale oppervlakte binnenruimtes"
-          m2={totaalBinnen}
-        />
       </OverzichtSection>
 
-      <OverzichtSection title="Buitenruimtes" icon={ParkingIcon}>
+      <OverzichtSection
+        title={metOppervlakte("Buitenruimtes", totaalBuiten)}
+        icon={ParkingIcon}
+      >
         <RuimteSpecs
           ruimtes={buitenruimtes}
           emptyText="Geen buitenruimtes toegevoegd."
           specs={buitenruimteSpecs}
-        />
-        <TotaalOppervlakte
-          label="Totale oppervlakte buitenruimtes"
-          m2={totaalBuiten}
         />
       </OverzichtSection>
 
       <OverzichtSection title="Bijzonderheden" icon={StarIcon}>
         <Description
           termsWidth="wide"
-          data={toItems(BIJZONDERHEDEN_FIELDS, values)}
-        />
-      </OverzichtSection>
 
-      <OverzichtSection title="Totale oppervlakte" icon={RulerIcon}>
-        <Description
-          termsWidth="wide"
-          data={[
-            { label: "Binnenruimtes", value: formatM2(totaalBinnen) },
-            { label: "Buitenruimtes", value: formatM2(totaalBuiten) },
-            {
-              label: "Totaal",
-              value: <strong>{formatM2(totaalBinnen + totaalBuiten)}</strong>,
-            },
-          ]}
+          data={toItems(BIJZONDERHEDEN_FIELDS, values)}
         />
       </OverzichtSection>
 

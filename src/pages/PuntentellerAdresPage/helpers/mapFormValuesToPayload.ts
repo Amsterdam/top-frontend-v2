@@ -185,35 +185,44 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
   return ruimten
 }
 
+// The form's parkeerplek fields per backend type.
+const PARKEERPLEK_TYPES = [
+  ["parkeerplekken_afgesloten_parkeergarage", "gesloten_garage_bij_complex"],
+  ["parkeerplekken_buiten_met_dak", "buiten_bij_complex_met_dak"],
+  ["parkeerplekken_buiten_zonder_dak", "buiten_bij_complex_zonder_dak"],
+] as const
+
 /**
- * The buitenruimtes, split into the backend's buitenruimten and the parkeerplekken/laadpalen
- * of all Parkeerruimtes added up.
+ * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. The form asks
+ * a Parkeerruimte for the number of plekken per type and its laadpalen; the backend wants one
+ * object per plek, each with or without a laadpaal. So the laadpalen go to the plekken one by
+ * one; any left over (more laadpalen than plekken) count as losse laadpalen.
  */
 function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
   const buitenruimten: PayloadBuitenruimte[] = []
-  const parkeren = {
-    parkeerruimte_gesloten_garage_bij_complex: 0,
-    parkeerruimte_buiten_bij_complex_met_dak: 0,
-    parkeerruimte_buiten_bij_complex_zonder_dak: 0,
-    bijzondere_voorziening_laadpaal: 0,
-  }
+  const parkeerruimten: PayloadParkeerruimte[] = []
+  let losseLaadpalen = 0
 
   for (const ruimte of values.buitenruimtes ?? []) {
+    const aantalAdressen = count(ruimte.aantal_adressen) || 1
+
     if (ruimte.type === "Parkeerruimte") {
-      parkeren.parkeerruimte_gesloten_garage_bij_complex += count(
-        ruimte.parkeerplekken_afgesloten_parkeergarage,
-      )
-      parkeren.parkeerruimte_buiten_bij_complex_met_dak += count(
-        ruimte.parkeerplekken_buiten_met_dak,
-      )
-      parkeren.parkeerruimte_buiten_bij_complex_zonder_dak += count(
-        ruimte.parkeerplekken_buiten_zonder_dak,
-      )
-      parkeren.bijzondere_voorziening_laadpaal += count(ruimte.laadpaal)
+      let laadpalen = count(ruimte.laadpaal)
+      for (const [veld, type] of PARKEERPLEK_TYPES) {
+        for (let plek = 0; plek < count(ruimte[veld]); plek++) {
+          parkeerruimten.push({
+            naam: "buitenruimte_parkeerplaats",
+            type,
+            aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
+            laadpaal: laadpalen > 0,
+          })
+          laadpalen = Math.max(laadpalen - 1, 0)
+        }
+      }
+      losseLaadpalen += laadpalen
       continue
     }
 
-    const aantalAdressen = count(ruimte.aantal_adressen) || 1
     buitenruimten.push(
       aantalAdressen > 1
         ? {
@@ -228,33 +237,52 @@ function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
     )
   }
 
-  return { buitenruimten, parkeren }
+  return { buitenruimten, parkeerruimten, losseLaadpalen }
 }
 
 /**
- * Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/.
- *
- * Not sent, because the backend has no field for them (yet): zorgwoning and
- * in_gebruik_genomen_na_1_juli_2024.
+ * The backend's monument_soort per form option. It tells a rijksmonument's contract before
+ * and after 1 July 2024 apart by huurovereenkomst_afgesloten_op, see MONUMENT_CONTRACTDATUM.
  */
+const MONUMENT_SOORT: Record<
+  string,
+  GebruikersinvoerPayload["monument_soort"]
+> = {
+  // Both get the same huurprijsopslag in the backend.
+  gemeentelijk_of_provinciaal_monument: "gemeentelijk_monument",
+  beschermd_stads_en_dorpsgezicht: "beschermd_stads_of_dorpsgezicht",
+  rijksmonument_contract_voor_1_juli_2024: "rijksmonument",
+  rijksmonument_contract_na_1_juli_2024: "rijksmonument",
+}
+
+/**
+ * TODO(puntenteller): the form asks "contract vóór/na 1 juli 2024" rather than the date
+ * itself, so a date before 1 July 2024 stands in for "vóór" (the backend only compares it).
+ * Replace it with the real date once the wizard asks for it.
+ */
+const MONUMENT_CONTRACTDATUM: Record<string, string> = {
+  rijksmonument_contract_voor_1_juli_2024: "2024-06-30",
+}
+
+/** Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/. */
 export function mapFormValuesToPayload(
   values: GebruikersinvoerFormValues,
 ): GebruikersinvoerPayload {
-  const { buitenruimten, parkeren } = mapBuitenruimtes(values)
+  const { buitenruimten, parkeerruimten, losseLaadpalen } =
+    mapBuitenruimtes(values)
+  const monumentSoort = values.monument_soort ?? ""
 
   return {
     energie: values.energielabel_klasse
-      ? { type: "label", label: values.energielabel_klasse }
+      ? { type: "label", waarde: values.energielabel_klasse }
       : { type: "bouwjaar" },
     is_eengezinswoning: values.type_woning
       ? values.type_woning === "Eengezinswoning"
       : null,
-    // TODO(puntenteller): not asked in the wizard yet.
-    individuele_woonruimte: false,
     ...mapBinnenruimtes(values),
     buitenruimten,
+    parkeerruimten,
     completed: true,
-    ...parkeren,
     bouwjaar: values.bouwjaar ?? null,
     gebruiksoppervlakte: count(values.gebruiksoppervlakte),
     woz_waarde: count(values.woz_waarde),
@@ -266,15 +294,17 @@ export function mapFormValuesToPayload(
     woonvoorziening_handicap: isJa(
       values.voorzieningen_voor_mensen_met_handicap,
     ),
-    monument: isJa(values.monument),
-    monument_soort:
-      values.monument_soort && values.monument_soort !== GEEN_MONUMENT
-        ? values.monument_soort
-        : null,
+    monument: isJa(values.monument) && monumentSoort !== GEEN_MONUMENT,
+    monument_soort: MONUMENT_SOORT[monumentSoort] ?? null,
+    huurovereenkomst_afgesloten_op:
+      MONUMENT_CONTRACTDATUM[monumentSoort] ?? null,
+    zorgwoning: isJa(values.zorgwoning),
+    // TODO(puntenteller): assumed to be the question behind the backend's nieuwbouw
+    // huurprijsopslag; the backend doesn't say what nieuwbouw means. Check with the backend.
+    nieuwbouw: isJa(values.in_gebruik_genomen_na_1_juli_2024),
     bijzondere_voorziening_intercom_met_beeld: isJa(
       values.bijzondere_voorziening_intercom_met_beeld,
-    )
-      ? 1
-      : 0,
+    ),
+    bijzondere_voorziening_laadpalen: losseLaadpalen,
   }
 }

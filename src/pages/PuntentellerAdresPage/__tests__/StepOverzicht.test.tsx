@@ -1,4 +1,10 @@
-import { cleanup, render, screen, within } from "@testing-library/react"
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm } from "react-hook-form"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -31,7 +37,7 @@ const valueOf = (term: HTMLElement) => term.nextElementSibling?.textContent
 describe("StepOverzicht", () => {
   afterEach(cleanup)
 
-  it("shows the specificaties of each ruimte", () => {
+  it("shows the specificaties of each ruimte, with its oppervlakte in the heading", () => {
     render(
       <Harness
         values={{
@@ -49,15 +55,14 @@ describe("StepOverzicht", () => {
     )
 
     const slaapkamer1 = screen
-      .getByRole("heading", { name: "Slaapkamer 1" })
+      .getByRole("heading", { name: "Slaapkamer 1 (12,5 m²)" })
       .closest("div") as HTMLElement
     expect(valueOf(within(slaapkamer1).getByText("Lengte"))).toBe("5 m")
     expect(valueOf(within(slaapkamer1).getByText("Breedte"))).toBe("2,5 m")
-    expect(valueOf(within(slaapkamer1).getByText("Oppervlakte"))).toBe(
-      "12,5 m²",
-    )
     expect(valueOf(within(slaapkamer1).getByText("Verwarmd"))).toBe("ja")
-    expect(screen.getByRole("heading", { name: "Slaapkamer 2" })).toBeDefined()
+    expect(
+      screen.getByRole("heading", { name: "Slaapkamer 2 (10 m²)" }),
+    ).toBeDefined()
   })
 
   it("only shows the sanitair that's present for a badkamer", () => {
@@ -87,7 +92,7 @@ describe("StepOverzicht", () => {
     expect(screen.queryByText("Wastafel")).toBeNull()
   })
 
-  it("adds up the oppervlakte per categorie and in total", () => {
+  it("shows the oppervlakte per categorie in its heading, and the total", () => {
     render(
       <Harness
         values={{
@@ -109,13 +114,14 @@ describe("StepOverzicht", () => {
       />,
     )
 
-    expect(valueOf(screen.getByText("Totale oppervlakte binnenruimtes"))).toBe(
-      "30,5 m²",
-    )
-    expect(valueOf(screen.getByText("Totale oppervlakte buitenruimtes"))).toBe(
-      "4,25 m²",
-    )
-    expect(valueOf(screen.getByText("Totaal"))).toBe("34,75 m²")
+    expect(
+      screen.getByRole("heading", { name: "Binnenruimtes (30,5 m²)" }),
+    ).toBeDefined()
+    expect(
+      screen.getByRole("heading", { name: "Buitenruimtes (4,25 m²)" }),
+    ).toBeDefined()
+    // A room without oppervlakte gets no m² in its heading.
+    expect(screen.getByRole("heading", { name: "Overloop" })).toBeDefined()
   })
 
   it("counts an oppervlakte typed into the input, which arrives as a string", () => {
@@ -126,14 +132,42 @@ describe("StepOverzicht", () => {
     }
     render(<Harness values={{ binnenruimtes: [typed], buitenruimtes: [] }} />)
 
-    expect(valueOf(screen.getByText("Oppervlakte"))).toBe("20,5 m²")
-    expect(valueOf(screen.getByText("Totaal"))).toBe("20,5 m²")
+    expect(
+      screen.getByRole("heading", { name: "Woonkamer (20,5 m²)" }),
+    ).toBeDefined()
+    expect(
+      screen.getByRole("heading", { name: "Binnenruimtes (20,5 m²)" }),
+    ).toBeDefined()
   })
 
-  it("shows 0 m² when no ruimtes are added", () => {
+  it("leaves the m² out of the headings when the oppervlakte is 0", () => {
+    render(
+      <Harness
+        values={{
+          binnenruimtes: [binnenruimte("Berging", 0)],
+          buitenruimtes: [],
+        }}
+      />,
+    )
+
+    expect(screen.getByRole("heading", { name: "Binnenruimtes" })).toBeDefined()
+    expect(screen.getByRole("heading", { name: "Berging" })).toBeDefined()
+    expect(screen.getByRole("heading", { name: "Buitenruimtes" })).toBeDefined()
+    expect(screen.getByText("Geen buitenruimtes toegevoegd.")).toBeDefined()
+    expect(screen.queryByText("Totale oppervlakte")).toBeNull()
+  })
+
+  it("links to the Sla op en bereken button and focuses it", () => {
+    // jsdom doesn't implement scrollIntoView.
+    Element.prototype.scrollIntoView = vi.fn()
     render(<Harness values={{ binnenruimtes: [], buitenruimtes: [] }} />)
 
-    expect(screen.getByText("Geen binnenruimtes toegevoegd.")).toBeDefined()
-    expect(valueOf(screen.getByText("Totaal"))).toBe("0 m²")
+    fireEvent.click(screen.getByRole("link", { name: "Sla op en bereken" }))
+
+    const button = screen.getByRole("button", { name: "Sla op en bereken" })
+    expect(button.scrollIntoView).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: "smooth" }),
+    )
+    expect(document.activeElement).toBe(button)
   })
 })

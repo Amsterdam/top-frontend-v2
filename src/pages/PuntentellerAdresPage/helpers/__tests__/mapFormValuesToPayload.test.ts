@@ -238,27 +238,57 @@ describe("mapFormValuesToPayload", () => {
       ])
     })
 
-    it("adds up the parkeerplekken and laadpalen of all parkeerruimtes", () => {
-      const parkeerruimte = (plekken: string) =>
-        buitenruimte("Parkeerruimte", {
-          parkeerplekken_afgesloten_parkeergarage: plekken,
-          parkeerplekken_buiten_met_dak: "0",
-          parkeerplekken_buiten_zonder_dak: "1",
-          laadpaal: "1",
-        })
+    it("sends one parkeerruimte per plek, handing out the laadpalen one by one", () => {
       const payload = mapFormValuesToPayload(
-        formValues({ buitenruimtes: [parkeerruimte("2"), parkeerruimte("3")] }),
-      )
-
-      expect(payload.buitenruimten).toEqual([])
-      expect(payload).toEqual(
-        expect.objectContaining({
-          parkeerruimte_gesloten_garage_bij_complex: 5,
-          parkeerruimte_buiten_bij_complex_met_dak: 0,
-          parkeerruimte_buiten_bij_complex_zonder_dak: 2,
-          bijzondere_voorziening_laadpaal: 2,
+        formValues({
+          buitenruimtes: [
+            buitenruimte("Parkeerruimte", {
+              aantal_adressen: 3,
+              parkeerplekken_afgesloten_parkeergarage: "1",
+              parkeerplekken_buiten_met_dak: "0",
+              parkeerplekken_buiten_zonder_dak: "2",
+              laadpaal: "2",
+            }),
+          ],
         }),
       )
+
+      const plek = (
+        type: PayloadParkeerruimte["type"],
+        laadpaal: boolean,
+      ): PayloadParkeerruimte => ({
+        naam: "buitenruimte_parkeerplaats",
+        type,
+        aantal_adressen_met_toegang_en_gebruiksrecht: 3,
+        laadpaal,
+      })
+      expect(payload.buitenruimten).toEqual([])
+      expect(payload.parkeerruimten).toEqual([
+        plek("gesloten_garage_bij_complex", true),
+        plek("buiten_bij_complex_zonder_dak", true),
+        plek("buiten_bij_complex_zonder_dak", false),
+      ])
+      expect(payload.bijzondere_voorziening_laadpalen).toBe(0)
+    })
+
+    it("counts laadpalen beyond the number of plekken as losse laadpalen", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          buitenruimtes: [
+            buitenruimte("Parkeerruimte", {
+              parkeerplekken_afgesloten_parkeergarage: "0",
+              parkeerplekken_buiten_met_dak: "1",
+              parkeerplekken_buiten_zonder_dak: "0",
+              laadpaal: "3",
+            }),
+          ],
+        }),
+      )
+
+      expect(payload.parkeerruimten).toEqual([
+        expect.objectContaining({ laadpaal: true }),
+      ])
+      expect(payload.bijzondere_voorziening_laadpalen).toBe(2)
     })
   })
 
@@ -274,6 +304,8 @@ describe("mapFormValuesToPayload", () => {
           type_woning: "Eengezinswoning",
           monument: true,
           monument_soort: "rijksmonument_contract_na_1_juli_2024",
+          zorgwoning: "true",
+          in_gebruik_genomen_na_1_juli_2024: "true",
           opgeleverd_2015_tot_en_met_2019: "true",
           kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
           voorzieningen_voor_mensen_met_handicap: "true",
@@ -283,7 +315,7 @@ describe("mapFormValuesToPayload", () => {
 
       expect(payload).toEqual(
         expect.objectContaining({
-          energie: { type: "label", label: "C" },
+          energie: { type: "label", waarde: "C" },
           is_eengezinswoning: true,
           completed: true,
           bouwjaar: 1970,
@@ -291,11 +323,14 @@ describe("mapFormValuesToPayload", () => {
           woz_waarde: 374000,
           woz_peildatum_jaar: 2025,
           monument: true,
-          monument_soort: "rijksmonument_contract_na_1_juli_2024",
+          monument_soort: "rijksmonument",
+          huurovereenkomst_afgesloten_op: null,
+          zorgwoning: true,
+          nieuwbouw: true,
           woz_nieuwbouw_2015_2019: true,
           woz_kleine_nieuwbouwwoning: false,
           woonvoorziening_handicap: true,
-          bijzondere_voorziening_intercom_met_beeld: 1,
+          bijzondere_voorziening_intercom_met_beeld: true,
         }),
       )
     })
@@ -314,5 +349,31 @@ describe("mapFormValuesToPayload", () => {
       expect(payload.is_eengezinswoning).toBeNull()
       expect(payload.monument_soort).toBeNull()
     })
+
+    it.each([
+      ["gemeentelijk_of_provinciaal_monument", "gemeentelijk_monument", null],
+      [
+        "beschermd_stads_en_dorpsgezicht",
+        "beschermd_stads_of_dorpsgezicht",
+        null,
+      ],
+      [
+        "rijksmonument_contract_voor_1_juli_2024",
+        "rijksmonument",
+        "2024-06-30",
+      ],
+      ["rijksmonument_contract_na_1_juli_2024", "rijksmonument", null],
+    ])(
+      "maps monument_soort %s onto the backend's %s",
+      (formSoort, monumentSoort, contractdatum) => {
+        const payload = mapFormValuesToPayload(
+          formValues({ monument: true, monument_soort: formSoort }),
+        )
+
+        expect(payload.monument).toBe(true)
+        expect(payload.monument_soort).toBe(monumentSoort)
+        expect(payload.huurovereenkomst_afgesloten_op).toBe(contractdatum)
+      },
+    )
   })
 })

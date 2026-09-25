@@ -4,6 +4,9 @@ import {
   SaveIcon,
 } from "@amsterdam/design-system-react-icons"
 
+/** The id of the "Sla op en bereken" button, so the overzicht can link to it. */
+export const SUBMIT_BUTTON_ID = "sla-op-en-bereken"
+
 type Props = {
   onNextStep?: () => void
   isLastStep?: boolean
@@ -19,6 +22,7 @@ export function StepActions({
     <ActionGroup>
       {isLastStep ? (
         <Button
+          id={SUBMIT_BUTTON_ID}
           type="submit"
           icon={SaveIcon}
           iconBefore
