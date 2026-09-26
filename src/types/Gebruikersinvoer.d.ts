@@ -100,7 +100,7 @@ type GebruikersinvoerFormValues = {
   // Buitenruimtes (a Parkeerruimte holds the parkeerplekken and laadpalen)
   buitenruimtes: Buitenruimte[]
 
-  // Woninggegevens (overlap met PuntentellerInvoerwaarden, onderdeel van hetzelfde record)
+  // Woninggegevens (overlap with PuntentellerInvoerwaarden, part of the same record)
   bouwjaar: number | null
   energielabel_klasse: string
   gebruiksoppervlakte: number
@@ -112,7 +112,7 @@ type GebruikersinvoerFormValues = {
   // Bijzonderheden
   monument: boolean
   monument_soort: string | null
-  // Ja/nee-vragen ("true"/"false"), zie JA_NEE_VRAGEN in StepBijzonderheden.tsx
+  // Ja/nee-vragen ("true"/"false"), see JA_NEE_VRAGEN in fieldDefinitions.ts
   zorgwoning: string
   voorzieningen_voor_mensen_met_handicap: string
   opgeleverd_2015_tot_en_met_2019: string

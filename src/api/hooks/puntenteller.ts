@@ -5,10 +5,10 @@ import { env } from "@/config/env"
 import { queryKeys } from "@/api/queryKeys"
 
 /**
- * TODO(puntenteller-backend): de puntenteller-backend en dit endpoint bestaan nog niet.
- * Vervang queryFn door een echte fetch<PuntentellerInvoerwaarden>(makeApiUrl(...)) zodra
- * het endpoint (GET /puntenteller/adressen/:bagId/invoerwaarden) live is. Het responstype
- * blijft ongewijzigd.
+ * TODO(puntenteller-backend): dummy data until this hook calls the backend. Replace queryFn
+ * with a real fetch of GET /puntenteller/adressen/:bagId/invoerwaarden/. The endpoint exists,
+ * but its response has an `energie` object instead of `energielabel`, so
+ * PuntentellerInvoerwaarden has to follow.
  */
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
@@ -46,15 +46,15 @@ type SaveGebruikersinvoerOptions = {
 }
 
 /**
- * TODO(puntenteller-backend): voorlopig een eigen basis-URL, omdat de puntenteller-backend
- * lokaal naast de TOP-API draait. Weghalen zodra de endpoints via VITE_API_URL bereikbaar zijn.
+ * TODO(puntenteller-backend): a separate base URL for now, because the puntenteller-backend runs
+ * locally next to the TOP-API. Remove it once the endpoints are reachable through VITE_API_URL.
  */
 const PUNTENTELLER_API_URL =
   env.VITE_PUNTENTELLER_API_URL ?? "http://localhost:8080/api/v1/"
 
 /**
- * Slaat de gebruikersinvoer op; de backend berekent in hetzelfde request de punten en geeft
- * alleen het resultaat terug ("Sla op en bereken" in de overzicht-stap).
+ * Saves the gebruikersinvoer; the backend calculates the punten in the same request and only
+ * returns the resultaat ("Sla op en bereken" in the overzicht-stap).
  */
 export const useSaveGebruikersinvoer = ({
   bagId,
