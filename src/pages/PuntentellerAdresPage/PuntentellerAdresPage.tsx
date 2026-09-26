@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import {
   Breadcrumb,
   Grid,
@@ -8,6 +9,7 @@ import {
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
+  ClipboardIcon,
   DocumentCheckMarkIcon,
   HouseIcon,
   ParkingIcon,
@@ -15,13 +17,16 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
+import { useBagPdokAddress } from "@/api/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
+import type { MissingField } from "./helpers/findMissingFields"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
 import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
 import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
 import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
 import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
+import { StepResultaat } from "./StepResultaat/StepResultaat"
 
 const TAB_ITEMS = [
   { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
@@ -44,9 +49,15 @@ const TAB_ITEMS = [
     icon: StarIcon,
   },
   {
-    title: "Resultaat",
+    title: "Overzicht",
     firstStep: 4,
     lastStep: 4,
+    icon: ClipboardIcon,
+  },
+  {
+    title: "Resultaat",
+    firstStep: 5,
+    lastStep: 5,
     icon: DocumentCheckMarkIcon,
   },
 ]
@@ -55,14 +66,43 @@ export default function PuntentellerAdresPage() {
   const { bagId } = useParams<{ bagId: string }>()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
-  const { form, invoerwaarden, isPending, isError, onSubmit, isSubmitting } =
-    useGebruikersinvoerForm(bagId)
+  const invalidFormAlertRef = useRef<HTMLDivElement>(null)
+  // Not waited for: the page works without it, see adres below.
+  const { data: pdokAddress } = useBagPdokAddress(bagId)
+  const {
+    form,
+    invoerwaarden,
+    isPending,
+    isError,
+    onSubmit,
+    isSubmitting,
+    resultaat,
+  } = useGebruikersinvoerForm(bagId, {
+    onCalculated: () => setCurrentStep(5),
+    onMissingFields: () => invalidFormAlertRef.current?.focus(),
+  })
   const currentTabIndex = TAB_ITEMS.findIndex(
     ({ firstStep, lastStep }) =>
       currentStep >= firstStep && currentStep <= lastStep,
   )
 
+  // Renders the missing field's step right away, so its fields can show their errors and the
+  // field can get focus. A field of a ruimte that isn't opened isn't rendered; then only the
+  // step opens.
+  const goToField = ({ step, name }: MissingField) => {
+    flushSync(() => setCurrentStep(step))
+    void form.trigger()
+    document.querySelector<HTMLElement>(`[name="${name}"]`)?.focus()
+  }
+
   if (isPending) return <AmsterdamCrossSpinner />
+
+  // "Aalsmeerplein 1-H": the part of PDOK's weergavenaam before the postcode, as in the search.
+  // Until PDOK has answered (or when it fails) the backend's "Aalsmeerplein 1", which lacks
+  // the huisletter and huisnummertoevoeging; empty when it has neither straat nor huisnummer.
+  const adres =
+    pdokAddress?.weergavenaam.split(",")[0] ??
+    [invoerwaarden?.straat, invoerwaarden?.huisnummer].filter(Boolean).join(" ")
 
   const steps = [
     <StepWoninggegevens
@@ -73,7 +113,18 @@ export default function PuntentellerAdresPage() {
     <StepBinnenruimtes key="step-1" onNextStep={() => setCurrentStep(2)} />,
     <StepBuitenruimtes key="step-2" onNextStep={() => setCurrentStep(3)} />,
     <StepBijzonderheden key="step-3" onNextStep={() => setCurrentStep(4)} />,
-    <StepOverzicht key="step-4" isSubmitting={isSubmitting} />,
+    <StepOverzicht
+      key="step-4"
+      invoerwaarden={invoerwaarden}
+      isSubmitting={isSubmitting}
+      onGoToField={goToField}
+      invalidFormAlertRef={invalidFormAlertRef}
+    />,
+    <StepResultaat
+      key="step-5"
+      resultaat={resultaat}
+      onPreviousStep={() => setCurrentStep(4)}
+    />,
   ]
 
   // The form wraps the whole Grid rather than sitting in a Grid.Cell, so each step can render
@@ -93,18 +144,11 @@ export default function PuntentellerAdresPage() {
               Puntenteller
             </Breadcrumb.Link>
             <Breadcrumb.Link aria-current="location">
-              {invoerwaarden
-                ? `${invoerwaarden.straat} ${invoerwaarden.huisnummer}`
-                : "Gegevens woning"}
+              {adres || "Gegevens woning"}
             </Breadcrumb.Link>
           </Breadcrumb>
 
-          <Heading level={1}>
-            Puntenteller{" "}
-            {invoerwaarden
-              ? `(${invoerwaarden.straat} ${invoerwaarden.huisnummer})`
-              : ""}
-          </Heading>
+          <Heading level={1}>Puntenteller {adres && `(${adres})`}</Heading>
         </Grid.Cell>
 
         {isError && (

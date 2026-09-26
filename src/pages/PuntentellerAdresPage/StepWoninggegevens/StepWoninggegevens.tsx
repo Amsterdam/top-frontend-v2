@@ -7,24 +7,38 @@ import {
   TextInputControl,
 } from "@amsterdam/ee-ads-rhf"
 import { StepActions } from "../components/StepActions"
+import { StepInvalidFormAlert } from "../components/StepInvalidFormAlert"
+import { REQUIRED_MESSAGES } from "../fieldDefinitions"
 import {
   peildatumToJaar,
   sortWozWaardenByPeildatum,
 } from "../helpers/mapInvoerwaardenToFormValues"
+import { EnergielabelSummary } from "./EnergielabelSummary"
 
 const ENERGIELABEL_OPTIONS = [
-  "A++++",
-  "A+++",
-  "A++",
-  "A+",
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-].map((label) => ({ label: `Label ${label}`, value: label }))
+  { label: "Maak een keuze", value: "" },
+  ...["A++++", "A+++", "A++", "A+", "A", "B", "C", "D", "E", "F", "G"].map(
+    (label) => ({ label: `Label ${label}`, value: label }),
+  ),
+]
+
+const ENERGIE_TYPE_OPTIONS: { label: string; value: EnergieType }[] = [
+  { label: "Energielabel", value: "label" },
+  { label: "Energie-index", value: "index" },
+  { label: "Bouwjaar", value: "bouwjaar" },
+]
+
+/** The fields of this step in page order, for the StepInvalidFormAlert. */
+const FIELD_NAMES = [
+  "woz_peildatum_jaar",
+  "woz_waarde",
+  "energie_type",
+  "energielabel_klasse",
+  "energie_index",
+  "bouwjaar",
+  "type_woning",
+  "gemeenschappelijke_binnenruimtes",
+] as const
 
 const formatEuro = (value: number) =>
   new Intl.NumberFormat("nl-NL", {
@@ -56,6 +70,8 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
     value: String(peildatumToJaar(w.peildatum)),
   }))
 
+  const energieType = useWatch({ control, name: "energie_type" })
+
   // When the user picks a different peildatum, the WOZ-waarde follows automatically
   // (but remains separately editable afterwards via the WOZ-waarde field below).
   const wozPeildatumJaar = useWatch({ control, name: "woz_peildatum_jaar" })
@@ -73,6 +89,8 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
 
   return (
     <>
+      <StepInvalidFormAlert fieldNames={FIELD_NAMES} />
+
       <Grid.Cell span="all">
         <Grid gapVertical="large" className="align-items-end grid-in-cell">
           <Grid.Cell span="all" appearance="transparent">
@@ -92,7 +110,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
                 name="woz_peildatum_jaar"
                 options={wozPeildatumOptions}
                 registerOptions={{
-                  required: "WOZ-peildatum is verplicht",
+                  required: REQUIRED_MESSAGES.woz_peildatum_jaar,
                 }}
                 style={{ width: "100%" }}
                 inFieldSet
@@ -109,7 +127,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
               attributes={{ type: "number", min: 0, step: 1 }}
               registerOptions={{
                 valueAsNumber: true,
-                required: "WOZ-waarde is verplicht",
+                required: REQUIRED_MESSAGES.woz_waarde,
                 min: 0,
               }}
               inFieldSet
@@ -118,19 +136,61 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
 
           <Grid.Cell span="all" appearance="transparent">
             <Heading level={3}>Energielabel gegevens</Heading>
+            <EnergielabelSummary energie={invoerwaarden?.energie} />
           </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <RadioControl<GebruikersinvoerFormValues>
+              label="Kies het type energielabel of bouwjaar"
+              name="energie_type"
+              options={ENERGIE_TYPE_OPTIONS}
+              registerOptions={{
+                required: REQUIRED_MESSAGES.energie_type,
+              }}
+              inFieldSet
+            />
+          </Grid.Cell>
+          {/* Only the field for the chosen energie_type is shown (and validated). */}
           <Grid.Cell
             span={{ narrow: 4, medium: 4, wide: 4 }}
             appearance="transparent"
           >
-            <SelectControl<GebruikersinvoerFormValues>
-              label="Energielabel"
-              name="energielabel_klasse"
-              options={ENERGIELABEL_OPTIONS}
-              registerOptions={{ required: "Energielabel is verplicht" }}
-              style={{ width: "100%" }}
-              inFieldSet
-            />
+            {energieType === "label" && (
+              <SelectControl<GebruikersinvoerFormValues>
+                label="Energielabel"
+                name="energielabel_klasse"
+                options={ENERGIELABEL_OPTIONS}
+                registerOptions={{
+                  required: REQUIRED_MESSAGES.energielabel_klasse,
+                }}
+                style={{ width: "100%" }}
+                inFieldSet
+              />
+            )}
+            {energieType === "index" && (
+              <TextInputControl<GebruikersinvoerFormValues>
+                label="Energie-index"
+                name="energie_index"
+                attributes={{ type: "number", min: 0, step: 0.01 }}
+                registerOptions={{
+                  valueAsNumber: true,
+                  required: REQUIRED_MESSAGES.energie_index,
+                  min: 0,
+                }}
+                inFieldSet
+              />
+            )}
+            {energieType === "bouwjaar" && (
+              <TextInputControl<GebruikersinvoerFormValues>
+                label="Bouwjaar"
+                name="bouwjaar"
+                attributes={{ type: "number", step: 1 }}
+                registerOptions={{
+                  valueAsNumber: true,
+                  required: REQUIRED_MESSAGES.bouwjaar,
+                }}
+                inFieldSet
+              />
+            )}
           </Grid.Cell>
 
           <Grid.Cell span="all" appearance="transparent">
@@ -149,7 +209,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
                 },
               ]}
               registerOptions={{
-                required: "Type woning is verplicht",
+                required: REQUIRED_MESSAGES.type_woning,
               }}
             />
           </Grid.Cell>
@@ -170,7 +230,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
                 },
               ]}
               registerOptions={{
-                required: "Gemeenschappelijke binnenruimtes is verplicht",
+                required: REQUIRED_MESSAGES.gemeenschappelijke_binnenruimtes,
               }}
             />
           </Grid.Cell>

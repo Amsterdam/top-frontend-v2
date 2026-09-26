@@ -12,29 +12,17 @@ import { mapErrorsToAlert, TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { OppervlakteFields } from "../components/OppervlakteFields"
 import { QuantityCheckboxList } from "../components/QuantityCheckbox"
 import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
+import { PARKEERPLEK_FIELDS, REQUIRED_MESSAGES } from "../fieldDefinitions"
 
 const MAX_PARKEERPLEKKEN = 50
-
-const PARKEERPLEK_FIELDS = [
-  {
-    name: "parkeerplekken_afgesloten_parkeergarage",
-    label: "In afgesloten parkeergarage behorende tot het complex",
-  },
-  {
-    name: "parkeerplekken_buiten_met_dak",
-    label: "Buiten met dak behorend bij het complex",
-  },
-  {
-    name: "parkeerplekken_buiten_zonder_dak",
-    label: "Buiten zonder dak behorend tot het complex",
-  },
-] as const
 
 type Props = {
   index: number
   label: string
   type: BuitenruimteType
   onSave: () => void
+  /** Drops the room when it's a new one, or undoes the edits of a saved one. */
+  onCancel: () => void
 }
 
 /**
@@ -42,7 +30,13 @@ type Props = {
  * parkeerruimte aantal adressen, the parkeerplekken per soort and laadpalen instead of the
  * oppervlakte.
  */
-export function BuitenruimteFields({ index, label, type, onSave }: Props) {
+export function BuitenruimteFields({
+  index,
+  label,
+  type,
+  onSave,
+  onCancel,
+}: Props) {
   const isParkeerruimte = type === "Parkeerruimte"
   const {
     trigger,
@@ -114,7 +108,7 @@ export function BuitenruimteFields({ index, label, type, onSave }: Props) {
           size={2}
           registerOptions={{
             valueAsNumber: true,
-            required: "Vul het aantal adressen in.",
+            required: REQUIRED_MESSAGES.aantal_adressen,
             min: { value: 1, message: "Het aantal adressen is minimaal 1." },
             // TextInputControl renders a Controller, which ignores valueAsNumber, so the value
             // arrives as the input's string ("2") and needs converting first.
@@ -168,6 +162,9 @@ export function BuitenruimteFields({ index, label, type, onSave }: Props) {
             variant="secondary"
           >
             {label} toevoegen
+          </Button>
+          <Button type="button" onClick={onCancel} variant="tertiary">
+            Annuleren
           </Button>
         </ActionGroup>
       </Grid.Cell>

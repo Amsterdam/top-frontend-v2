@@ -1,16 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useApiFetch } from "@/api/useApiFetch"
+import { slashSandwich } from "@/api/utils/slashSandwich"
+import { env } from "@/config/env"
 import { queryKeys } from "@/api/queryKeys"
 
 /**
- * TODO(puntenteller-backend): de puntenteller-backend en dit endpoint bestaan nog niet.
- * Vervang queryFn door een echte fetch<PuntentellerInvoerwaarden>(makeApiUrl(...)) zodra
- * het endpoint (GET /puntenteller/adressen/:bagId/invoerwaarden) live is. Het responstype
- * blijft ongewijzigd.
+ * TODO(puntenteller-backend): a separate base URL for now, because the puntenteller-backend runs
+ * locally next to the TOP-API. Remove it once the endpoints are reachable through VITE_API_URL.
  */
+const PUNTENTELLER_API_URL =
+  env.VITE_PUNTENTELLER_API_URL ?? "http://localhost:8080/api/v1/"
+
+/**
+ * Set to true to work on the wizard without a running puntenteller-backend: the invoerwaarden
+ * then come from DUMMY_INVOERWAARDEN below instead of the backend.
+ */
+const USE_DUMMY_INVOERWAARDEN = false
+
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
   huisnummer: "59",
-  bouwjaar: 1970,
+  bouwjaar: 1977,
   gebruiksoppervlakte: 90,
   woz_waarden: [
     { peildatum: "2025-01-01", vastgestelde_waarde: 374000 },
@@ -27,13 +37,33 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
     { peildatum: "2014-01-01", vastgestelde_waarde: 138500 },
   ],
   wozobjectnummer: 36300297723,
-  energielabel: "C",
+  energie: {
+    energielabel: "C",
+    energieindex: null,
+    registratiedatum: null,
+    opnamedatum: null,
+    meting_geldig_tot: null,
+  },
 }
 
+/** GET /puntenteller/adressen/:bagId/invoerwaarden/: the known data of the address (BAG, WOZ, EP-Online). */
 export const useAddressInvoerwaarden = (bagId?: string) => {
+  const fetch = useApiFetch()
+
   return useQuery({
     queryKey: queryKeys.puntenteller.invoerwaarden(bagId ?? ""),
-    queryFn: () => Promise.resolve(DUMMY_INVOERWAARDEN),
+    queryFn: () =>
+      USE_DUMMY_INVOERWAARDEN
+        ? Promise.resolve(DUMMY_INVOERWAARDEN)
+        : fetch<PuntentellerInvoerwaarden>(
+            slashSandwich([
+              PUNTENTELLER_API_URL,
+              "puntenteller",
+              "adressen",
+              bagId,
+              "invoerwaarden",
+            ]),
+          ),
     enabled: Boolean(bagId),
   })
 }
@@ -43,25 +73,33 @@ type SaveGebruikersinvoerOptions = {
 }
 
 /**
- * TODO(puntenteller-backend): vervang mutationFn door een echte
- * fetch<Gebruikersinvoer>(makeApiUrl(...), { method: "POST", data: payload }) zodra het
- * endpoint bestaat. Voor nu wordt alleen de React Query cache bijgewerkt (geen persistentie).
+ * Saves the gebruikersinvoer; the backend calculates the punten in the same request and only
+ * returns the resultaat ("Sla op en bereken" in the overzicht-stap).
  */
 export const useSaveGebruikersinvoer = ({
   bagId,
 }: SaveGebruikersinvoerOptions) => {
+  const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (
-      payload: GebruikersinvoerFormValues,
-    ): Promise<Gebruikersinvoer> =>
-      Promise.resolve({ id: 1, ...payload, completed: true }),
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        queryKeys.puntenteller.gebruikersinvoer(bagId ?? ""),
-        data,
-      )
-    },
+    mutationFn: (payload: GebruikersinvoerPayload) =>
+      fetch<PuntentellerResultaat>(
+        slashSandwich([
+          PUNTENTELLER_API_URL,
+          "puntenteller",
+          "adressen",
+          bagId,
+        ]),
+        { method: "POST", data: payload },
+      ),
+    // The response is only the berekening (the resultaat-stap reads it from the mutation), so
+    // the address's list of gebruikersinvoer is refetched to include the new one. `exact`
+    // leaves the invoerwaarden, which sit under the same address key, alone.
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
+        exact: true,
+      }),
   })
 }

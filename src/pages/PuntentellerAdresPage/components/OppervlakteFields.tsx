@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
 import { TextInputControl } from "@amsterdam/ee-ads-rhf"
+import { REQUIRED_MESSAGES } from "../fieldDefinitions"
 
 type Props = {
   /** The form's room list this room is in. */
@@ -118,7 +119,7 @@ export function OppervlakteFields({ name, index }: Props) {
           }}
           registerOptions={{
             valueAsNumber: true,
-            required: "Vul de oppervlakte in.",
+            required: REQUIRED_MESSAGES.oppervlakte,
             min: 0,
           }}
           inFieldSet

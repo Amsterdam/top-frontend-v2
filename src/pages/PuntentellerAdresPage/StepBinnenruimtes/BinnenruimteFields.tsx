@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import { useFormContext, type FieldError, type Path } from "react-hook-form"
+import { useFormContext, type FieldError } from "react-hook-form"
 import {
   ActionGroup,
   Button,
@@ -20,10 +20,18 @@ type Props = {
   label: string
   type: BinnenruimteType
   onSave: () => void
+  /** Drops the room when it's a new one, or undoes the edits of a saved one. */
+  onCancel: () => void
 }
 
 /** The oppervlakte calculator + verwarmd/verkoeld questions for one added binnenruimte. */
-export function BinnenruimteFields({ index, label, type, onSave }: Props) {
+export function BinnenruimteFields({
+  index,
+  label,
+  type,
+  onSave,
+  onCancel,
+}: Props) {
   const {
     trigger,
     formState: { errors },
@@ -40,12 +48,15 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
   // since oppervlakte can be filled directly. Verwarmd and verkoeld are always forced to a
   // value (see VerwarmdVerkoeldFields), even for types without the question, so this list
   // needs no extra case for hasVerwarmd/hasVerkoeld. Oppervlakte isn't asked at all for types
-  // with hasOppervlakte: false (e.g. overloop), so it's skipped there too. Required extra
-  // fields (e.g. aanrechtlengte) mirror the `required` set on them in fieldDefinitions.ts.
-  const requiredExtraFieldNames = (extra ?? [])
+  // with hasOppervlakte: false (e.g. overloop), so it's skipped there too. Required
+  // voorzieningen (e.g. aanrechtlengte) mirror the `required` set on them in fieldDefinitions.ts.
+  const requiredVoorzieningen = (extra ?? [])
     .flatMap((section) => section.fields)
     .filter((field) => field.required)
-    .map((field) => field.name as Path<GebruikersinvoerFormValues>)
+    .map((field) => field.name)
+  const requiredExtraFieldNames = requiredVoorzieningen.map(
+    (name) => `binnenruimtes.${index}.${name}` as const,
+  )
 
   const requiredFieldNames = [
     ...(hasOppervlakte ? [`binnenruimtes.${index}.oppervlakte` as const] : []),
@@ -56,8 +67,8 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
 
   // mapErrorsToAlert only reads the top-level keys of the errors object, so the nested
   // binnenruimtes.<index>.* errors need to be flattened to their input `name` first.
-  const roomErrors = errors.binnenruimtes?.[index]
-  const topLevelErrors = errors as Record<string, FieldError | undefined>
+  const roomErrors = errors.binnenruimtes?.[index] as
+    Record<string, FieldError | undefined> | undefined
   const alertErrors = mapErrorsToAlert({
     ...(roomErrors?.oppervlakte && {
       [`binnenruimtes.${index}.oppervlakte`]: roomErrors.oppervlakte,
@@ -69,9 +80,9 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
       [`binnenruimtes.${index}.verkoeld`]: roomErrors.verkoeld,
     }),
     ...Object.fromEntries(
-      requiredExtraFieldNames
-        .filter((name) => topLevelErrors[name])
-        .map((name) => [name, topLevelErrors[name]]),
+      requiredVoorzieningen
+        .filter((name) => roomErrors?.[name])
+        .map((name) => [`binnenruimtes.${index}.${name}`, roomErrors?.[name]]),
     ),
   })
   const showErrors = alertErrors.length > 0
@@ -115,7 +126,7 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             )}
           </Grid.Cell>
           <Grid.Cell span="all" appearance="transparent">
-            <SectionFields fields={section.fields} />
+            <SectionFields index={index} fields={section.fields} />
           </Grid.Cell>
         </Fragment>
       ))}
@@ -130,6 +141,9 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             variant="secondary"
           >
             {label} toevoegen
+          </Button>
+          <Button type="button" onClick={onCancel} variant="tertiary">
+            Annuleren
           </Button>
         </ActionGroup>
       </Grid.Cell>

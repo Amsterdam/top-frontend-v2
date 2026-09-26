@@ -13,6 +13,8 @@ const mockParams = { bagId: "abc123" }
 const mockNavigate = vi.fn()
 const mockMutate = vi.fn()
 const mockShowToast = vi.fn()
+const mockFindMissingFields = vi.fn()
+const mockUseBagPdokAddress = vi.fn()
 
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
@@ -24,7 +26,13 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
     { peildatum: "2024-01-01", vastgestelde_waarde: 331000 },
   ],
   wozobjectnummer: 36300297723,
-  energielabel: "C",
+  energie: {
+    energielabel: "C",
+    energieindex: null,
+    registratiedatum: null,
+    opnamedatum: null,
+    meting_geldig_tot: null,
+  },
 }
 
 vi.mock("react-router", async (importOriginal) => {
@@ -43,6 +51,7 @@ vi.mock("@/api/hooks", () => ({
     isPending: false,
     isError: false,
   }),
+  useBagPdokAddress: (bagId?: string) => mockUseBagPdokAddress(bagId),
   useSaveGebruikersinvoer: () => ({
     mutate: mockMutate,
     isPending: false,
@@ -57,6 +66,12 @@ vi.mock("@/components", async (importOriginal) => {
     AmsterdamCrossSpinner: () => <div>Laden...</div>,
   }
 })
+
+// The steps are placeholders here, so no field can be filled in; findMissingFields has its
+// own tests.
+vi.mock("../helpers/findMissingFields", () => ({
+  findMissingFields: (...args: unknown[]) => mockFindMissingFields(...args),
+}))
 
 vi.mock("@/components/toasts/useToast", () => ({
   useToast: () => ({ showToast: mockShowToast }),
@@ -86,7 +101,7 @@ const { stepPlaceholder } = vi.hoisted(() => ({
         <div>
           <p>{label}</p>
           {isLastStep ? (
-            <button type="submit">Opslaan</button>
+            <button type="submit">Sla op en bereken</button>
           ) : (
             <button type="button" onClick={onNextStep}>
               Volgende stap
@@ -112,25 +127,44 @@ vi.mock("../StepBijzonderheden/StepBijzonderheden", () => ({
 vi.mock("../StepOverzicht/StepOverzicht", () => ({
   StepOverzicht: stepPlaceholder("Stap overzicht", true),
 }))
+vi.mock("../StepResultaat/StepResultaat", () => ({
+  StepResultaat: () => <p>Stap resultaat</p>,
+}))
 
 describe("PuntentellerAdresPage", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
+    mockFindMissingFields.mockReturnValue([])
+    mockUseBagPdokAddress.mockReturnValue({ data: undefined })
   })
 
   afterEach(() => {
     cleanup()
   })
 
-  it("shows the address in the heading once the invoerwaarden are loaded", async () => {
+  it("shows the backend's straat and huisnummer in the heading until PDOK has answered", async () => {
     render(<PuntentellerAdresPage />)
 
     expect(
-      await screen.findByRole("heading", { name: /Tjasker 59/ }),
+      await screen.findByRole("heading", { name: "Puntenteller (Tjasker 59)" }),
     ).toBeDefined()
   })
 
-  it("walks through all 5 steps and submits on the overzicht-stap", async () => {
+  it("shows PDOK's weergavenaam of the bagId, without postcode and woonplaats", async () => {
+    mockUseBagPdokAddress.mockReturnValue({
+      data: { weergavenaam: "Tjasker 59-H, 1035CS Amsterdam" },
+    })
+    render(<PuntentellerAdresPage />)
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "Puntenteller (Tjasker 59-H)",
+      }),
+    ).toBeDefined()
+    expect(mockUseBagPdokAddress).toHaveBeenCalledWith("abc123")
+  })
+
+  it("walks through the steps and submits on the overzicht-stap", async () => {
     render(<PuntentellerAdresPage />)
 
     await screen.findByText("Stap woninggegevens")
@@ -145,10 +179,64 @@ describe("PuntentellerAdresPage", () => {
       expect(await screen.findByText(label)).toBeDefined()
     }
 
-    fireEvent.click(screen.getByRole("button", { name: "Opslaan" }))
+    fireEvent.click(screen.getByRole("button", { name: "Sla op en bereken" }))
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it("doesn't save while required fields are missing", async () => {
+    mockFindMissingFields.mockReturnValue([
+      { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
+    ])
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    await waitFor(() => {
+      expect(mockFindMissingFields).toHaveBeenCalled()
+    })
+    expect(mockMutate).not.toHaveBeenCalled()
+  })
+
+  it("shows the resultaat-stap once the berekening has succeeded", async () => {
+    mockMutate.mockImplementation(
+      (_values: unknown, { onSuccess }: { onSuccess: () => void }) =>
+        onSuccess(),
+    )
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    expect(await screen.findByText("Stap resultaat")).toBeDefined()
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: "success" }),
+    )
+  })
+
+  it("shows an error toast and stays on the overzicht-stap when the berekening fails", async () => {
+    mockMutate.mockImplementation(
+      (_values: unknown, { onError }: { onError: () => void }) => onError(),
+    )
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({ severity: "error" }),
+      )
+    })
+    expect(screen.getByText("Stap overzicht")).toBeDefined()
   })
 })

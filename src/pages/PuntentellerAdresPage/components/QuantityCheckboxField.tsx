@@ -2,7 +2,7 @@ import { Controller, type Path } from "react-hook-form"
 import { QuantityCheckbox } from "./QuantityCheckbox"
 
 type Props = {
-  /** A top-level count field, or one inside a room list (e.g. buitenruimtes.0.laadpaal). */
+  /** A count field inside a room list, e.g. binnenruimtes.0.wastafel or buitenruimtes.0.laadpaal. */
   name: Path<GebruikersinvoerFormValues>
   label: string
   max?: number

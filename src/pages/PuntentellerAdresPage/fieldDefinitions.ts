@@ -3,8 +3,9 @@
  * StepOverzicht (summary), so labels only need to be maintained in one place.
  */
 
+/** A voorziening of a binnenruimte, stored on the room itself (binnenruimtes.<index>.<name>). */
 type FieldBase = {
-  name: keyof GebruikersinvoerFormValues
+  name: keyof BinnenruimteVoorzieningen
   label: string
   /** Most fields default to "0" and don't need an answer; pass a message to require one. */
   required?: string
@@ -36,15 +37,39 @@ export type FieldSection = {
   fields: readonly FieldDefinition[]
 }
 
-/** Flat view of a room's sections for StepOverzicht's summary, which doesn't care about grouping. */
-const flattenSections = (sections: readonly FieldSection[]) =>
-  sections.flatMap((section) => section.fields)
+/** The fields directly on the form, as opposed to the fields of a ruimte in its list. */
+export type TopLevelFieldName = Exclude<
+  keyof GebruikersinvoerFormValues,
+  "binnenruimtes" | "buitenruimtes"
+>
+
+/**
+ * The messages of the required fields that don't have a field definition with a `required`
+ * below, shared between the fields' registerOptions and findMissingFields (the
+ * InvalidFormAlert on the overzicht).
+ */
+export const REQUIRED_MESSAGES = {
+  woz_peildatum_jaar: "WOZ-peildatum is verplicht",
+  woz_waarde: "WOZ-waarde is verplicht",
+  energie_type: "Kies waarop de energieprestatie is gebaseerd",
+  energielabel_klasse: "Energielabel is verplicht",
+  energie_index: "Energie-index is verplicht",
+  bouwjaar: "Bouwjaar is verplicht",
+  type_woning: "Type woning is verplicht",
+  gemeenschappelijke_binnenruimtes:
+    "Gemeenschappelijke binnenruimtes is verplicht",
+  monument_soort: "Geef aan of de woning een monument is",
+  oppervlakte: "Vul de oppervlakte in.",
+  verwarmd: "Geef aan of de ruimte verwarmd is",
+  verkoeld: "Geef aan of de ruimte verkoeld is",
+  aantal_adressen: "Vul het aantal adressen in.",
+} as const
 
 export const WONINGGEGEVENS_FIELDS = [
   { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte (m²)" },
   { name: "woz_waarde", label: "WOZ-waarde (€)" },
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
-  { name: "energielabel_klasse", label: "Energielabel" },
+  { name: "energie_type", label: "Energieprestatie" },
   { name: "type_woning", label: "Woonvorm" },
   {
     name: "gemeenschappelijke_binnenruimtes",
@@ -52,19 +77,18 @@ export const WONINGGEGEVENS_FIELDS = [
   },
 ] as const
 
-// Shared between BADKAMER_SECTIONS and SLAAPKAMER_SANITAIR_SECTIONS, which write to the same
-// badkamer_* fields.
+// Shared between BADKAMER_SECTIONS and SLAAPKAMER_SANITAIR_SECTIONS.
 const DOUCHE_BAD_SECTION = {
   heading: "Douche, bad of combinatie",
   fields: [
     {
-      name: "badkamer_douche",
+      name: "douche_bad",
       label: "Is er een douche, een bad of een combinatie van beide?",
       options: [
         { label: "Maak een keuze", value: "" },
-        { label: "Douche", value: "badkamer_douche" },
-        { label: "Bad (met handdouche)", value: "badkamer_bad" },
-        { label: "Bad en aparte douche", value: "badkamer_baddouche" },
+        { label: "Douche", value: "douche" },
+        { label: "Bad (met handdouche)", value: "bad" },
+        { label: "Bad en aparte douche", value: "baddouche" },
       ],
       inFieldSet: true,
       required: "Een douche of bad is verplicht",
@@ -73,12 +97,12 @@ const DOUCHE_BAD_SECTION = {
 } as const satisfies FieldSection
 
 const WASTAFEL_FIELD = {
-  name: "badkamer_wastafel",
+  name: "wastafel",
   label: "Wastafel",
 } as const satisfies FieldDefinition
 
 const MEERPERSOONS_WASTAFEL_FIELD = {
-  name: "badkamer_meerpersoons_wastafel",
+  name: "meerpersoons_wastafel",
   label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
 } as const satisfies FieldDefinition
 
@@ -89,11 +113,11 @@ export const BADKAMER_SECTIONS = [
     heading: "Toiletvoorzieningen in de badkamer",
     fields: [
       {
-        name: "badkamer_toilet_hangend",
+        name: "toilet_hangend",
         label: "Hangend toilet",
       },
       {
-        name: "badkamer_toilet_normaal",
+        name: "toilet_normaal",
         label: "Normaal toilet",
       },
     ],
@@ -102,11 +126,11 @@ export const BADKAMER_SECTIONS = [
     heading: "Bad- en douchevoorzieningen",
     fields: [
       {
-        name: "badkamer_volledige_afscheiding_douche",
+        name: "volledige_afscheiding_douche",
         label: "Volledige afscheiding van de douche",
       },
       {
-        name: "badkamer_bubbelfunctie_bad",
+        name: "bubbelfunctie_bad",
         label: "Bubbelfunctie bad",
       },
     ],
@@ -116,15 +140,15 @@ export const BADKAMER_SECTIONS = [
     fields: [
       WASTAFEL_FIELD,
       {
-        name: "badkamer_eenhandsmengkraan",
+        name: "eenhandsmengkraan",
         label: "Eénhandsmengkraan",
       },
       {
-        name: "badkamer_stopcontacten",
+        name: "stopcontacten",
         label: "Stopcontacten",
       },
       {
-        name: "badkamer_thermostatische_mengkraan",
+        name: "thermostatische_mengkraan",
         label: "Thermostatische mengkraan",
       },
       MEERPERSOONS_WASTAFEL_FIELD,
@@ -134,22 +158,20 @@ export const BADKAMER_SECTIONS = [
     heading: "Extra voorzieningen",
     fields: [
       {
-        name: "badkamer_kast_bij_wastafel",
+        name: "kast_bij_wastafel",
         label: "Wastafelkast- of meubel voor een wastafel",
       },
       {
-        name: "badkamer_kastruimte",
+        name: "kastruimte",
         label: "Kastruimte (min. 40 x 40 cm)",
       },
       {
-        name: "badkamer_handdoekenradiator",
+        name: "handdoekenradiator",
         label: "Handdoekenradiator",
       },
     ],
   },
 ] as const satisfies readonly FieldSection[]
-
-export const BADKAMER_FIELDS = flattenSections(BADKAMER_SECTIONS)
 
 /** Subset of BADKAMER_SECTIONS shown for a "Slaapkamer met wastafel, douche of bad" binnenruimte. */
 export const SLAAPKAMER_SANITAIR_SECTIONS = [
@@ -166,19 +188,17 @@ export const TOILETRUIMTE_SECTIONS = [
     description: "Geef aan wat er aanwezig is in de toiletruimte.",
     fields: [
       {
-        name: "apart_toilet_hangend",
+        name: "toilet_hangend",
         label: "Hangend toilet",
       },
       {
-        name: "apart_toilet_wastafel",
+        name: "wastafel",
         label: "Wastafel (fonteintje)",
         max: 1,
       },
     ],
   },
 ] as const satisfies readonly FieldSection[]
-
-export const APART_TOILET_FIELDS = flattenSections(TOILETRUIMTE_SECTIONS)
 
 export const KEUKEN_SECTIONS = [
   {
@@ -187,7 +207,7 @@ export const KEUKEN_SECTIONS = [
       "Meet over het midden van het bovenblad. Tel ook ingebouwde spoelbakken en inbouwkookplaten mee.",
     fields: [
       {
-        name: "keuken_aanrechtlengte_meters",
+        name: "aanrechtlengte",
         label: "Hoe lang is het aanrecht?",
         options: [
           { label: "Maak een keuze", value: "" },
@@ -206,20 +226,20 @@ export const KEUKEN_SECTIONS = [
       "Geef hier aan welke voorzieningen in de keuken aanwezig zijn.",
     fields: [
       {
-        name: "keuken_inbouw_afzuiginstallatie",
+        name: "inbouw_afzuiginstallatie",
         label: "Inbouw afzuiginstallatie",
       },
       {
-        name: "keuken_inbouw_kookplaat_inductie",
+        name: "inbouw_kookplaat_inductie",
         label: "Inbouw kookplaat inductie",
       },
       {
-        name: "keuken_inbouw_kookplaat_keramisch",
+        name: "inbouw_kookplaat_keramisch",
         label: "Inbouw kookplaat keramisch",
       },
       {
-        name: "keuken_inbouw_kookplaat_gas",
-        label: "Inbouw kookplaat, gas",
+        name: "inbouw_kookplaat_gas",
+        label: "Inbouw kookplaat gas",
       },
     ],
   },
@@ -229,23 +249,23 @@ export const KEUKEN_SECTIONS = [
       "Luxere kranen hebben soms een functie voor kokend water. Kies de juiste kraan als dit van toepassing is.",
     fields: [
       {
-        name: "keuken_eenhandsmengkraan",
+        name: "eenhandsmengkraan",
         label: "Eénhandsmengkraan",
       },
       {
-        name: "keuken_thermostatische_mengkraan",
+        name: "thermostatische_mengkraan",
         label: "Thermostatische mengkraan",
       },
       {
-        name: "keuken_eenhandsmengkraan_kookfunctie",
+        name: "eenhandsmengkraan_kookfunctie",
         label: "Eénhandsmengkraan met kookfunctie",
       },
       {
-        name: "keuken_thermostatische_mengkraan_kookfunctie",
+        name: "thermostatische_mengkraan_kookfunctie",
         label: "Thermostatische mengkraan met kookfunctie",
       },
       {
-        name: "keuken_kokendwaterfunctie",
+        name: "kokendwaterfunctie",
         label: "Kraan met kookfunctie",
         max: 2,
       },
@@ -257,11 +277,11 @@ export const KEUKEN_SECTIONS = [
       "Is de koelkast met de vriezer als inbouw gecombineerd? Geef deze dan op als twee aparte voorzieningen: een inbouwkoelkast en een inbouwvriezer.",
     fields: [
       {
-        name: "keuken_inbouw_koelkast",
+        name: "inbouw_koelkast",
         label: "Inbouw koelkast",
       },
       {
-        name: "keuken_inbouw_vrieskast",
+        name: "inbouw_vrieskast",
         label: "Inbouw vrieskast",
       },
     ],
@@ -272,15 +292,15 @@ export const KEUKEN_SECTIONS = [
       "Is de inbouwoven ook een magnetron? Geef dan beide voorzieningen apart op.",
     fields: [
       {
-        name: "keuken_inbouw_magnetron",
+        name: "inbouw_magnetron",
         label: "Inbouw magnetron",
       },
       {
-        name: "keuken_inbouw_oven_gas",
+        name: "inbouw_oven_gas",
         label: "Inbouw oven gas",
       },
       {
-        name: "keuken_inbouw_oven_elektrisch",
+        name: "inbouw_oven_elektrisch",
         label: "Inbouw oven elektrisch",
       },
     ],
@@ -291,11 +311,11 @@ export const KEUKEN_SECTIONS = [
       "De keuken moet standaard 100 cm brede inbouwkastruimte hebben. Extra kastruimte telt mee als deze minimaal 60 cm hoog is. Bereken de extra kastruimte door de totale extra breedte in cm door 60 te delen en naar beneden af te ronden. Bijvoorbeeld: 210 cm extra kastruimte ÷ 60 = 3 extra kasten.",
     fields: [
       {
-        name: "keuken_inbouw_vaatwasmachine",
+        name: "inbouw_vaatwasmachine",
         label: "Inbouw vaatwasmachine",
       },
       {
-        name: "keuken_extra_kastruimte",
+        name: "extra_kastruimte",
         label: "Extra kastruimte (per strekkende 60 cm)",
         max: 10,
       },
@@ -303,35 +323,20 @@ export const KEUKEN_SECTIONS = [
   },
 ] as const satisfies readonly FieldSection[]
 
-export const KEUKEN_FIELDS = flattenSections(KEUKEN_SECTIONS)
-
-export const BUITEN_PARKEREN_FIELDS = [
+/** The parkeerplekken per soort asked for a Parkeerruimte buitenruimte. */
+export const PARKEERPLEK_FIELDS = [
   {
-    name: "buitenruimte_prive_buitenruimte",
-    label: "Privé buitenruimte",
+    name: "parkeerplekken_afgesloten_parkeergarage",
+    label: "In afgesloten parkeergarage behorende tot het complex",
   },
   {
-    name: "buitenruimte_gemeenschappelijke_buitenruimte",
-    label: "Gemeenschappelijke buitenruimte",
+    name: "parkeerplekken_buiten_met_dak",
+    label: "Buiten met dak behorend bij het complex",
   },
   {
-    name: "parkeerruimte_gesloten_garage_bij_complex",
-    label: "Gesloten garage bij complex",
+    name: "parkeerplekken_buiten_zonder_dak",
+    label: "Buiten zonder dak behorend tot het complex",
   },
-  {
-    name: "parkeerruimte_buiten_bij_complex_met_dak",
-    label: "Parkeerruimte buiten bij complex, met dak",
-  },
-  {
-    name: "parkeerruimte_buiten_bij_complex_zonder_dak",
-    label: "Parkeerruimte buiten bij complex, zonder dak",
-  },
-] as const
-
-/** Bijzondere voorzieningen without a question in the wizard yet; the intercom is in
- * JA_NEE_VRAGEN. */
-export const BIJZONDERE_VOORZIENING_FIELDS = [
-  { name: "bijzondere_voorziening_laadpaal", label: "Laadpaal" },
 ] as const
 
 export const GEEN_MONUMENT = "geen_monument"
@@ -364,7 +369,7 @@ export const JA_NEE_OPTIONS = [
 /** Ja/nee questions asked in StepBijzonderheden, all required and defaulting to nee (see
  * useGebruikersinvoerForm). */
 export const JA_NEE_VRAGEN: {
-  name: keyof GebruikersinvoerFormValues
+  name: TopLevelFieldName
   label: string
   required: string
 }[] = [
