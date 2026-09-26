@@ -1,13 +1,15 @@
-/** Sorts woz_waarden descending by peildatum (most recent first). */
+/** Sorts woz_waarden descending by peildatum (most recent first); none when there are none. */
 export function sortWozWaardenByPeildatum(
-  wozWaarden: WozWaarde[],
+  wozWaarden: WozWaarde[] | null,
 ): WozWaarde[] {
-  return [...wozWaarden].sort((a, b) => b.peildatum.localeCompare(a.peildatum))
+  return [...(wozWaarden ?? [])].sort((a, b) =>
+    b.peildatum.localeCompare(a.peildatum),
+  )
 }
 
 /** The WOZ-waarde used as default as long as the user hasn't chosen a peildatum. */
 export function selectDefaultWozWaarde(
-  wozWaarden: WozWaarde[],
+  wozWaarden: WozWaarde[] | null,
 ): WozWaarde | undefined {
   return sortWozWaardenByPeildatum(wozWaarden)[0]
 }
@@ -36,11 +38,11 @@ export function mapInvoerwaardenToFormValues(
 
   return {
     bouwjaar: invoerwaarden.bouwjaar,
-    gebruiksoppervlakte: invoerwaarden.gebruiksoppervlakte,
+    gebruiksoppervlakte: invoerwaarden.gebruiksoppervlakte ?? 0,
     woz_waarde: wozWaarde?.vastgestelde_waarde ?? 0,
     woz_peildatum_jaar: wozWaarde
       ? peildatumToJaar(wozWaarde.peildatum)
       : new Date().getFullYear(),
-    energielabel_klasse: invoerwaarden.energielabel,
+    energielabel_klasse: invoerwaarden.energie?.energielabel ?? "",
   }
 }

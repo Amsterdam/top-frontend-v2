@@ -24,7 +24,13 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
     { peildatum: "2024-01-01", vastgestelde_waarde: 331000 },
   ],
   wozobjectnummer: 36300297723,
-  energielabel: "C",
+  energie: {
+    energielabel: "C",
+    energieindex: null,
+    registratiedatum: null,
+    opnamedatum: null,
+    meting_geldig_tot: null,
+  },
 }
 
 vi.mock("react-router", async (importOriginal) => {

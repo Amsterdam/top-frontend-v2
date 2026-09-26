@@ -11,20 +11,14 @@ import {
   peildatumToJaar,
   sortWozWaardenByPeildatum,
 } from "../helpers/mapInvoerwaardenToFormValues"
+import { EnergielabelSummary } from "./EnergielabelSummary"
 
 const ENERGIELABEL_OPTIONS = [
-  "A++++",
-  "A+++",
-  "A++",
-  "A+",
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-].map((label) => ({ label: `Label ${label}`, value: label }))
+  { label: "Maak een keuze", value: "" },
+  ...["A++++", "A+++", "A++", "A+", "A", "B", "C", "D", "E", "F", "G"].map(
+    (label) => ({ label: `Label ${label}`, value: label }),
+  ),
+]
 
 const formatEuro = (value: number) =>
   new Intl.NumberFormat("nl-NL", {
@@ -118,6 +112,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
 
           <Grid.Cell span="all" appearance="transparent">
             <Heading level={3}>Energielabel gegevens</Heading>
+            <EnergielabelSummary energie={invoerwaarden?.energie} />
           </Grid.Cell>
           <Grid.Cell
             span={{ narrow: 4, medium: 4, wide: 4 }}

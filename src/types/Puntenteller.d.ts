@@ -3,14 +3,28 @@ type WozWaarde = {
   vastgestelde_waarde: number
 }
 
+/** The most recent energielabel registration of the address, from the EP-Online data. */
+type PuntentellerEnergie = {
+  energielabel: string | null
+  energieindex: number | null
+  registratiedatum: string | null
+  opnamedatum: string | null
+  /** ISO date until which the measurement behind the energielabel is valid. */
+  meting_geldig_tot: string | null
+}
+
+/**
+ * Response of GET /puntenteller/adressen/:bagId/invoerwaarden/ (GebouwDataSerializer). Every
+ * field can be null when the external source has no data for the address.
+ */
 type PuntentellerInvoerwaarden = {
-  straat: string
-  huisnummer: string
-  bouwjaar: number
-  gebruiksoppervlakte: number
-  woz_waarden: WozWaarde[]
-  wozobjectnummer: number
-  energielabel: string
+  straat: string | null
+  huisnummer: string | null
+  bouwjaar: number | null
+  gebruiksoppervlakte: number | null
+  woz_waarden: WozWaarde[] | null
+  wozobjectnummer: number | null
+  energie: PuntentellerEnergie | null
 }
 
 /** Response of POST /puntenteller/adressen/:bagId/ (PuntentellerResultaatSerializer). */

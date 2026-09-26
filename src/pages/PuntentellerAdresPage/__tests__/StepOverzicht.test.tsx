@@ -59,7 +59,7 @@ describe("StepOverzicht", () => {
       .closest("div") as HTMLElement
     expect(valueOf(within(slaapkamer1).getByText("Lengte"))).toBe("5 m")
     expect(valueOf(within(slaapkamer1).getByText("Breedte"))).toBe("2,5 m")
-    expect(valueOf(within(slaapkamer1).getByText("Verwarmd"))).toBe("ja")
+    expect(valueOf(within(slaapkamer1).getByText("Verwarmd"))).toBe("Ja")
     expect(
       screen.getByRole("heading", { name: "Slaapkamer 2 (10 m²)" }),
     ).toBeDefined()

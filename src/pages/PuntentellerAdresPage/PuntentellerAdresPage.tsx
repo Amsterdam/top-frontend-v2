@@ -79,6 +79,11 @@ export default function PuntentellerAdresPage() {
 
   if (isPending) return <AmsterdamCrossSpinner />
 
+  // "Tjasker 59"; empty when the backend has neither straat nor huisnummer.
+  const adres = [invoerwaarden?.straat, invoerwaarden?.huisnummer]
+    .filter(Boolean)
+    .join(" ")
+
   const steps = [
     <StepWoninggegevens
       key="step-0"
@@ -113,18 +118,11 @@ export default function PuntentellerAdresPage() {
               Puntenteller
             </Breadcrumb.Link>
             <Breadcrumb.Link aria-current="location">
-              {invoerwaarden
-                ? `${invoerwaarden.straat} ${invoerwaarden.huisnummer}`
-                : "Gegevens woning"}
+              {adres || "Gegevens woning"}
             </Breadcrumb.Link>
           </Breadcrumb>
 
-          <Heading level={1}>
-            Puntenteller{" "}
-            {invoerwaarden
-              ? `(${invoerwaarden.straat} ${invoerwaarden.huisnummer})`
-              : ""}
-          </Heading>
+          <Heading level={1}>Puntenteller {adres && `(${adres})`}</Heading>
         </Grid.Cell>
 
         {isError && (
