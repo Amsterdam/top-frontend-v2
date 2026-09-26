@@ -1,3 +1,6 @@
+/** What the energieprestatie is based on, see selectEnergieGrondslag. */
+type EnergieType = "label" | "index" | "bouwjaar"
+
 type BinnenruimteType =
   | "Woonkamer"
   | "Keuken"
@@ -102,7 +105,10 @@ type GebruikersinvoerFormValues = {
 
   // Woninggegevens (overlap with PuntentellerInvoerwaarden, part of the same record)
   bouwjaar: number | null
+  /** What the energieprestatie is based on; decides which of the three fields below is sent. */
+  energie_type: EnergieType
   energielabel_klasse: string
+  energie_index: number | null
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number

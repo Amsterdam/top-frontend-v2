@@ -17,6 +17,8 @@ const mockShowToast = vi.fn()
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
   huisnummer: "59",
+  huisnummertoevoeging: null,
+  huisletter: null,
   bouwjaar: 1970,
   gebruiksoppervlakte: 90,
   woz_waarden: [

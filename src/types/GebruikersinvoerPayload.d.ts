@@ -4,7 +4,11 @@
  * (ruimte_m2, aanrechtlengte_meters) are strings, as DRF's DecimalField expects.
  */
 
-type PayloadEnergie = { type: "label"; waarde: string } | { type: "bouwjaar" }
+/** The bouwjaar itself isn't sent in here but in GebruikersinvoerPayload.bouwjaar. */
+type PayloadEnergie =
+  | { type: "label"; waarde: string }
+  | { type: "index"; waarde: string }
+  | { type: "bouwjaar" }
 
 type PayloadSanitair = {
   wastafel: number

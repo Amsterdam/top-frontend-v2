@@ -10,7 +10,9 @@ const defaultValues: GebruikersinvoerFormValues = {
   buitenruimtes: [],
 
   bouwjaar: null,
+  energie_type: "bouwjaar",
   energielabel_klasse: "",
+  energie_index: null,
   gebruiksoppervlakte: 0,
   woz_waarde: 0,
   woz_peildatum_jaar: new Date().getFullYear(),
@@ -59,7 +61,9 @@ export function useGebruikersinvoerForm(
     form.setValue("gebruiksoppervlakte", mapped.gebruiksoppervlakte)
     form.setValue("woz_waarde", mapped.woz_waarde)
     form.setValue("woz_peildatum_jaar", mapped.woz_peildatum_jaar)
+    form.setValue("energie_type", mapped.energie_type)
     form.setValue("energielabel_klasse", mapped.energielabel_klasse)
+    form.setValue("energie_index", mapped.energie_index)
   }, [invoerwaarden, form])
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {

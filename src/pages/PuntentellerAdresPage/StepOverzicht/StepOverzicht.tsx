@@ -38,14 +38,29 @@ const jaNee = (value: unknown) =>
 const monumentSoortLabel = (value: unknown) =>
   MONUMENT_SOORT_OPTIONS.find((option) => option.value === value)?.label ?? null
 
+/** "Energielabel C", "Energie-index 1,45" or "Bouwjaar 1977", following energie_type. */
+const energieprestatie = (
+  energieType: unknown,
+  values: GebruikersinvoerFormValues,
+) => {
+  if (energieType === "label")
+    return `Energielabel ${values.energielabel_klasse}`
+  if (energieType === "index") {
+    const energieIndex = toNumber(values.energie_index)
+    return `Energie-index ${energieIndex === null ? "" : energieIndex.toLocaleString("nl-NL")}`
+  }
+  return `Bouwjaar ${toNumber(values.bouwjaar) ?? ""}`
+}
+
 const WONING_FIELDS: {
   name: keyof GebruikersinvoerFormValues
   label: string
-  format?: (value: unknown) => ReactNode
+  format?: (value: unknown, values: GebruikersinvoerFormValues) => ReactNode
 }[] = WONINGGEGEVENS_FIELDS.map(({ name, label }) => ({
   name,
   label,
   ...(name === "gemeenschappelijke_binnenruimtes" && { format: jaNee }),
+  ...(name === "energie_type" && { format: energieprestatie }),
 }))
 
 const BIJZONDERHEDEN_FIELDS: {
@@ -67,7 +82,7 @@ const toItems = (
 ): DescriptionItem[] =>
   fields.map(({ name, label, format }) => ({
     label,
-    value: format ? format(values[name]) : (values[name] as ReactNode),
+    value: format ? format(values[name], values) : (values[name] as ReactNode),
   }))
 
 /** A room's voorziening (sanitair, keuken): the chosen option's label or the count, or null

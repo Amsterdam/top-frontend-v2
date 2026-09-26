@@ -20,6 +20,12 @@ const ENERGIELABEL_OPTIONS = [
   ),
 ]
 
+const ENERGIE_TYPE_OPTIONS: { label: string; value: EnergieType }[] = [
+  { label: "Energielabel", value: "label" },
+  { label: "Energie-index", value: "index" },
+  { label: "Bouwjaar", value: "bouwjaar" },
+]
+
 const formatEuro = (value: number) =>
   new Intl.NumberFormat("nl-NL", {
     style: "currency",
@@ -49,6 +55,8 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
     label: `${formatPeildatum(w.peildatum)} — ${formatEuro(w.vastgestelde_waarde)}`,
     value: String(peildatumToJaar(w.peildatum)),
   }))
+
+  const energieType = useWatch({ control, name: "energie_type" })
 
   // When the user picks a different peildatum, the WOZ-waarde follows automatically
   // (but remains separately editable afterwards via the WOZ-waarde field below).
@@ -114,18 +122,57 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
             <Heading level={3}>Energielabel gegevens</Heading>
             <EnergielabelSummary energie={invoerwaarden?.energie} />
           </Grid.Cell>
+          <Grid.Cell span="all" appearance="transparent">
+            <RadioControl<GebruikersinvoerFormValues>
+              label="Kies het type energielabel of bouwjaar"
+              name="energie_type"
+              options={ENERGIE_TYPE_OPTIONS}
+              registerOptions={{
+                required: "Kies waarop de energieprestatie is gebaseerd",
+              }}
+              inFieldSet
+            />
+          </Grid.Cell>
+          {/* Only the field for the chosen energie_type is shown (and validated). */}
           <Grid.Cell
             span={{ narrow: 4, medium: 4, wide: 4 }}
             appearance="transparent"
           >
-            <SelectControl<GebruikersinvoerFormValues>
-              label="Energielabel"
-              name="energielabel_klasse"
-              options={ENERGIELABEL_OPTIONS}
-              registerOptions={{ required: "Energielabel is verplicht" }}
-              style={{ width: "100%" }}
-              inFieldSet
-            />
+            {energieType === "label" && (
+              <SelectControl<GebruikersinvoerFormValues>
+                label="Energielabel"
+                name="energielabel_klasse"
+                options={ENERGIELABEL_OPTIONS}
+                registerOptions={{ required: "Energielabel is verplicht" }}
+                style={{ width: "100%" }}
+                inFieldSet
+              />
+            )}
+            {energieType === "index" && (
+              <TextInputControl<GebruikersinvoerFormValues>
+                label="Energie-index"
+                name="energie_index"
+                attributes={{ type: "number", min: 0, step: 0.01 }}
+                registerOptions={{
+                  valueAsNumber: true,
+                  required: "Energie-index is verplicht",
+                  min: 0,
+                }}
+                inFieldSet
+              />
+            )}
+            {energieType === "bouwjaar" && (
+              <TextInputControl<GebruikersinvoerFormValues>
+                label="Bouwjaar"
+                name="bouwjaar"
+                attributes={{ type: "number", step: 1 }}
+                registerOptions={{
+                  valueAsNumber: true,
+                  required: "Bouwjaar is verplicht",
+                }}
+                inFieldSet
+              />
+            )}
           </Grid.Cell>
 
           <Grid.Cell span="all" appearance="transparent">

@@ -264,6 +264,23 @@ const MONUMENT_CONTRACTDATUM: Record<string, string> = {
   rijksmonument_contract_voor_1_juli_2024: "2024-06-30",
 }
 
+/**
+ * The energie as the backend expects it, following the chosen energie_type. Falls back to the
+ * bouwjaar when the chosen label or index is missing, which the backend would reject.
+ * { type: "bouwjaar" } carries no waarde: the backend's EnergieSerializer discards it and takes
+ * the bouwjaar from the top-level bouwjaar field of the payload instead.
+ */
+const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
+  const energieIndex = toNumber(values.energie_index)
+  if (values.energie_type === "label" && values.energielabel_klasse) {
+    return { type: "label", waarde: values.energielabel_klasse }
+  }
+  if (values.energie_type === "index" && energieIndex !== null) {
+    return { type: "index", waarde: String(energieIndex) }
+  }
+  return { type: "bouwjaar" }
+}
+
 /** Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/. */
 export function mapFormValuesToPayload(
   values: GebruikersinvoerFormValues,
@@ -273,9 +290,7 @@ export function mapFormValuesToPayload(
   const monumentSoort = values.monument_soort ?? ""
 
   return {
-    energie: values.energielabel_klasse
-      ? { type: "label", waarde: values.energielabel_klasse }
-      : { type: "bouwjaar" },
+    energie: energie(values),
     is_eengezinswoning: values.type_woning
       ? values.type_woning === "Eengezinswoning"
       : null,
@@ -283,7 +298,7 @@ export function mapFormValuesToPayload(
     buitenruimten,
     parkeerruimten,
     completed: true,
-    bouwjaar: values.bouwjaar ?? null,
+    bouwjaar: toNumber(values.bouwjaar),
     gebruiksoppervlakte: count(values.gebruiksoppervlakte),
     woz_waarde: count(values.woz_waarde),
     woz_peildatum_jaar: count(values.woz_peildatum_jaar),

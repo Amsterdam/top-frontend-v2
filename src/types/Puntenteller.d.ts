@@ -6,7 +6,8 @@ type WozWaarde = {
 /** The most recent energielabel registration of the address, from the EP-Online data. */
 type PuntentellerEnergie = {
   energielabel: string | null
-  energieindex: number | null
+  /** As EP-Online formats it, with a decimal comma, e.g. "1,13"; see parseEnergieIndex. */
+  energieindex: string | null
   registratiedatum: string | null
   opnamedatum: string | null
   /** ISO date until which the measurement behind the energielabel is valid. */
@@ -20,6 +21,10 @@ type PuntentellerEnergie = {
 type PuntentellerInvoerwaarden = {
   straat: string | null
   huisnummer: string | null
+  /** Huisnummertoevoeging from the BAG, e.g. "2" or "H"; may also be "" when there's none. */
+  huisnummertoevoeging: string | null
+  /** Huisletter from the BAG, e.g. "A"; may also be "" when there's none. */
+  huisletter: string | null
   bouwjaar: number | null
   gebruiksoppervlakte: number | null
   woz_waarden: WozWaarde[] | null

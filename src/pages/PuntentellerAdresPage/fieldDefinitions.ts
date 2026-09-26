@@ -41,7 +41,7 @@ export const WONINGGEGEVENS_FIELDS = [
   { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte (m²)" },
   { name: "woz_waarde", label: "WOZ-waarde (€)" },
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
-  { name: "energielabel_klasse", label: "Energielabel" },
+  { name: "energie_type", label: "Energieprestatie" },
   { name: "type_woning", label: "Woonvorm" },
   {
     name: "gemeenschappelijke_binnenruimtes",

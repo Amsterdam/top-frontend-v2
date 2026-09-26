@@ -157,6 +157,30 @@ describe("StepOverzicht", () => {
     expect(screen.queryByText("Totale oppervlakte")).toBeNull()
   })
 
+  it.each([
+    ["label", "Energielabel C"],
+    ["index", "Energie-index 1,45"],
+    ["bouwjaar", "Bouwjaar 1977"],
+  ] as const)(
+    "shows the energieprestatie following energie_type %s",
+    (energieType, expected) => {
+      render(
+        <Harness
+          values={{
+            binnenruimtes: [],
+            buitenruimtes: [],
+            energie_type: energieType,
+            energielabel_klasse: "C",
+            energie_index: "1.45" as unknown as number,
+            bouwjaar: 1977,
+          }}
+        />,
+      )
+
+      expect(valueOf(screen.getByText("Energieprestatie"))).toBe(expected)
+    },
+  )
+
   it("links to the Sla op en bereken button and focuses it", () => {
     // jsdom doesn't implement scrollIntoView.
     Element.prototype.scrollIntoView = vi.fn()

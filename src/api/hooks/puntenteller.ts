@@ -20,6 +20,8 @@ const USE_DUMMY_INVOERWAARDEN = false
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
   huisnummer: "59",
+  huisnummertoevoeging: null,
+  huisletter: null,
   bouwjaar: 1977,
   gebruiksoppervlakte: 90,
   woz_waarden: [

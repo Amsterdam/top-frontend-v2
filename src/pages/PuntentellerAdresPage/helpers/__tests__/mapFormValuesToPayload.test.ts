@@ -300,6 +300,7 @@ describe("mapFormValuesToPayload", () => {
           gebruiksoppervlakte: 90,
           woz_waarde: 374000,
           woz_peildatum_jaar: "2025" as unknown as number,
+          energie_type: "label",
           energielabel_klasse: "C",
           type_woning: "Eengezinswoning",
           monument: true,
@@ -335,17 +336,55 @@ describe("mapFormValuesToPayload", () => {
       )
     })
 
-    it("falls back to the bouwjaar without energielabel and sends geen monument as null", () => {
+    it("sends the energie-index when that's the chosen energie_type", () => {
       const payload = mapFormValuesToPayload(
         formValues({
-          energielabel_klasse: "",
+          energie_type: "index",
+          energielabel_klasse: "C",
+          energie_index: "1.45" as unknown as number,
+        }),
+      )
+
+      expect(payload.energie).toEqual({ type: "index", waarde: "1.45" })
+    })
+
+    it("sends the bouwjaar when that's the chosen energie_type, also when a label is known", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          energie_type: "bouwjaar",
+          energielabel_klasse: "C",
+          energie_index: 1.45,
+          bouwjaar: "1977" as unknown as number,
+        }),
+      )
+
+      expect(payload.energie).toEqual({ type: "bouwjaar" })
+      expect(payload.bouwjaar).toBe(1977)
+    })
+
+    it.each([
+      ["label", { energielabel_klasse: "" }],
+      ["index", { energie_index: null }],
+    ] as const)(
+      "falls back to the bouwjaar when the chosen %s is missing",
+      (energieType, values) => {
+        const payload = mapFormValuesToPayload(
+          formValues({ energie_type: energieType, ...values }),
+        )
+
+        expect(payload.energie).toEqual({ type: "bouwjaar" })
+      },
+    )
+
+    it("sends geen monument and an unknown type woning as null", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
           type_woning: null,
           monument: false,
           monument_soort: "geen_monument",
         }),
       )
 
-      expect(payload.energie).toEqual({ type: "bouwjaar" })
       expect(payload.is_eengezinswoning).toBeNull()
       expect(payload.monument_soort).toBeNull()
     })
