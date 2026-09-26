@@ -1,3 +1,4 @@
+import { useFormContext } from "react-hook-form"
 import { ActionGroup, Button } from "@amsterdam/design-system-react"
 import {
   ChevronForwardIcon,
@@ -13,11 +14,36 @@ type Props = {
   isSubmitting?: boolean
 }
 
+/**
+ * Focuses the step's InvalidFormAlert, or the first invalid field (aria-invalid) when the step
+ * has none. Both only render after trigger() resolves, hence the animation frame.
+ */
+const focusErrors = () =>
+  requestAnimationFrame(() =>
+    (
+      document.querySelector<HTMLElement>(".ams-invalid-form-alert") ??
+      document.querySelector<HTMLElement>('[aria-invalid="true"]')
+    )?.focus(),
+  )
+
 export function StepActions({
   onNextStep,
   isLastStep = false,
   isSubmitting = false,
 }: Props) {
+  const { trigger } = useFormContext<GebruikersinvoerFormValues>()
+
+  // Only the current step is rendered, so trigger() validates just its fields (including a
+  // ruimte that's still open). The tabs still let the user skip a step; the overzicht lists
+  // whatever is missing then.
+  const goToNextStep = async () => {
+    if (await trigger()) {
+      onNextStep?.()
+    } else {
+      focusErrors()
+    }
+  }
+
   return (
     <ActionGroup>
       {isLastStep ? (
@@ -31,7 +57,7 @@ export function StepActions({
           Sla op en bereken
         </Button>
       ) : (
-        <Button type="button" onClick={onNextStep} icon={ChevronForwardIcon}>
+        <Button type="button" onClick={goToNextStep} icon={ChevronForwardIcon}>
           Volgende stap
         </Button>
       )}

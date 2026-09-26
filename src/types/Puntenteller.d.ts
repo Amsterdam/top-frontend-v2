@@ -21,10 +21,6 @@ type PuntentellerEnergie = {
 type PuntentellerInvoerwaarden = {
   straat: string | null
   huisnummer: string | null
-  /** Huisnummertoevoeging from the BAG, e.g. "2" or "H"; may also be "" when there's none. */
-  huisnummertoevoeging: string | null
-  /** Huisletter from the BAG, e.g. "A"; may also be "" when there's none. */
-  huisletter: string | null
   bouwjaar: number | null
   gebruiksoppervlakte: number | null
   woz_waarden: WozWaarde[] | null

@@ -37,6 +37,34 @@ export type FieldSection = {
   fields: readonly FieldDefinition[]
 }
 
+/** The fields directly on the form, as opposed to the fields of a ruimte in its list. */
+export type TopLevelFieldName = Exclude<
+  keyof GebruikersinvoerFormValues,
+  "binnenruimtes" | "buitenruimtes"
+>
+
+/**
+ * The messages of the required fields that don't have a field definition with a `required`
+ * below, shared between the fields' registerOptions and findMissingFields (the
+ * InvalidFormAlert on the overzicht).
+ */
+export const REQUIRED_MESSAGES = {
+  woz_peildatum_jaar: "WOZ-peildatum is verplicht",
+  woz_waarde: "WOZ-waarde is verplicht",
+  energie_type: "Kies waarop de energieprestatie is gebaseerd",
+  energielabel_klasse: "Energielabel is verplicht",
+  energie_index: "Energie-index is verplicht",
+  bouwjaar: "Bouwjaar is verplicht",
+  type_woning: "Type woning is verplicht",
+  gemeenschappelijke_binnenruimtes:
+    "Gemeenschappelijke binnenruimtes is verplicht",
+  monument_soort: "Geef aan of de woning een monument is",
+  oppervlakte: "Vul de oppervlakte in.",
+  verwarmd: "Geef aan of de ruimte verwarmd is",
+  verkoeld: "Geef aan of de ruimte verkoeld is",
+  aantal_adressen: "Vul het aantal adressen in.",
+} as const
+
 export const WONINGGEGEVENS_FIELDS = [
   { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte (m²)" },
   { name: "woz_waarde", label: "WOZ-waarde (€)" },
@@ -341,7 +369,7 @@ export const JA_NEE_OPTIONS = [
 /** Ja/nee questions asked in StepBijzonderheden, all required and defaulting to nee (see
  * useGebruikersinvoerForm). */
 export const JA_NEE_VRAGEN: {
-  name: keyof GebruikersinvoerFormValues
+  name: TopLevelFieldName
   label: string
   required: string
 }[] = [

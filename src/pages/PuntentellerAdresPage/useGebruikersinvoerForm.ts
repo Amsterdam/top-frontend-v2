@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useAddressInvoerwaarden, useSaveGebruikersinvoer } from "@/api/hooks"
 import { useToast } from "@/components/toasts/useToast"
+import { findMissingFields } from "./helpers/findMissingFields"
 import { mapFormValuesToPayload } from "./helpers/mapFormValuesToPayload"
 import { mapInvoerwaardenToFormValues } from "./helpers/mapInvoerwaardenToFormValues"
 
@@ -32,11 +33,13 @@ const defaultValues: GebruikersinvoerFormValues = {
 type Options = {
   /** Called once the backend has saved the invoer and returned the berekening. */
   onCalculated?: () => void
+  /** Called instead of saving while required fields are missing (see findMissingFields). */
+  onMissingFields?: () => void
 }
 
 export function useGebruikersinvoerForm(
   bagId?: string,
-  { onCalculated }: Options = {},
+  { onCalculated, onMissingFields }: Options = {},
 ) {
   const {
     data: invoerwaarden,
@@ -67,6 +70,12 @@ export function useGebruikersinvoerForm(
   }, [invoerwaarden, form])
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {
+    // handleSubmit only validates the fields of the current step (the overzicht has none).
+    if (findMissingFields(values, invoerwaarden).length > 0) {
+      onMissingFields?.()
+      return
+    }
+
     saveGebruikersinvoer.mutate(mapFormValuesToPayload(values), {
       onSuccess: () => {
         showToast({

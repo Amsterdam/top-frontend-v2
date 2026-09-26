@@ -1,8 +1,9 @@
-import type { MouseEvent, ReactNode } from "react"
+import type { MouseEvent, ReactNode, Ref } from "react"
 import {
   Column,
   Grid,
   Heading,
+  InvalidFormAlert,
   Link,
   Paragraph,
 } from "@amsterdam/design-system-react"
@@ -16,6 +17,10 @@ import { useFormContext, useWatch } from "react-hook-form"
 import { Description, type DescriptionItem } from "@/components"
 import { OverzichtSection } from "../components/OverzichtSection"
 import { StepActions, SUBMIT_BUTTON_ID } from "../components/StepActions"
+import {
+  findMissingFields,
+  type MissingField,
+} from "../helpers/findMissingFields"
 import { getRoomLabels } from "../helpers/getRoomLabels"
 import {
   formatM2,
@@ -214,12 +219,35 @@ function focusSubmitButton(event: MouseEvent<HTMLAnchorElement>) {
 }
 
 type Props = {
+  invoerwaarden?: PuntentellerInvoerwaarden
   isSubmitting?: boolean
+  /** Opens the step of a missing field and focuses it; the field isn't rendered here. */
+  onGoToField: (field: MissingField) => void
+  /** Lets the page focus the InvalidFormAlert when saving is blocked by missing fields. */
+  invalidFormAlertRef?: Ref<HTMLDivElement>
 }
 
-export function StepOverzicht({ isSubmitting }: Props) {
+export function StepOverzicht({
+  invoerwaarden,
+  isSubmitting,
+  onGoToField,
+  invalidFormAlertRef,
+}: Props) {
   const { control } = useFormContext<GebruikersinvoerFormValues>()
   const values = useWatch({ control }) as GebruikersinvoerFormValues
+  const missingFields = findMissingFields(values, invoerwaarden)
+
+  // The InvalidFormAlert renders plain #links, but the fields sit on other steps and aren't
+  // in the page, so a click opens the field's step instead.
+  const goToField = (event: MouseEvent<HTMLDivElement>) => {
+    const link = (event.target as HTMLElement).closest("a")
+    const field = missingFields.find(
+      ({ name }) => link?.getAttribute("href") === `#${name}`,
+    )
+    if (!field) return
+    event.preventDefault()
+    onGoToField(field)
+  }
   const binnenruimtes = values.binnenruimtes ?? []
   const buitenruimtes = values.buitenruimtes ?? []
   const totaalBinnen = sumOppervlakte(binnenruimtes)
@@ -227,6 +255,21 @@ export function StepOverzicht({ isSubmitting }: Props) {
 
   return (
     <>
+      {missingFields.length > 0 && (
+        <Grid.Cell span="all" appearance="transparent">
+          <InvalidFormAlert
+            ref={invalidFormAlertRef}
+            errors={missingFields.map(({ name, message }) => ({
+              id: `#${name}`,
+              label: message,
+            }))}
+            focusOnRender={false}
+            headingLevel={2}
+            onClick={goToField}
+          />
+        </Grid.Cell>
+      )}
+
       <Grid.Cell span="all">
         <Heading level={2} className="ams-mb-m">
           Overzicht

@@ -1,5 +1,13 @@
 import { useEffect } from "react"
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, type UseFormReturn } from "react-hook-form"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -10,10 +18,12 @@ type Form = UseFormReturn<GebruikersinvoerFormValues>
 function Harness({
   values,
   onForm,
+  onNextStep = vi.fn(),
 }: {
   values: Partial<GebruikersinvoerFormValues>
   /** Hands the form to the test, e.g. to trigger validation. */
   onForm?: (form: Form) => void
+  onNextStep?: () => void
 }) {
   const form = useForm<GebruikersinvoerFormValues>({ defaultValues: values })
   useEffect(() => {
@@ -21,7 +31,7 @@ function Harness({
   }, [form, onForm])
   return (
     <FormProvider form={form} onSubmit={vi.fn()}>
-      <StepWoninggegevens onNextStep={vi.fn()} />
+      <StepWoninggegevens onNextStep={onNextStep} />
     </FormProvider>
   )
 }
@@ -106,5 +116,55 @@ describe("StepWoninggegevens", () => {
     await act(() => form!.trigger())
 
     expect(form!.getFieldState("energielabel_klasse").error).toBeUndefined()
+  })
+
+  describe("Volgende stap", () => {
+    const complete: Partial<GebruikersinvoerFormValues> = {
+      woz_waarde: 374000,
+      energie_type: "bouwjaar",
+      bouwjaar: 1977,
+      type_woning: "Eengezinswoning",
+      gemeenschappelijke_binnenruimtes: "false",
+    }
+    const volgendeStap = () =>
+      fireEvent.click(screen.getByRole("button", { name: "Volgende stap" }))
+
+    it("goes to the next step when the required fields are filled in", async () => {
+      const onNextStep = vi.fn()
+      render(<Harness values={complete} onNextStep={onNextStep} />)
+
+      volgendeStap()
+
+      await waitFor(() => expect(onNextStep).toHaveBeenCalledTimes(1))
+    })
+
+    it("stays on the step and shows the errors in an InvalidFormAlert, which gets focus", async () => {
+      const onNextStep = vi.fn()
+      render(
+        <Harness
+          values={{ ...complete, bouwjaar: null, type_woning: null }}
+          onNextStep={onNextStep}
+        />,
+      )
+
+      volgendeStap()
+
+      const alert = (
+        await screen.findByRole("heading", {
+          name: "Verbeter de fouten voor u verder gaat",
+        })
+      ).closest(".ams-invalid-form-alert") as HTMLElement
+      // In page order, linking to the fields.
+      expect(
+        within(alert)
+          .getAllByRole("link")
+          .map((link) => [link.textContent, link.getAttribute("href")]),
+      ).toEqual([
+        ["Bouwjaar is verplicht", "#bouwjaar"],
+        ["Type woning is verplicht", "#type_woning-0"],
+      ])
+      await waitFor(() => expect(document.activeElement).toBe(alert))
+      expect(onNextStep).not.toHaveBeenCalled()
+    })
   })
 })

@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import {
   Breadcrumb,
   Grid,
@@ -16,7 +17,9 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
+import { useBagPdokAddress } from "@/api/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
+import type { MissingField } from "./helpers/findMissingFields"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
 import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
 import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
@@ -63,6 +66,9 @@ export default function PuntentellerAdresPage() {
   const { bagId } = useParams<{ bagId: string }>()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
+  const invalidFormAlertRef = useRef<HTMLDivElement>(null)
+  // Not waited for: the page works without it, see adres below.
+  const { data: pdokAddress } = useBagPdokAddress(bagId)
   const {
     form,
     invoerwaarden,
@@ -71,18 +77,32 @@ export default function PuntentellerAdresPage() {
     onSubmit,
     isSubmitting,
     resultaat,
-  } = useGebruikersinvoerForm(bagId, { onCalculated: () => setCurrentStep(5) })
+  } = useGebruikersinvoerForm(bagId, {
+    onCalculated: () => setCurrentStep(5),
+    onMissingFields: () => invalidFormAlertRef.current?.focus(),
+  })
   const currentTabIndex = TAB_ITEMS.findIndex(
     ({ firstStep, lastStep }) =>
       currentStep >= firstStep && currentStep <= lastStep,
   )
 
+  // Renders the missing field's step right away, so its fields can show their errors and the
+  // field can get focus. A field of a ruimte that isn't opened isn't rendered; then only the
+  // step opens.
+  const goToField = ({ step, name }: MissingField) => {
+    flushSync(() => setCurrentStep(step))
+    void form.trigger()
+    document.querySelector<HTMLElement>(`[name="${name}"]`)?.focus()
+  }
+
   if (isPending) return <AmsterdamCrossSpinner />
 
-  // "Tjasker 59"; empty when the backend has neither straat nor huisnummer.
-  const adres = [invoerwaarden?.straat, invoerwaarden?.huisnummer]
-    .filter(Boolean)
-    .join(" ")
+  // "Aalsmeerplein 1-H": the part of PDOK's weergavenaam before the postcode, as in the search.
+  // Until PDOK has answered (or when it fails) the backend's "Aalsmeerplein 1", which lacks
+  // the huisletter and huisnummertoevoeging; empty when it has neither straat nor huisnummer.
+  const adres =
+    pdokAddress?.weergavenaam.split(",")[0] ??
+    [invoerwaarden?.straat, invoerwaarden?.huisnummer].filter(Boolean).join(" ")
 
   const steps = [
     <StepWoninggegevens
@@ -93,7 +113,13 @@ export default function PuntentellerAdresPage() {
     <StepBinnenruimtes key="step-1" onNextStep={() => setCurrentStep(2)} />,
     <StepBuitenruimtes key="step-2" onNextStep={() => setCurrentStep(3)} />,
     <StepBijzonderheden key="step-3" onNextStep={() => setCurrentStep(4)} />,
-    <StepOverzicht key="step-4" isSubmitting={isSubmitting} />,
+    <StepOverzicht
+      key="step-4"
+      invoerwaarden={invoerwaarden}
+      isSubmitting={isSubmitting}
+      onGoToField={goToField}
+      invalidFormAlertRef={invalidFormAlertRef}
+    />,
     <StepResultaat
       key="step-5"
       resultaat={resultaat}

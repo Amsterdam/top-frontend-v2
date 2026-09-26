@@ -43,6 +43,7 @@ export const queryKeys = {
 
   pdok: {
     search: (q: string) => ["pdok", "search", q] as const,
+    address: (bagId: string) => ["pdok", "address", bagId] as const,
   },
 
   permissions: {

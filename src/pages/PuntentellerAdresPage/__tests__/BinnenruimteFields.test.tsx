@@ -40,6 +40,7 @@ function Harness() {
         label="Badkamer 2"
         type="Badkamer"
         onSave={vi.fn()}
+        onCancel={vi.fn()}
       />
     </FormProvider>
   )

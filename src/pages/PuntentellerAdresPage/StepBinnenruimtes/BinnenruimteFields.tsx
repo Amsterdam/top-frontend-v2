@@ -20,10 +20,18 @@ type Props = {
   label: string
   type: BinnenruimteType
   onSave: () => void
+  /** Drops the room when it's a new one, or undoes the edits of a saved one. */
+  onCancel: () => void
 }
 
 /** The oppervlakte calculator + verwarmd/verkoeld questions for one added binnenruimte. */
-export function BinnenruimteFields({ index, label, type, onSave }: Props) {
+export function BinnenruimteFields({
+  index,
+  label,
+  type,
+  onSave,
+  onCancel,
+}: Props) {
   const {
     trigger,
     formState: { errors },
@@ -133,6 +141,9 @@ export function BinnenruimteFields({ index, label, type, onSave }: Props) {
             variant="secondary"
           >
             {label} toevoegen
+          </Button>
+          <Button type="button" onClick={onCancel} variant="tertiary">
+            Annuleren
           </Button>
         </ActionGroup>
       </Grid.Cell>
