@@ -319,7 +319,6 @@ describe("mapFormValuesToPayload", () => {
           energie: { type: "label", waarde: "C" },
           is_eengezinswoning: true,
           completed: true,
-          bouwjaar: 1970,
           gebruiksoppervlakte: 90,
           woz_waarde: 374000,
           woz_peildatum_jaar: 2025,
@@ -358,8 +357,8 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
-      expect(payload.energie).toEqual({ type: "bouwjaar" })
-      expect(payload.bouwjaar).toBe(1977)
+      expect(payload.energie).toEqual({ type: "bouwjaar", waarde: "1977" })
+      expect(payload).not.toHaveProperty("bouwjaar")
     })
 
     it.each([
@@ -369,10 +368,10 @@ describe("mapFormValuesToPayload", () => {
       "falls back to the bouwjaar when the chosen %s is missing",
       (energieType, values) => {
         const payload = mapFormValuesToPayload(
-          formValues({ energie_type: energieType, ...values }),
+          formValues({ energie_type: energieType, bouwjaar: 1970, ...values }),
         )
 
-        expect(payload.energie).toEqual({ type: "bouwjaar" })
+        expect(payload.energie).toEqual({ type: "bouwjaar", waarde: "1970" })
       },
     )
 

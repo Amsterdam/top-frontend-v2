@@ -44,7 +44,7 @@ export function mapInvoerwaardenToFormValues(
   const wozWaarde = selectDefaultWozWaarde(invoerwaarden.woz_waarden)
 
   return {
-    bouwjaar: invoerwaarden.bouwjaar,
+    bouwjaar: invoerwaarden.energie?.bouwjaar ?? null,
     gebruiksoppervlakte: invoerwaarden.gebruiksoppervlakte ?? 0,
     woz_waarde: wozWaarde?.vastgestelde_waarde ?? 0,
     woz_peildatum_jaar: wozWaarde

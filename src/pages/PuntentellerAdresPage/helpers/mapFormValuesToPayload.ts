@@ -267,8 +267,6 @@ const MONUMENT_CONTRACTDATUM: Record<string, string> = {
 /**
  * The energie as the backend expects it, following the chosen energie_type. Falls back to the
  * bouwjaar when the chosen label or index is missing, which the backend would reject.
- * { type: "bouwjaar" } carries no waarde: the backend's EnergieSerializer discards it and takes
- * the bouwjaar from the top-level bouwjaar field of the payload instead.
  */
 const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
   const energieIndex = toNumber(values.energie_index)
@@ -278,7 +276,11 @@ const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
   if (values.energie_type === "index" && energieIndex !== null) {
     return { type: "index", waarde: String(energieIndex) }
   }
-  return { type: "bouwjaar" }
+  const bouwjaar = toNumber(values.bouwjaar)
+  return {
+    type: "bouwjaar",
+    waarde: bouwjaar === null ? null : String(bouwjaar),
+  }
 }
 
 /** Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/. */
@@ -298,7 +300,6 @@ export function mapFormValuesToPayload(
     buitenruimten,
     parkeerruimten,
     completed: true,
-    bouwjaar: toNumber(values.bouwjaar),
     gebruiksoppervlakte: count(values.gebruiksoppervlakte),
     woz_waarde: count(values.woz_waarde),
     woz_peildatum_jaar: count(values.woz_peildatum_jaar),

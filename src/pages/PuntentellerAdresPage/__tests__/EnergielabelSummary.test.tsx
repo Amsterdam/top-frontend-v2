@@ -10,6 +10,7 @@ dayjs.locale("nl")
 const energie = (
   overrides: Partial<PuntentellerEnergie> = {},
 ): PuntentellerEnergie => ({
+  bouwjaar: 1970,
   energielabel: "C",
   energieindex: null,
   registratiedatum: "2021-03-13",

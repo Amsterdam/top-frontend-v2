@@ -20,7 +20,6 @@ const USE_DUMMY_INVOERWAARDEN = false
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
   huisnummer: "59",
-  bouwjaar: 1977,
   gebruiksoppervlakte: 90,
   woz_waarden: [
     { peildatum: "2025-01-01", vastgestelde_waarde: 374000 },
@@ -38,6 +37,7 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   ],
   wozobjectnummer: 36300297723,
   energie: {
+    bouwjaar: 1977,
     energielabel: "C",
     energieindex: null,
     registratiedatum: null,

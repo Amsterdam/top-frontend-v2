@@ -4,11 +4,11 @@
  * (ruimte_m2, aanrechtlengte_meters) are strings, as DRF's DecimalField expects.
  */
 
-/** The bouwjaar itself isn't sent in here but in GebruikersinvoerPayload.bouwjaar. */
+/** A bouwjaar without waarde (unknown) is rejected by the backend. */
 type PayloadEnergie =
   | { type: "label"; waarde: string }
   | { type: "index"; waarde: string }
-  | { type: "bouwjaar" }
+  | { type: "bouwjaar"; waarde: string | null }
 
 type PayloadSanitair = {
   wastafel: number
@@ -127,7 +127,6 @@ type GebruikersinvoerPayload = {
   buitenruimten: PayloadBuitenruimte[]
   parkeerruimten: PayloadParkeerruimte[]
   completed: boolean
-  bouwjaar: number | null
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
