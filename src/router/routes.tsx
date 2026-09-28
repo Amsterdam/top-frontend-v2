@@ -18,6 +18,7 @@ import PuntentellerPage from "@/pages/PuntentellerPage/PuntentellerPage"
 import PuntentellerAdresPage from "@/pages/PuntentellerAdresPage/PuntentellerAdresPage"
 import RequirePermissions from "./RequirePermissions"
 import { APP_PERMISSIONS } from "@/shared/permissions"
+import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 
 export const routes = [
   {
@@ -55,8 +56,13 @@ export const routes = [
         element: <SelectStartAddressPage />,
       },
       { path: "looplijsten/nieuw", element: <ChooseThemePage /> },
-      { path: "puntenteller", element: <PuntentellerPage /> },
-      { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
+      // The puntenteller is not live yet: only routed outside PROD (runtime env, same build as ACC).
+      ...(isAcceptanceOrLocalEnvironment()
+        ? [
+            { path: "puntenteller", element: <PuntentellerPage /> },
+            { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
+          ]
+        : []),
       {
         element: (
           <RequirePermissions
