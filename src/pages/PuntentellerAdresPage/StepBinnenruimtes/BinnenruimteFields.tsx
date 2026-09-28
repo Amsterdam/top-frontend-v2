@@ -9,6 +9,7 @@ import {
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
+import { AantalAdressenField } from "../components/AantalAdressenField"
 import { SectionFields } from "../components/SectionFields"
 import { BINNENRUIMTE_CONFIG } from "./binnenruimteConfig"
 import { OppervlakteFields } from "../components/OppervlakteFields"
@@ -24,7 +25,8 @@ type Props = {
   onCancel: () => void
 }
 
-/** The oppervlakte calculator + verwarmd/verkoeld questions for one added binnenruimte. */
+/** The oppervlakte calculator, verwarmd/verkoeld and aantal adressen questions for one added
+ * binnenruimte, followed by its type's voorzieningen. */
 export function BinnenruimteFields({
   index,
   label,
@@ -116,6 +118,20 @@ export function BinnenruimteFields({
         hasVerkoeld={hasVerkoeld}
         hasVerwarmd={hasVerwarmd}
       />
+
+      <Grid.Cell span="all" appearance="transparent">
+        <Heading level={3}>Gebruik van de binnenruimte</Heading>
+        <Paragraph>
+          Vul in hoeveel adressen deze binnenruimte gebruiken. Bij een
+          privéruimte: vul 1 in. Dit gaat om adressen, niet om bewoners.
+        </Paragraph>
+      </Grid.Cell>
+      <Grid.Cell span="all" appearance="transparent">
+        <AantalAdressenField
+          name={`binnenruimtes.${index}.aantal_adressen`}
+          label="Aantal adressen"
+        />
+      </Grid.Cell>
 
       {extra?.map((section) => (
         <Fragment key={section.heading}>

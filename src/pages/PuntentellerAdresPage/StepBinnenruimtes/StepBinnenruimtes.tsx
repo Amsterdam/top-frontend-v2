@@ -50,6 +50,7 @@ const emptyBinnenruimte = (type: BinnenruimteType): Binnenruimte => ({
   oppervlakte: null,
   verwarmd: null,
   verkoeld: null,
+  aantal_adressen: 1,
   ...emptyVoorzieningen(type),
 })
 

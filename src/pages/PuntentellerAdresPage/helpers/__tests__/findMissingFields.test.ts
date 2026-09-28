@@ -15,7 +15,6 @@ const complete = (
     energie_index: null,
     bouwjaar: null,
     type_woning: "Eengezinswoning",
-    gemeenschappelijke_binnenruimtes: "false",
     monument: false,
     monument_soort: "geen_monument",
     zorgwoning: "false",
@@ -38,6 +37,7 @@ const binnenruimte = (
   oppervlakte: 12,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
   ...overrides,
 })
 
@@ -67,17 +67,11 @@ describe("findMissingFields", () => {
         complete({
           woz_waarde: Number.NaN,
           type_woning: null,
-          gemeenschappelijke_binnenruimtes: null,
         }),
       ),
     ).toEqual([
       { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
       { step: 0, name: "type_woning", message: "Type woning is verplicht" },
-      {
-        step: 0,
-        name: "gemeenschappelijke_binnenruimtes",
-        message: "Gemeenschappelijke binnenruimtes is verplicht",
-      },
     ])
   })
 
@@ -171,14 +165,14 @@ describe("findMissingFields", () => {
     ).toEqual(["binnenruimtes.0.douche_bad"])
   })
 
-  it("lists the missing fields of each buitenruimte; a parkeerruimte has no oppervlakte", () => {
+  it("lists the missing oppervlakte of each buitenruimte; a parkeerruimte has none", () => {
     expect(
       findMissingFields(
         complete({
           buitenruimtes: [
+            buitenruimte("Balkon", { oppervlakte: null }),
             buitenruimte("Parkeerruimte", {
               oppervlakte: null,
-              aantal_adressen: null,
               parkeerplekken_buiten_zonder_dak: "1",
             }),
           ],
@@ -187,8 +181,8 @@ describe("findMissingFields", () => {
     ).toEqual([
       {
         step: 2,
-        name: "buitenruimtes.0.aantal_adressen",
-        message: "Parkeerruimte: Vul het aantal adressen in.",
+        name: "buitenruimtes.0.oppervlakte",
+        message: "Balkon: Vul de oppervlakte in.",
       },
     ])
   })

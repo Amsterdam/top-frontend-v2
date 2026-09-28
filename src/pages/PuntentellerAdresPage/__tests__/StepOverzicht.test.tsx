@@ -21,6 +21,7 @@ const binnenruimte = (
   oppervlakte,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
 })
 
 function Harness({
@@ -46,7 +47,6 @@ const COMPLETE_VALUES: Partial<GebruikersinvoerFormValues> = {
   energie_type: "bouwjaar",
   bouwjaar: 1977,
   type_woning: "Eengezinswoning",
-  gemeenschappelijke_binnenruimtes: "false",
   monument_soort: "geen_monument",
   zorgwoning: "false",
   woonvoorziening_handicap: "false",

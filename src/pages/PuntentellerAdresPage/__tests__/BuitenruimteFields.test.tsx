@@ -59,18 +59,19 @@ const getStepperInput = () =>
 describe("BuitenruimteFields", () => {
   afterEach(cleanup)
 
-  it("shows an error for a non-integer aantal adressen and clears it once it's an integer", async () => {
+  it("asks the aantal adressen of a buitenruimte with a stepper, from 1", () => {
     renderFields("Balkon")
-    const aantalAdressen = screen.getByLabelText("Aantal adressen")
 
-    fireEvent.change(aantalAdressen, { target: { value: "1.5" } })
-    // Shown both below the field and in the InvalidFormAlert.
-    expect(await screen.findAllByText("Vul een heel getal in.")).toHaveLength(2)
-
-    fireEvent.change(aantalAdressen, { target: { value: "2" } })
-    await waitFor(() =>
-      expect(screen.queryAllByText("Vul een heel getal in.")).toHaveLength(0),
+    const aantalAdressen = screen.getByLabelText<HTMLInputElement>(
+      "Aantal adressen",
+      { selector: "input" },
     )
+    expect(aantalAdressen.value).toBe("1")
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Aantal adressen verhogen" }),
+    )
+    expect(aantalAdressen.value).toBe("2")
   })
 
   it("asks the aantal adressen of a parkeerruimte with a stepper, from 1", () => {

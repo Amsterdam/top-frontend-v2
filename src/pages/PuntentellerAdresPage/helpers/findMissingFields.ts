@@ -61,7 +61,6 @@ export function findMissingFields(
   if (values.energie_type === "index") woning("energie_index")
   if (values.energie_type === "bouwjaar") woning("bouwjaar")
   woning("type_woning")
-  woning("gemeenschappelijke_binnenruimtes")
 
   // Binnenruimtes; verwarmd and verkoeld are forced to a value where they aren't asked (see
   // VerwarmdVerkoeldFields), so they're only required where they are.
@@ -111,11 +110,6 @@ export function findMissingFields(
     if (ruimte.type !== "Parkeerruimte") {
       room("oppervlakte", ruimte.oppervlakte, REQUIRED_MESSAGES.oppervlakte)
     }
-    room(
-      "aantal_adressen",
-      ruimte.aantal_adressen,
-      REQUIRED_MESSAGES.aantal_adressen,
-    )
     // At least one parkeerplek; linked to the first type's checkbox (see BuitenruimteFields).
     if (ruimte.type === "Parkeerruimte" && !hasParkeerplek(ruimte)) {
       room(PARKEERPLEK_FIELDS[0].name, "", REQUIRED_MESSAGES.parkeerplekken)

@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 import {
   ActionGroup,
   Button,
@@ -7,12 +7,11 @@ import {
   Grid,
   Heading,
   InvalidFormAlert,
-  Label,
   Paragraph,
 } from "@amsterdam/design-system-react"
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
-import { mapErrorsToAlert, TextInputControl } from "@amsterdam/ee-ads-rhf"
-import { NumberStepper } from "../components/NumberStepper"
+import { mapErrorsToAlert } from "@amsterdam/ee-ads-rhf"
+import { AantalAdressenField } from "../components/AantalAdressenField"
 import { OppervlakteFields } from "../components/OppervlakteFields"
 import { QuantityCheckboxList } from "../components/QuantityCheckbox"
 import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
@@ -51,9 +50,9 @@ export function BuitenruimteFields({
     formState: { errors },
   } = useFormContext<GebruikersinvoerFormValues>()
 
-  // The required fields: oppervlakte (see the registerOptions in OppervlakteFields) and
-  // aantal_adressen below, or for a parkeerruimte at least one parkeerplek (its aantal_adressen
-  // is a stepper, which can't hold an invalid value).
+  // The required fields: oppervlakte (see the registerOptions in OppervlakteFields), or for a
+  // parkeerruimte at least one parkeerplek. The aantal_adressen is a stepper, which can't hold
+  // an invalid value.
   const oppervlakteName = `buitenruimtes.${index}.oppervlakte` as const
   const aantalAdressenName = `buitenruimtes.${index}.aantal_adressen` as const
   // The "at least one parkeerplek" rule sits on the first type's checkbox; the other types
@@ -71,16 +70,13 @@ export function BuitenruimteFields({
     ...(roomErrors?.oppervlakte && {
       [oppervlakteName]: roomErrors.oppervlakte,
     }),
-    ...(roomErrors?.aantal_adressen && {
-      [aantalAdressenName]: roomErrors.aantal_adressen,
-    }),
     ...(parkeerplekkenError && { [parkeerplekkenName]: parkeerplekkenError }),
   })
 
   const handleSaveClick = async () => {
     const requiredFieldNames = isParkeerruimte
       ? [parkeerplekkenName]
-      : [oppervlakteName, aantalAdressenName]
+      : [oppervlakteName]
     if (await trigger(requiredFieldNames)) onSave()
   }
 
@@ -114,53 +110,23 @@ export function BuitenruimteFields({
 
       {!isParkeerruimte && (
         <Grid.Cell span="all" appearance="transparent">
-          <Heading level={3}>Gemeenschappelijke buitenruimte</Heading>
+          <Heading level={3}>Gebruik van de buitenruimte</Heading>
           <Paragraph>
-            Geef hier op hoeveel adressen gebruik maken van deze buitenruimte.
-            Is de ruimte privé? Dan is 1 het juiste getal. Let op: het gaat hier
-            om het aantal adressen, niet om het aantal bewoners.
+            Vul in hoeveel adressen deze buitenruimte gebruiken. Bij een
+            privéruimte: vul 1 in. Dit gaat om adressen, niet om het aantal
+            bewoners.
           </Paragraph>
         </Grid.Cell>
       )}
       <Grid.Cell span="all" appearance="transparent">
-        {isParkeerruimte ? (
-          <Field>
-            <Label htmlFor={aantalAdressenName} inFieldSet>
-              Hoeveel adressen kunnen gebruik maken van de parkeerruimte(s)?
-            </Label>
-            <Controller<GebruikersinvoerFormValues>
-              name={aantalAdressenName}
-              render={({ field: { value, onChange } }) => (
-                <NumberStepper
-                  id={aantalAdressenName}
-                  label="Aantal adressen"
-                  value={Number(value) || 1}
-                  onChange={onChange}
-                  max={MAX_PARKEERPLEKKEN}
-                  size={3}
-                  hasVisibleLabel
-                />
-              )}
-            />
-          </Field>
-        ) : (
-          <TextInputControl<GebruikersinvoerFormValues>
-            label="Aantal adressen"
-            name={aantalAdressenName}
-            attributes={{ type: "number", min: 1, step: 1 }}
-            size={2}
-            registerOptions={{
-              valueAsNumber: true,
-              required: REQUIRED_MESSAGES.aantal_adressen,
-              min: { value: 1, message: "Het aantal adressen is minimaal 1." },
-              // TextInputControl renders a Controller, which ignores valueAsNumber, so the value
-              // arrives as the input's string ("2") and needs converting first.
-              validate: (value) =>
-                Number.isInteger(Number(value)) || "Vul een heel getal in.",
-            }}
-            inFieldSet
-          />
-        )}
+        <AantalAdressenField
+          name={aantalAdressenName}
+          label={
+            isParkeerruimte
+              ? "Hoeveel adressen kunnen gebruik maken van de parkeerruimte(s)?"
+              : "Aantal adressen"
+          }
+        />
       </Grid.Cell>
 
       {isParkeerruimte && (

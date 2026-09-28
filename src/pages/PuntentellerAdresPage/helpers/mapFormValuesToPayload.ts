@@ -107,6 +107,8 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
     const overig = {
       ruimte_m2: hasOppervlakte ? decimal(ruimte.oppervlakte) : "0",
       verwarmd: hasVerwarmd && isJa(ruimte.verwarmd),
+      aantal_adressen_met_toegang_en_gebruiksrecht:
+        count(ruimte.aantal_adressen) || 1,
       ...sanitair(ruimte),
     }
     const vertrek = { ...overig, gekoeld: isJa(ruimte.verkoeld) }
@@ -145,7 +147,7 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
         ruimten.overige_ruimten.push({
           naam: "toiletruimte",
           ...overig,
-          toilet_staand: 0,
+          toilet_staand: count(ruimte.toilet_staand),
           toilet_hangend: count(ruimte.toilet_hangend),
         })
         break
@@ -173,6 +175,8 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
           naam: "verkeersruimte",
           ruimte_m2: overig.ruimte_m2,
           verwarmd: overig.verwarmd,
+          aantal_adressen_met_toegang_en_gebruiksrecht:
+            overig.aantal_adressen_met_toegang_en_gebruiksrecht,
         })
         break
       default: {

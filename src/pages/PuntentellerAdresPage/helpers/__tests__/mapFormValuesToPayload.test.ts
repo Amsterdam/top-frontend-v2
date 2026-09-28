@@ -19,6 +19,7 @@ const binnenruimte = (
   oppervlakte: 10,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
   ...overrides,
 })
 
@@ -64,8 +65,30 @@ describe("mapFormValuesToPayload", () => {
       ])
       expect(payload.overige_ruimten[0]).not.toHaveProperty("gekoeld")
       expect(payload.verkeersruimten).toEqual([
-        { naam: "verkeersruimte", ruimte_m2: "0", verwarmd: true },
+        {
+          naam: "verkeersruimte",
+          ruimte_m2: "0",
+          verwarmd: true,
+          aantal_adressen_met_toegang_en_gebruiksrecht: 1,
+        },
       ])
+    })
+
+    it("sends the aantal adressen of each room, 1 when unset", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          binnenruimtes: [
+            binnenruimte("Woonkamer", { aantal_adressen: 4 }),
+            binnenruimte("Berging", { aantal_adressen: null }),
+            binnenruimte("Overloop", { aantal_adressen: 2 }),
+          ],
+        }),
+      )
+
+      const aantal = "aantal_adressen_met_toegang_en_gebruiksrecht"
+      expect(payload.vertrekken[0][aantal]).toBe(4)
+      expect(payload.overige_ruimten[0][aantal]).toBe(1)
+      expect(payload.verkeersruimten[0][aantal]).toBe(2)
     })
 
     it("sends an oppervlakte typed into the input (a string) as a decimal string", () => {
@@ -199,6 +222,7 @@ describe("mapFormValuesToPayload", () => {
         formValues({
           binnenruimtes: [
             binnenruimte("Toiletruimte", {
+              toilet_staand: "1",
               toilet_hangend: "1",
               wastafel: "1",
             }),
@@ -210,7 +234,7 @@ describe("mapFormValuesToPayload", () => {
         expect.objectContaining({
           naam: "toiletruimte",
           toilet_hangend: 1,
-          toilet_staand: 0,
+          toilet_staand: 1,
           wastafel: 1,
         }),
       ])

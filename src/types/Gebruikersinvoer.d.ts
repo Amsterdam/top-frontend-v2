@@ -59,6 +59,8 @@ type BinnenruimteVoorzieningen = {
   meerpersoons_wastafel?: string
   toilet_hangend?: string
   toilet_normaal?: string
+  /** Toiletruimte only; the badkamer asks toilet_normaal instead. */
+  toilet_staand?: string
   bubbelfunctie_bad?: string
   volledige_afscheiding_douche?: string
   handdoekenradiator?: string
@@ -94,6 +96,8 @@ type Binnenruimte = BinnenruimteVoorzieningen & {
   oppervlakte: number | null
   verwarmd: string | null
   verkoeld: string | null
+  /** How many addresses use this binnenruimte; 1 means it's privé. */
+  aantal_adressen: number | null
 }
 
 type GebruikersinvoerFormValues = {
@@ -113,7 +117,6 @@ type GebruikersinvoerFormValues = {
   woz_waarde: number
   woz_peildatum_jaar: number
   type_woning: string | null
-  gemeenschappelijke_binnenruimtes: string | null
 
   // Bijzonderheden
   monument: boolean

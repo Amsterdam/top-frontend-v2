@@ -56,12 +56,9 @@ export const REQUIRED_MESSAGES = {
   energie_index: "Energie-index is verplicht",
   bouwjaar: "Bouwjaar is verplicht",
   type_woning: "Type woning is verplicht",
-  gemeenschappelijke_binnenruimtes:
-    "Gemeenschappelijke binnenruimtes is verplicht",
   oppervlakte: "Vul de oppervlakte in.",
   verwarmd: "Geef aan of de ruimte verwarmd is",
   verkoeld: "Geef aan of de ruimte verkoeld is",
-  aantal_adressen: "Vul het aantal adressen in.",
   parkeerplekken: "Kies minimaal 1 type parkeerplek.",
 } as const
 
@@ -71,10 +68,6 @@ export const WONINGGEGEVENS_FIELDS = [
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
   { name: "energie_type", label: "Energieprestatie" },
   { name: "type_woning", label: "Woonvorm" },
-  {
-    name: "gemeenschappelijke_binnenruimtes",
-    label: "Gemeenschappelijke binnenruimtes",
-  },
 ] as const
 
 // Shared between BADKAMER_SECTIONS and SLAAPKAMER_SANITAIR_SECTIONS.
@@ -187,6 +180,10 @@ export const TOILETRUIMTE_SECTIONS = [
     heading: "Voorzieningen",
     description: "Geef aan wat er aanwezig is in de toiletruimte.",
     fields: [
+      {
+        name: "toilet_staand",
+        label: "Staand toilet",
+      },
       {
         name: "toilet_hangend",
         label: "Hangend toilet",

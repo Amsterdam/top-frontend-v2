@@ -60,7 +60,6 @@ const WONING_FIELDS: {
 }[] = WONINGGEGEVENS_FIELDS.map(({ name, label }) => ({
   name,
   label,
-  ...(name === "gemeenschappelijke_binnenruimtes" && { format: jaNee }),
   ...(name === "energie_type" && { format: energieprestatie }),
 }))
 
@@ -104,6 +103,16 @@ const extraFieldValue = (field: FieldDefinition, value: unknown) => {
   return value as string
 }
 
+/** How many addresses use a room; 1 means it's privé, unset counts as 1 (see
+ * AantalAdressenField). */
+const aantalAdressen = (ruimte: { aantal_adressen: number | null }) => {
+  const aantal = Number(ruimte.aantal_adressen) || 1
+  return {
+    label: "Aantal adressen",
+    value: aantal === 1 ? "1 (privé)" : aantal,
+  }
+}
+
 /** The specificaties of one binnenruimte, only for the questions its type asks. */
 function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
   const {
@@ -126,6 +135,7 @@ function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
     ...(hasVerkoeld
       ? [{ label: "Verkoeld", value: jaNee(ruimte.verkoeld) }]
       : []),
+    aantalAdressen(ruimte),
     ...extra
       .flatMap((section) => section.fields)
       .map((field) => ({
@@ -138,14 +148,9 @@ function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
 /** The specificaties of one buitenruimte: parkeerplekken for a parkeerruimte, the
  * oppervlakte for every other type. */
 function buitenruimteSpecs(ruimte: Buitenruimte): DescriptionItem[] {
-  const aantalAdressen = {
-    label: "Aantal adressen",
-    value: ruimte.aantal_adressen === 1 ? "1 (privé)" : ruimte.aantal_adressen,
-  }
-
   if (ruimte.type === "Parkeerruimte") {
     return [
-      aantalAdressen,
+      aantalAdressen(ruimte),
       ...PARKEERPLEK_FIELDS.map(({ name, label }) => ({
         label,
         value: ruimte[name] ?? "0",
@@ -157,7 +162,7 @@ function buitenruimteSpecs(ruimte: Buitenruimte): DescriptionItem[] {
   return [
     { label: "Lengte", value: formatMeters(ruimte.lengte) },
     { label: "Breedte", value: formatMeters(ruimte.breedte) },
-    aantalAdressen,
+    aantalAdressen(ruimte),
   ]
 }
 

@@ -21,6 +21,8 @@ type PayloadSanitair = {
 type PayloadRuimte = {
   ruimte_m2: string
   verwarmd: boolean
+  /** The ruimte's punten are divided by it; 1 (the default) is privé. */
+  aantal_adressen_met_toegang_en_gebruiksrecht: number
 }
 
 type PayloadVertrekBasis = PayloadRuimte &

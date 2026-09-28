@@ -37,7 +37,6 @@ const FIELD_NAMES = [
   "energie_index",
   "bouwjaar",
   "type_woning",
-  "gemeenschappelijke_binnenruimtes",
 ] as const
 
 const formatEuro = (value: number) =>
@@ -210,27 +209,6 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
               ]}
               registerOptions={{
                 required: REQUIRED_MESSAGES.type_woning,
-              }}
-            />
-          </Grid.Cell>
-
-          <Grid.Cell span="all" appearance="transparent">
-            <RadioControl<GebruikersinvoerFormValues>
-              label="Heeft de woning toegang tot binnenruimtes die worden gedeeld met andere adressen?"
-              description="Binnenruimtes die door minimaal twee adressen worden gedeeld tellen mee in de puntentelling. Voorbeelden zijn een gemeenschappelijke (fietsen)berging of een keuken."
-              name="gemeenschappelijke_binnenruimtes"
-              options={[
-                {
-                  label: "Ja",
-                  value: "true",
-                },
-                {
-                  label: "Nee",
-                  value: "false",
-                },
-              ]}
-              registerOptions={{
-                required: REQUIRED_MESSAGES.gemeenschappelijke_binnenruimtes,
               }}
             />
           </Grid.Cell>

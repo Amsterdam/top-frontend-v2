@@ -124,7 +124,6 @@ describe("StepWoninggegevens", () => {
       energie_type: "bouwjaar",
       bouwjaar: 1977,
       type_woning: "Eengezinswoning",
-      gemeenschappelijke_binnenruimtes: "false",
     }
     const volgendeStap = () =>
       fireEvent.click(screen.getByRole("button", { name: "Volgende stap" }))

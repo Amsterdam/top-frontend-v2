@@ -18,7 +18,6 @@ const defaultValues: GebruikersinvoerFormValues = {
   woz_waarde: 0,
   woz_peildatum_jaar: new Date().getFullYear(),
   type_woning: null,
-  gemeenschappelijke_binnenruimtes: null,
 
   monument: false,
   monument_soort: null,
