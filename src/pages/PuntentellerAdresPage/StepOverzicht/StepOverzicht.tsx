@@ -30,8 +30,7 @@ import {
 } from "../helpers/oppervlakte"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import {
-  JA_NEE_VRAGEN,
-  MONUMENT_SOORT_OPTIONS,
+  BIJZONDERHEDEN_FIELDS,
   PARKEERPLEK_FIELDS,
   WONINGGEGEVENS_FIELDS,
   type FieldDefinition,
@@ -39,9 +38,6 @@ import {
 
 const jaNee = (value: unknown) =>
   value === true || value === "true" ? "Ja" : "Nee"
-
-const monumentSoortLabel = (value: unknown) =>
-  MONUMENT_SOORT_OPTIONS.find((option) => option.value === value)?.label ?? null
 
 /** "Energielabel C", "Energie-index 1,45" or "Bouwjaar 1977", following energie_type. */
 const energieprestatie = (
@@ -64,22 +60,29 @@ const WONING_FIELDS: {
 }[] = WONINGGEGEVENS_FIELDS.map(({ name, label }) => ({
   name,
   label,
-  ...(name === "gemeenschappelijke_binnenruimtes" && { format: jaNee }),
   ...(name === "energie_type" && { format: energieprestatie }),
 }))
 
-const BIJZONDERHEDEN_FIELDS: {
-  name: keyof GebruikersinvoerFormValues
-  label: string
-  format?: (value: unknown) => ReactNode
-}[] = [
-  {
-    name: "monument_soort",
-    label: "Soort monument",
-    format: monumentSoortLabel,
-  },
-  ...JA_NEE_VRAGEN.map(({ name, label }) => ({ name, label, format: jaNee })),
-]
+/** The chosen option's label of a question with its own options, Ja/Nee otherwise. */
+const optionLabel =
+  (options?: readonly { label: string; value: string }[]) =>
+  (value: unknown) =>
+    options
+      ? (options.find((option) => option.value === value)?.label ?? null)
+      : jaNee(value)
+
+/** The bijzonderheden in page order; a follow-up field only when it's asked. */
+const bijzonderhedenFields = (
+  values: GebruikersinvoerFormValues,
+): typeof WONING_FIELDS =>
+  BIJZONDERHEDEN_FIELDS.flatMap(
+    ({ name, label, summaryLabel, options, followUp }) => [
+      { name, label: summaryLabel ?? label, format: optionLabel(options) },
+      ...(followUp && values[name] === "true"
+        ? [{ name: followUp.name, label: followUp.label }]
+        : []),
+    ],
+  )
 
 const toItems = (
   fields: typeof WONING_FIELDS,
@@ -98,6 +101,16 @@ const extraFieldValue = (field: FieldDefinition, value: unknown) => {
     return field.options.find((option) => option.value === value)?.label
   }
   return value as string
+}
+
+/** How many addresses use a room; 1 means it's privé, unset counts as 1 (see
+ * AantalAdressenField). */
+const aantalAdressen = (ruimte: { aantal_adressen: number | null }) => {
+  const aantal = Number(ruimte.aantal_adressen) || 1
+  return {
+    label: "Aantal adressen",
+    value: aantal === 1 ? "1 (privé)" : aantal,
+  }
 }
 
 /** The specificaties of one binnenruimte, only for the questions its type asks. */
@@ -122,6 +135,7 @@ function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
     ...(hasVerkoeld
       ? [{ label: "Verkoeld", value: jaNee(ruimte.verkoeld) }]
       : []),
+    aantalAdressen(ruimte),
     ...extra
       .flatMap((section) => section.fields)
       .map((field) => ({
@@ -134,14 +148,9 @@ function binnenruimteSpecs(ruimte: Binnenruimte): DescriptionItem[] {
 /** The specificaties of one buitenruimte: parkeerplekken for a parkeerruimte, the
  * oppervlakte for every other type. */
 function buitenruimteSpecs(ruimte: Buitenruimte): DescriptionItem[] {
-  const aantalAdressen = {
-    label: "Aantal adressen",
-    value: ruimte.aantal_adressen === 1 ? "1 (privé)" : ruimte.aantal_adressen,
-  }
-
   if (ruimte.type === "Parkeerruimte") {
     return [
-      aantalAdressen,
+      aantalAdressen(ruimte),
       ...PARKEERPLEK_FIELDS.map(({ name, label }) => ({
         label,
         value: ruimte[name] ?? "0",
@@ -153,7 +162,7 @@ function buitenruimteSpecs(ruimte: Buitenruimte): DescriptionItem[] {
   return [
     { label: "Lengte", value: formatMeters(ruimte.lengte) },
     { label: "Breedte", value: formatMeters(ruimte.breedte) },
-    aantalAdressen,
+    aantalAdressen(ruimte),
   ]
 }
 
@@ -312,8 +321,7 @@ export function StepOverzicht({
       <OverzichtSection title="Bijzonderheden" icon={StarIcon}>
         <Description
           termsWidth="wide"
-
-          data={toItems(BIJZONDERHEDEN_FIELDS, values)}
+          data={toItems(bijzonderhedenFields(values), values)}
         />
       </OverzichtSection>
 

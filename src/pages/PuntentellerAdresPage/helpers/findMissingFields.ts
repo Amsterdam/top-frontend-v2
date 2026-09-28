@@ -1,4 +1,9 @@
-import { JA_NEE_VRAGEN, REQUIRED_MESSAGES } from "../fieldDefinitions"
+import {
+  BIJZONDERHEDEN_FIELDS,
+  hasParkeerplek,
+  PARKEERPLEK_FIELDS,
+  REQUIRED_MESSAGES,
+} from "../fieldDefinitions"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import { getRoomLabels } from "./getRoomLabels"
 
@@ -56,7 +61,6 @@ export function findMissingFields(
   if (values.energie_type === "index") woning("energie_index")
   if (values.energie_type === "bouwjaar") woning("bouwjaar")
   woning("type_woning")
-  woning("gemeenschappelijke_binnenruimtes")
 
   // Binnenruimtes; verwarmd and verkoeld are forced to a value where they aren't asked (see
   // VerwarmdVerkoeldFields), so they're only required where they are.
@@ -91,7 +95,7 @@ export function findMissingFields(
     }
   })
 
-  // Buitenruimtes; a parkeerruimte doesn't ask the oppervlakte.
+  // Buitenruimtes; a parkeerruimte doesn't ask the oppervlakte, but needs a parkeerplek.
   const buitenruimtes = values.buitenruimtes ?? []
   const buitenLabels = getRoomLabels(buitenruimtes)
   buitenruimtes.forEach((ruimte, index) => {
@@ -106,22 +110,23 @@ export function findMissingFields(
     if (ruimte.type !== "Parkeerruimte") {
       room("oppervlakte", ruimte.oppervlakte, REQUIRED_MESSAGES.oppervlakte)
     }
-    room(
-      "aantal_adressen",
-      ruimte.aantal_adressen,
-      REQUIRED_MESSAGES.aantal_adressen,
-    )
+    // At least one parkeerplek; linked to the first type's checkbox (see BuitenruimteFields).
+    if (ruimte.type === "Parkeerruimte" && !hasParkeerplek(ruimte)) {
+      room(PARKEERPLEK_FIELDS[0].name, "", REQUIRED_MESSAGES.parkeerplekken)
+    }
   })
 
   // Bijzonderheden
-  check(
-    STEP.bijzonderheden,
-    "monument_soort",
-    values.monument_soort,
-    REQUIRED_MESSAGES.monument_soort,
-  )
-  for (const { name, required } of JA_NEE_VRAGEN) {
+  for (const { name, required, followUp } of BIJZONDERHEDEN_FIELDS) {
     check(STEP.bijzonderheden, name, values[name], required)
+    if (followUp && values[name] === "true") {
+      check(
+        STEP.bijzonderheden,
+        followUp.name,
+        values[followUp.name],
+        followUp.required,
+      )
+    }
   }
 
   return missing

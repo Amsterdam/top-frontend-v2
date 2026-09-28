@@ -1,4 +1,4 @@
-import { Controller, type Path } from "react-hook-form"
+import { Controller, type ControllerProps, type Path } from "react-hook-form"
 import { QuantityCheckbox } from "./QuantityCheckbox"
 
 type Props = {
@@ -6,15 +6,17 @@ type Props = {
   name: Path<GebruikersinvoerFormValues>
   label: string
   max?: number
+  rules?: ControllerProps<GebruikersinvoerFormValues>["rules"]
 }
 
 /** A QuantityCheckbox bound to a form field. */
-export function QuantityCheckboxField({ name, label, max }: Props) {
+export function QuantityCheckboxField({ name, label, max, rules }: Props) {
   // The form value stays the "0".."max" string the puntenberekening expects; only
   // QuantityCheckbox itself works with a number.
   return (
     <Controller<GebruikersinvoerFormValues>
       name={name}
+      rules={rules}
       render={({ field: { value, onChange } }) => (
         <QuantityCheckbox
           id={name}

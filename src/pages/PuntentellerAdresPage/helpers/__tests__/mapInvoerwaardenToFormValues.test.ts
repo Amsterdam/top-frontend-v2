@@ -8,7 +8,6 @@ import {
 const invoerwaarden: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
   huisnummer: "59",
-  bouwjaar: 1970,
   gebruiksoppervlakte: 90,
   woz_waarden: [
     { peildatum: "2023-01-01", vastgestelde_waarde: 350000 },
@@ -17,6 +16,7 @@ const invoerwaarden: PuntentellerInvoerwaarden = {
   ],
   wozobjectnummer: 36300297723,
   energie: {
+    bouwjaar: 1970,
     energielabel: "C",
     energieindex: null,
     registratiedatum: null,

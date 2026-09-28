@@ -12,6 +12,10 @@ type Props = {
   onChange: (value: number) => void
   min?: number
   max?: number
+  /** Set when a visible Label for `id` is rendered elsewhere, so the input isn't labeled twice. */
+  hasVisibleLabel?: boolean
+  /** Width of the input in characters; raise it for a `max` with more digits. */
+  size?: number
 }
 
 const clamp = (value: number, min: number, max: number) =>
@@ -28,6 +32,8 @@ export function NumberStepper({
   onChange,
   min = 1,
   max = 5,
+  hasVisibleLabel = false,
+  size = 1,
 }: Props) {
   // What's being typed, while it isn't (yet) a valid aantal; null shows `value` itself.
   const [draft, setDraft] = useState<string | null>(null)
@@ -65,14 +71,16 @@ export function NumberStepper({
       >
         {label} verlagen
       </Button>
-      <Label htmlFor={id} className="ams-visually-hidden">
-        {label}
-      </Label>
+      {!hasVisibleLabel && (
+        <Label htmlFor={id} className="ams-visually-hidden">
+          {label}
+        </Label>
+      )}
       <TextInput
         id={id}
         inputMode="numeric"
         // Without `size`, ADS stretches the input to 100% width and overrides our inline-size.
-        size={1}
+        size={size}
         autoComplete="off"
         className={styles.input}
         value={draft ?? String(value)}

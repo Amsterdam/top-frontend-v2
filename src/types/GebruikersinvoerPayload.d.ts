@@ -4,11 +4,11 @@
  * (ruimte_m2, aanrechtlengte_meters) are strings, as DRF's DecimalField expects.
  */
 
-/** The bouwjaar itself isn't sent in here but in GebruikersinvoerPayload.bouwjaar. */
+/** A bouwjaar without waarde (unknown) is rejected by the backend. */
 type PayloadEnergie =
   | { type: "label"; waarde: string }
   | { type: "index"; waarde: string }
-  | { type: "bouwjaar" }
+  | { type: "bouwjaar"; waarde: string | null }
 
 type PayloadSanitair = {
   wastafel: number
@@ -21,6 +21,8 @@ type PayloadSanitair = {
 type PayloadRuimte = {
   ruimte_m2: string
   verwarmd: boolean
+  /** The ruimte's punten are divided by it; 1 (the default) is privé. */
+  aantal_adressen_met_toegang_en_gebruiksrecht: number
 }
 
 type PayloadVertrekBasis = PayloadRuimte &
@@ -107,15 +109,15 @@ type PayloadBuitenruimte =
       aantal_adressen_met_toegang_en_gebruiksrecht: number
     }
 
-/** One parkeerplek (ParkeerruimteSerializer). */
+/** One parkeerruimte with its plekken per type (ParkeerruimteSerializer); needs at least one
+ * plek, and no more laadpalen than plekken. */
 type PayloadParkeerruimte = {
   naam: "buitenruimte_parkeerplaats"
-  type:
-    | "gesloten_garage_bij_complex"
-    | "buiten_bij_complex_met_dak"
-    | "buiten_bij_complex_zonder_dak"
+  aantal_gesloten_garage_bij_complex: number
+  aantal_buiten_bij_complex_met_dak: number
+  aantal_buiten_bij_complex_zonder_dak: number
   aantal_adressen_met_toegang_en_gebruiksrecht: number
-  laadpaal: boolean
+  aantal_laadpalen: number
 }
 
 type GebruikersinvoerPayload = {
@@ -127,13 +129,14 @@ type GebruikersinvoerPayload = {
   buitenruimten: PayloadBuitenruimte[]
   parkeerruimten: PayloadParkeerruimte[]
   completed: boolean
-  bouwjaar: number | null
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
   woz_kleine_nieuwbouwwoning: boolean
   woz_nieuwbouw_2015_2019: boolean
   woonvoorziening_handicap: boolean
+  /** Null unless woonvoorziening_handicap. */
+  woonvoorziening_handicap_netto_investering: string | null
   monument: boolean
   monument_soort:
     | "gemeentelijk_monument"

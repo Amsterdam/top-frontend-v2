@@ -1,22 +1,61 @@
 import { useEffect } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
-import { Column, Grid, Heading } from "@amsterdam/design-system-react"
-import { RadioControl } from "@amsterdam/ee-ads-rhf"
+import {
+  Column,
+  Grid,
+  Heading,
+  Paragraph,
+} from "@amsterdam/design-system-react"
+import { RadioControl, TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { StepActions } from "../components/StepActions"
 import { StepInvalidFormAlert } from "../components/StepInvalidFormAlert"
 import {
+  BIJZONDERHEDEN_FIELDS,
+  BIJZONDERHEDEN_SECTIONS,
   GEEN_MONUMENT,
   JA_NEE_OPTIONS,
-  JA_NEE_VRAGEN,
-  MONUMENT_SOORT_OPTIONS,
-  REQUIRED_MESSAGES,
+  type BijzonderhedenField as BijzonderhedenFieldDefinition,
+  type TopLevelFieldName,
 } from "../fieldDefinitions"
 
 /** The fields of this step in page order, for the StepInvalidFormAlert. */
-const FIELD_NAMES = [
-  "monument_soort",
-  ...JA_NEE_VRAGEN.map(({ name }) => name),
-] as const
+const FIELD_NAMES: TopLevelFieldName[] = BIJZONDERHEDEN_FIELDS.flatMap(
+  ({ name, followUp }) => (followUp ? [name, followUp.name] : [name]),
+)
+
+type BijzonderhedenFieldProps = {
+  field: BijzonderhedenFieldDefinition
+  inFieldSet: boolean
+}
+
+/** A radio question, followed by its follow-up field once it's answered ja. */
+function BijzonderhedenField({
+  field: { name, label, required, options = JA_NEE_OPTIONS, followUp },
+  inFieldSet,
+}: BijzonderhedenFieldProps) {
+  return (
+    <>
+      <RadioControl<GebruikersinvoerFormValues>
+        label={label}
+        name={name}
+        options={[...options]}
+        registerOptions={{ required }}
+        inFieldSet={inFieldSet}
+      />
+      {followUp && (
+        <TextInputControl<GebruikersinvoerFormValues>
+          label={followUp.label}
+          description={followUp.description}
+          name={followUp.name}
+          registerOptions={{ required: followUp.required }}
+          shouldShow={(watch) => watch(name) === "true"}
+          inFieldSet={inFieldSet}
+          size={6}
+        />
+      )}
+    </>
+  )
+}
 
 type Props = {
   onNextStep: () => void
@@ -40,23 +79,22 @@ export function StepBijzonderheden({ onNextStep }: Props) {
         <Column gap="large">
           <Heading level={2}>Bijzonderheden</Heading>
 
-          <RadioControl<GebruikersinvoerFormValues>
-            label="Is de woning (onderdeel van) een monument?"
-            name="monument_soort"
-            options={MONUMENT_SOORT_OPTIONS}
-            registerOptions={{
-              required: REQUIRED_MESSAGES.monument_soort,
-            }}
-          />
-
-          {JA_NEE_VRAGEN.map(({ name, label, required }) => (
-            <RadioControl<GebruikersinvoerFormValues>
-              key={name}
-              label={label}
-              name={name}
-              options={JA_NEE_OPTIONS}
-              registerOptions={{ required }}
-            />
+          {BIJZONDERHEDEN_SECTIONS.map(({ heading, description, fields }) => (
+            <Column gap="large" key={heading ?? fields[0].name}>
+              {heading && (
+                <Column gap="small">
+                  <Heading level={3}>{heading}</Heading>
+                  {description && <Paragraph>{description}</Paragraph>}
+                </Column>
+              )}
+              {fields.map((field) => (
+                <BijzonderhedenField
+                  key={field.name}
+                  field={field}
+                  inFieldSet={Boolean(heading)}
+                />
+              ))}
+            </Column>
           ))}
         </Column>
       </Grid.Cell>

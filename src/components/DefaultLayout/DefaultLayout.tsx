@@ -20,6 +20,7 @@ import { useAuth } from "react-oidc-context"
 
 import { usePermissions } from "@/api/hooks"
 import { env } from "@/config/env"
+import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { useOnlineStatus, useRedirectFromState } from "@/hooks"
 import {
   APP_PERMISSIONS,
@@ -33,7 +34,7 @@ type MenuItem = {
   icon: typeof HouseCanalIcon
   label: string
   requiredPermissions?: PermissionRequirement
-  devOnly?: boolean
+  nonProdOnly?: boolean
 }
 
 const menuItems: MenuItem[] = [
@@ -51,7 +52,7 @@ const menuItems: MenuItem[] = [
     href: "/puntenteller",
     icon: AwardRibbonIcon,
     label: "Puntenteller",
-    devOnly: true,
+    nonProdOnly: true,
   },
   {
     href: "/team-instellingen",
@@ -75,7 +76,7 @@ export function DefaultLayout() {
 
   const visibleMenuItems = menuItems.filter(
     (item) =>
-      (!item.devOnly || import.meta.env.DEV) &&
+      (!item.nonProdOnly || isAcceptanceOrLocalEnvironment()) &&
       hasRequiredPermissions(permissions, item.requiredPermissions),
   )
 

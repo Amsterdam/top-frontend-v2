@@ -4,6 +4,7 @@ import { parseEnergieIndex, selectEnergieGrondslag } from "../energieGrondslag"
 const energie = (
   overrides: Partial<PuntentellerEnergie> = {},
 ): PuntentellerEnergie => ({
+  bouwjaar: 1970,
   energielabel: "C",
   energieindex: null,
   registratiedatum: null,
@@ -31,6 +32,7 @@ describe("parseEnergieIndex", () => {
 describe("selectEnergieGrondslag", () => {
   it("uses the energie-index of the EP-Online response while it's valid", () => {
     const response = {
+      bouwjaar: 1970,
       energielabel: "C",
       energieindex: "1,13",
       registratiedatum: "2016-09-13",

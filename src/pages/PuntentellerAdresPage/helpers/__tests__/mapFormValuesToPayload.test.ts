@@ -19,6 +19,7 @@ const binnenruimte = (
   oppervlakte: 10,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
   ...overrides,
 })
 
@@ -64,8 +65,30 @@ describe("mapFormValuesToPayload", () => {
       ])
       expect(payload.overige_ruimten[0]).not.toHaveProperty("gekoeld")
       expect(payload.verkeersruimten).toEqual([
-        { naam: "verkeersruimte", ruimte_m2: "0", verwarmd: true },
+        {
+          naam: "verkeersruimte",
+          ruimte_m2: "0",
+          verwarmd: true,
+          aantal_adressen_met_toegang_en_gebruiksrecht: 1,
+        },
       ])
+    })
+
+    it("sends the aantal adressen of each room, 1 when unset", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          binnenruimtes: [
+            binnenruimte("Woonkamer", { aantal_adressen: 4 }),
+            binnenruimte("Berging", { aantal_adressen: null }),
+            binnenruimte("Overloop", { aantal_adressen: 2 }),
+          ],
+        }),
+      )
+
+      const aantal = "aantal_adressen_met_toegang_en_gebruiksrecht"
+      expect(payload.vertrekken[0][aantal]).toBe(4)
+      expect(payload.overige_ruimten[0][aantal]).toBe(1)
+      expect(payload.verkeersruimten[0][aantal]).toBe(2)
     })
 
     it("sends an oppervlakte typed into the input (a string) as a decimal string", () => {
@@ -199,6 +222,7 @@ describe("mapFormValuesToPayload", () => {
         formValues({
           binnenruimtes: [
             binnenruimte("Toiletruimte", {
+              toilet_staand: "1",
               toilet_hangend: "1",
               wastafel: "1",
             }),
@@ -210,7 +234,7 @@ describe("mapFormValuesToPayload", () => {
         expect.objectContaining({
           naam: "toiletruimte",
           toilet_hangend: 1,
-          toilet_staand: 0,
+          toilet_staand: 1,
           wastafel: 1,
         }),
       ])
@@ -238,7 +262,7 @@ describe("mapFormValuesToPayload", () => {
       ])
     })
 
-    it("sends one parkeerruimte per plek, handing out the laadpalen one by one", () => {
+    it("sends a parkeerruimte with its plekken per type and laadpalen", () => {
       const payload = mapFormValuesToPayload(
         formValues({
           buitenruimtes: [
@@ -253,20 +277,16 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
-      const plek = (
-        type: PayloadParkeerruimte["type"],
-        laadpaal: boolean,
-      ): PayloadParkeerruimte => ({
-        naam: "buitenruimte_parkeerplaats",
-        type,
-        aantal_adressen_met_toegang_en_gebruiksrecht: 3,
-        laadpaal,
-      })
       expect(payload.buitenruimten).toEqual([])
       expect(payload.parkeerruimten).toEqual([
-        plek("gesloten_garage_bij_complex", true),
-        plek("buiten_bij_complex_zonder_dak", true),
-        plek("buiten_bij_complex_zonder_dak", false),
+        {
+          naam: "buitenruimte_parkeerplaats",
+          aantal_gesloten_garage_bij_complex: 1,
+          aantal_buiten_bij_complex_met_dak: 0,
+          aantal_buiten_bij_complex_zonder_dak: 2,
+          aantal_adressen_met_toegang_en_gebruiksrecht: 3,
+          aantal_laadpalen: 2,
+        },
       ])
       expect(payload.bijzondere_voorziening_laadpalen).toBe(0)
     })
@@ -286,7 +306,7 @@ describe("mapFormValuesToPayload", () => {
       )
 
       expect(payload.parkeerruimten).toEqual([
-        expect.objectContaining({ laadpaal: true }),
+        expect.objectContaining({ aantal_laadpalen: 1 }),
       ])
       expect(payload.bijzondere_voorziening_laadpalen).toBe(2)
     })
@@ -309,7 +329,8 @@ describe("mapFormValuesToPayload", () => {
           in_gebruik_genomen_na_1_juli_2024: "true",
           opgeleverd_2015_tot_en_met_2019: "true",
           kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
-          voorzieningen_voor_mensen_met_handicap: "true",
+          woonvoorziening_handicap: "true",
+          woonvoorziening_handicap_netto_investering: "12500",
           bijzondere_voorziening_intercom_met_beeld: "true",
         }),
       )
@@ -319,7 +340,6 @@ describe("mapFormValuesToPayload", () => {
           energie: { type: "label", waarde: "C" },
           is_eengezinswoning: true,
           completed: true,
-          bouwjaar: 1970,
           gebruiksoppervlakte: 90,
           woz_waarde: 374000,
           woz_peildatum_jaar: 2025,
@@ -331,6 +351,7 @@ describe("mapFormValuesToPayload", () => {
           woz_nieuwbouw_2015_2019: true,
           woz_kleine_nieuwbouwwoning: false,
           woonvoorziening_handicap: true,
+          woonvoorziening_handicap_netto_investering: "12500",
           bijzondere_voorziening_intercom_met_beeld: true,
         }),
       )
@@ -358,8 +379,8 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
-      expect(payload.energie).toEqual({ type: "bouwjaar" })
-      expect(payload.bouwjaar).toBe(1977)
+      expect(payload.energie).toEqual({ type: "bouwjaar", waarde: "1977" })
+      expect(payload).not.toHaveProperty("bouwjaar")
     })
 
     it.each([
@@ -369,12 +390,23 @@ describe("mapFormValuesToPayload", () => {
       "falls back to the bouwjaar when the chosen %s is missing",
       (energieType, values) => {
         const payload = mapFormValuesToPayload(
-          formValues({ energie_type: energieType, ...values }),
+          formValues({ energie_type: energieType, bouwjaar: 1970, ...values }),
         )
 
-        expect(payload.energie).toEqual({ type: "bouwjaar" })
+        expect(payload.energie).toEqual({ type: "bouwjaar", waarde: "1970" })
       },
     )
+
+    it("sends no netto investering without woonvoorzieningen", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          woonvoorziening_handicap: "false",
+          woonvoorziening_handicap_netto_investering: "12500",
+        }),
+      )
+
+      expect(payload.woonvoorziening_handicap_netto_investering).toBeNull()
+    })
 
     it("sends geen monument and an unknown type woning as null", () => {
       const payload = mapFormValuesToPayload(

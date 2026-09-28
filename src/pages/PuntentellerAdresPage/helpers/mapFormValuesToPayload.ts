@@ -107,6 +107,8 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
     const overig = {
       ruimte_m2: hasOppervlakte ? decimal(ruimte.oppervlakte) : "0",
       verwarmd: hasVerwarmd && isJa(ruimte.verwarmd),
+      aantal_adressen_met_toegang_en_gebruiksrecht:
+        count(ruimte.aantal_adressen) || 1,
       ...sanitair(ruimte),
     }
     const vertrek = { ...overig, gekoeld: isJa(ruimte.verkoeld) }
@@ -145,7 +147,7 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
         ruimten.overige_ruimten.push({
           naam: "toiletruimte",
           ...overig,
-          toilet_staand: 0,
+          toilet_staand: count(ruimte.toilet_staand),
           toilet_hangend: count(ruimte.toilet_hangend),
         })
         break
@@ -173,6 +175,8 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
           naam: "verkeersruimte",
           ruimte_m2: overig.ruimte_m2,
           verwarmd: overig.verwarmd,
+          aantal_adressen_met_toegang_en_gebruiksrecht:
+            overig.aantal_adressen_met_toegang_en_gebruiksrecht,
         })
         break
       default: {
@@ -185,18 +189,10 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
   return ruimten
 }
 
-// The form's parkeerplek fields per backend type.
-const PARKEERPLEK_TYPES = [
-  ["parkeerplekken_afgesloten_parkeergarage", "gesloten_garage_bij_complex"],
-  ["parkeerplekken_buiten_met_dak", "buiten_bij_complex_met_dak"],
-  ["parkeerplekken_buiten_zonder_dak", "buiten_bij_complex_zonder_dak"],
-] as const
-
 /**
- * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. The form asks
- * a Parkeerruimte for the number of plekken per type and its laadpalen; the backend wants one
- * object per plek, each with or without a laadpaal. So the laadpalen go to the plekken one by
- * one; any left over (more laadpalen than plekken) count as losse laadpalen.
+ * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. A Parkeerruimte
+ * is sent as is, with its plekken per type and laadpalen. The backend doesn't accept more
+ * laadpalen than plekken, so any left over count as losse laadpalen.
  */
 function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
   const buitenruimten: PayloadBuitenruimte[] = []
@@ -207,19 +203,29 @@ function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
     const aantalAdressen = count(ruimte.aantal_adressen) || 1
 
     if (ruimte.type === "Parkeerruimte") {
-      let laadpalen = count(ruimte.laadpaal)
-      for (const [veld, type] of PARKEERPLEK_TYPES) {
-        for (let plek = 0; plek < count(ruimte[veld]); plek++) {
-          parkeerruimten.push({
-            naam: "buitenruimte_parkeerplaats",
-            type,
-            aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
-            laadpaal: laadpalen > 0,
-          })
-          laadpalen = Math.max(laadpalen - 1, 0)
-        }
-      }
-      losseLaadpalen += laadpalen
+      const parkeerruimte = {
+        naam: "buitenruimte_parkeerplaats",
+        aantal_gesloten_garage_bij_complex: count(
+          ruimte.parkeerplekken_afgesloten_parkeergarage,
+        ),
+        aantal_buiten_bij_complex_met_dak: count(
+          ruimte.parkeerplekken_buiten_met_dak,
+        ),
+        aantal_buiten_bij_complex_zonder_dak: count(
+          ruimte.parkeerplekken_buiten_zonder_dak,
+        ),
+        aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
+      } as const
+      const plekken =
+        parkeerruimte.aantal_gesloten_garage_bij_complex +
+        parkeerruimte.aantal_buiten_bij_complex_met_dak +
+        parkeerruimte.aantal_buiten_bij_complex_zonder_dak
+      const laadpalen = count(ruimte.laadpaal)
+      parkeerruimten.push({
+        ...parkeerruimte,
+        aantal_laadpalen: Math.min(laadpalen, plekken),
+      })
+      losseLaadpalen += Math.max(laadpalen - plekken, 0)
       continue
     }
 
@@ -267,8 +273,6 @@ const MONUMENT_CONTRACTDATUM: Record<string, string> = {
 /**
  * The energie as the backend expects it, following the chosen energie_type. Falls back to the
  * bouwjaar when the chosen label or index is missing, which the backend would reject.
- * { type: "bouwjaar" } carries no waarde: the backend's EnergieSerializer discards it and takes
- * the bouwjaar from the top-level bouwjaar field of the payload instead.
  */
 const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
   const energieIndex = toNumber(values.energie_index)
@@ -278,7 +282,11 @@ const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
   if (values.energie_type === "index" && energieIndex !== null) {
     return { type: "index", waarde: String(energieIndex) }
   }
-  return { type: "bouwjaar" }
+  const bouwjaar = toNumber(values.bouwjaar)
+  return {
+    type: "bouwjaar",
+    waarde: bouwjaar === null ? null : String(bouwjaar),
+  }
 }
 
 /** Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/. */
@@ -298,7 +306,6 @@ export function mapFormValuesToPayload(
     buitenruimten,
     parkeerruimten,
     completed: true,
-    bouwjaar: toNumber(values.bouwjaar),
     gebruiksoppervlakte: count(values.gebruiksoppervlakte),
     woz_waarde: count(values.woz_waarde),
     woz_peildatum_jaar: count(values.woz_peildatum_jaar),
@@ -306,9 +313,12 @@ export function mapFormValuesToPayload(
       values.kleiner_dan_40_m2_opgeleverd_2018_2022,
     ),
     woz_nieuwbouw_2015_2019: isJa(values.opgeleverd_2015_tot_en_met_2019),
-    woonvoorziening_handicap: isJa(
-      values.voorzieningen_voor_mensen_met_handicap,
-    ),
+    woonvoorziening_handicap: isJa(values.woonvoorziening_handicap),
+    woonvoorziening_handicap_netto_investering: isJa(
+      values.woonvoorziening_handicap,
+    )
+      ? values.woonvoorziening_handicap_netto_investering
+      : null,
     monument: isJa(values.monument) && monumentSoort !== GEEN_MONUMENT,
     monument_soort: MONUMENT_SOORT[monumentSoort] ?? null,
     huurovereenkomst_afgesloten_op:

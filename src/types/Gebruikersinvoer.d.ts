@@ -59,6 +59,8 @@ type BinnenruimteVoorzieningen = {
   meerpersoons_wastafel?: string
   toilet_hangend?: string
   toilet_normaal?: string
+  /** Toiletruimte only; the badkamer asks toilet_normaal instead. */
+  toilet_staand?: string
   bubbelfunctie_bad?: string
   volledige_afscheiding_douche?: string
   handdoekenradiator?: string
@@ -94,6 +96,8 @@ type Binnenruimte = BinnenruimteVoorzieningen & {
   oppervlakte: number | null
   verwarmd: string | null
   verkoeld: string | null
+  /** How many addresses use this binnenruimte; 1 means it's privé. */
+  aantal_adressen: number | null
 }
 
 type GebruikersinvoerFormValues = {
@@ -113,14 +117,15 @@ type GebruikersinvoerFormValues = {
   woz_waarde: number
   woz_peildatum_jaar: number
   type_woning: string | null
-  gemeenschappelijke_binnenruimtes: string | null
 
   // Bijzonderheden
   monument: boolean
   monument_soort: string | null
-  // Ja/nee-vragen ("true"/"false"), see JA_NEE_VRAGEN in fieldDefinitions.ts
+  // Ja/nee-vragen ("true"/"false"), see BIJZONDERHEDEN_SECTIONS in fieldDefinitions.ts
   zorgwoning: string
-  voorzieningen_voor_mensen_met_handicap: string
+  woonvoorziening_handicap: string
+  /** Only asked when woonvoorziening_handicap is "true". */
+  woonvoorziening_handicap_netto_investering: string
   opgeleverd_2015_tot_en_met_2019: string
   in_gebruik_genomen_na_1_juli_2024: string
   kleiner_dan_40_m2_opgeleverd_2018_2022: string

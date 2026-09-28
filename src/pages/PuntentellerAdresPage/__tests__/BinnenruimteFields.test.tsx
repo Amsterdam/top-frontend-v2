@@ -12,6 +12,7 @@ const badkamer = (voorzieningen: BinnenruimteVoorzieningen): Binnenruimte => ({
   oppervlakte: 6,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
   ...emptyVoorzieningen("Badkamer"),
   ...voorzieningen,
 })
@@ -67,6 +68,30 @@ describe("BinnenruimteFields", () => {
     expect(badkamer2.douche_bad).toBe("")
     expect(badkamer1.wastafel).toBe("1")
     expect(badkamer1.douche_bad).toBe("douche")
+  })
+
+  it("asks the aantal adressen with a stepper, from 1", () => {
+    render(<Harness />)
+
+    const aantalAdressen = screen.getByLabelText<HTMLInputElement>(
+      "Aantal adressen",
+      { selector: "input" },
+    )
+    expect(aantalAdressen.value).toBe("1")
+    expect(
+      screen.getByRole<HTMLButtonElement>("button", {
+        name: "Aantal adressen verlagen",
+      }).disabled,
+    ).toBe(true)
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Aantal adressen verhogen" }),
+    )
+
+    const [, badkamer2] = JSON.parse(
+      screen.getByTestId("binnenruimtes").textContent ?? "[]",
+    ) as Binnenruimte[]
+    expect(badkamer2.aantal_adressen).toBe(2)
   })
 })
 

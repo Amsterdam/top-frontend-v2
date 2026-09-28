@@ -15,11 +15,11 @@ const complete = (
     energie_index: null,
     bouwjaar: null,
     type_woning: "Eengezinswoning",
-    gemeenschappelijke_binnenruimtes: "false",
     monument: false,
     monument_soort: "geen_monument",
     zorgwoning: "false",
-    voorzieningen_voor_mensen_met_handicap: "false",
+    woonvoorziening_handicap: "false",
+    woonvoorziening_handicap_netto_investering: "",
     opgeleverd_2015_tot_en_met_2019: "false",
     in_gebruik_genomen_na_1_juli_2024: "false",
     kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
@@ -37,6 +37,7 @@ const binnenruimte = (
   oppervlakte: 12,
   verwarmd: "true",
   verkoeld: "false",
+  aantal_adressen: 1,
   ...overrides,
 })
 
@@ -66,17 +67,11 @@ describe("findMissingFields", () => {
         complete({
           woz_waarde: Number.NaN,
           type_woning: null,
-          gemeenschappelijke_binnenruimtes: null,
         }),
       ),
     ).toEqual([
       { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
       { step: 0, name: "type_woning", message: "Type woning is verplicht" },
-      {
-        step: 0,
-        name: "gemeenschappelijke_binnenruimtes",
-        message: "Gemeenschappelijke binnenruimtes is verplicht",
-      },
     ])
   })
 
@@ -170,14 +165,15 @@ describe("findMissingFields", () => {
     ).toEqual(["binnenruimtes.0.douche_bad"])
   })
 
-  it("lists the missing fields of each buitenruimte; a parkeerruimte has no oppervlakte", () => {
+  it("lists the missing oppervlakte of each buitenruimte; a parkeerruimte has none", () => {
     expect(
       findMissingFields(
         complete({
           buitenruimtes: [
+            buitenruimte("Balkon", { oppervlakte: null }),
             buitenruimte("Parkeerruimte", {
               oppervlakte: null,
-              aantal_adressen: null,
+              parkeerplekken_buiten_zonder_dak: "1",
             }),
           ],
         }),
@@ -185,10 +181,35 @@ describe("findMissingFields", () => {
     ).toEqual([
       {
         step: 2,
-        name: "buitenruimtes.0.aantal_adressen",
-        message: "Parkeerruimte: Vul het aantal adressen in.",
+        name: "buitenruimtes.0.oppervlakte",
+        message: "Balkon: Vul de oppervlakte in.",
       },
     ])
+  })
+
+  it("requires at least one parkeerplek for a parkeerruimte", () => {
+    expect(
+      findMissingFields(
+        complete({ buitenruimtes: [buitenruimte("Parkeerruimte")] }),
+      ),
+    ).toEqual([
+      {
+        step: 2,
+        name: "buitenruimtes.0.parkeerplekken_afgesloten_parkeergarage",
+        message: "Parkeerruimte: Kies minimaal 1 type parkeerplek.",
+      },
+    ])
+    expect(
+      names(
+        complete({
+          buitenruimtes: [
+            buitenruimte("Parkeerruimte", {
+              parkeerplekken_buiten_met_dak: "2",
+            }),
+          ],
+        }),
+      ),
+    ).toEqual([])
   })
 
   it("lists the missing bijzonderheden", () => {
@@ -206,5 +227,26 @@ describe("findMissingFields", () => {
         message: "Geef aan of de woning een zorgwoning is",
       },
     ])
+  })
+
+  it("only requires the netto investering when there are woonvoorzieningen", () => {
+    expect(names(complete({ woonvoorziening_handicap: "false" }))).toEqual([])
+    expect(
+      findMissingFields(complete({ woonvoorziening_handicap: "true" })),
+    ).toEqual([
+      {
+        step: 3,
+        name: "woonvoorziening_handicap_netto_investering",
+        message: "Netto investering voor de voorzieningen is verplicht",
+      },
+    ])
+    expect(
+      names(
+        complete({
+          woonvoorziening_handicap: "true",
+          woonvoorziening_handicap_netto_investering: "12500",
+        }),
+      ),
+    ).toEqual([])
   })
 })
