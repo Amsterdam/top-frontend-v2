@@ -133,6 +133,8 @@ type GebruikersinvoerPayload = {
   woz_kleine_nieuwbouwwoning: boolean
   woz_nieuwbouw_2015_2019: boolean
   woonvoorziening_handicap: boolean
+  /** Null unless woonvoorziening_handicap. */
+  woonvoorziening_handicap_netto_investering: string | null
   monument: boolean
   monument_soort:
     | "gemeentelijk_monument"

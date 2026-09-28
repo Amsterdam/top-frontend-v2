@@ -307,9 +307,12 @@ export function mapFormValuesToPayload(
       values.kleiner_dan_40_m2_opgeleverd_2018_2022,
     ),
     woz_nieuwbouw_2015_2019: isJa(values.opgeleverd_2015_tot_en_met_2019),
-    woonvoorziening_handicap: isJa(
-      values.voorzieningen_voor_mensen_met_handicap,
-    ),
+    woonvoorziening_handicap: isJa(values.woonvoorziening_handicap),
+    woonvoorziening_handicap_netto_investering: isJa(
+      values.woonvoorziening_handicap,
+    )
+      ? values.woonvoorziening_handicap_netto_investering
+      : null,
     monument: isJa(values.monument) && monumentSoort !== GEEN_MONUMENT,
     monument_soort: MONUMENT_SOORT[monumentSoort] ?? null,
     huurovereenkomst_afgesloten_op:

@@ -58,7 +58,6 @@ export const REQUIRED_MESSAGES = {
   type_woning: "Type woning is verplicht",
   gemeenschappelijke_binnenruimtes:
     "Gemeenschappelijke binnenruimtes is verplicht",
-  monument_soort: "Geef aan of de woning een monument is",
   oppervlakte: "Vul de oppervlakte in.",
   verwarmd: "Geef aan of de ruimte verwarmd is",
   verkoeld: "Geef aan of de ruimte verkoeld is",
@@ -366,46 +365,111 @@ export const JA_NEE_OPTIONS = [
   { label: "Nee", value: "false" },
 ]
 
-/** Ja/nee questions asked in StepBijzonderheden, all required and defaulting to nee (see
- * useGebruikersinvoerForm). */
-export const JA_NEE_VRAGEN: {
+/** A text field only asked when its BijzonderhedenField is answered ja ("true"). */
+export type FollowUpField = {
   name: TopLevelFieldName
   label: string
+  description?: string
   required: string
-}[] = [
+}
+
+/** A required radio question in StepBijzonderheden, stored directly on the form. */
+export type BijzonderhedenField = {
+  name: TopLevelFieldName
+  label: string
+  /** The label in StepOverzicht, when it differs from the question. */
+  summaryLabel?: string
+  required: string
+  /** Defaults to JA_NEE_OPTIONS (stored as "true"/"false", defaulting to nee, see
+   * useGebruikersinvoerForm). */
+  options?: readonly { label: string; value: string }[]
+  followUp?: FollowUpField
+}
+
+/** Like FieldSection, but the heading is optional: fields without one are shown ungrouped. */
+export type BijzonderhedenSection = {
+  heading?: string
+  description?: string
+  fields: readonly BijzonderhedenField[]
+}
+
+/**
+ * The sections of StepBijzonderheden, in page order; StepOverzicht and findMissingFields follow
+ * the same order. The fields of a section with a heading are styled as nested under it
+ * (inFieldSet).
+ */
+export const BIJZONDERHEDEN_SECTIONS: readonly BijzonderhedenSection[] = [
   {
-    name: "zorgwoning",
-    label: "Is de woning een zorgwoning?",
-    required: "Geef aan of de woning een zorgwoning is",
+    fields: [
+      {
+        name: "monument_soort",
+        label: "Is de woning (onderdeel van) een monument?",
+        summaryLabel: "Soort monument",
+        required: "Geef aan of de woning een monument is",
+        options: MONUMENT_SOORT_OPTIONS,
+      },
+      {
+        name: "zorgwoning",
+        label: "Is de woning een zorgwoning?",
+        required: "Geef aan of de woning een zorgwoning is",
+      },
+    ],
   },
   {
-    name: "voorzieningen_voor_mensen_met_handicap",
-    label: "Heeft de woning voorzieningen voor mensen met een handicap?",
-    required:
-      "Geef aan of de woning voorzieningen heeft voor mensen met een handicap",
+    heading: "Voorzieningen voor personen met een handicap",
+    description:
+      "Het gaat om voorzieningen voor personen met een fysieke beperking, zoals een verhoogd toilet of een traplift. Alleen voorzieningen die verhuurder heeft aangebracht, tellen mee.",
+    fields: [
+      {
+        name: "woonvoorziening_handicap",
+        label: "Heeft de woning voorzieningen voor mensen met een handicap?",
+        required:
+          "Geef aan of de woning voorzieningen heeft voor mensen met een handicap",
+        followUp: {
+          name: "woonvoorziening_handicap_netto_investering",
+          label: "Netto investering voor de voorzieningen (€)",
+          description:
+            "Geef aan hoeveel de voorzieningen de verhuurder hebben gekost. Het gaat dus alleen om het deel dat door de verhuurder is betaald en/of aangebracht.",
+          required: "Netto investering voor de voorzieningen is verplicht",
+        },
+      },
+    ],
   },
   {
-    name: "opgeleverd_2015_tot_en_met_2019",
-    label: "Is de woning opgeleverd in de periode 2015 tot en met 2019?",
-    required: "Geef aan of de woning is opgeleverd in 2015 tot en met 2019",
+    heading: "Nieuwbouw",
+    fields: [
+      {
+        name: "opgeleverd_2015_tot_en_met_2019",
+        label: "Is de woning opgeleverd in de periode 2015 tot en met 2019?",
+        required: "Geef aan of de woning is opgeleverd in 2015 tot en met 2019",
+      },
+      {
+        name: "in_gebruik_genomen_na_1_juli_2024",
+        label: "Is de woning voor het eerst in gebruik genomen na 1 juli 2024?",
+        required:
+          "Geef aan of de woning na 1 juli 2024 voor het eerst in gebruik is genomen",
+      },
+    ],
   },
   {
-    name: "in_gebruik_genomen_na_1_juli_2024",
-    label: "Is de woning voor het eerst in gebruik genomen na 1 juli 2024?",
-    required:
-      "Geef aan of de woning na 1 juli 2024 voor het eerst in gebruik is genomen",
-  },
-  {
-    name: "bijzondere_voorziening_intercom_met_beeld",
-    label:
-      "Heeft de woning een intercom met beeld, waarmee je kunt zien wie er voor de deur staat?",
-    required: "Geef aan of de woning een intercom met beeld heeft",
-  },
-  {
-    name: "kleiner_dan_40_m2_opgeleverd_2018_2022",
-    label:
-      "Is de totale oppervlakte van alle ruimtes samen kleiner dan 40 m² en is de woning opgeleverd in de periode 2018-2022?",
-    required:
-      "Geef aan of de woning kleiner is dan 40 m² en is opgeleverd in 2018-2022",
+    fields: [
+      {
+        name: "bijzondere_voorziening_intercom_met_beeld",
+        label:
+          "Heeft de woning een intercom met beeld, waarmee je kunt zien wie er voor de deur staat?",
+        required: "Geef aan of de woning een intercom met beeld heeft",
+      },
+      {
+        name: "kleiner_dan_40_m2_opgeleverd_2018_2022",
+        label:
+          "Is de totale oppervlakte van alle ruimtes samen kleiner dan 40 m² en is de woning opgeleverd in de periode 2018-2022?",
+        required:
+          "Geef aan of de woning kleiner is dan 40 m² en is opgeleverd in 2018-2022",
+      },
+    ],
   },
 ]
+
+export const BIJZONDERHEDEN_FIELDS = BIJZONDERHEDEN_SECTIONS.flatMap(
+  ({ fields }) => fields,
+)

@@ -118,9 +118,11 @@ type GebruikersinvoerFormValues = {
   // Bijzonderheden
   monument: boolean
   monument_soort: string | null
-  // Ja/nee-vragen ("true"/"false"), see JA_NEE_VRAGEN in fieldDefinitions.ts
+  // Ja/nee-vragen ("true"/"false"), see BIJZONDERHEDEN_SECTIONS in fieldDefinitions.ts
   zorgwoning: string
-  voorzieningen_voor_mensen_met_handicap: string
+  woonvoorziening_handicap: string
+  /** Only asked when woonvoorziening_handicap is "true". */
+  woonvoorziening_handicap_netto_investering: string
   opgeleverd_2015_tot_en_met_2019: string
   in_gebruik_genomen_na_1_juli_2024: string
   kleiner_dan_40_m2_opgeleverd_2018_2022: string

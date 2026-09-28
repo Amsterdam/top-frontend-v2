@@ -19,7 +19,8 @@ const complete = (
     monument: false,
     monument_soort: "geen_monument",
     zorgwoning: "false",
-    voorzieningen_voor_mensen_met_handicap: "false",
+    woonvoorziening_handicap: "false",
+    woonvoorziening_handicap_netto_investering: "",
     opgeleverd_2015_tot_en_met_2019: "false",
     in_gebruik_genomen_na_1_juli_2024: "false",
     kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
@@ -206,5 +207,26 @@ describe("findMissingFields", () => {
         message: "Geef aan of de woning een zorgwoning is",
       },
     ])
+  })
+
+  it("only requires the netto investering when there are woonvoorzieningen", () => {
+    expect(names(complete({ woonvoorziening_handicap: "false" }))).toEqual([])
+    expect(
+      findMissingFields(complete({ woonvoorziening_handicap: "true" })),
+    ).toEqual([
+      {
+        step: 3,
+        name: "woonvoorziening_handicap_netto_investering",
+        message: "Netto investering voor de voorzieningen is verplicht",
+      },
+    ])
+    expect(
+      names(
+        complete({
+          woonvoorziening_handicap: "true",
+          woonvoorziening_handicap_netto_investering: "12500",
+        }),
+      ),
+    ).toEqual([])
   })
 })

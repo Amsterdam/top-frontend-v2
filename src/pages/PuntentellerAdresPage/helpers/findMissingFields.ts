@@ -1,4 +1,4 @@
-import { JA_NEE_VRAGEN, REQUIRED_MESSAGES } from "../fieldDefinitions"
+import { BIJZONDERHEDEN_FIELDS, REQUIRED_MESSAGES } from "../fieldDefinitions"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import { getRoomLabels } from "./getRoomLabels"
 
@@ -114,14 +114,16 @@ export function findMissingFields(
   })
 
   // Bijzonderheden
-  check(
-    STEP.bijzonderheden,
-    "monument_soort",
-    values.monument_soort,
-    REQUIRED_MESSAGES.monument_soort,
-  )
-  for (const { name, required } of JA_NEE_VRAGEN) {
+  for (const { name, required, followUp } of BIJZONDERHEDEN_FIELDS) {
     check(STEP.bijzonderheden, name, values[name], required)
+    if (followUp && values[name] === "true") {
+      check(
+        STEP.bijzonderheden,
+        followUp.name,
+        values[followUp.name],
+        followUp.required,
+      )
+    }
   }
 
   return missing

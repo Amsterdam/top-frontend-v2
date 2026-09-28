@@ -309,7 +309,8 @@ describe("mapFormValuesToPayload", () => {
           in_gebruik_genomen_na_1_juli_2024: "true",
           opgeleverd_2015_tot_en_met_2019: "true",
           kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
-          voorzieningen_voor_mensen_met_handicap: "true",
+          woonvoorziening_handicap: "true",
+          woonvoorziening_handicap_netto_investering: "12500",
           bijzondere_voorziening_intercom_met_beeld: "true",
         }),
       )
@@ -330,6 +331,7 @@ describe("mapFormValuesToPayload", () => {
           woz_nieuwbouw_2015_2019: true,
           woz_kleine_nieuwbouwwoning: false,
           woonvoorziening_handicap: true,
+          woonvoorziening_handicap_netto_investering: "12500",
           bijzondere_voorziening_intercom_met_beeld: true,
         }),
       )
@@ -374,6 +376,17 @@ describe("mapFormValuesToPayload", () => {
         expect(payload.energie).toEqual({ type: "bouwjaar", waarde: "1970" })
       },
     )
+
+    it("sends no netto investering without woonvoorzieningen", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          woonvoorziening_handicap: "false",
+          woonvoorziening_handicap_netto_investering: "12500",
+        }),
+      )
+
+      expect(payload.woonvoorziening_handicap_netto_investering).toBeNull()
+    })
 
     it("sends geen monument and an unknown type woning as null", () => {
       const payload = mapFormValuesToPayload(

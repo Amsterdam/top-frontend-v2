@@ -30,8 +30,7 @@ import {
 } from "../helpers/oppervlakte"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import {
-  JA_NEE_VRAGEN,
-  MONUMENT_SOORT_OPTIONS,
+  BIJZONDERHEDEN_FIELDS,
   PARKEERPLEK_FIELDS,
   WONINGGEGEVENS_FIELDS,
   type FieldDefinition,
@@ -39,9 +38,6 @@ import {
 
 const jaNee = (value: unknown) =>
   value === true || value === "true" ? "Ja" : "Nee"
-
-const monumentSoortLabel = (value: unknown) =>
-  MONUMENT_SOORT_OPTIONS.find((option) => option.value === value)?.label ?? null
 
 /** "Energielabel C", "Energie-index 1,45" or "Bouwjaar 1977", following energie_type. */
 const energieprestatie = (
@@ -68,18 +64,26 @@ const WONING_FIELDS: {
   ...(name === "energie_type" && { format: energieprestatie }),
 }))
 
-const BIJZONDERHEDEN_FIELDS: {
-  name: keyof GebruikersinvoerFormValues
-  label: string
-  format?: (value: unknown) => ReactNode
-}[] = [
-  {
-    name: "monument_soort",
-    label: "Soort monument",
-    format: monumentSoortLabel,
-  },
-  ...JA_NEE_VRAGEN.map(({ name, label }) => ({ name, label, format: jaNee })),
-]
+/** The chosen option's label of a question with its own options, Ja/Nee otherwise. */
+const optionLabel =
+  (options?: readonly { label: string; value: string }[]) =>
+  (value: unknown) =>
+    options
+      ? (options.find((option) => option.value === value)?.label ?? null)
+      : jaNee(value)
+
+/** The bijzonderheden in page order; a follow-up field only when it's asked. */
+const bijzonderhedenFields = (
+  values: GebruikersinvoerFormValues,
+): typeof WONING_FIELDS =>
+  BIJZONDERHEDEN_FIELDS.flatMap(
+    ({ name, label, summaryLabel, options, followUp }) => [
+      { name, label: summaryLabel ?? label, format: optionLabel(options) },
+      ...(followUp && values[name] === "true"
+        ? [{ name: followUp.name, label: followUp.label }]
+        : []),
+    ],
+  )
 
 const toItems = (
   fields: typeof WONING_FIELDS,
@@ -312,8 +316,7 @@ export function StepOverzicht({
       <OverzichtSection title="Bijzonderheden" icon={StarIcon}>
         <Description
           termsWidth="wide"
-
-          data={toItems(BIJZONDERHEDEN_FIELDS, values)}
+          data={toItems(bijzonderhedenFields(values), values)}
         />
       </OverzichtSection>
 
