@@ -53,6 +53,7 @@ describe("BuitenruimteFields", () => {
           label="Parkeerruimte"
           type="Parkeerruimte"
           onSave={vi.fn()}
+          onCancel={vi.fn()}
         />
       </Harness>,
     )
@@ -76,6 +77,7 @@ describe("BuitenruimteFields", () => {
           label="Parkeerruimte"
           type="Parkeerruimte"
           onSave={onSave}
+          onCancel={vi.fn()}
         />
       </Harness>,
     )

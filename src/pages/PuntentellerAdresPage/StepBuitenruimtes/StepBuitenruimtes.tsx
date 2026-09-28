@@ -40,8 +40,9 @@ type Props = {
 }
 
 export function StepBuitenruimtes({ onNextStep }: Props) {
-  const { control } = useFormContext<GebruikersinvoerFormValues>()
-  const { fields, append, remove } = useFieldArray({
+  const { control, getValues, clearErrors } =
+    useFormContext<GebruikersinvoerFormValues>()
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "buitenruimtes",
   })
@@ -58,11 +59,17 @@ export function StepBuitenruimtes({ onNextStep }: Props) {
     add,
     edit,
     save,
+    cancel,
     remove: removeRoom,
   } = useOpenRoom({
     count: fields.length,
     append,
     remove,
+    getRoom: (index) => getValues(`buitenruimtes.${index}`),
+    restore: (index, room) => {
+      update(index, room)
+      clearErrors(`buitenruimtes.${index}`)
+    },
   })
   const openType = openIndex !== null ? fields[openIndex]?.type : undefined
 
@@ -112,6 +119,7 @@ export function StepBuitenruimtes({ onNextStep }: Props) {
             type={fields[openIndex].type}
             label={roomLabels[openIndex]}
             onSave={save}
+            onCancel={cancel}
           />
         </Grid.Cell>
       )}

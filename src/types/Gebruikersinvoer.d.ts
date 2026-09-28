@@ -1,3 +1,6 @@
+/** What the energieprestatie is based on, see selectEnergieGrondslag. */
+type EnergieType = "label" | "index" | "bouwjaar"
+
 type BinnenruimteType =
   | "Woonkamer"
   | "Keuken"
@@ -43,7 +46,48 @@ type Buitenruimte = {
   laadpaal?: string
 }
 
-type Binnenruimte = {
+/**
+ * The voorzieningen of one binnenruimte. Which ones a room has depends on its type (the extra
+ * sections in BINNENRUIMTE_CONFIG); the rest stay undefined. The names follow the backend's
+ * vertrek fields. Counts are "0".."max" strings, see fieldDefinitions.ts.
+ */
+type BinnenruimteVoorzieningen = {
+  // Sanitair
+  /** "douche", "bad" or "baddouche"; "" while unanswered. */
+  douche_bad?: string
+  wastafel?: string
+  meerpersoons_wastafel?: string
+  toilet_hangend?: string
+  toilet_normaal?: string
+  bubbelfunctie_bad?: string
+  volledige_afscheiding_douche?: string
+  handdoekenradiator?: string
+  kast_bij_wastafel?: string
+  kastruimte?: string
+  stopcontacten?: string
+  eenhandsmengkraan?: string
+  thermostatische_mengkraan?: string
+
+  // Keuken
+  /** "korter_dan_1_meter", "1_tot_2_meter" or "langer_dan_2_meter"; "" while unanswered. */
+  aanrechtlengte?: string
+  inbouw_afzuiginstallatie?: string
+  inbouw_kookplaat_inductie?: string
+  inbouw_kookplaat_keramisch?: string
+  inbouw_kookplaat_gas?: string
+  inbouw_koelkast?: string
+  inbouw_vrieskast?: string
+  inbouw_oven_elektrisch?: string
+  inbouw_oven_gas?: string
+  inbouw_magnetron?: string
+  inbouw_vaatwasmachine?: string
+  extra_kastruimte?: string
+  eenhandsmengkraan_kookfunctie?: string
+  thermostatische_mengkraan_kookfunctie?: string
+  kokendwaterfunctie?: string
+}
+
+type Binnenruimte = BinnenruimteVoorzieningen & {
   type: BinnenruimteType
   lengte: number | null
   breedte: number | null
@@ -53,63 +97,18 @@ type Binnenruimte = {
 }
 
 type GebruikersinvoerFormValues = {
-  // Sanitair (select "0".."5", zie BADKAMER_FIELDS in fieldDefinitions.ts)
-  badkamer_toilet_hangend: string
-  badkamer_toilet_normaal: string
-  badkamer_wastafel: string
-  badkamer_meerpersoons_wastafel: string
-  badkamer_douche: string
-  badkamer_bad: string
-  badkamer_baddouche: string
-  badkamer_bubbelfunctie_bad: string
-  badkamer_volledige_afscheiding_douche: string
-  badkamer_handdoekenradiator: string
-  badkamer_kast_bij_wastafel: string
-  badkamer_kastruimte: string
-  badkamer_stopcontacten: string
-  badkamer_eenhandsmengkraan: string
-  badkamer_thermostatische_mengkraan: string
-
-  // Toiletruimte (select "0".."5", zie APART_TOILET_FIELDS in fieldDefinitions.ts)
-  apart_toilet_hangend: string
-  apart_toilet_wastafel: string
-
-  // Keuken (select "0".."5", zie KEUKEN_FIELDS in fieldDefinitions.ts)
-  keuken_aanrechtlengte_meters: string | null
-  keuken_inbouw_afzuiginstallatie: string
-  keuken_inbouw_kookplaat_inductie: string
-  keuken_inbouw_kookplaat_keramisch: string
-  keuken_inbouw_kookplaat_gas: string
-  keuken_inbouw_koelkast: string
-  keuken_inbouw_vrieskast: string
-  keuken_inbouw_oven_elektrisch: string
-  keuken_inbouw_oven_gas: string
-  keuken_inbouw_magnetron: string
-  keuken_inbouw_vaatwasmachine: string
-  keuken_extra_kastruimte: string
-  keuken_eenhandsmengkraan: string
-  keuken_thermostatische_mengkraan: string
-  keuken_eenhandsmengkraan_kookfunctie: string
-  keuken_thermostatische_mengkraan_kookfunctie: string
-  keuken_kokendwaterfunctie: string
-
   // Binnenruimtes
   binnenruimtes: Binnenruimte[]
-  bad_douche_wastafel_andere_ruimte: string | null
-  keuken_andere_ruimte: string | null
 
-  // Buitenruimtes
+  // Buitenruimtes (a Parkeerruimte holds the parkeerplekken and laadpalen)
   buitenruimtes: Buitenruimte[]
 
-  // Buitenruimte & parkeren
-  buitenruimte_prive_buitenruimte: number
-  buitenruimte_gemeenschappelijke_buitenruimte: number
-  parkeerruimte_gesloten_garage_bij_complex: number
-  parkeerruimte_buiten_bij_complex_met_dak: number
-  parkeerruimte_buiten_bij_complex_zonder_dak: number
-
-  // Woninggegevens (overlap met PuntentellerInvoerwaarden, onderdeel van hetzelfde record)
+  // Woninggegevens (overlap with PuntentellerInvoerwaarden, part of the same record)
+  bouwjaar: number | null
+  /** What the energieprestatie is based on; decides which of the three fields below is sent. */
+  energie_type: EnergieType
   energielabel_klasse: string
+  energie_index: number | null
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
@@ -119,14 +118,13 @@ type GebruikersinvoerFormValues = {
   // Bijzonderheden
   monument: boolean
   monument_soort: string | null
-  // Ja/nee-vragen ("true"/"false"), zie JA_NEE_VRAGEN in StepBijzonderheden.tsx
+  // Ja/nee-vragen ("true"/"false"), see JA_NEE_VRAGEN in fieldDefinitions.ts
   zorgwoning: string
   voorzieningen_voor_mensen_met_handicap: string
   opgeleverd_2015_tot_en_met_2019: string
   in_gebruik_genomen_na_1_juli_2024: string
   kleiner_dan_40_m2_opgeleverd_2018_2022: string
   bijzondere_voorziening_intercom_met_beeld: string
-  bijzondere_voorziening_laadpaal: number
 }
 
 type Gebruikersinvoer = GebruikersinvoerFormValues & {

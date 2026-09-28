@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Grid, Heading, Paragraph } from "@amsterdam/design-system-react"
 import { RadioControl } from "@amsterdam/ee-ads-rhf"
+import { REQUIRED_MESSAGES } from "../fieldDefinitions"
 
 type Props = {
   index: number
@@ -81,7 +82,7 @@ export function VerwarmdVerkoeldFields({
               { label: "Ja", value: "true" },
               { label: "Nee", value: "false" },
             ]}
-            registerOptions={{ required: "Geef aan of de ruimte verwarmd is" }}
+            registerOptions={{ required: REQUIRED_MESSAGES.verwarmd }}
             inFieldSet
           />
         </Grid.Cell>
@@ -99,7 +100,7 @@ export function VerwarmdVerkoeldFields({
               { label: "Ja", value: "true" },
               { label: "Nee", value: "false" },
             ]}
-            registerOptions={{ required: "Geef aan of de ruimte verkoeld is" }}
+            registerOptions={{ required: REQUIRED_MESSAGES.verkoeld }}
             disabled={!verwarmdIsJa}
             inFieldSet
           />

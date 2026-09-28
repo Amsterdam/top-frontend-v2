@@ -2,61 +2,18 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useAddressInvoerwaarden, useSaveGebruikersinvoer } from "@/api/hooks"
 import { useToast } from "@/components/toasts/useToast"
+import { findMissingFields } from "./helpers/findMissingFields"
+import { mapFormValuesToPayload } from "./helpers/mapFormValuesToPayload"
 import { mapInvoerwaardenToFormValues } from "./helpers/mapInvoerwaardenToFormValues"
 
 const defaultValues: GebruikersinvoerFormValues = {
-  badkamer_toilet_hangend: "0",
-  badkamer_toilet_normaal: "0",
-  badkamer_wastafel: "0",
-  badkamer_meerpersoons_wastafel: "0",
-  // Required, like keuken_aanrechtlengte_meters below, so this starts unanswered: with "0" the
-  // required check would pass without a choice ("0" isn't one of its options).
-  badkamer_douche: "",
-  badkamer_bad: "0",
-  badkamer_baddouche: "0",
-  badkamer_bubbelfunctie_bad: "0",
-  badkamer_volledige_afscheiding_douche: "0",
-  badkamer_handdoekenradiator: "0",
-  badkamer_kast_bij_wastafel: "0",
-  badkamer_kastruimte: "0",
-  badkamer_stopcontacten: "0",
-  badkamer_eenhandsmengkraan: "0",
-  badkamer_thermostatische_mengkraan: "0",
-  apart_toilet_hangend: "0",
-  apart_toilet_wastafel: "0",
-
-  // Required (unlike the "0"-defaulted count fields), so this starts unanswered, same as
-  // badkamer_douche above and energielabel_klasse/type_woning below.
-  keuken_aanrechtlengte_meters: "",
-  keuken_inbouw_afzuiginstallatie: "0",
-  keuken_inbouw_kookplaat_inductie: "0",
-  keuken_inbouw_kookplaat_keramisch: "0",
-  keuken_inbouw_kookplaat_gas: "0",
-  keuken_inbouw_koelkast: "0",
-  keuken_inbouw_vrieskast: "0",
-  keuken_inbouw_oven_elektrisch: "0",
-  keuken_inbouw_oven_gas: "0",
-  keuken_inbouw_magnetron: "0",
-  keuken_inbouw_vaatwasmachine: "0",
-  keuken_extra_kastruimte: "0",
-  keuken_eenhandsmengkraan: "0",
-  keuken_thermostatische_mengkraan: "0",
-  keuken_eenhandsmengkraan_kookfunctie: "0",
-  keuken_thermostatische_mengkraan_kookfunctie: "0",
-  keuken_kokendwaterfunctie: "0",
-
   binnenruimtes: [],
   buitenruimtes: [],
-  bad_douche_wastafel_andere_ruimte: null,
-  keuken_andere_ruimte: null,
 
-  buitenruimte_prive_buitenruimte: 0,
-  buitenruimte_gemeenschappelijke_buitenruimte: 0,
-  parkeerruimte_gesloten_garage_bij_complex: 0,
-  parkeerruimte_buiten_bij_complex_met_dak: 0,
-  parkeerruimte_buiten_bij_complex_zonder_dak: 0,
-
+  bouwjaar: null,
+  energie_type: "bouwjaar",
   energielabel_klasse: "",
+  energie_index: null,
   gebruiksoppervlakte: 0,
   woz_waarde: 0,
   woz_peildatum_jaar: new Date().getFullYear(),
@@ -71,10 +28,19 @@ const defaultValues: GebruikersinvoerFormValues = {
   in_gebruik_genomen_na_1_juli_2024: "false",
   kleiner_dan_40_m2_opgeleverd_2018_2022: "false",
   bijzondere_voorziening_intercom_met_beeld: "false",
-  bijzondere_voorziening_laadpaal: 0,
 }
 
-export function useGebruikersinvoerForm(bagId?: string) {
+type Options = {
+  /** Called once the backend has saved the invoer and returned the berekening. */
+  onCalculated?: () => void
+  /** Called instead of saving while required fields are missing (see findMissingFields). */
+  onMissingFields?: () => void
+}
+
+export function useGebruikersinvoerForm(
+  bagId?: string,
+  { onCalculated, onMissingFields }: Options = {},
+) {
   const {
     data: invoerwaarden,
     isPending,
@@ -94,19 +60,37 @@ export function useGebruikersinvoerForm(bagId?: string) {
     if (!invoerwaarden) return
 
     const mapped = mapInvoerwaardenToFormValues(invoerwaarden)
+    form.setValue("bouwjaar", mapped.bouwjaar)
     form.setValue("gebruiksoppervlakte", mapped.gebruiksoppervlakte)
     form.setValue("woz_waarde", mapped.woz_waarde)
     form.setValue("woz_peildatum_jaar", mapped.woz_peildatum_jaar)
+    form.setValue("energie_type", mapped.energie_type)
     form.setValue("energielabel_klasse", mapped.energielabel_klasse)
+    form.setValue("energie_index", mapped.energie_index)
   }, [invoerwaarden, form])
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {
-    saveGebruikersinvoer.mutate(values, {
+    // handleSubmit only validates the fields of the current step (the overzicht has none).
+    if (findMissingFields(values, invoerwaarden).length > 0) {
+      onMissingFields?.()
+      return
+    }
+
+    saveGebruikersinvoer.mutate(mapFormValuesToPayload(values), {
       onSuccess: () => {
         showToast({
           title: "Puntenteller opgeslagen!",
-          description: "De invoer voor dit adres is succesvol opgeslagen.",
+          description: "De invoer is opgeslagen en de punten zijn berekend.",
           severity: "success",
+        })
+        onCalculated?.()
+      },
+      onError: () => {
+        showToast({
+          title: "Opslaan mislukt",
+          description:
+            "Er is iets misgegaan bij het opslaan en berekenen. Probeer het opnieuw.",
+          severity: "error",
         })
       },
     })
@@ -119,5 +103,6 @@ export function useGebruikersinvoerForm(bagId?: string) {
     isError,
     onSubmit,
     isSubmitting: saveGebruikersinvoer.isPending,
+    resultaat: saveGebruikersinvoer.data,
   }
 }

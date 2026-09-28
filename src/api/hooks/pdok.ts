@@ -48,3 +48,38 @@ export const useBagPdokSearch = (
     enabled: !(options?.lazy ?? false),
   })
 }
+
+/** The hoofdadres of a verblijfsobject (the bagId in our URLs), or null when PDOK has none. */
+const getBagPdokAddress = async (
+  bagId: string,
+): Promise<BAGPdokAddress | null> => {
+  const queryString = stringifyQueryParams({
+    fq: `adresseerbaarobject_id:${bagId} ${ADDRESS_FILTER}`,
+    fl: FIELD_LIST,
+    rows: 1,
+  })
+
+  const response = await fetch(`${PDOK_URL}/free${queryString}`)
+
+  if (!response.ok) {
+    throw new Error(`PDOK-aanvraag mislukt: ${response.status}`)
+  }
+
+  const data: BAGPdokResponse = await response.json()
+  return data.response.docs[0] ?? null
+}
+
+/**
+ * The PDOK address of a bagId, e.g. for its weergavenaam. Picking an address in the search
+ * puts it in the cache already (see PuntentellerPage), so this only fetches after a refresh
+ * or when a link is opened directly.
+ */
+export const useBagPdokAddress = (bagId?: string) => {
+  return useQuery({
+    queryKey: queryKeys.pdok.address(bagId ?? ""),
+    queryFn: () => getBagPdokAddress(bagId!),
+    enabled: !!bagId,
+    // An address doesn't change during a session.
+    staleTime: Infinity,
+  })
+}

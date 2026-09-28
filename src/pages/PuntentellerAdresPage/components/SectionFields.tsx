@@ -9,6 +9,8 @@ import { QuantityCheckboxList } from "./QuantityCheckbox"
 import { QuantityCheckboxField } from "./QuantityCheckboxField"
 
 type Props = {
+  /** The binnenruimte (its index in binnenruimtes) these voorzieningen belong to. */
+  index: number
   fields: readonly FieldDefinition[]
 }
 
@@ -21,7 +23,10 @@ const isOptionsSelectField = (
  * count fields (the default) as a single-column QuantityCheckboxList. Selects always come
  * first, so a section mixing both doesn't keep its definition order. See fieldDefinitions.ts.
  */
-export function SectionFields({ fields }: Props) {
+export function SectionFields({ index, fields }: Props) {
+  const path = (name: FieldDefinition["name"]) =>
+    `binnenruimtes.${index}.${name}` as Path<GebruikersinvoerFormValues>
+
   const selectFields = fields.filter(isOptionsSelectField)
   const countFields = fields.filter(
     (field): field is CountField => !isOptionsSelectField(field),
@@ -33,7 +38,7 @@ export function SectionFields({ fields }: Props) {
         <SelectControl<GebruikersinvoerFormValues>
           key={name}
           label={label}
-          name={name as Path<GebruikersinvoerFormValues>}
+          name={path(name)}
           options={options}
           registerOptions={required ? { required } : undefined}
           inFieldSet={inFieldSet}
@@ -44,7 +49,7 @@ export function SectionFields({ fields }: Props) {
           {countFields.map((field) => (
             <QuantityCheckboxField
               key={field.name}
-              name={field.name as Path<GebruikersinvoerFormValues>}
+              name={path(field.name)}
               label={field.label}
               max={field.max}
             />

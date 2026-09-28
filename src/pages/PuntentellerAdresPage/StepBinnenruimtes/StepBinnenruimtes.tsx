@@ -12,6 +12,7 @@ import { StepActions } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
 import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BinnenruimteFields } from "./BinnenruimteFields"
+import { emptyVoorzieningen } from "./binnenruimteConfig"
 
 const BINNENRUIMTE_TYPES: BinnenruimteType[] = [
   "Woonkamer",
@@ -49,6 +50,7 @@ const emptyBinnenruimte = (type: BinnenruimteType): Binnenruimte => ({
   oppervlakte: null,
   verwarmd: null,
   verkoeld: null,
+  ...emptyVoorzieningen(type),
 })
 
 type Props = {
@@ -56,8 +58,9 @@ type Props = {
 }
 
 export function StepBinnenruimtes({ onNextStep }: Props) {
-  const { control } = useFormContext<GebruikersinvoerFormValues>()
-  const { fields, append, remove } = useFieldArray({
+  const { control, getValues, clearErrors } =
+    useFormContext<GebruikersinvoerFormValues>()
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "binnenruimtes",
   })
@@ -74,11 +77,17 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
     add,
     edit,
     save,
+    cancel,
     remove: removeRoom,
   } = useOpenRoom({
     count: fields.length,
     append,
     remove,
+    getRoom: (index) => getValues(`binnenruimtes.${index}`),
+    restore: (index, room) => {
+      update(index, room)
+      clearErrors(`binnenruimtes.${index}`)
+    },
   })
   const openType = openIndex !== null ? fields[openIndex]?.type : undefined
   const handleAdd = (type: BinnenruimteType) => add(emptyBinnenruimte(type))
@@ -145,6 +154,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
             label={roomLabels[openIndex]}
             type={fields[openIndex].type}
             onSave={save}
+            onCancel={cancel}
           />
         </Grid.Cell>
       )}
