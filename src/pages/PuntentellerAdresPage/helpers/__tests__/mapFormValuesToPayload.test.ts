@@ -238,7 +238,7 @@ describe("mapFormValuesToPayload", () => {
       ])
     })
 
-    it("sends one parkeerruimte per plek, handing out the laadpalen one by one", () => {
+    it("sends a parkeerruimte with its plekken per type and laadpalen", () => {
       const payload = mapFormValuesToPayload(
         formValues({
           buitenruimtes: [
@@ -253,20 +253,16 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
-      const plek = (
-        type: PayloadParkeerruimte["type"],
-        laadpaal: boolean,
-      ): PayloadParkeerruimte => ({
-        naam: "buitenruimte_parkeerplaats",
-        type,
-        aantal_adressen_met_toegang_en_gebruiksrecht: 3,
-        laadpaal,
-      })
       expect(payload.buitenruimten).toEqual([])
       expect(payload.parkeerruimten).toEqual([
-        plek("gesloten_garage_bij_complex", true),
-        plek("buiten_bij_complex_zonder_dak", true),
-        plek("buiten_bij_complex_zonder_dak", false),
+        {
+          naam: "buitenruimte_parkeerplaats",
+          aantal_gesloten_garage_bij_complex: 1,
+          aantal_buiten_bij_complex_met_dak: 0,
+          aantal_buiten_bij_complex_zonder_dak: 2,
+          aantal_adressen_met_toegang_en_gebruiksrecht: 3,
+          aantal_laadpalen: 2,
+        },
       ])
       expect(payload.bijzondere_voorziening_laadpalen).toBe(0)
     })
@@ -286,7 +282,7 @@ describe("mapFormValuesToPayload", () => {
       )
 
       expect(payload.parkeerruimten).toEqual([
-        expect.objectContaining({ laadpaal: true }),
+        expect.objectContaining({ aantal_laadpalen: 1 }),
       ])
       expect(payload.bijzondere_voorziening_laadpalen).toBe(2)
     })

@@ -107,15 +107,15 @@ type PayloadBuitenruimte =
       aantal_adressen_met_toegang_en_gebruiksrecht: number
     }
 
-/** One parkeerplek (ParkeerruimteSerializer). */
+/** One parkeerruimte with its plekken per type (ParkeerruimteSerializer); needs at least one
+ * plek, and no more laadpalen than plekken. */
 type PayloadParkeerruimte = {
   naam: "buitenruimte_parkeerplaats"
-  type:
-    | "gesloten_garage_bij_complex"
-    | "buiten_bij_complex_met_dak"
-    | "buiten_bij_complex_zonder_dak"
+  aantal_gesloten_garage_bij_complex: number
+  aantal_buiten_bij_complex_met_dak: number
+  aantal_buiten_bij_complex_zonder_dak: number
   aantal_adressen_met_toegang_en_gebruiksrecht: number
-  laadpaal: boolean
+  aantal_laadpalen: number
 }
 
 type GebruikersinvoerPayload = {

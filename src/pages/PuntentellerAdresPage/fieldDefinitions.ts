@@ -62,6 +62,7 @@ export const REQUIRED_MESSAGES = {
   verwarmd: "Geef aan of de ruimte verwarmd is",
   verkoeld: "Geef aan of de ruimte verkoeld is",
   aantal_adressen: "Vul het aantal adressen in.",
+  parkeerplekken: "Kies minimaal 1 type parkeerplek.",
 } as const
 
 export const WONINGGEGEVENS_FIELDS = [
@@ -337,6 +338,10 @@ export const PARKEERPLEK_FIELDS = [
     label: "Buiten zonder dak behorend tot het complex",
   },
 ] as const
+
+/** A parkeerruimte needs at least one parkeerplek, of any of the PARKEERPLEK_FIELDS types. */
+export const hasParkeerplek = (ruimte?: Partial<Buitenruimte>) =>
+  PARKEERPLEK_FIELDS.some(({ name }) => Number(ruimte?.[name]) > 0)
 
 export const GEEN_MONUMENT = "geen_monument"
 

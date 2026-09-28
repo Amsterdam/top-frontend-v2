@@ -1,4 +1,9 @@
-import { BIJZONDERHEDEN_FIELDS, REQUIRED_MESSAGES } from "../fieldDefinitions"
+import {
+  BIJZONDERHEDEN_FIELDS,
+  hasParkeerplek,
+  PARKEERPLEK_FIELDS,
+  REQUIRED_MESSAGES,
+} from "../fieldDefinitions"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import { getRoomLabels } from "./getRoomLabels"
 
@@ -91,7 +96,7 @@ export function findMissingFields(
     }
   })
 
-  // Buitenruimtes; a parkeerruimte doesn't ask the oppervlakte.
+  // Buitenruimtes; a parkeerruimte doesn't ask the oppervlakte, but needs a parkeerplek.
   const buitenruimtes = values.buitenruimtes ?? []
   const buitenLabels = getRoomLabels(buitenruimtes)
   buitenruimtes.forEach((ruimte, index) => {
@@ -111,6 +116,10 @@ export function findMissingFields(
       ruimte.aantal_adressen,
       REQUIRED_MESSAGES.aantal_adressen,
     )
+    // At least one parkeerplek; linked to the first type's checkbox (see BuitenruimteFields).
+    if (ruimte.type === "Parkeerruimte" && !hasParkeerplek(ruimte)) {
+      room(PARKEERPLEK_FIELDS[0].name, "", REQUIRED_MESSAGES.parkeerplekken)
+    }
   })
 
   // Bijzonderheden

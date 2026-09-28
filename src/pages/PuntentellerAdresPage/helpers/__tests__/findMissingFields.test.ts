@@ -179,6 +179,7 @@ describe("findMissingFields", () => {
             buitenruimte("Parkeerruimte", {
               oppervlakte: null,
               aantal_adressen: null,
+              parkeerplekken_buiten_zonder_dak: "1",
             }),
           ],
         }),
@@ -190,6 +191,31 @@ describe("findMissingFields", () => {
         message: "Parkeerruimte: Vul het aantal adressen in.",
       },
     ])
+  })
+
+  it("requires at least one parkeerplek for a parkeerruimte", () => {
+    expect(
+      findMissingFields(
+        complete({ buitenruimtes: [buitenruimte("Parkeerruimte")] }),
+      ),
+    ).toEqual([
+      {
+        step: 2,
+        name: "buitenruimtes.0.parkeerplekken_afgesloten_parkeergarage",
+        message: "Parkeerruimte: Kies minimaal 1 type parkeerplek.",
+      },
+    ])
+    expect(
+      names(
+        complete({
+          buitenruimtes: [
+            buitenruimte("Parkeerruimte", {
+              parkeerplekken_buiten_met_dak: "2",
+            }),
+          ],
+        }),
+      ),
+    ).toEqual([])
   })
 
   it("lists the missing bijzonderheden", () => {

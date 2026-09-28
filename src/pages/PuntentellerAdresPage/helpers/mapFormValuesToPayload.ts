@@ -185,18 +185,10 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
   return ruimten
 }
 
-// The form's parkeerplek fields per backend type.
-const PARKEERPLEK_TYPES = [
-  ["parkeerplekken_afgesloten_parkeergarage", "gesloten_garage_bij_complex"],
-  ["parkeerplekken_buiten_met_dak", "buiten_bij_complex_met_dak"],
-  ["parkeerplekken_buiten_zonder_dak", "buiten_bij_complex_zonder_dak"],
-] as const
-
 /**
- * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. The form asks
- * a Parkeerruimte for the number of plekken per type and its laadpalen; the backend wants one
- * object per plek, each with or without a laadpaal. So the laadpalen go to the plekken one by
- * one; any left over (more laadpalen than plekken) count as losse laadpalen.
+ * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. A Parkeerruimte
+ * is sent as is, with its plekken per type and laadpalen. The backend doesn't accept more
+ * laadpalen than plekken, so any left over count as losse laadpalen.
  */
 function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
   const buitenruimten: PayloadBuitenruimte[] = []
@@ -207,19 +199,29 @@ function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
     const aantalAdressen = count(ruimte.aantal_adressen) || 1
 
     if (ruimte.type === "Parkeerruimte") {
-      let laadpalen = count(ruimte.laadpaal)
-      for (const [veld, type] of PARKEERPLEK_TYPES) {
-        for (let plek = 0; plek < count(ruimte[veld]); plek++) {
-          parkeerruimten.push({
-            naam: "buitenruimte_parkeerplaats",
-            type,
-            aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
-            laadpaal: laadpalen > 0,
-          })
-          laadpalen = Math.max(laadpalen - 1, 0)
-        }
-      }
-      losseLaadpalen += laadpalen
+      const parkeerruimte = {
+        naam: "buitenruimte_parkeerplaats",
+        aantal_gesloten_garage_bij_complex: count(
+          ruimte.parkeerplekken_afgesloten_parkeergarage,
+        ),
+        aantal_buiten_bij_complex_met_dak: count(
+          ruimte.parkeerplekken_buiten_met_dak,
+        ),
+        aantal_buiten_bij_complex_zonder_dak: count(
+          ruimte.parkeerplekken_buiten_zonder_dak,
+        ),
+        aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
+      } as const
+      const plekken =
+        parkeerruimte.aantal_gesloten_garage_bij_complex +
+        parkeerruimte.aantal_buiten_bij_complex_met_dak +
+        parkeerruimte.aantal_buiten_bij_complex_zonder_dak
+      const laadpalen = count(ruimte.laadpaal)
+      parkeerruimten.push({
+        ...parkeerruimte,
+        aantal_laadpalen: Math.min(laadpalen, plekken),
+      })
+      losseLaadpalen += Math.max(laadpalen - plekken, 0)
       continue
     }
 
