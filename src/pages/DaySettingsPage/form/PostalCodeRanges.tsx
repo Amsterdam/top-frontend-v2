@@ -60,6 +60,7 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
                       message: "De startpostcode mag maximaal 1384 zijn. ",
                     },
                   }}
+                  inFieldSet
                 />
               </Column>
               <Column>
@@ -81,6 +82,7 @@ export function PostalCodeRanges({ name }: PostalCodeRangesProps) {
                       message: "De eindpostcode mag maximaal 1384 zijn. ",
                     },
                   }}
+                  inFieldSet
                 />
               </Column>
               <Column align="end">

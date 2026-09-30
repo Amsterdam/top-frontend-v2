@@ -25,6 +25,7 @@ export default function DaySettingsCard({
     <Grid.Cell span="all">
       <Card
         title={daySetting.name}
+        headingLevel={2}
         icon={SettingsIcon}
         actions={
           <ActionGroup>

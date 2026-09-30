@@ -15,6 +15,8 @@ type Props = {
   actions?: ReactNode
   className?: string
   icon?: IconProps["svg"]
+  /** Level of the title heading; also sizes the icon so both align. */
+  headingLevel?: 1 | 2 | 3 | 4
   loading?: boolean
   loadingBody?: ReactNode
   loadingLabel?: string
@@ -27,13 +29,18 @@ export function Card({
   actions,
   className,
   icon,
+  headingLevel = 3,
   loading = false,
   loadingBody,
   loadingLabel,
   error,
 }: Props) {
   const titleContent =
-    typeof title === "string" ? <Heading level={3}>{title}</Heading> : title
+    typeof title === "string" ? (
+      <Heading level={headingLevel}>{title}</Heading>
+    ) : (
+      title
+    )
   const accessibleLoadingLabel =
     loadingLabel ?? (typeof title === "string" ? title : "Kaart")
   const content = loading ? (loadingBody ?? children) : children
@@ -52,7 +59,7 @@ export function Card({
     <Column as="article" className={`${className ?? ""}`}>
       <Row align="between" gap="small" wrap>
         <div className={styles.titleContent}>
-          {icon && <Icon svg={icon} size="heading-3" />}
+          {icon && <Icon svg={icon} size={`heading-${headingLevel}`} />}
           {titleContent}
         </div>
         {actions}

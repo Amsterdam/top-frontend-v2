@@ -1,6 +1,6 @@
 // src/components/ItineraryListItem/ItineraryListItem.tsx
 import {
-  Card,
+  Card as ADSCard,
   Column,
   Heading,
   Paragraph,
@@ -66,7 +66,7 @@ export function ItineraryListItem({
       <Row>
         <Column gap="x-small" style={{ flexGrow: 1, flexShrink: 0 }}>
           <Heading level={3}>
-            <Card.Link
+            <ADSCard.Link
               href={cardLink}
               onClick={(e) => {
                 e.preventDefault()
@@ -74,7 +74,7 @@ export function ItineraryListItem({
               }}
             >
               {formatAddress(address)}
-            </Card.Link>
+            </ADSCard.Link>
           </Heading>
           <Paragraph>{address?.postal_code}</Paragraph>
           <Paragraph>{caseData?.reason?.name}</Paragraph>

@@ -51,10 +51,6 @@ body {
   align-items: flex-end;
 }
 
-.padding-Inline-start {
-  padding-inline-start: 0;
-}
-
 /* A Grid inside a Grid.Cell, for columns within a white block: the cell already has its own
    padding, so the Grid's page gutters would double it. */
 .grid-in-cell {

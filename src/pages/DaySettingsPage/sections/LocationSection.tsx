@@ -26,6 +26,7 @@ export function LocationSection() {
           label="Locatie & Stadsdelen"
           svg={MapMarkerIcon}
           highlightIcon
+          level={2}
         />
       }
     >
@@ -45,6 +46,7 @@ export function LocationSection() {
               required: "Dit veld is verplicht!",
             }}
             columns={isMobile ? 1 : 2}
+            inFieldSet
           />
         </Grid.Cell>
         <Grid.Cell
@@ -62,6 +64,7 @@ export function LocationSection() {
                 required: "Stadsdeel is verplicht",
               }}
               columns={isMobile ? 1 : 3}
+              inFieldSet
             />
           )}
         </Grid.Cell>
