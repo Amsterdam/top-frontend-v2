@@ -46,7 +46,7 @@ export const useSaveDaySetting = ({
           data: payload,
         },
       ),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       if (data?.id) {
         // Store the saved day setting (incl. fresh case_count) in the detail cache.
         // Route params are strings, so key by string id to match useDaySetting.
@@ -59,13 +59,12 @@ export const useSaveDaySetting = ({
         queryKey: queryKeys.daySettings.all,
         exact: true,
       })
-      const weekday = variables.week_days?.[0]
-      if (weekday !== undefined) {
-        // Invalidate the query for the specific team and weekday to ensure fresh data is fetched
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.teamSettings.options(teamId, weekday),
-        })
-      }
+      // Invalidate the options of every weekday: the form sends week_days as
+      // strings (so they don't match the numeric key), and an edit may have
+      // moved the day setting away from its previous weekday.
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.teamSettings.allOptions(teamId),
+      })
     },
   })
 }

@@ -64,6 +64,8 @@ export const queryKeys = {
 
   teamSettings: {
     all: (teamId: string) => ["team-settings", teamId] as const,
+    allOptions: (teamId: string) =>
+      ["team-settings", teamId, "weekday"] as const,
     options: (teamId: string, weekday: number) =>
       ["team-settings", teamId, "weekday", weekday] as const,
     reasons: (teamId: string) => ["team-settings", teamId, "reasons"] as const,
