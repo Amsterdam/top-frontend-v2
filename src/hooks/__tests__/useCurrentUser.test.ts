@@ -14,12 +14,10 @@ describe("useCurrentUser", () => {
 
     vi.doMock("@/api/hooks", () => ({
       useUsers: () => ({
-        data: {
-          results: [
-            { id: "1", username: "john", name: "John Doe" },
-            { id: "2", username: "jane", name: "Jane Doe" },
-          ],
-        },
+        data: [
+          { id: "1", username: "john", name: "John Doe" },
+          { id: "2", username: "jane", name: "Jane Doe" },
+        ],
       }),
     }))
 
@@ -45,12 +43,10 @@ describe("useCurrentUser", () => {
 
     vi.doMock("@/api/hooks", () => ({
       useUsers: () => ({
-        data: {
-          results: [
-            { id: "1", username: "john", name: "John Doe" },
-            { id: "2", username: "jane", name: "Jane Doe" },
-          ],
-        },
+        data: [
+          { id: "1", username: "john", name: "John Doe" },
+          { id: "2", username: "jane", name: "Jane Doe" },
+        ],
       }),
     }))
 

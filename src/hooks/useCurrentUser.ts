@@ -8,10 +8,10 @@ export const useCurrentUser = () => {
 
   return useMemo(
     () =>
-      data?.results.find(
+      data?.find(
         (_) =>
           _.username.toLowerCase() === decodedToken?.unique_name.toLowerCase(),
       ),
-    [data?.results, decodedToken?.unique_name],
+    [data, decodedToken?.unique_name],
   )
 }
