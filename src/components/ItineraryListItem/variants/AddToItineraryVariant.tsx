@@ -9,15 +9,7 @@ type Props = {
 
 export function AddToItineraryVariant({ item }: Props) {
   const caseData = item.case
-  const {
-    canAdd,
-    caseThemeName,
-    hasItineraries,
-    hasMatchingItinerary,
-    onAdd,
-    status,
-    targetItinerary,
-  } = useAddToItinerary(caseData)
+  const { canAdd, onAdd, status, targetItinerary } = useAddToItinerary(caseData)
   const visitWrapperNotification = useVisitWrapperNotification()
 
   useEffect(() => {
@@ -27,15 +19,6 @@ export function AddToItineraryVariant({ item }: Props) {
 
     if (!caseData) {
       visitWrapperNotification.clearNotification()
-      return
-    }
-
-    if (hasItineraries && !hasMatchingItinerary) {
-      visitWrapperNotification.pushNotification({
-        tone: "error",
-        label: `Thema ${caseThemeName} kan niet aan deze looplijst worden toegevoegd.`,
-        icon: ErrorIcon,
-      })
       return
     }
 
@@ -69,15 +52,7 @@ export function AddToItineraryVariant({ item }: Props) {
     }
 
     visitWrapperNotification.clearNotification()
-  }, [
-    caseData,
-    caseThemeName,
-    hasItineraries,
-    hasMatchingItinerary,
-    status,
-    targetItinerary,
-    visitWrapperNotification,
-  ])
+  }, [caseData, status, targetItinerary, visitWrapperNotification])
 
   useEffect(() => {
     if (!visitWrapperNotification) {

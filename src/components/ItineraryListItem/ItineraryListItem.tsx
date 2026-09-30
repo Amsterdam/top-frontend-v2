@@ -79,6 +79,7 @@ export function ItineraryListItem({
           <Paragraph>{address?.postal_code}</Paragraph>
           <Paragraph>{caseData?.reason?.name}</Paragraph>
           <Paragraph>{caseData?.project?.name}</Paragraph>
+          <Paragraph>{caseData?.theme?.name}</Paragraph>
         </Column>
 
         <div style={{ minWidth: 0 }}>

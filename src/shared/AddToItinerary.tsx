@@ -40,10 +40,8 @@ export function AddToItineraryAlert({
 }: AddToItineraryAlertProps) {
   const {
     caseData,
-    caseThemeName,
     hasItineraries,
     hasItinerariesSummarySuccess,
-    hasMatchingItinerary,
     status,
     targetItinerary,
   } = addToItinerary
@@ -77,21 +75,6 @@ export function AddToItineraryAlert({
       >
         <Paragraph>
           Maak eerst een looplijst aan voordat je een zaak toevoegt.
-        </Paragraph>
-      </Alert>
-    )
-  }
-
-  if (hasItinerariesSummarySuccess && !hasMatchingItinerary) {
-    return (
-      <Alert
-        closeable={false}
-        heading="Toevoegen aan looplijst niet mogelijk"
-        headingLevel={2}
-        severity="error"
-      >
-        <Paragraph>
-          {`Thema ${caseThemeName} kan niet aan deze looplijst worden toegevoegd.`}
         </Paragraph>
       </Alert>
     )
