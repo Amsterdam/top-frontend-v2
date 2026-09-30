@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  type QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 import { useApiFetch } from "@/api/useApiFetch"
 import { makeApiUrl } from "@/api/utils/makeApiUrl"
 import { queryKeys } from "@/api/queryKeys"
@@ -22,6 +27,29 @@ export const useDaySettings = () => {
   return useQuery({
     queryKey: queryKeys.daySettings.all,
     queryFn: () => fetch<DaySettings[]>(makeApiUrl("day-settings")),
+  })
+}
+
+/**
+ * Day settings are also served via team settings: the team settings page lists
+ * them (day_settings_list) and the list create page offers them per weekday.
+ * Invalidate every weekday: the form sends week_days as strings (so they don't
+ * match the numeric key), and an edit may move a day setting to another day.
+ */
+const invalidateTeamDaySettings = (
+  queryClient: QueryClient,
+  teamId: string,
+) => {
+  queryClient.invalidateQueries({
+    queryKey: queryKeys.daySettings.all,
+    exact: true,
+  })
+  queryClient.invalidateQueries({
+    queryKey: queryKeys.teamSettings.all(teamId),
+    exact: true,
+  })
+  queryClient.invalidateQueries({
+    queryKey: queryKeys.teamSettings.allOptions(teamId),
   })
 }
 
@@ -55,16 +83,7 @@ export const useSaveDaySetting = ({
           data,
         )
       }
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.daySettings.all,
-        exact: true,
-      })
-      // Invalidate the options of every weekday: the form sends week_days as
-      // strings (so they don't match the numeric key), and an edit may have
-      // moved the day setting away from its previous weekday.
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.teamSettings.allOptions(teamId),
-      })
+      invalidateTeamDaySettings(queryClient, teamId)
     },
   })
 }
@@ -72,13 +91,11 @@ export const useSaveDaySetting = ({
 type DeleteDaySettingOptions = {
   daySettingId: number
   teamId: string
-  weekday?: number
 }
 
 export const useDeleteDaySetting = ({
   daySettingId,
   teamId,
-  weekday,
 }: DeleteDaySettingOptions) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
@@ -89,11 +106,10 @@ export const useDeleteDaySetting = ({
         method: "DELETE",
       }),
     onSuccess: () => {
-      if (weekday !== undefined) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.teamSettings.options(teamId, weekday),
-        })
-      }
+      queryClient.removeQueries({
+        queryKey: queryKeys.daySettings.detail(String(daySettingId)),
+      })
+      invalidateTeamDaySettings(queryClient, teamId)
     },
   })
 }

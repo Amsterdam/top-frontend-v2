@@ -10,7 +10,6 @@ type Props = {
   daySetting: DaySettings
   teamSettingsOptions: TeamSettingsOptions
   teamId: string
-  weekday: number
   animationDelay?: number
 }
 
@@ -18,7 +17,6 @@ export default function DaySettingsCard({
   daySetting,
   teamSettingsOptions,
   teamId,
-  weekday,
 }: Props) {
   const navigate = useNavigate()
   return (
@@ -45,7 +43,6 @@ export default function DaySettingsCard({
               daySettingId={daySetting.id}
               daySettingName={daySetting.name}
               teamId={teamId}
-              weekday={weekday}
             />
           </ActionGroup>
         }
