@@ -1,4 +1,4 @@
-// src/pages/DaySettingsPage/useDaySettingsForm.ts
+// src/pages/DaySettingsPage/useDaySettingsForm.tsx
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import dayjs from "dayjs"
@@ -120,21 +120,32 @@ export function useDaySettingsForm({
           const count = res.case_count?.count
           const action = daySettingsId ? "bijgewerkt" : "aangemaakt"
 
-          let countText = ""
+          let countText: React.ReactNode = null
           if (count !== undefined) {
             if (count === 0) {
-              countText = " Er zijn geen beschikbare bezoeken."
+              countText = " Er zijn geen bezoeken beschikbaar."
             } else {
-              const noun =
-                count === 1 ? "beschikbaar bezoek" : "beschikbare bezoeken"
+              const noun = count === 1 ? "bezoek" : "bezoeken"
               const verb = count === 1 ? "is" : "zijn"
-              countText = ` Er ${verb} ${count} ${noun}.`
+              countText = (
+                <>
+                  {` Er ${verb} `}
+                  <strong>
+                    {count} {noun}
+                  </strong>{" "}
+                  beschikbaar.
+                </>
+              )
             }
           }
 
           showToast({
             title: "Daginstelling opgeslagen!",
-            description: `De daginstelling is succesvol ${action}.${countText}`,
+            description: (
+              <>
+                De daginstelling is succesvol {action}.{countText}
+              </>
+            ),
             severity: "success",
           })
           onSuccess?.(res.id)

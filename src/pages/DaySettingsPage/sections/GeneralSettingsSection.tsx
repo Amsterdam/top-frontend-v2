@@ -28,6 +28,7 @@ export function GeneralSettingsSection() {
             label="Naam van de daginstelling"
             name="name"
             registerOptions={{ required: "Naam is verplicht" }}
+            inFieldSet
           />
         </Grid.Cell>
 
