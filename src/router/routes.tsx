@@ -16,6 +16,7 @@ import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
 import ChooseListPage from "@/pages/ChooseListPage/ChooseListPage"
 import PuntentellerPage from "@/pages/PuntentellerPage/PuntentellerPage"
 import PuntentellerAdresPage from "@/pages/PuntentellerAdresPage/PuntentellerAdresPage"
+import VeelgesteldeVragenPage from "@/pages/VeelgesteldeVragenPage/VeelgesteldeVragenPage"
 import RequirePermissions from "./RequirePermissions"
 import { APP_PERMISSIONS } from "@/shared/permissions"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
@@ -56,11 +57,15 @@ export const routes = [
         element: <SelectStartAddressPage />,
       },
       { path: "looplijsten/nieuw", element: <ChooseThemePage /> },
-      // The puntenteller is not live yet: only routed outside PROD (runtime env, same build as ACC).
+      // The puntenteller and FAQ are not live yet: only routed outside PROD (runtime env, same build as ACC).
       ...(isAcceptanceOrLocalEnvironment()
         ? [
             { path: "puntenteller", element: <PuntentellerPage /> },
             { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
+            {
+              path: "veelgestelde-vragen",
+              element: <VeelgesteldeVragenPage />,
+            },
           ]
         : []),
       {

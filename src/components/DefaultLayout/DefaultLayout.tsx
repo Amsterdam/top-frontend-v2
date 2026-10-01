@@ -12,6 +12,7 @@ import {
   AwardRibbonIcon,
   HouseCanalIcon,
   LogOutIcon,
+  QuestionMarkCircleIcon,
   SearchIcon,
   SettingsIcon,
   WiFiIcon,
@@ -59,6 +60,12 @@ const menuItems: MenuItem[] = [
     icon: SettingsIcon,
     label: "Instellingen",
     requiredPermissions: APP_PERMISSIONS.manageSettings,
+  },
+  {
+    href: "/veelgestelde-vragen",
+    icon: QuestionMarkCircleIcon,
+    label: "Veelgestelde vragen",
+    nonProdOnly: true,
   },
 ]
 
