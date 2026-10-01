@@ -192,7 +192,8 @@ export default function CreateListPage() {
             />
 
             <RadioControl<FormValues>
-              label="Wat voor looplijst wil je maken?"
+              label="Welke daginstelling wil je gebruiken?"
+              description="De daginstelling bepaalt welke zaken in aanmerking komen voor je looplijst."
               name="daySettingsId"
               options={teamSettingsDayOptions}
               registerOptions={{
