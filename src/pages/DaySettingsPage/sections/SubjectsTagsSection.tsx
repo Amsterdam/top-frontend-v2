@@ -21,6 +21,7 @@ export function SubjectsTagsSection({ themeId }: Props) {
           label="Onderwerpen & Tags"
           highlightIcon
           iconComponent={<TagIcon />}
+          level={2}
         />
       }
     >
@@ -33,6 +34,7 @@ export function SubjectsTagsSection({ themeId }: Props) {
             label="Met welke onderwerpen wil je dat de looplijsten gegenereerd worden?"
             name="subjects"
             options={mapToOptions("id", "name", subjects)}
+            inFieldSet
           />
         </Grid.Cell>
         <Grid.Cell
@@ -43,6 +45,7 @@ export function SubjectsTagsSection({ themeId }: Props) {
             label="Met welke tags wil je dat de looplijsten gegenereerd worden?"
             name="tags"
             options={mapToOptions("id", "name", tags)}
+            inFieldSet
           />
         </Grid.Cell>
       </Grid>

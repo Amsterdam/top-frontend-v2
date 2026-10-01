@@ -24,6 +24,7 @@ export function ReasonsProjectsSection({ themeId }: Props) {
           label="Openingsredenen & Projecten"
           highlightIcon
           svg={FolderIcon}
+          level={2}
         />
       }
     >
@@ -39,6 +40,7 @@ export function ReasonsProjectsSection({ themeId }: Props) {
             registerOptions={{
               required: "Minimaal één openingsreden is verplicht",
             }}
+            inFieldSet
           />
         </Grid.Cell>
         <Grid.Cell
@@ -49,6 +51,7 @@ export function ReasonsProjectsSection({ themeId }: Props) {
             label="Met welke projecten wil je dat de looplijsten gegenereerd worden?"
             name="project_ids"
             options={mapToOptions("id", "name", caseProjects)}
+            inFieldSet
           />
         </Grid.Cell>
       </Grid>

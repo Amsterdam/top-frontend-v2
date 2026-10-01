@@ -24,6 +24,7 @@ export function PlanningPrioritySection({ themeId }: Props) {
           label="Planning & Prioriteit"
           highlightIcon
           svg={CalendarIcon}
+          level={2}
         />
       }
     >
@@ -39,6 +40,7 @@ export function PlanningPrioritySection({ themeId }: Props) {
             registerOptions={{
               required: "Minimaal één status is verplicht",
             }}
+            inFieldSet
           />
         </Grid.Cell>
 
@@ -53,6 +55,7 @@ export function PlanningPrioritySection({ themeId }: Props) {
             registerOptions={{
               required: "Minimaal één dagdeel is verplicht",
             }}
+            inFieldSet
           />
         </Grid.Cell>
 
@@ -67,6 +70,7 @@ export function PlanningPrioritySection({ themeId }: Props) {
             registerOptions={{
               required: "Minimaal één weekdeel is verplicht",
             }}
+            inFieldSet
           />
         </Grid.Cell>
         <Grid.Cell
@@ -80,6 +84,7 @@ export function PlanningPrioritySection({ themeId }: Props) {
             registerOptions={{
               required: "Minimaal één prioriteit is verplicht",
             }}
+            inFieldSet
           />
         </Grid.Cell>
       </Grid>

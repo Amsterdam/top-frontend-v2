@@ -10,7 +10,6 @@ type Props = {
   daySetting: DaySettings
   teamSettingsOptions: TeamSettingsOptions
   teamId: string
-  weekday: number
   animationDelay?: number
 }
 
@@ -18,13 +17,13 @@ export default function DaySettingsCard({
   daySetting,
   teamSettingsOptions,
   teamId,
-  weekday,
 }: Props) {
   const navigate = useNavigate()
   return (
     <Grid.Cell span="all">
       <Card
         title={daySetting.name}
+        headingLevel={2}
         icon={SettingsIcon}
         actions={
           <ActionGroup>
@@ -44,7 +43,6 @@ export default function DaySettingsCard({
               daySettingId={daySetting.id}
               daySettingName={daySetting.name}
               teamId={teamId}
-              weekday={weekday}
             />
           </ActionGroup>
         }

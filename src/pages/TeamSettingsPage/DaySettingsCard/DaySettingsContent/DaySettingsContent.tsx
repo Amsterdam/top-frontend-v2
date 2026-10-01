@@ -9,6 +9,7 @@ import {
   UnorderedList,
 } from "@amsterdam/design-system-react"
 import { formatDate } from "@/shared/dateFormatters"
+import { NO_OPENING_DATE } from "@/shared/constants/daySettings"
 import { mapIdsToNames, mapIdsToObjects } from "../utils"
 import styles from "./DaySettingsContent.module.css"
 
@@ -102,11 +103,17 @@ export default function DaySettingsContent({
     teamSettingsOptions?.scheduleTypes?.priorities,
   )
 
+  const hasOpeningDate =
+    !!daySetting.opening_date &&
+    formatDate(daySetting.opening_date, "YYYY-MM-DD") !== NO_OPENING_DATE
+
   return (
     <div className={styles.masonry}>
-      <InfoRow title="Openingsdatum">
+      <InfoRow title="Ingepland vanaf">
         <Paragraph>
-          {formatDate(daySetting.opening_date, "D MMM YYYY", "-")}
+          {hasOpeningDate
+            ? formatDate(daySetting.opening_date, "D MMM YYYY", "-")
+            : "Geen (alle zaken)"}
         </Paragraph>
       </InfoRow>
 

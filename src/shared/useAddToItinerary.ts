@@ -15,11 +15,9 @@ type StatusState = {
 
 export type AddToItinerary = {
   caseData?: Case
-  caseThemeName?: string
   canAdd: boolean
   hasItineraries: boolean
   hasItinerariesSummarySuccess: boolean
-  hasMatchingItinerary: boolean
   isAlreadyInTargetItinerary: boolean
   onAdd: () => Promise<void>
   status: AddToItineraryStatus
@@ -37,11 +35,12 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
   const caseId = caseData ? String(caseData.id) : undefined
   const status =
     statusState.caseId === caseId ? statusState.value : ("idle" as const)
-  const caseThemeName = caseData?.theme?.name
-  const matchingItineraries = (itineraries ?? []).filter(
-    (itinerary) => itinerary.theme === caseThemeName,
-  )
-  const targetItinerary = matchingItineraries[0]
+  // A case of any theme can be added. Prefer an itinerary of the case's own
+  // theme, otherwise fall back to the first itinerary.
+  const targetItinerary =
+    itineraries?.find(
+      (itinerary) => itinerary.theme === caseData?.theme?.name,
+    ) ?? itineraries?.[0]
   const { data: targetItineraryDetail, isSuccess: hasTargetItineraryDetail } =
     useItinerary(targetItinerary ? String(targetItinerary.id) : undefined)
 
@@ -77,11 +76,9 @@ export function useAddToItinerary(caseData?: Case): AddToItinerary {
 
   return {
     caseData,
-    caseThemeName,
     canAdd,
     hasItineraries: (itineraries?.length ?? 0) > 0,
     hasItinerariesSummarySuccess,
-    hasMatchingItinerary: matchingItineraries.length > 0,
     isAlreadyInTargetItinerary,
     onAdd,
     status,

@@ -9,25 +9,23 @@ export function DeleteDaySettingsButton({
   daySettingId,
   daySettingName,
   teamId,
-  weekday,
 }: {
   daySettingId: number
   daySettingName: string
   teamId: string
-  weekday: number
 }) {
   const deleteDaySetting = useDeleteDaySetting({
     daySettingId,
     teamId,
-    weekday,
   })
   const { showToast } = useToast()
   const dialogId = `delete-day-setting-${daySettingId}`
-  const { openDialog } = useDialog(dialogId)
+  const { openDialog, closeDialog } = useDialog(dialogId)
 
   const handleDelete = () => {
     deleteDaySetting.mutate(undefined, {
       onSuccess: () => {
+        closeDialog()
         showToast({
           title: "Instelling verwijderd",
           description: `De instelling "${daySettingName}" is succesvol verwijderd.`,
