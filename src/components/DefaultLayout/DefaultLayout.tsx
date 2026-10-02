@@ -65,7 +65,6 @@ const menuItems: MenuItem[] = [
     href: "/veelgestelde-vragen",
     icon: QuestionMarkCircleIcon,
     label: "Veelgestelde vragen",
-    nonProdOnly: true,
   },
 ]
 
