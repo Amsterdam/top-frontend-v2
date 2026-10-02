@@ -57,15 +57,12 @@ export const routes = [
         element: <SelectStartAddressPage />,
       },
       { path: "looplijsten/nieuw", element: <ChooseThemePage /> },
-      // The puntenteller and FAQ are not live yet: only routed outside PROD (runtime env, same build as ACC).
+      { path: "veelgestelde-vragen", element: <VeelgesteldeVragenPage /> },
+      // The puntenteller is not live yet: only routed outside PROD (runtime env, same build as ACC).
       ...(isAcceptanceOrLocalEnvironment()
         ? [
             { path: "puntenteller", element: <PuntentellerPage /> },
             { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
-            {
-              path: "veelgestelde-vragen",
-              element: <VeelgesteldeVragenPage />,
-            },
           ]
         : []),
       {
