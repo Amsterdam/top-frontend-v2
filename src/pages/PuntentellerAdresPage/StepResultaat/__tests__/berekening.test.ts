@@ -57,7 +57,7 @@ describe("correcties", () => {
       ),
     ).toEqual([
       {
-        label: "WOZ-punten boven 33%",
+        label: "Aftopping WOZ-punten",
         note: "WOZ telt voor maximaal 33% van het totaal mee",
         punten: -20,
       },
@@ -77,7 +77,7 @@ describe("correcties", () => {
     )
 
     expect(list).toEqual([
-      expect.objectContaining({ label: "WOZ-punten boven 33%", punten: -20 }),
+      expect.objectContaining({ label: "Aftopping WOZ-punten", punten: -20 }),
       expect.objectContaining({ label: "Minimaal 186 punten", punten: 6 }),
     ])
   })
@@ -95,7 +95,7 @@ describe("correcties", () => {
     )
 
     expect(list.map(({ label }) => label)).toEqual([
-      "WOZ-punten boven 33%",
+      "Aftopping WOZ-punten",
       "Minimaal 186 punten",
       "Zorgwoning",
     ])

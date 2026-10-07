@@ -160,7 +160,7 @@ export function BerekeningCard({ resultaat }: Props) {
                   {note && <Paragraph size="small">{note}</Paragraph>}
                 </Table.Cell>
               )}
-              <Table.Cell align="end">
+              <Table.Cell align="end" className={styles.punten}>
                 {strong ? <strong>{punten}</strong> : punten}
               </Table.Cell>
             </Table.Row>
@@ -169,7 +169,7 @@ export function BerekeningCard({ resultaat }: Props) {
         <Table.Footer>
           <Table.Row>
             <Table.HeaderCell scope="row">Totaal</Table.HeaderCell>
-            <Table.Cell align="end">
+            <Table.Cell align="end" className={styles.punten}>
               <strong>{formatPunten(resultaat.totaal_punten_na_caps)}</strong>
             </Table.Cell>
           </Table.Row>

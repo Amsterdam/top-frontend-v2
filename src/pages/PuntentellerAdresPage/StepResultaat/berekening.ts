@@ -59,7 +59,7 @@ export function correcties(resultaat: PuntentellerResultaat): Correctie[] {
   const capEffect = naCap - resultaat.totaal_punten_bruto
   if (Math.abs(capEffect) >= 0.005) {
     list.push({
-      label: "WOZ-punten boven 33%",
+      label: "Aftopping WOZ-punten",
       note: "WOZ telt voor maximaal 33% van het totaal mee",
       punten: capEffect,
     })

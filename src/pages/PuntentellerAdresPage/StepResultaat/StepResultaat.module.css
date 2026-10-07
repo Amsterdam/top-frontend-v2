@@ -85,3 +85,8 @@
   display: inline-block;
   inline-size: 0.75rem;
 }
+
+/* The punten column of the berekening: "− 422,5" stays on one line; the label wraps instead. */
+.punten {
+  white-space: nowrap;
+}
