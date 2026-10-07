@@ -11,6 +11,13 @@ import {
 } from "./form/postalCodeRangeValidation"
 import type { FormValues } from "./types"
 
+// Nullable booleans are edited as a select: "" (no preference), "true" or "false"
+const toTriState = (value?: boolean | null) =>
+  value === true ? "true" : value === false ? "false" : ""
+
+const fromTriState = (value?: string | null) =>
+  value === "true" ? true : value === "false" ? false : null
+
 type Options = {
   themeId: string
   dayOfWeek?: string
@@ -89,13 +96,11 @@ export function useDaySettingsForm({
         housing_corporations: toStringArray(
           daySetting.housing_corporations ?? [],
         ),
-        housing_corporation_combiteam:
-          daySetting.housing_corporation_combiteam === true
-            ? "true"
-            : daySetting.housing_corporation_combiteam === false
-              ? "false"
-              : "",
+        housing_corporation_combiteam: toTriState(
+          daySetting.housing_corporation_combiteam,
+        ),
       }),
+      is_bed_and_breakfast: toTriState(daySetting.is_bed_and_breakfast),
     })
   }, [daySetting, form])
 
@@ -105,13 +110,10 @@ export function useDaySettingsForm({
     setIsLoading(true)
     const payload = { ...values } as unknown as DaySettingsPayload
     payload.opening_date = values.opening_date || NO_OPENING_DATE
-    if (values.housing_corporation_combiteam === "true") {
-      payload.housing_corporation_combiteam = true
-    } else if (values.housing_corporation_combiteam === "false") {
-      payload.housing_corporation_combiteam = false
-    } else {
-      payload.housing_corporation_combiteam = null
-    }
+    payload.housing_corporation_combiteam = fromTriState(
+      values.housing_corporation_combiteam,
+    )
+    payload.is_bed_and_breakfast = fromTriState(values.is_bed_and_breakfast)
     if (values.postal_codes_type === "stadsdeel") {
       payload.postal_code_ranges = []
     } else {

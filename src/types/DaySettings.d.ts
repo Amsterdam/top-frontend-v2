@@ -38,6 +38,7 @@ type DaySettingsPayload = Omit<
   | "districts"
   | "housing_corporation_combiteam"
   | "housing_corporations"
+  | "is_bed_and_breakfast"
   | "priorities"
   | "project_ids"
   | "reasons"
@@ -54,6 +55,7 @@ type DaySettingsPayload = Omit<
   districts?: string[] | null
   housing_corporation_combiteam?: string | boolean | null
   housing_corporations?: string[] | null
+  is_bed_and_breakfast?: string | boolean | null
   priorities?: string[] | null
   project_ids?: string[] | null
   reasons?: string[] | null

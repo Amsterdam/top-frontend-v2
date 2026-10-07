@@ -26,7 +26,6 @@ export function LocationSection() {
           label="Locatie & Stadsdelen"
           svg={MapMarkerIcon}
           highlightIcon
-          level={2}
         />
       }
     >

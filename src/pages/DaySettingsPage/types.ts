@@ -3,6 +3,7 @@ export type FormValues = {
   districts: string[]
   housing_corporation_combiteam?: string | null
   housing_corporations?: string[]
+  is_bed_and_breakfast?: string | null
   // id?: number
   name: string
   opening_date: string
