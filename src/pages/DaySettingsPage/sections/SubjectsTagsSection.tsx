@@ -21,7 +21,6 @@ export function SubjectsTagsSection({ themeId }: Props) {
           label="Onderwerpen & Tags"
           highlightIcon
           iconComponent={<TagIcon />}
-          level={2}
         />
       }
     >

@@ -24,7 +24,6 @@ export function ReasonsProjectsSection({ themeId }: Props) {
           label="Openingsredenen & Projecten"
           highlightIcon
           svg={FolderIcon}
-          level={2}
         />
       }
     >

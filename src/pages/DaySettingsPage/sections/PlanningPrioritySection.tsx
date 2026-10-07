@@ -24,7 +24,6 @@ export function PlanningPrioritySection({ themeId }: Props) {
           label="Planning & Prioriteit"
           highlightIcon
           svg={CalendarIcon}
-          level={2}
         />
       }
     >

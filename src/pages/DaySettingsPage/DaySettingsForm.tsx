@@ -12,6 +12,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { GeneralSettingsSection } from "./sections/GeneralSettingsSection"
 import { LocationSection } from "./sections/LocationSection"
 import { CorporationsSection } from "./sections/CorporationsSection"
+import { BedAndBreakfastSection } from "./sections/BedAndBreakfastSection"
 import { ReasonsProjectsSection } from "./sections/ReasonsProjectsSection"
 import { SubjectsTagsSection } from "./sections/SubjectsTagsSection"
 import { PlanningPrioritySection } from "./sections/PlanningPrioritySection"
@@ -39,6 +40,7 @@ export default function DaySettingsForm({
   onCancel,
 }: Props) {
   const isThemeOnderhuur = themeName === "Onderhuur"
+  const isThemeVakantieverhuur = themeName === "Vakantieverhuur"
 
   const { formState } = form
   const ranges = useWatch({
@@ -53,6 +55,7 @@ export default function DaySettingsForm({
         <GeneralSettingsSection />
         <LocationSection />
         {isThemeOnderhuur && <CorporationsSection />}
+        {isThemeVakantieverhuur && <BedAndBreakfastSection />}
         <ReasonsProjectsSection themeId={themeId} />
         <SubjectsTagsSection themeId={themeId} />
         <PlanningPrioritySection themeId={themeId} />

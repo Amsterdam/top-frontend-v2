@@ -14,7 +14,7 @@ export function HeadingWithIcon({
   label,
   svg,
   iconComponent: IconComponent, // Destructure en hernoem voor intern gebruik
-  level = 3,
+  level = 2,
   highlightIcon = false,
 }: HeadingWithIconProps) {
   const size = `heading-${level}` as IconProps["size"]

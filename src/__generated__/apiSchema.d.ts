@@ -848,6 +848,7 @@ export interface components {
             districts?: number[] | null;
             housing_corporations?: number[] | null;
             housing_corporation_combiteam?: boolean | null;
+            is_bed_and_breakfast?: boolean | null;
             readonly team_settings: components["schemas"]["TeamSettingsCompact"];
             readonly used_today_count: number;
             max_use_limit?: number;
@@ -973,6 +974,7 @@ export interface components {
             districts?: number[] | null;
             housing_corporations?: number[] | null;
             housing_corporation_combiteam?: boolean | null;
+            is_bed_and_breakfast?: boolean | null;
             team_settings: string;
             readonly used_today_count: number;
             max_use_limit?: number;
@@ -1240,6 +1242,7 @@ export interface components {
             districts?: number[] | null;
             housing_corporations?: number[] | null;
             housing_corporation_combiteam?: boolean | null;
+            is_bed_and_breakfast?: boolean | null;
             readonly team_settings?: components["schemas"]["TeamSettingsCompact"];
             readonly used_today_count?: number;
             max_use_limit?: number;

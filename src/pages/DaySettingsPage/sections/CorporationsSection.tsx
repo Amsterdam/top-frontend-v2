@@ -35,6 +35,7 @@ export function CorporationsSection() {
               { label: "Ja", value: "true" },
               { label: "Nee", value: "false" },
             ]}
+            inFieldSet
           />
         </Grid.Cell>
         <Grid.Cell
@@ -46,6 +47,7 @@ export function CorporationsSection() {
             name="housing_corporations"
             options={mapToOptions("id", "name", corporations)}
             columns={isMobile ? 1 : 2}
+            inFieldSet
           />
         </Grid.Cell>
       </Grid>

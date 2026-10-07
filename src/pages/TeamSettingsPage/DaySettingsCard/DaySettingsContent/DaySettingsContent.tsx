@@ -55,6 +55,8 @@ export default function DaySettingsContent({
   teamSettingsOptions,
 }: Props) {
   const isThemeOnderhuur = daySetting?.team_settings?.name === "Onderhuur"
+  const isThemeVakantieverhuur =
+    daySetting?.team_settings?.name === "Vakantieverhuur"
 
   const housingCorporationNames = mapIdsToNames(
     daySetting.housing_corporations,
@@ -129,6 +131,18 @@ export default function DaySettingsContent({
             {renderNamesList(housingCorporationNames)}
           </InfoRow>
         </>
+      )}
+
+      {isThemeVakantieverhuur && (
+        <InfoRow title="Bed & Breakfast">
+          <Paragraph>
+            {daySetting.is_bed_and_breakfast === true
+              ? "Alleen B&B-zaken"
+              : daySetting.is_bed_and_breakfast === false
+                ? "Geen B&B-zaken"
+                : "Geen voorkeur"}
+          </Paragraph>
+        </InfoRow>
       )}
 
       {daySetting?.postal_code_ranges?.length > 0 && (
