@@ -10,6 +10,7 @@ import { RuimteTable } from "../components/RuimteTable"
 import { RuimteTypeButtons } from "../components/RuimteTypeButtons"
 import { StepActions } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
+import { useFocusOpenRoom } from "../helpers/useFocusOpenRoom"
 import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BinnenruimteFields } from "./BinnenruimteFields"
 import { emptyVoorzieningen } from "./binnenruimteConfig"
@@ -91,6 +92,9 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
     },
   })
   const openType = openIndex !== null ? fields[openIndex]?.type : undefined
+  const openRoomRef = useFocusOpenRoom(
+    openIndex !== null ? fields[openIndex]?.id : undefined,
+  )
   const handleAdd = (type: BinnenruimteType) => add(emptyBinnenruimte(type))
 
   return (
@@ -146,7 +150,7 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
       </Grid.Cell>
 
       {openIndex !== null && (
-        <Grid.Cell span="all">
+        <Grid.Cell span="all" ref={openRoomRef}>
           <Heading level={2} className="ams-mb-m">
             {roomLabels[openIndex]}
           </Heading>

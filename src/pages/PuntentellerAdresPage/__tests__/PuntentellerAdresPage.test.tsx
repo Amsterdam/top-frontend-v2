@@ -6,6 +6,11 @@ import {
   waitFor,
 } from "@testing-library/react"
 import type { ReactNode } from "react"
+import {
+  FormProvider as RhfFormProvider,
+  useFormContext,
+  type UseFormReturn,
+} from "react-hook-form"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import PuntentellerAdresPage from "../PuntentellerAdresPage"
 
@@ -88,18 +93,32 @@ vi.mock("@amsterdam/ee-ads-rhf", async (importOriginal) => {
       onSubmit,
     }: {
       children: ReactNode
-      form: { handleSubmit: (fn: (values: unknown) => void) => () => void }
-      onSubmit: (values: unknown) => void
-    }) => <form onSubmit={form.handleSubmit(onSubmit)}>{children}</form>,
+      form: UseFormReturn<GebruikersinvoerFormValues>
+      onSubmit: (values: GebruikersinvoerFormValues) => void
+    }) => (
+      <RhfFormProvider {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>{children}</form>
+      </RhfFormProvider>
+    ),
   }
 })
 
 const { stepPlaceholder } = vi.hoisted(() => ({
   stepPlaceholder: (label: string, isLastStep = false) =>
     function StepPlaceholder({ onNextStep }: { onNextStep?: () => void }) {
+      const { setValue } = useFormContext<GebruikersinvoerFormValues>()
       return (
         <div>
           <p>{label}</p>
+          {[1970, 1990].map((bouwjaar) => (
+            <button
+              key={bouwjaar}
+              type="button"
+              onClick={() => setValue("bouwjaar", bouwjaar)}
+            >
+              Bouwjaar {bouwjaar}
+            </button>
+          ))}
           {isLastStep ? (
             <button type="submit">Sla op en bereken</button>
           ) : (
@@ -128,7 +147,12 @@ vi.mock("../StepOverzicht/StepOverzicht", () => ({
   StepOverzicht: stepPlaceholder("Stap overzicht", true),
 }))
 vi.mock("../StepResultaat/StepResultaat", () => ({
-  StepResultaat: () => <p>Stap resultaat</p>,
+  StepResultaat: () => (
+    <div>
+      <p>Stap resultaat</p>
+      <button type="submit">Opnieuw opslaan</button>
+    </div>
+  ),
 }))
 
 describe("PuntentellerAdresPage", () => {
@@ -219,6 +243,146 @@ describe("PuntentellerAdresPage", () => {
     expect(mockShowToast).toHaveBeenCalledWith(
       expect.objectContaining({ severity: "success" }),
     )
+  })
+
+  describe("niet-opgeslagen wijzigingen", () => {
+    const save = async () => {
+      fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+      fireEvent.click(
+        await screen.findByRole("button", { name: "Sla op en bereken" }),
+      )
+    }
+    const changeBouwjaar = (bouwjaar: number) =>
+      fireEvent.click(
+        screen.getByRole("button", { name: `Bouwjaar ${bouwjaar}` }),
+      )
+
+    beforeEach(() => {
+      mockMutate.mockImplementation(
+        (_values: unknown, { onSuccess }: { onSuccess: () => void }) =>
+          onSuccess(),
+      )
+    })
+
+    it("doesn't warn before the first save", async () => {
+      render(<PuntentellerAdresPage />)
+
+      await screen.findByText("Stap woninggegevens")
+      changeBouwjaar(1990)
+
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+    })
+
+    it("marks the Resultaat tab as niet actueel while a change is unsaved", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+      expect(screen.getByRole("link", { name: "Resultaat" })).toBeDefined()
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+
+      expect(
+        await screen.findByRole("link", {
+          name: /^Resultaat ?, niet actueel$/,
+        }),
+      ).toBeDefined()
+
+      changeBouwjaar(1970)
+
+      expect(
+        await screen.findByRole("link", { name: "Resultaat" }),
+      ).toBeDefined()
+    })
+
+    it("doesn't warn on the steps with fields, nor once the change is undone", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+
+      changeBouwjaar(1970)
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+
+      expect(await screen.findByText("Stap resultaat")).toBeDefined()
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+    })
+
+    it("warns on the resultaat-stap that the resultaat isn't up to date, and links to the overzicht", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+
+      expect(
+        await screen.findByRole("heading", {
+          name: "Dit resultaat is niet actueel",
+        }),
+      ).toBeDefined()
+
+      fireEvent.click(screen.getByRole("link", { name: "overzicht" }))
+
+      expect(await screen.findByText("Stap overzicht")).toBeDefined()
+    })
+
+    it("saves and shows the resultaat-stap again when submitting from the resultaat-stap", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+      fireEvent.click(
+        await screen.findByRole("button", { name: "Opnieuw opslaan" }),
+      )
+
+      expect(await screen.findByText("Stap resultaat")).toBeDefined()
+      expect(mockMutate).toHaveBeenCalledTimes(2)
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+    })
+
+    it("opens the overzicht-stap when saving from the resultaat-stap is blocked by missing fields", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+      mockFindMissingFields.mockReturnValue([
+        { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
+      ])
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+      fireEvent.click(
+        await screen.findByRole("button", { name: "Opnieuw opslaan" }),
+      )
+
+      expect(await screen.findByText("Stap overzicht")).toBeDefined()
+      expect(mockMutate).toHaveBeenCalledTimes(1)
+    })
+
+    it("stops warning once the changes are saved", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+      await save()
+
+      expect(await screen.findByText("Stap resultaat")).toBeDefined()
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+    })
   })
 
   it("shows an error toast and stays on the overzicht-stap when the berekening fails", async () => {

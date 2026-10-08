@@ -100,7 +100,7 @@ export function StepBijzonderheden({ onNextStep }: Props) {
       </Grid.Cell>
 
       <Grid.Cell span="all" appearance="transparent">
-        <StepActions onNextStep={onNextStep} />
+        <StepActions onNextStep={onNextStep} nextStepLabel="Naar overzicht" />
       </Grid.Cell>
     </>
   )

@@ -1,10 +1,11 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useAddressInvoerwaarden, useSaveGebruikersinvoer } from "@/api/hooks"
 import { useToast } from "@/components/toasts/useToast"
 import { findMissingFields } from "./helpers/findMissingFields"
 import { mapFormValuesToPayload } from "./helpers/mapFormValuesToPayload"
 import { mapInvoerwaardenToFormValues } from "./helpers/mapInvoerwaardenToFormValues"
+import { GEEN_MONUMENT } from "./fieldDefinitions"
 
 const defaultValues: GebruikersinvoerFormValues = {
   binnenruimtes: [],
@@ -20,7 +21,7 @@ const defaultValues: GebruikersinvoerFormValues = {
   type_woning: null,
 
   monument: false,
-  monument_soort: null,
+  monument_soort: GEEN_MONUMENT,
   zorgwoning: "false",
   woonvoorziening_handicap: "false",
   woonvoorziening_handicap_netto_investering: "",
@@ -48,6 +49,12 @@ export function useGebruikersinvoerForm(
   } = useAddressInvoerwaarden(bagId)
   const saveGebruikersinvoer = useSaveGebruikersinvoer({ bagId })
   const { showToast } = useToast()
+  // The last successful save: its payload (as JSON) to tell whether the form has changed
+  // since, and its resultaat, which stays when saving again fails.
+  const [lastSave, setLastSave] = useState<{
+    payload: string
+    resultaat: PuntentellerResultaat
+  }>()
 
   const form = useForm<GebruikersinvoerFormValues>({
     mode: "onChange",
@@ -76,8 +83,10 @@ export function useGebruikersinvoerForm(
       return
     }
 
-    saveGebruikersinvoer.mutate(mapFormValuesToPayload(values), {
-      onSuccess: () => {
+    const payload = mapFormValuesToPayload(values)
+    saveGebruikersinvoer.mutate(payload, {
+      onSuccess: (resultaat) => {
+        setLastSave({ payload: JSON.stringify(payload), resultaat })
         showToast({
           title: "Puntenteller opgeslagen!",
           description: "De invoer is opgeslagen en de punten zijn berekend.",
@@ -103,6 +112,7 @@ export function useGebruikersinvoerForm(
     isError,
     onSubmit,
     isSubmitting: saveGebruikersinvoer.isPending,
-    resultaat: saveGebruikersinvoer.data,
+    resultaat: lastSave?.resultaat,
+    savedPayload: lastSave?.payload,
   }
 }

@@ -156,7 +156,7 @@ export function BinnenruimteFields({
             onClick={handleSaveClick}
             variant="secondary"
           >
-            {label} toevoegen
+            {label} opslaan
           </Button>
           <Button type="button" onClick={onCancel} variant="tertiary">
             Annuleren

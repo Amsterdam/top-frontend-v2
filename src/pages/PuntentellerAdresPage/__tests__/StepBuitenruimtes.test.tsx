@@ -61,6 +61,16 @@ describe("StepBuitenruimtes", () => {
     expect(form!.getValues("buitenruimtes")).toEqual([])
   })
 
+  it("focuses the oppervlakte of a buitenruimte once it's opened for editing", () => {
+    render(<Harness values={{ buitenruimtes: [balkon(8)] }} onForm={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Wijzigen" }))
+
+    expect(document.activeElement?.getAttribute("name")).toBe(
+      "buitenruimtes.0.oppervlakte",
+    )
+  })
+
   it("undoes the edits of a saved buitenruimte on Annuleren, including its errors", async () => {
     let form: Form | undefined
     render(
@@ -74,7 +84,7 @@ describe("StepBuitenruimtes", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Wijzigen" }))
     fireEvent.change(oppervlakteInput(), { target: { value: "" } })
-    fireEvent.click(screen.getByRole("button", { name: "Balkon toevoegen" }))
+    fireEvent.click(screen.getByRole("button", { name: "Balkon opslaan" }))
     expect(
       (await screen.findAllByText("Vul de oppervlakte in.")).length,
     ).toBeGreaterThan(0)

@@ -1,0 +1,7 @@
+/* Sits in the tab's title, an inline span. The icon's box rests on the text's baseline; the
+   small drop centres it on the letters (vertical-align: middle puts it visibly too low). */
+.icon {
+  color: var(--ams-color-feedback-warning);
+  margin-inline-start: 0.5rem;
+  vertical-align: -0.1em;
+}

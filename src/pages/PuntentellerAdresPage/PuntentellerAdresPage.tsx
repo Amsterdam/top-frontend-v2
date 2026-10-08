@@ -21,6 +21,8 @@ import { useBagPdokAddress } from "@/api/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
 import type { MissingField } from "./helpers/findMissingFields"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
+import { UnsavedChangesAlert } from "./components/UnsavedChangesAlert"
+import { UnsavedChangesMarker } from "./components/UnsavedChangesMarker"
 import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
 import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
 import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
@@ -77,9 +79,15 @@ export default function PuntentellerAdresPage() {
     onSubmit,
     isSubmitting,
     resultaat,
+    savedPayload,
   } = useGebruikersinvoerForm(bagId, {
     onCalculated: () => setCurrentStep(5),
-    onMissingFields: () => invalidFormAlertRef.current?.focus(),
+    // Saving can also be tried from the resultaat-stap (ResubmitButton); the missing fields
+    // are listed on the overzicht.
+    onMissingFields: () => {
+      flushSync(() => setCurrentStep(4))
+      invalidFormAlertRef.current?.focus()
+    },
   })
   const currentTabIndex = TAB_ITEMS.findIndex(
     ({ firstStep, lastStep }) =>
@@ -117,12 +125,15 @@ export default function PuntentellerAdresPage() {
       key="step-4"
       invoerwaarden={invoerwaarden}
       isSubmitting={isSubmitting}
+      savedPayload={savedPayload}
       onGoToField={goToField}
       invalidFormAlertRef={invalidFormAlertRef}
     />,
     <StepResultaat
       key="step-5"
       resultaat={resultaat}
+      savedPayload={savedPayload}
+      isSubmitting={isSubmitting}
       onPreviousStep={() => setCurrentStep(4)}
     />,
   ]
@@ -175,11 +186,23 @@ export default function PuntentellerAdresPage() {
                   }}
                 >
                   {title}
+                  {firstStep === 5 && (
+                    <UnsavedChangesMarker savedPayload={savedPayload} />
+                  )}
                 </TabNavigation.Link>
               ))}
             </TabNavigation.List>
           </TabNavigation>
         </Grid.Cell>
+
+        {/* Only where the punten are shown; the overzicht-stap says it in its own text and
+            submit button. */}
+        {!isError && currentStep === 5 && (
+          <UnsavedChangesAlert
+            savedPayload={savedPayload}
+            onGoToOverzicht={() => setCurrentStep(4)}
+          />
+        )}
 
         {!isError && steps[currentStep]}
       </Grid>
