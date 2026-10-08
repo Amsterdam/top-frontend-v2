@@ -98,7 +98,7 @@ describe("BuitenruimteFields", () => {
     fireEvent.click(
       screen.getByLabelText("Buiten met dak behorend bij het complex"),
     )
-    fireEvent.click(screen.getByRole("button", { name: /toevoegen/ }))
+    fireEvent.click(screen.getByRole("button", { name: /opslaan/ }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
     expect(getStepperInput().value).toBe("3")
@@ -108,7 +108,7 @@ describe("BuitenruimteFields", () => {
     const onSave = vi.fn()
     renderFields("Parkeerruimte", onSave)
 
-    fireEvent.click(screen.getByRole("button", { name: /toevoegen/ }))
+    fireEvent.click(screen.getByRole("button", { name: /opslaan/ }))
     // Shown both above the parkeerplekken and in the InvalidFormAlert.
     expect(
       await screen.findAllByText("Kies minimaal 1 type parkeerplek."),
@@ -125,7 +125,7 @@ describe("BuitenruimteFields", () => {
       ).toHaveLength(0),
     )
 
-    fireEvent.click(screen.getByRole("button", { name: /toevoegen/ }))
+    fireEvent.click(screen.getByRole("button", { name: /opslaan/ }))
     await waitFor(() => expect(onSave).toHaveBeenCalled())
   })
 })

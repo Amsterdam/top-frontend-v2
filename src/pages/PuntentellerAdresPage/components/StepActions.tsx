@@ -5,12 +5,17 @@ import {
   SaveIcon,
 } from "@amsterdam/design-system-react-icons"
 
-/** The id of the "Sla op en bereken" button, so the overzicht can link to it. */
-export const SUBMIT_BUTTON_ID = "sla-op-en-bereken"
+export const SUBMIT_LABEL = "Sla op en bereken"
+/** The submit label once the form has changed since the last save. */
+export const RESUBMIT_LABEL = "Wijzigingen opslaan en herberekenen"
 
 type Props = {
   onNextStep?: () => void
+  /** The label of the next step button; "Volgende stap" unless the step says where it leads. */
+  nextStepLabel?: string
   isLastStep?: boolean
+  /** Whether the form has changed since the last save, which the submit button then says. */
+  hasUnsavedChanges?: boolean
   isSubmitting?: boolean
 }
 
@@ -28,7 +33,9 @@ const focusErrors = () =>
 
 export function StepActions({
   onNextStep,
+  nextStepLabel = "Volgende stap",
   isLastStep = false,
+  hasUnsavedChanges = false,
   isSubmitting = false,
 }: Props) {
   const { trigger } = useFormContext<GebruikersinvoerFormValues>()
@@ -48,17 +55,16 @@ export function StepActions({
     <ActionGroup>
       {isLastStep ? (
         <Button
-          id={SUBMIT_BUTTON_ID}
           type="submit"
           icon={SaveIcon}
           iconBefore
           disabled={isSubmitting}
         >
-          Sla op en bereken
+          {hasUnsavedChanges ? RESUBMIT_LABEL : SUBMIT_LABEL}
         </Button>
       ) : (
         <Button type="button" onClick={goToNextStep} icon={ChevronForwardIcon}>
-          Volgende stap
+          {nextStepLabel}
         </Button>
       )}
     </ActionGroup>

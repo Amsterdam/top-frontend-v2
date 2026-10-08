@@ -29,7 +29,7 @@ function Harness({
 describe("StepBijzonderheden", () => {
   afterEach(cleanup)
 
-  it("shows the missing answers in an InvalidFormAlert on Volgende stap, which gets focus", async () => {
+  it("shows the missing answers in an InvalidFormAlert on Naar overzicht, which gets focus", async () => {
     const onNextStep = vi.fn()
     render(
       <Harness
@@ -38,7 +38,7 @@ describe("StepBijzonderheden", () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "Volgende stap" }))
+    fireEvent.click(screen.getByRole("button", { name: "Naar overzicht" }))
 
     const alert = (
       await screen.findByRole("heading", {

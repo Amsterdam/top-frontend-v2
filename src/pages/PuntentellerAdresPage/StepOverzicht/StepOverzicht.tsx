@@ -1,27 +1,33 @@
 import type { MouseEvent, ReactNode, Ref } from "react"
 import {
+  Button,
   Column,
   Grid,
   Heading,
   InvalidFormAlert,
-  Link,
   Paragraph,
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
   HouseIcon,
   ParkingIcon,
+  SaveIcon,
   StarIcon,
 } from "@amsterdam/design-system-react-icons"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Description, type DescriptionItem } from "@/components"
 import { OverzichtSection } from "../components/OverzichtSection"
-import { StepActions, SUBMIT_BUTTON_ID } from "../components/StepActions"
+import {
+  RESUBMIT_LABEL,
+  StepActions,
+  SUBMIT_LABEL,
+} from "../components/StepActions"
 import {
   findMissingFields,
   type MissingField,
 } from "../helpers/findMissingFields"
 import { getRoomLabels } from "../helpers/getRoomLabels"
+import { useHasUnsavedChanges } from "../helpers/useHasUnsavedChanges"
 import {
   formatM2,
   formatMeters,
@@ -209,27 +215,11 @@ function RuimteSpecs<T extends { type: string; oppervlakte: unknown }>({
   })
 }
 
-/**
- * Scrolls to the "Sla op en bereken" button and focuses it, so keyboard users continue from
- * there too; a plain #anchor only scrolls. The scroll is smooth, unless the user asked for
- * reduced motion.
- */
-function focusSubmitButton(event: MouseEvent<HTMLAnchorElement>) {
-  event.preventDefault()
-  const button = document.getElementById(SUBMIT_BUTTON_ID)
-  const reduceMotion = window.matchMedia?.(
-    "(prefers-reduced-motion: reduce)",
-  ).matches
-  button?.scrollIntoView({
-    block: "center",
-    behavior: reduceMotion ? "auto" : "smooth",
-  })
-  button?.focus({ preventScroll: true })
-}
-
 type Props = {
   invoerwaarden?: PuntentellerInvoerwaarden
   isSubmitting?: boolean
+  /** The payload of the last successful save, see useHasUnsavedChanges. */
+  savedPayload?: string
   /** Opens the step of a missing field and focuses it; the field isn't rendered here. */
   onGoToField: (field: MissingField) => void
   /** Lets the page focus the InvalidFormAlert when saving is blocked by missing fields. */
@@ -239,9 +229,11 @@ type Props = {
 export function StepOverzicht({
   invoerwaarden,
   isSubmitting,
+  savedPayload,
   onGoToField,
   invalidFormAlertRef,
 }: Props) {
+  const hasUnsavedChanges = useHasUnsavedChanges(savedPayload)
   const { control } = useFormContext<GebruikersinvoerFormValues>()
   const values = useWatch({ control }) as GebruikersinvoerFormValues
   const missingFields = findMissingFields(values, invoerwaarden)
@@ -283,13 +275,22 @@ export function StepOverzicht({
         <Heading level={2} className="ams-mb-m">
           Overzicht
         </Heading>
-        <Paragraph>
-          Controleer de ingevoerde gegevens. Klopt alles? Kies dan{" "}
-          <Link href={`#${SUBMIT_BUTTON_ID}`} onClick={focusSubmitButton}>
-            Sla op en bereken
-          </Link>{" "}
-          om de punten voor deze woning te berekenen.
+        <Paragraph className="ams-mb-m">
+          {hasUnsavedChanges
+            ? "Je wijzigingen zijn nog niet opgeslagen en tellen nog niet mee in het resultaat. Controleer de gegevens."
+            : "Controleer de ingevoerde gegevens."}{" "}
+          Klopt alles? Kies dan '
+          {hasUnsavedChanges ? RESUBMIT_LABEL : SUBMIT_LABEL}' om de punten voor
+          deze woning {hasUnsavedChanges ? "opnieuw " : ""}te berekenen.
         </Paragraph>
+        <Button
+          type="submit"
+          icon={SaveIcon}
+          iconBefore
+          disabled={isSubmitting}
+        >
+          {hasUnsavedChanges ? RESUBMIT_LABEL : SUBMIT_LABEL}
+        </Button>
       </Grid.Cell>
 
       <OverzichtSection title="Woning" icon={HouseIcon}>
@@ -326,7 +327,11 @@ export function StepOverzicht({
       </OverzichtSection>
 
       <Grid.Cell span="all" appearance="transparent">
-        <StepActions isLastStep isSubmitting={isSubmitting} />
+        <StepActions
+          isLastStep
+          isSubmitting={isSubmitting}
+          hasUnsavedChanges={hasUnsavedChanges}
+        />
       </Grid.Cell>
     </>
   )

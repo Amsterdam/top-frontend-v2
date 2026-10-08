@@ -26,15 +26,17 @@ const binnenruimte = (
 
 function Harness({
   values,
+  savedPayload,
   onGoToField = vi.fn(),
 }: {
   values: Partial<GebruikersinvoerFormValues>
+  savedPayload?: string
   onGoToField?: (field: MissingField) => void
 }) {
   const form = useForm<GebruikersinvoerFormValues>({ defaultValues: values })
   return (
     <FormProvider form={form} onSubmit={vi.fn()}>
-      <StepOverzicht onGoToField={onGoToField} />
+      <StepOverzicht savedPayload={savedPayload} onGoToField={onGoToField} />
     </FormProvider>
   )
 }
@@ -240,17 +242,17 @@ describe("StepOverzicht", () => {
     ).toBeNull()
   })
 
-  it("links to the Sla op en bereken button and focuses it", () => {
-    // jsdom doesn't implement scrollIntoView.
-    Element.prototype.scrollIntoView = vi.fn()
-    render(<Harness values={{ binnenruimtes: [], buitenruimtes: [] }} />)
+  it("names the button after the changes once the form differs from the last save", () => {
+    render(<Harness values={COMPLETE_VALUES} savedPayload="{}" />)
 
-    fireEvent.click(screen.getByRole("link", { name: "Sla op en bereken" }))
-
-    const button = screen.getByRole("button", { name: "Sla op en bereken" })
-    expect(button.scrollIntoView).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: "smooth" }),
-    )
-    expect(document.activeElement).toBe(button)
+    // Above and below the overzicht.
+    expect(
+      screen.getAllByRole("button", {
+        name: "Wijzigingen opslaan en herberekenen",
+      }),
+    ).toHaveLength(2)
+    expect(
+      screen.queryByRole("button", { name: "Sla op en bereken" }),
+    ).toBeNull()
   })
 })

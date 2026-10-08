@@ -63,7 +63,7 @@ export const REQUIRED_MESSAGES = {
 } as const
 
 export const WONINGGEGEVENS_FIELDS = [
-  { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte (m²)" },
+  { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte BAG (m²)" },
   { name: "woz_waarde", label: "WOZ-waarde (€)" },
   { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
   { name: "energie_type", label: "Energieprestatie" },
