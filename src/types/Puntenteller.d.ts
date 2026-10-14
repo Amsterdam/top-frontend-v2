@@ -28,17 +28,36 @@ type PuntentellerInvoerwaarden = {
   energie: PuntentellerEnergie | null
 }
 
+type PuntentellerRegel = {
+  omschrijving: string
+  punten: number
+  /** Label of the ruimte, e.g. "Slaapkamer"; null for a regel over the whole rubriek. */
+  ruimte: string | null
+  aantal: number | null
+  factor: number | null
+}
+
+type PuntentellerRubriek = {
+  naam: string
+  /** Sum of the punten of its regels. */
+  punten: number
+  regels: PuntentellerRegel[]
+}
+
 /** Response of POST /puntenteller/adressen/:bagId/ (PuntentellerResultaatSerializer). */
 type PuntentellerResultaat = {
-  /** Punten per rubriek, e.g. { vertrekken: 32, keuken: 7, woz: 40.5 }. */
-  rubrieken: Record<string, number>
-  energieprestatie_berekening: {
-    categorie: string
-    punten: number
-    punten_voor_monumentcorrectie: number
-    monumentcorrectie_toegepast: boolean
-  }
-  totaal_punten_bruto: number
-  correcties: Record<string, number | boolean | string | null>
-  totaal_punten_na_caps: number
+  /** Sum of the punten of all rubrieken and opslagen. */
+  totaal_punten: number
+  rubrieken: PuntentellerRubriek[]
+  opslagen: PuntentellerRubriek[]
+  /** Opslagen on the maximale huurprijs; they don't count in the punten. */
+  huurprijsopslagen: { naam: string; procent: number }[]
+  huurprijsopslag_procent: number
+  /** Maximale kale huur per maand; null when no huurprijstabel applies. */
+  maximale_huurprijs: {
+    bedrag: number
+    met_opslagen: number
+    /** ISO date of the huurprijstabel used. */
+    prijspeil: string
+  } | null
 }
