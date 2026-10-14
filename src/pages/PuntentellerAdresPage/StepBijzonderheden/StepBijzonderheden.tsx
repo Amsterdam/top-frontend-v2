@@ -9,6 +9,7 @@ import {
 import { RadioControl, TextInputControl } from "@amsterdam/ee-ads-rhf"
 import { StepActions } from "../components/StepActions"
 import { StepInvalidFormAlert } from "../components/StepInvalidFormAlert"
+import { useHasUnsavedChanges } from "../helpers/useHasUnsavedChanges"
 import {
   BIJZONDERHEDEN_FIELDS,
   BIJZONDERHEDEN_SECTIONS,
@@ -58,11 +59,15 @@ function BijzonderhedenField({
 }
 
 type Props = {
-  onNextStep: () => void
+  /** The payload of the last successful save, see useHasUnsavedChanges. */
+  savedPayload?: string
+  isSubmitting?: boolean
 }
 
-export function StepBijzonderheden({ onNextStep }: Props) {
+/** The last step with fields: it saves and calculates, then opens the resultaat-stap. */
+export function StepBijzonderheden({ savedPayload, isSubmitting }: Props) {
   const { control, setValue } = useFormContext<GebruikersinvoerFormValues>()
+  const hasUnsavedChanges = useHasUnsavedChanges(savedPayload)
 
   // monument follows the chosen monument_soort, so the two can't contradict each other.
   const monumentSoort = useWatch({ control, name: "monument_soort" })
@@ -100,10 +105,12 @@ export function StepBijzonderheden({ onNextStep }: Props) {
       </Grid.Cell>
 
       <Grid.Cell span="all" appearance="transparent">
-        <StepActions onNextStep={onNextStep} nextStepLabel="Naar overzicht" />
+        <StepActions
+          isLastStep
+          isSubmitting={isSubmitting}
+          hasUnsavedChanges={hasUnsavedChanges}
+        />
       </Grid.Cell>
     </>
   )
 }
-
-export default StepBijzonderheden

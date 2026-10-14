@@ -8,7 +8,7 @@ import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import { getRoomLabels } from "./getRoomLabels"
 
 /** The wizard steps (see the steps in PuntentellerAdresPage) that hold required fields. */
-export const STEP = {
+const STEP = {
   woninggegevens: 0,
   binnenruimtes: 1,
   buitenruimtes: 2,

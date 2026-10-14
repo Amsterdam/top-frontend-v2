@@ -23,7 +23,7 @@ type SaveGebruikersinvoerOptions = {
 
 /**
  * Saves the gebruikersinvoer; the backend calculates the punten in the same request and only
- * returns the resultaat ("Sla op en bereken" in the overzicht-stap).
+ * returns the resultaat ("Sla op en bereken" in the bijzonderheden- or resultaat-stap).
  */
 export const useSaveGebruikersinvoer = ({
   bagId,

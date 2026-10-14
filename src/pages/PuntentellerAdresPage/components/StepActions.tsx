@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react"
 import { useFormContext } from "react-hook-form"
 import { ActionGroup, Button } from "@amsterdam/design-system-react"
 import {
@@ -11,8 +12,6 @@ export const RESUBMIT_LABEL = "Wijzigingen opslaan en herberekenen"
 
 type Props = {
   onNextStep?: () => void
-  /** The label of the next step button; "Volgende stap" unless the step says where it leads. */
-  nextStepLabel?: string
   isLastStep?: boolean
   /** Whether the form has changed since the last save, which the submit button then says. */
   hasUnsavedChanges?: boolean
@@ -33,7 +32,6 @@ const focusErrors = () =>
 
 export function StepActions({
   onNextStep,
-  nextStepLabel = "Volgende stap",
   isLastStep = false,
   hasUnsavedChanges = false,
   isSubmitting = false,
@@ -41,7 +39,7 @@ export function StepActions({
   const { trigger } = useFormContext<GebruikersinvoerFormValues>()
 
   // Only the current step is rendered, so trigger() validates just its fields (including a
-  // ruimte that's still open). The tabs still let the user skip a step; the overzicht lists
+  // ruimte that's still open). The tabs still let the user skip a step; the resultaat lists
   // whatever is missing then.
   const goToNextStep = async () => {
     if (await trigger()) {
@@ -51,11 +49,23 @@ export function StepActions({
     }
   }
 
+  // Validates the step first like goToNextStep, so a blocked save focuses the step's
+  // InvalidFormAlert too, instead of handleSubmit focusing the first invalid field.
+  const submit = async (event: MouseEvent<HTMLButtonElement>) => {
+    const { form } = event.currentTarget
+    if (await trigger()) {
+      form?.requestSubmit()
+    } else {
+      focusErrors()
+    }
+  }
+
   return (
     <ActionGroup>
       {isLastStep ? (
         <Button
-          type="submit"
+          type="button"
+          onClick={submit}
           icon={SaveIcon}
           iconBefore
           disabled={isSubmitting}
@@ -64,7 +74,7 @@ export function StepActions({
         </Button>
       ) : (
         <Button type="button" onClick={goToNextStep} icon={ChevronForwardIcon}>
-          {nextStepLabel}
+          Volgende stap
         </Button>
       )}
     </ActionGroup>

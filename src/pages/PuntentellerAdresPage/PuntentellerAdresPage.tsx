@@ -9,7 +9,6 @@ import {
 } from "@amsterdam/design-system-react"
 import {
   BedIcon,
-  ClipboardIcon,
   DocumentCheckMarkIcon,
   HouseIcon,
   ParkingIcon,
@@ -27,42 +26,17 @@ import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
 import { StepBinnenruimtes } from "./StepBinnenruimtes/StepBinnenruimtes"
 import { StepBuitenruimtes } from "./StepBuitenruimtes/StepBuitenruimtes"
 import { StepBijzonderheden } from "./StepBijzonderheden/StepBijzonderheden"
-import { StepOverzicht } from "./StepOverzicht/StepOverzicht"
 import { StepResultaat } from "./StepResultaat/StepResultaat"
 
+// One tab per step, in step order: a tab's index is its step.
 const TAB_ITEMS = [
-  { title: "Woning", firstStep: 0, lastStep: 0, icon: HouseIcon },
-  {
-    title: "Binnenruimtes",
-    firstStep: 1,
-    lastStep: 1,
-    icon: BedIcon,
-  },
-  {
-    title: "Buitenruimtes",
-    firstStep: 2,
-    lastStep: 2,
-    icon: ParkingIcon,
-  },
-  {
-    title: "Bijzonderheden",
-    firstStep: 3,
-    lastStep: 3,
-    icon: StarIcon,
-  },
-  {
-    title: "Overzicht",
-    firstStep: 4,
-    lastStep: 4,
-    icon: ClipboardIcon,
-  },
-  {
-    title: "Resultaat",
-    firstStep: 5,
-    lastStep: 5,
-    icon: DocumentCheckMarkIcon,
-  },
+  { title: "Woning", icon: HouseIcon },
+  { title: "Binnenruimtes", icon: BedIcon },
+  { title: "Buitenruimtes", icon: ParkingIcon },
+  { title: "Bijzonderheden", icon: StarIcon },
+  { title: "Resultaat", icon: DocumentCheckMarkIcon },
 ]
+const RESULTAAT_STEP = TAB_ITEMS.length - 1
 
 export default function PuntentellerAdresPage() {
   const { bagId } = useParams<{ bagId: string }>()
@@ -81,18 +55,14 @@ export default function PuntentellerAdresPage() {
     resultaat,
     savedPayload,
   } = useGebruikersinvoerForm(bagId, {
-    onCalculated: () => setCurrentStep(5),
-    // Saving can also be tried from the resultaat-stap (ResubmitButton); the missing fields
-    // are listed on the overzicht.
+    onCalculated: () => setCurrentStep(RESULTAAT_STEP),
+    // Saving is tried from the bijzonderheden-stap or the resultaat-stap; the missing fields
+    // are listed on the resultaat-stap.
     onMissingFields: () => {
-      flushSync(() => setCurrentStep(4))
+      flushSync(() => setCurrentStep(RESULTAAT_STEP))
       invalidFormAlertRef.current?.focus()
     },
   })
-  const currentTabIndex = TAB_ITEMS.findIndex(
-    ({ firstStep, lastStep }) =>
-      currentStep >= firstStep && currentStep <= lastStep,
-  )
 
   // Renders the missing field's step right away, so its fields can show their errors and the
   // field can get focus. A field of a ruimte that isn't opened isn't rendered; then only the
@@ -120,21 +90,18 @@ export default function PuntentellerAdresPage() {
     />,
     <StepBinnenruimtes key="step-1" onNextStep={() => setCurrentStep(2)} />,
     <StepBuitenruimtes key="step-2" onNextStep={() => setCurrentStep(3)} />,
-    <StepBijzonderheden key="step-3" onNextStep={() => setCurrentStep(4)} />,
-    <StepOverzicht
-      key="step-4"
-      invoerwaarden={invoerwaarden}
-      isSubmitting={isSubmitting}
+    <StepBijzonderheden
+      key="step-3"
       savedPayload={savedPayload}
-      onGoToField={goToField}
-      invalidFormAlertRef={invalidFormAlertRef}
+      isSubmitting={isSubmitting}
     />,
     <StepResultaat
-      key="step-5"
+      key="step-4"
       resultaat={resultaat}
-      savedPayload={savedPayload}
       isSubmitting={isSubmitting}
-      onPreviousStep={() => setCurrentStep(4)}
+      invoerwaarden={invoerwaarden}
+      onGoToField={goToField}
+      invalidFormAlertRef={invalidFormAlertRef}
     />,
   ]
 
@@ -174,19 +141,19 @@ export default function PuntentellerAdresPage() {
         <Grid.Cell appearance="flush" span="all">
           <TabNavigation accessibleName="Subnavigatie voor dit project">
             <TabNavigation.List>
-              {TAB_ITEMS.map(({ title, firstStep, icon }, index) => (
+              {TAB_ITEMS.map(({ title, icon }, step) => (
                 <TabNavigation.Link
-                  aria-current={currentTabIndex === index ? "page" : undefined}
+                  aria-current={currentStep === step ? "page" : undefined}
                   href="#"
                   icon={icon}
                   key={title}
                   onClick={(e) => {
                     e.preventDefault()
-                    setCurrentStep(firstStep)
+                    setCurrentStep(step)
                   }}
                 >
                   {title}
-                  {firstStep === 5 && (
+                  {step === RESULTAAT_STEP && (
                     <UnsavedChangesMarker savedPayload={savedPayload} />
                   )}
                 </TabNavigation.Link>
@@ -195,12 +162,12 @@ export default function PuntentellerAdresPage() {
           </TabNavigation>
         </Grid.Cell>
 
-        {/* Only where the punten are shown; the overzicht-stap says it in its own text and
-            submit button. */}
-        {!isError && currentStep === 5 && (
+        {/* Only where the punten are shown; the bijzonderheden-stap says it in its submit
+            button. */}
+        {!isError && currentStep === RESULTAAT_STEP && (
           <UnsavedChangesAlert
             savedPayload={savedPayload}
-            onGoToOverzicht={() => setCurrentStep(4)}
+            isSubmitting={isSubmitting}
           />
         )}
 

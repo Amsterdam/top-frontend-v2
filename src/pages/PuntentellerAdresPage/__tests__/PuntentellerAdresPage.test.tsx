@@ -20,6 +20,7 @@ const mockMutate = vi.fn()
 const mockShowToast = vi.fn()
 const mockFindMissingFields = vi.fn()
 const mockUseBagPdokAddress = vi.fn()
+const mockUseInitialValues = vi.fn()
 
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
@@ -61,6 +62,10 @@ vi.mock("@/api/hooks", () => ({
     mutate: mockMutate,
     isPending: false,
   }),
+}))
+
+vi.mock("../helpers/useInitialValues", () => ({
+  useInitialValues: () => mockUseInitialValues(),
 }))
 
 vi.mock("@/components", async (importOriginal) => {
@@ -141,18 +146,10 @@ vi.mock("../StepBuitenruimtes/StepBuitenruimtes", () => ({
   StepBuitenruimtes: stepPlaceholder("Stap buitenruimtes"),
 }))
 vi.mock("../StepBijzonderheden/StepBijzonderheden", () => ({
-  StepBijzonderheden: stepPlaceholder("Stap bijzonderheden"),
-}))
-vi.mock("../StepOverzicht/StepOverzicht", () => ({
-  StepOverzicht: stepPlaceholder("Stap overzicht", true),
+  StepBijzonderheden: stepPlaceholder("Stap bijzonderheden", true),
 }))
 vi.mock("../StepResultaat/StepResultaat", () => ({
-  StepResultaat: () => (
-    <div>
-      <p>Stap resultaat</p>
-      <button type="submit">Opnieuw opslaan</button>
-    </div>
-  ),
+  StepResultaat: () => <p>Stap resultaat</p>,
 }))
 
 describe("PuntentellerAdresPage", () => {
@@ -160,6 +157,7 @@ describe("PuntentellerAdresPage", () => {
     vi.resetAllMocks()
     mockFindMissingFields.mockReturnValue([])
     mockUseBagPdokAddress.mockReturnValue({ data: undefined })
+    mockUseInitialValues.mockReturnValue({ isPending: false })
   })
 
   afterEach(() => {
@@ -188,7 +186,42 @@ describe("PuntentellerAdresPage", () => {
     expect(mockUseBagPdokAddress).toHaveBeenCalledWith("abc123")
   })
 
-  it("walks through the steps and submits on the overzicht-stap", async () => {
+  it("fills the form with the invoerwaarden, with the initial values winning", async () => {
+    mockUseInitialValues.mockReturnValue({
+      values: { woz_waarde: 215000, energielabel_klasse: "F" },
+      isPending: false,
+    })
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    await waitFor(() => {
+      expect(mockFindMissingFields).toHaveBeenCalledWith(
+        expect.objectContaining({
+          // From the initial values, instead of the invoerwaarden's 374000 and "C".
+          woz_waarde: 215000,
+          energielabel_klasse: "F",
+          // From the invoerwaarden.
+          gebruiksoppervlakte: 90,
+          woz_peildatum_jaar: 2025,
+        }),
+        DUMMY_INVOERWAARDEN,
+      )
+    })
+  })
+
+  it("waits for the initial values before showing the form", () => {
+    mockUseInitialValues.mockReturnValue({ isPending: true })
+    render(<PuntentellerAdresPage />)
+
+    expect(screen.getByText("Laden...")).toBeDefined()
+    expect(screen.queryByText("Stap woninggegevens")).toBeNull()
+  })
+
+  it("walks through the steps and submits on the bijzonderheden-stap", async () => {
     render(<PuntentellerAdresPage />)
 
     await screen.findByText("Stap woninggegevens")
@@ -197,7 +230,6 @@ describe("PuntentellerAdresPage", () => {
       "Stap binnenruimtes",
       "Stap buitenruimtes",
       "Stap bijzonderheden",
-      "Stap overzicht",
     ]) {
       fireEvent.click(screen.getByRole("button", { name: "Volgende stap" }))
       expect(await screen.findByText(label)).toBeDefined()
@@ -210,20 +242,18 @@ describe("PuntentellerAdresPage", () => {
     })
   })
 
-  it("doesn't save while required fields are missing", async () => {
+  it("doesn't save while required fields are missing, and opens the resultaat-stap that lists them", async () => {
     mockFindMissingFields.mockReturnValue([
       { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
     ])
     render(<PuntentellerAdresPage />)
 
-    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
       await screen.findByRole("button", { name: "Sla op en bereken" }),
     )
 
-    await waitFor(() => {
-      expect(mockFindMissingFields).toHaveBeenCalled()
-    })
+    expect(await screen.findByText("Stap resultaat")).toBeDefined()
     expect(mockMutate).not.toHaveBeenCalled()
   })
 
@@ -234,7 +264,7 @@ describe("PuntentellerAdresPage", () => {
     )
     render(<PuntentellerAdresPage />)
 
-    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
       await screen.findByRole("button", { name: "Sla op en bereken" }),
     )
@@ -247,7 +277,9 @@ describe("PuntentellerAdresPage", () => {
 
   describe("niet-opgeslagen wijzigingen", () => {
     const save = async () => {
-      fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+      fireEvent.click(
+        await screen.findByRole("link", { name: "Bijzonderheden" }),
+      )
       fireEvent.click(
         await screen.findByRole("button", { name: "Sla op en bereken" }),
       )
@@ -315,7 +347,7 @@ describe("PuntentellerAdresPage", () => {
       expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
     })
 
-    it("warns on the resultaat-stap that the resultaat isn't up to date, and links to the overzicht", async () => {
+    it("warns on the resultaat-stap that the resultaat isn't up to date", async () => {
       render(<PuntentellerAdresPage />)
       await save()
       await screen.findByText("Stap resultaat")
@@ -329,10 +361,6 @@ describe("PuntentellerAdresPage", () => {
           name: "Dit resultaat is niet actueel",
         }),
       ).toBeDefined()
-
-      fireEvent.click(screen.getByRole("link", { name: "overzicht" }))
-
-      expect(await screen.findByText("Stap overzicht")).toBeDefined()
     })
 
     it("saves and shows the resultaat-stap again when submitting from the resultaat-stap", async () => {
@@ -344,7 +372,9 @@ describe("PuntentellerAdresPage", () => {
       changeBouwjaar(1990)
       fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
       fireEvent.click(
-        await screen.findByRole("button", { name: "Opnieuw opslaan" }),
+        await screen.findByRole("button", {
+          name: "Wijzigingen opslaan en herberekenen",
+        }),
       )
 
       expect(await screen.findByText("Stap resultaat")).toBeDefined()
@@ -352,7 +382,7 @@ describe("PuntentellerAdresPage", () => {
       expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
     })
 
-    it("opens the overzicht-stap when saving from the resultaat-stap is blocked by missing fields", async () => {
+    it("stays on the resultaat-stap when saving from it is blocked by missing fields", async () => {
       render(<PuntentellerAdresPage />)
       await save()
       await screen.findByText("Stap resultaat")
@@ -364,10 +394,12 @@ describe("PuntentellerAdresPage", () => {
       ])
       fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
       fireEvent.click(
-        await screen.findByRole("button", { name: "Opnieuw opslaan" }),
+        await screen.findByRole("button", {
+          name: "Wijzigingen opslaan en herberekenen",
+        }),
       )
 
-      expect(await screen.findByText("Stap overzicht")).toBeDefined()
+      expect(await screen.findByText("Stap resultaat")).toBeDefined()
       expect(mockMutate).toHaveBeenCalledTimes(1)
     })
 
@@ -385,13 +417,13 @@ describe("PuntentellerAdresPage", () => {
     })
   })
 
-  it("shows an error toast and stays on the overzicht-stap when the berekening fails", async () => {
+  it("shows an error toast and stays on the bijzonderheden-stap when the berekening fails", async () => {
     mockMutate.mockImplementation(
       (_values: unknown, { onError }: { onError: () => void }) => onError(),
     )
     render(<PuntentellerAdresPage />)
 
-    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
       await screen.findByRole("button", { name: "Sla op en bereken" }),
     )
@@ -401,6 +433,6 @@ describe("PuntentellerAdresPage", () => {
         expect.objectContaining({ severity: "error" }),
       )
     })
-    expect(screen.getByText("Stap overzicht")).toBeDefined()
+    expect(screen.getByText("Stap bijzonderheden")).toBeDefined()
   })
 })

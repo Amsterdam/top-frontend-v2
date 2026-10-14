@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useAddressInvoerwaarden, useSaveGebruikersinvoer } from "@/api/hooks"
 import { useToast } from "@/components/toasts/useToast"
 import { findMissingFields } from "./helpers/findMissingFields"
 import { mapFormValuesToPayload } from "./helpers/mapFormValuesToPayload"
 import { mapInvoerwaardenToFormValues } from "./helpers/mapInvoerwaardenToFormValues"
+import { useInitialValues } from "./helpers/useInitialValues"
 import { GEEN_MONUMENT } from "./fieldDefinitions"
 
 const defaultValues: GebruikersinvoerFormValues = {
@@ -44,9 +45,11 @@ export function useGebruikersinvoerForm(
 ) {
   const {
     data: invoerwaarden,
-    isPending,
+    isPending: isInvoerwaardenPending,
     isError,
   } = useAddressInvoerwaarden(bagId)
+  const initialValues = useInitialValues()
+  const isPending = isInvoerwaardenPending || initialValues.isPending
   const saveGebruikersinvoer = useSaveGebruikersinvoer({ bagId })
   const { showToast } = useToast()
   // The last successful save: its payload (as JSON) to tell whether the form has changed
@@ -61,23 +64,24 @@ export function useGebruikersinvoerForm(
     defaultValues,
   })
 
-  // Fill in the fields that overlap with the prefilled invoerwaarden (step 0) once they
-  // arrive, without resetting wizard progress already filled in on other fields.
+  // Fills the form once per address, as soon as everything it starts from has loaded. Each
+  // layer wins over the one before: the defaults, the prefilled invoerwaarden (step 0), the
+  // initial values (dummydata, later a saved puntentelling). Only once, so a refetch of the
+  // invoerwaarden doesn't undo what the user has filled in since.
+  const filledInForBagId = useRef<string>(undefined)
   useEffect(() => {
-    if (!invoerwaarden) return
+    if (isPending || filledInForBagId.current === bagId) return
+    filledInForBagId.current = bagId
 
-    const mapped = mapInvoerwaardenToFormValues(invoerwaarden)
-    form.setValue("bouwjaar", mapped.bouwjaar)
-    form.setValue("gebruiksoppervlakte", mapped.gebruiksoppervlakte)
-    form.setValue("woz_waarde", mapped.woz_waarde)
-    form.setValue("woz_peildatum_jaar", mapped.woz_peildatum_jaar)
-    form.setValue("energie_type", mapped.energie_type)
-    form.setValue("energielabel_klasse", mapped.energielabel_klasse)
-    form.setValue("energie_index", mapped.energie_index)
-  }, [invoerwaarden, form])
+    form.reset({
+      ...defaultValues,
+      ...(invoerwaarden && mapInvoerwaardenToFormValues(invoerwaarden)),
+      ...initialValues.values,
+    })
+  }, [bagId, isPending, invoerwaarden, initialValues.values, form])
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {
-    // handleSubmit only validates the fields of the current step (the overzicht has none).
+    // handleSubmit only validates the fields of the current step (the resultaat has none).
     if (findMissingFields(values, invoerwaarden).length > 0) {
       onMissingFields?.()
       return

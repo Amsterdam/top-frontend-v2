@@ -1,6 +1,6 @@
 /**
- * Field labels per Gebruikersinvoer group, shared between the wizard steps (input) and
- * StepOverzicht (summary), so labels only need to be maintained in one place.
+ * Field labels per Gebruikersinvoer group, shared between the wizard steps and
+ * findMissingFields, so labels only need to be maintained in one place.
  */
 
 /** A voorziening of a binnenruimte, stored on the room itself (binnenruimtes.<index>.<name>). */
@@ -46,7 +46,7 @@ export type TopLevelFieldName = Exclude<
 /**
  * The messages of the required fields that don't have a field definition with a `required`
  * below, shared between the fields' registerOptions and findMissingFields (the
- * InvalidFormAlert on the overzicht).
+ * MissingFieldsAlert on the resultaat-stap).
  */
 export const REQUIRED_MESSAGES = {
   woz_peildatum_jaar: "WOZ-peildatum is verplicht",
@@ -61,14 +61,6 @@ export const REQUIRED_MESSAGES = {
   verkoeld: "Geef aan of de ruimte verkoeld is",
   parkeerplekken: "Kies minimaal 1 type parkeerplek.",
 } as const
-
-export const WONINGGEGEVENS_FIELDS = [
-  { name: "gebruiksoppervlakte", label: "Gebruiksoppervlakte BAG (m²)" },
-  { name: "woz_waarde", label: "WOZ-waarde (€)" },
-  { name: "woz_peildatum_jaar", label: "WOZ-peildatum (jaar)" },
-  { name: "energie_type", label: "Energieprestatie" },
-  { name: "type_woning", label: "Woonvorm" },
-] as const
 
 // Shared between BADKAMER_SECTIONS and SLAAPKAMER_SANITAIR_SECTIONS.
 const DOUCHE_BAD_SECTION = {
@@ -342,7 +334,7 @@ export const hasParkeerplek = (ruimte?: Partial<Buitenruimte>) =>
 
 export const GEEN_MONUMENT = "geen_monument"
 
-export const MONUMENT_SOORT_OPTIONS = [
+const MONUMENT_SOORT_OPTIONS = [
   {
     label: "Gemeentelijk of provinciaal monument",
     value: "gemeentelijk_of_provinciaal_monument",
@@ -368,7 +360,7 @@ export const JA_NEE_OPTIONS = [
 ]
 
 /** A text field only asked when its BijzonderhedenField is answered ja ("true"). */
-export type FollowUpField = {
+type FollowUpField = {
   name: TopLevelFieldName
   label: string
   description?: string
@@ -379,8 +371,6 @@ export type FollowUpField = {
 export type BijzonderhedenField = {
   name: TopLevelFieldName
   label: string
-  /** The label in StepOverzicht, when it differs from the question. */
-  summaryLabel?: string
   required: string
   /** Defaults to JA_NEE_OPTIONS (stored as "true"/"false", defaulting to nee, see
    * useGebruikersinvoerForm). */
@@ -389,15 +379,15 @@ export type BijzonderhedenField = {
 }
 
 /** Like FieldSection, but the heading is optional: fields without one are shown ungrouped. */
-export type BijzonderhedenSection = {
+type BijzonderhedenSection = {
   heading?: string
   description?: string
   fields: readonly BijzonderhedenField[]
 }
 
 /**
- * The sections of StepBijzonderheden, in page order; StepOverzicht and findMissingFields follow
- * the same order. The fields of a section with a heading are styled as nested under it
+ * The sections of StepBijzonderheden, in page order; findMissingFields follows the same
+ * order. The fields of a section with a heading are styled as nested under it
  * (inFieldSet).
  */
 export const BIJZONDERHEDEN_SECTIONS: readonly BijzonderhedenSection[] = [
@@ -406,7 +396,6 @@ export const BIJZONDERHEDEN_SECTIONS: readonly BijzonderhedenSection[] = [
       {
         name: "monument_soort",
         label: "Is de woning (onderdeel van) een monument?",
-        summaryLabel: "Soort monument",
         required: "Geef aan of de woning een monument is",
         options: MONUMENT_SOORT_OPTIONS,
       },

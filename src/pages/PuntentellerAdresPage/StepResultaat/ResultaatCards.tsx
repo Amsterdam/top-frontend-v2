@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react"
+import { useId, type CSSProperties } from "react"
 import {
   Column,
   Heading,
@@ -6,6 +6,7 @@ import {
   Row,
   Table,
 } from "@amsterdam/design-system-react"
+import { formatDate } from "@/shared/dateFormatters"
 import { HUURSEGMENTEN, huursegment, type Huursegment } from "./berekening"
 import styles from "./StepResultaat.module.css"
 
@@ -22,6 +23,12 @@ const SCALE_MAX = 250
 
 const formatRange = ({ from, to }: Huursegment) =>
   to === Infinity ? `${from} punten of meer` : `${from} t/m ${to} punten`
+
+/** Every rubriek and opslag, in the order the backend gives them. */
+const allRubrieken = (resultaat: PuntentellerResultaat) => [
+  ...resultaat.rubrieken,
+  ...resultaat.opslagen,
+]
 
 type Props = {
   resultaat: PuntentellerResultaat
@@ -44,23 +51,6 @@ export function ScoreCard({ resultaat }: Props) {
           Deze woning valt in de <strong>{segment.name.toLowerCase()}</strong> (
           {formatRange(segment)}).
         </Paragraph>
-        {resultaat.maximale_huurprijs && (
-          <Paragraph>
-            Maximale huurprijs:{" "}
-            <strong>{formatEuro(resultaat.maximale_huurprijs.bedrag)}</strong>{" "}
-            per maand
-            {resultaat.maximale_huurprijs.met_opslagen !==
-              resultaat.maximale_huurprijs.bedrag && (
-              <>
-                , met opslagen{" "}
-                <strong>
-                  {formatEuro(resultaat.maximale_huurprijs.met_opslagen)}
-                </strong>
-              </>
-            )}
-            .
-          </Paragraph>
-        )}
       </Column>
 
       {/* Decorative: the sentence above already says which segment it is. */}
@@ -105,70 +95,211 @@ export function ScoreCard({ resultaat }: Props) {
   )
 }
 
-/** How the total came about: every rubriek and opslag with its regels, then the total. */
-export function BerekeningCard({ resultaat }: Props) {
+/**
+ * The maximale huurprijs, large like the puntentotaal, and the huurprijstabel it comes from.
+ * With huurprijsopslagen, a table below adds it up: the basishuurprijs plus each opslag in
+ * euro's. Nothing when no huurprijstabel applies.
+ */
+export function HuurprijsCard({ resultaat }: Props) {
+  const { maximale_huurprijs: huurprijs, huurprijsopslagen } = resultaat
+  if (!huurprijs) return null
+
+  // The backend only gives the total in euro's; split it over the opslagen by their procent,
+  // so the regels add up to it exactly.
+  const opslagBedrag = huurprijs.met_opslagen - huurprijs.bedrag
+  const opslagProcent = huurprijsopslagen.reduce((sum, o) => sum + o.procent, 0)
+
   return (
     <Column gap="large">
-      <Heading level={2}>Berekening</Heading>
-      {[...resultaat.rubrieken, ...resultaat.opslagen].map((rubriek, index) => (
-        <Table key={`${rubriek.naam}-${index}`}>
-          <Table.Caption>{rubriek.naam}</Table.Caption>
+      <Column gap="small">
+        <Heading level={2}>Maximale huurprijs</Heading>
+        <Paragraph>
+          <span className={styles.bedrag}>
+            {formatEuro(huurprijs.met_opslagen)}
+          </span>{" "}
+          per maand
+        </Paragraph>
+        <Paragraph size="small">
+          Volgens de huurprijstabel van{" "}
+          {formatDate(huurprijs.prijspeil, "D MMMM YYYY")}.
+        </Paragraph>
+      </Column>
+
+      {huurprijsopslagen.length > 0 && (
+        <Table className={styles.fullWidth}>
+          <Table.Caption className="ams-visually-hidden">
+            Opbouw maximale huurprijs
+          </Table.Caption>
           <Table.Header className="ams-visually-hidden">
             <Table.Row>
               <Table.HeaderCell>Onderdeel</Table.HeaderCell>
-              <Table.HeaderCell align="end">Punten</Table.HeaderCell>
+              <Table.HeaderCell align="end">Bedrag</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {rubriek.regels.map((regel, regelIndex) => (
-              <Table.Row key={regelIndex}>
+            <Table.Row>
+              <Table.Cell>
+                Basishuurprijs ({formatPunten(resultaat.totaal_punten)} punten)
+              </Table.Cell>
+              <Table.Cell align="end" className={styles.punten}>
+                {formatEuro(huurprijs.bedrag)}
+              </Table.Cell>
+            </Table.Row>
+            {huurprijsopslagen.map(({ naam, procent }) => (
+              <Table.Row key={naam}>
                 <Table.Cell>
-                  {regel.ruimte ? `${regel.ruimte}: ` : ""}
-                  {regel.omschrijving}
-                  {regel.aantal !== null && regel.factor !== null && (
-                    <Paragraph size="small">
-                      {formatPunten(regel.aantal)} ×{" "}
-                      {formatPunten(regel.factor)}
-                    </Paragraph>
-                  )}
+                  Opslag {naam} ({formatPunten(procent)}%)
                 </Table.Cell>
                 <Table.Cell align="end" className={styles.punten}>
-                  {formatPunten(regel.punten)}
+                  +{" "}
+                  {formatEuro(
+                    opslagProcent
+                      ? (opslagBedrag * procent) / opslagProcent
+                      : 0,
+                  )}
                 </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
           <Table.Footer>
             <Table.Row>
-              <Table.HeaderCell scope="row">Subtotaal</Table.HeaderCell>
+              <Table.HeaderCell scope="row">Totaal per maand</Table.HeaderCell>
               <Table.Cell align="end" className={styles.punten}>
-                <strong>{formatPunten(rubriek.punten)}</strong>
+                <strong>{formatEuro(huurprijs.met_opslagen)}</strong>
               </Table.Cell>
             </Table.Row>
           </Table.Footer>
         </Table>
-      ))}
-      <Table>
-        <Table.Caption className="ams-visually-hidden">
-          Totaal aantal punten
-        </Table.Caption>
-        <Table.Body>
-          <Table.Row>
-            <Table.HeaderCell scope="row">Totaal</Table.HeaderCell>
+      )}
+    </Column>
+  )
+}
+
+/**
+ * The subtotal of every rubriek at a glance, including the ones without punten, so it shows
+ * what didn't count too.
+ */
+export function PuntenopbouwCard({ resultaat }: Props) {
+  return (
+    <Table className={styles.fullWidth}>
+      <Table.Caption>
+        <Heading level={2}>Puntenopbouw</Heading>
+      </Table.Caption>
+      <Table.Header className="ams-visually-hidden">
+        <Table.Row>
+          <Table.HeaderCell>Rubriek</Table.HeaderCell>
+          <Table.HeaderCell align="end">Punten</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {allRubrieken(resultaat).map((rubriek, index) => (
+          <Table.Row key={`${rubriek.naam}-${index}`}>
+            <Table.Cell>{rubriek.naam}</Table.Cell>
             <Table.Cell align="end" className={styles.punten}>
-              <strong>{formatPunten(resultaat.totaal_punten)}</strong>
+              {formatPunten(rubriek.punten)}
             </Table.Cell>
           </Table.Row>
-          {resultaat.huurprijsopslagen.map(({ naam, procent }) => (
-            <Table.Row key={naam}>
-              <Table.Cell>Huurprijsopslag {naam}</Table.Cell>
+        ))}
+      </Table.Body>
+      <Table.Footer>
+        <Table.Row>
+          <Table.HeaderCell scope="row">Totaal</Table.HeaderCell>
+          <Table.Cell align="end" className={styles.punten}>
+            <strong>{formatPunten(resultaat.totaal_punten)}</strong>
+          </Table.Cell>
+        </Table.Row>
+      </Table.Footer>
+    </Table>
+  )
+}
+
+/**
+ * One regel's label, with its berekening inline. Without one when the factor is 1: then the
+ * aantal is the punten already.
+ */
+function RegelLabel({ regel }: { regel: PuntentellerRegel }) {
+  const { ruimte, omschrijving, aantal, factor } = regel
+
+  return (
+    <>
+      {ruimte ? `${ruimte}: ` : ""}
+      {omschrijving}
+      {aantal !== null && factor !== null && factor !== 1 && (
+        <span>{` (${formatPunten(aantal)} × ${formatPunten(factor)})`}</span>
+      )}
+    </>
+  )
+}
+
+/**
+ * A rubriek in a white block of its own (ams-grid__cell, the block a Grid.Cell is): its
+ * regels with the subtotal below them. Nothing for a rubriek without regels, not even the
+ * block.
+ */
+function Rubriek({ rubriek }: { rubriek: PuntentellerRubriek }) {
+  const headingId = useId()
+  const isLeeg = rubriek.regels.length === 0
+
+  if (isLeeg) {
+    return null
+  }
+
+  return (
+    <section aria-labelledby={headingId} className="ams-grid__cell">
+      <Table className={styles.fullWidth} aria-labelledby={headingId}>
+        <Table.Caption>
+          <Heading level={3}>{rubriek.naam}</Heading>
+        </Table.Caption>
+        <Table.Header className="ams-visually-hidden">
+          <Table.Row>
+            <Table.HeaderCell>Onderdeel</Table.HeaderCell>
+            <Table.HeaderCell align="end">Punten</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {rubriek.regels.map((regel, index) => (
+            <Table.Row key={index}>
+              <Table.Cell>
+                <RegelLabel regel={regel} />
+              </Table.Cell>
               <Table.Cell align="end" className={styles.punten}>
-                {formatPunten(procent)}%
+                {formatPunten(regel.punten)}
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.HeaderCell scope="row">Subtotaal</Table.HeaderCell>
+            <Table.Cell align="end" className={styles.punten}>
+              <strong>{formatPunten(rubriek.punten)}</strong>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Footer>
       </Table>
+    </section>
+  )
+}
+
+/**
+ * How the total came about: every rubriek and opslag with its regels, then the total, each in
+ * a white block of its own on the grey background.
+ */
+export function BerekeningCard({ resultaat }: Props) {
+  return (
+    <Column gap="large">
+      <Heading level={2}>Berekening</Heading>
+      {allRubrieken(resultaat).map((rubriek, index) => (
+        <Rubriek key={`${rubriek.naam}-${index}`} rubriek={rubriek} />
+      ))}
+      <div className="ams-grid__cell">
+        <Row align="between">
+          <Heading level={2}>Totaal</Heading>
+          <Heading level={2}>
+            {formatPunten(resultaat.totaal_punten)} punten
+          </Heading>
+        </Row>
+      </div>
     </Column>
   )
 }
