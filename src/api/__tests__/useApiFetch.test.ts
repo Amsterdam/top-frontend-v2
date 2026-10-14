@@ -11,12 +11,18 @@ const createResponse = (
   text: () => Promise.resolve(body),
 })
 
-const mockAuth = (accessToken?: string) => {
+const mockAuth = (accessToken?: string, expiresIn?: number) => {
+  const auth = {
+    user: accessToken
+      ? { access_token: accessToken, expires_in: expiresIn }
+      : undefined,
+    signinSilent: vi.fn(),
+    signinRedirect: vi.fn().mockResolvedValue(undefined),
+  }
   vi.doMock("react-oidc-context", () => ({
-    useAuth: () => ({
-      user: accessToken ? { access_token: accessToken } : undefined,
-    }),
+    useAuth: () => auth,
   }))
+  return auth
 }
 
 describe("useApiFetch", () => {
@@ -27,6 +33,7 @@ describe("useApiFetch", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   it("sends a GET request without an Authorization header when there is no token", async () => {
@@ -166,5 +173,127 @@ describe("useApiFetch", () => {
     const data = await result.current("https://api.test/things")
 
     expect(data).toBeNull()
+  })
+
+  it("renews an expiring token before sending the request", async () => {
+    const auth = mockAuth("old-token", 10)
+    auth.signinSilent.mockResolvedValue({ access_token: "new-token" })
+    const fetchMock = vi.fn().mockResolvedValue(createResponse("null"))
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await result.current("https://api.test/things")
+
+    expect(auth.signinSilent).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe(
+      "Bearer new-token",
+    )
+  })
+
+  it("does not renew a token that is still valid", async () => {
+    const auth = mockAuth("valid-token", 3600)
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(createResponse("null")))
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await result.current("https://api.test/things")
+
+    expect(auth.signinSilent).not.toHaveBeenCalled()
+  })
+
+  it("renews once and retries when the API answers with a 403", async () => {
+    const auth = mockAuth("rejected-token", 3600)
+    auth.signinSilent.mockResolvedValue({ access_token: "new-token" })
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        createResponse("", { ok: false, status: 403, statusText: "Forbidden" }),
+      )
+      .mockResolvedValueOnce(createResponse(JSON.stringify({ hello: "world" })))
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    const data = await result.current("https://api.test/things")
+
+    expect(data).toEqual({ hello: "world" })
+    expect(auth.signinSilent).toHaveBeenCalledTimes(1)
+    expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe(
+      "Bearer new-token",
+    )
+  })
+
+  it("throws the 403 when the retry is rejected as well", async () => {
+    const auth = mockAuth("token", 3600)
+    auth.signinSilent.mockResolvedValue({ access_token: "new-token" })
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        createResponse("", { ok: false, status: 403, statusText: "Forbidden" }),
+      )
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await expect(result.current("https://api.test/things")).rejects.toEqual({
+      status: 403,
+      message: "Forbidden",
+    })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it("redirects to the login when renewing fails", async () => {
+    const auth = mockAuth("old-token", 10)
+    auth.signinSilent.mockRejectedValue(new Error("invalid_grant"))
+    const fetchMock = vi.fn()
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await expect(result.current("https://api.test/things")).rejects.toThrow(
+      "invalid_grant",
+    )
+    expect(auth.signinRedirect).toHaveBeenCalledTimes(1)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it("shares a single renewal between concurrent requests", async () => {
+    const auth = mockAuth("old-token", 10)
+    auth.signinSilent.mockResolvedValue({ access_token: "new-token" })
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(createResponse("null")))
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await Promise.all([
+      result.current("https://api.test/a"),
+      result.current("https://api.test/b"),
+    ])
+
+    expect(auth.signinSilent).toHaveBeenCalledTimes(1)
+  })
+
+  it("skips renewing while offline so cached responses can still be served", async () => {
+    const auth = mockAuth("old-token", 10)
+    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false)
+    const fetchMock = vi.fn().mockResolvedValue(createResponse("null"))
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { useApiFetch } = await import("../useApiFetch")
+    const { result } = renderHook(() => useApiFetch())
+
+    await result.current("https://api.test/things")
+
+    expect(auth.signinSilent).not.toHaveBeenCalled()
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe(
+      "Bearer old-token",
+    )
   })
 })
