@@ -20,6 +20,7 @@ const mockMutate = vi.fn()
 const mockShowToast = vi.fn()
 const mockFindMissingFields = vi.fn()
 const mockUseBagPdokAddress = vi.fn()
+const mockUseInitialValues = vi.fn()
 
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   straat: "Tjasker",
@@ -61,6 +62,10 @@ vi.mock("@/api/hooks", () => ({
     mutate: mockMutate,
     isPending: false,
   }),
+}))
+
+vi.mock("../helpers/useInitialValues", () => ({
+  useInitialValues: () => mockUseInitialValues(),
 }))
 
 vi.mock("@/components", async (importOriginal) => {
@@ -160,6 +165,7 @@ describe("PuntentellerAdresPage", () => {
     vi.resetAllMocks()
     mockFindMissingFields.mockReturnValue([])
     mockUseBagPdokAddress.mockReturnValue({ data: undefined })
+    mockUseInitialValues.mockReturnValue({ isPending: false })
   })
 
   afterEach(() => {
@@ -186,6 +192,41 @@ describe("PuntentellerAdresPage", () => {
       }),
     ).toBeDefined()
     expect(mockUseBagPdokAddress).toHaveBeenCalledWith("abc123")
+  })
+
+  it("fills the form with the invoerwaarden, with the initial values winning", async () => {
+    mockUseInitialValues.mockReturnValue({
+      values: { woz_waarde: 215000, energielabel_klasse: "F" },
+      isPending: false,
+    })
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Overzicht" }))
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Sla op en bereken" }),
+    )
+
+    await waitFor(() => {
+      expect(mockFindMissingFields).toHaveBeenCalledWith(
+        expect.objectContaining({
+          // From the initial values, instead of the invoerwaarden's 374000 and "C".
+          woz_waarde: 215000,
+          energielabel_klasse: "F",
+          // From the invoerwaarden.
+          gebruiksoppervlakte: 90,
+          woz_peildatum_jaar: 2025,
+        }),
+        DUMMY_INVOERWAARDEN,
+      )
+    })
+  })
+
+  it("waits for the initial values before showing the form", () => {
+    mockUseInitialValues.mockReturnValue({ isPending: true })
+    render(<PuntentellerAdresPage />)
+
+    expect(screen.getByText("Laden...")).toBeDefined()
+    expect(screen.queryByText("Stap woninggegevens")).toBeNull()
   })
 
   it("walks through the steps and submits on the overzicht-stap", async () => {

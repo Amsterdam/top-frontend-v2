@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Grid, Heading } from "@amsterdam/design-system-react"
 import {
@@ -73,8 +73,14 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
 
   // When the user picks a different peildatum, the WOZ-waarde follows automatically
   // (but remains separately editable afterwards via the WOZ-waarde field below).
+  // Only on an actual change: the step remounts every time it's opened, and that shouldn't
+  // undo a WOZ-waarde that was edited, or loaded (dummydata, a saved puntentelling).
   const wozPeildatumJaar = useWatch({ control, name: "woz_peildatum_jaar" })
+  const previousWozPeildatumJaar = useRef(wozPeildatumJaar)
   useEffect(() => {
+    if (previousWozPeildatumJaar.current === wozPeildatumJaar) return
+    previousWozPeildatumJaar.current = wozPeildatumJaar
+
     const gekozenWozWaarde = wozWaarden.find(
       (w) => peildatumToJaar(w.peildatum) === Number(wozPeildatumJaar),
     )
