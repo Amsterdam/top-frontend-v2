@@ -10,8 +10,12 @@ import { formatDate } from "@/shared/dateFormatters"
 import { HUURSEGMENTEN, huursegment, type Huursegment } from "./berekening"
 import styles from "./StepResultaat.module.css"
 
+// With a real minus sign (U+2212) instead of the hyphen Intl gives: it reads better next to
+// the digits, and screen readers read it as "min".
 const formatPunten = (punten: number) =>
-  new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 2 }).format(punten)
+  new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 2 })
+    .format(punten)
+    .replace("-", "\u2212")
 
 const formatEuro = (bedrag: number) =>
   new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR" }).format(
