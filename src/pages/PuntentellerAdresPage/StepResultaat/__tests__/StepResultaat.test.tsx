@@ -11,16 +11,15 @@ const VALUES = {
 } as unknown as GebruikersinvoerFormValues
 
 const RESULTAAT: PuntentellerResultaat = {
-  rubrieken: { vertrekken: 56, woz: 47 },
-  energieprestatie_berekening: {
-    categorie: "label",
-    punten: 0,
-    punten_voor_monumentcorrectie: 0,
-    monumentcorrectie_toegepast: false,
-  },
-  totaal_punten_bruto: 103,
-  correcties: { totaal_zonder_woz: 56, woz_na_cap: 47 },
-  totaal_punten_na_caps: 103,
+  totaal_punten: 103,
+  rubrieken: [
+    { naam: "Oppervlakte vertrekken", punten: 56, regels: [] },
+    { naam: "WOZ-waarde", punten: 47, regels: [] },
+  ],
+  opslagen: [],
+  huurprijsopslagen: [],
+  huurprijsopslag_procent: 0,
+  maximale_huurprijs: null,
 }
 
 const RESUBMIT = "Wijzigingen opslaan en herberekenen"

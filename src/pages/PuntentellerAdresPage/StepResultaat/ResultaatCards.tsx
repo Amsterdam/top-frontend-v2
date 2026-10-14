@@ -6,24 +6,16 @@ import {
   Row,
   Table,
 } from "@amsterdam/design-system-react"
-import {
-  correcties,
-  HUURSEGMENTEN,
-  huursegment,
-  rubrieken,
-  type Huursegment,
-} from "./berekening"
+import { HUURSEGMENTEN, huursegment, type Huursegment } from "./berekening"
 import styles from "./StepResultaat.module.css"
 
 const formatPunten = (punten: number) =>
   new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 2 }).format(punten)
 
-/** "+ 3,5" or "− 2" (a real minus sign) for a correction's effect; just "0" when it rounds to 0. */
-const formatDifference = (punten: number) => {
-  const amount = formatPunten(Math.abs(punten))
-  if (amount === "0") return amount
-  return `${punten < 0 ? "−" : "+"} ${amount}`
-}
+const formatEuro = (bedrag: number) =>
+  new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR" }).format(
+    bedrag,
+  )
 
 // Where the segment bar ends; a higher score pins the marker to the end.
 const SCALE_MAX = 250
@@ -37,7 +29,7 @@ type Props = {
 
 /** The puntentotaal, with a segment bar showing its huursegment. */
 export function ScoreCard({ resultaat }: Props) {
-  const total = resultaat.totaal_punten_na_caps
+  const total = resultaat.totaal_punten
   const segment = huursegment(total)
   const position = Math.min(Math.max(total / SCALE_MAX, 0), 1) * 100
 
@@ -52,6 +44,23 @@ export function ScoreCard({ resultaat }: Props) {
           Deze woning valt in de <strong>{segment.name.toLowerCase()}</strong> (
           {formatRange(segment)}).
         </Paragraph>
+        {resultaat.maximale_huurprijs && (
+          <Paragraph>
+            Maximale huurprijs:{" "}
+            <strong>{formatEuro(resultaat.maximale_huurprijs.bedrag)}</strong>{" "}
+            per maand
+            {resultaat.maximale_huurprijs.met_opslagen !==
+              resultaat.maximale_huurprijs.bedrag && (
+              <>
+                , met opslagen{" "}
+                <strong>
+                  {formatEuro(resultaat.maximale_huurprijs.met_opslagen)}
+                </strong>
+              </>
+            )}
+            .
+          </Paragraph>
+        )}
       </Column>
 
       {/* Decorative: the sentence above already says which segment it is. */}
@@ -96,84 +105,69 @@ export function ScoreCard({ resultaat }: Props) {
   )
 }
 
-/** How the total came about: every rubriek, each correction the backend applied, the total. */
+/** How the total came about: every rubriek and opslag with its regels, then the total. */
 export function BerekeningCard({ resultaat }: Props) {
-  const applied = correcties(resultaat)
-  const rows: {
-    key: string
-    label: string
-    note?: string
-    punten: string
-    /** Shown in bold, like the total. */
-    strong?: boolean
-  }[] = [
-    ...rubrieken(resultaat).map(({ name, label, punten }) => ({
-      key: name,
-      label,
-      punten: formatPunten(punten),
-    })),
-    {
-      key: "subtotaal",
-      label: "Subtotaal",
-      punten: formatPunten(resultaat.totaal_punten_bruto),
-      strong: true,
-    },
-    ...applied.map(({ label, note, punten }) => ({
-      key: label,
-      label,
-      note,
-      punten: formatDifference(punten),
-    })),
-    ...(applied.length === 0
-      ? [
-          {
-            key: "correcties",
-            label: "Correcties",
-            note: "Geen correcties toegepast",
-            punten: formatDifference(0),
-          },
-        ]
-      : []),
-  ]
-
   return (
     <Column gap="large">
       <Heading level={2}>Berekening</Heading>
+      {[...resultaat.rubrieken, ...resultaat.opslagen].map((rubriek, index) => (
+        <Table key={`${rubriek.naam}-${index}`}>
+          <Table.Caption>{rubriek.naam}</Table.Caption>
+          <Table.Header className="ams-visually-hidden">
+            <Table.Row>
+              <Table.HeaderCell>Onderdeel</Table.HeaderCell>
+              <Table.HeaderCell align="end">Punten</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {rubriek.regels.map((regel, regelIndex) => (
+              <Table.Row key={regelIndex}>
+                <Table.Cell>
+                  {regel.ruimte ? `${regel.ruimte}: ` : ""}
+                  {regel.omschrijving}
+                  {regel.aantal !== null && regel.factor !== null && (
+                    <Paragraph size="small">
+                      {formatPunten(regel.aantal)} ×{" "}
+                      {formatPunten(regel.factor)}
+                    </Paragraph>
+                  )}
+                </Table.Cell>
+                <Table.Cell align="end" className={styles.punten}>
+                  {formatPunten(regel.punten)}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+          <Table.Footer>
+            <Table.Row>
+              <Table.HeaderCell scope="row">Subtotaal</Table.HeaderCell>
+              <Table.Cell align="end" className={styles.punten}>
+                <strong>{formatPunten(rubriek.punten)}</strong>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Footer>
+        </Table>
+      ))}
       <Table>
         <Table.Caption className="ams-visually-hidden">
-          Berekening van de punten
+          Totaal aantal punten
         </Table.Caption>
-        <Table.Header className="ams-visually-hidden">
-          <Table.Row>
-            <Table.HeaderCell>Onderdeel</Table.HeaderCell>
-            <Table.HeaderCell align="end">Punten</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
         <Table.Body>
-          {rows.map(({ key, label, note, punten, strong }) => (
-            <Table.Row key={key}>
-              {strong ? (
-                <Table.HeaderCell scope="row">{label}</Table.HeaderCell>
-              ) : (
-                <Table.Cell>
-                  {label}
-                  {note && <Paragraph size="small">{note}</Paragraph>}
-                </Table.Cell>
-              )}
+          <Table.Row>
+            <Table.HeaderCell scope="row">Totaal</Table.HeaderCell>
+            <Table.Cell align="end" className={styles.punten}>
+              <strong>{formatPunten(resultaat.totaal_punten)}</strong>
+            </Table.Cell>
+          </Table.Row>
+          {resultaat.huurprijsopslagen.map(({ naam, procent }) => (
+            <Table.Row key={naam}>
+              <Table.Cell>Huurprijsopslag {naam}</Table.Cell>
               <Table.Cell align="end" className={styles.punten}>
-                {strong ? <strong>{punten}</strong> : punten}
+                {formatPunten(procent)}%
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
-        <Table.Footer>
-          <Table.Row>
-            <Table.HeaderCell scope="row">Totaal</Table.HeaderCell>
-            <Table.Cell align="end" className={styles.punten}>
-              <strong>{formatPunten(resultaat.totaal_punten_na_caps)}</strong>
-            </Table.Cell>
-          </Table.Row>
-        </Table.Footer>
       </Table>
     </Column>
   )
