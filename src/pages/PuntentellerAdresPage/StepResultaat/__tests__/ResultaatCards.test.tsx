@@ -181,6 +181,33 @@ describe("BerekeningCard", () => {
     expect(screen.queryByText(/56 × 1/)).toBeNull()
   })
 
+  it("shows minpunten with a real minus sign", () => {
+    render(
+      <BerekeningCard
+        resultaat={{
+          ...RESULTAAT,
+          rubrieken: [
+            {
+              naam: "Buitenruimten",
+              punten: -5,
+              regels: [
+                {
+                  omschrijving: "Geen buitenruimte",
+                  punten: -5,
+                  ruimte: null,
+                  aantal: null,
+                  factor: null,
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    )
+
+    expect(puntenOf("Geen buitenruimte")).toBe("\u22125")
+  })
+
   it("leaves out a rubriek without regels", () => {
     render(
       <BerekeningCard
