@@ -81,7 +81,7 @@ export function useGebruikersinvoerForm(
   }, [bagId, isPending, invoerwaarden, initialValues.values, form])
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {
-    // handleSubmit only validates the fields of the current step (the overzicht has none).
+    // handleSubmit only validates the fields of the current step (the resultaat has none).
     if (findMissingFields(values, invoerwaarden).length > 0) {
       onMissingFields?.()
       return

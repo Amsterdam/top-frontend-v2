@@ -170,5 +170,3 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
     </>
   )
 }
-
-export default StepBinnenruimtes

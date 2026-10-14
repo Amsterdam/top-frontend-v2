@@ -1,9 +1,9 @@
 import dayjs from "dayjs"
 
 /** Energielabels opgenomen from this date on (until LABELS_VALID_AGAIN_FROM) don't count. */
-export const LABELS_INVALID_FROM = "2015-01-01"
+const LABELS_INVALID_FROM = "2015-01-01"
 /** From this date on energielabels count again (opnamemethode NTA 8800). */
-export const LABELS_VALID_AGAIN_FROM = "2021-01-01"
+const LABELS_VALID_AGAIN_FROM = "2021-01-01"
 
 /** The energieindex from EP-Online ("1,13") as a number; null when missing or not a number. */
 export function parseEnergieIndex(
@@ -26,7 +26,7 @@ export type BouwjaarReason =
   | "unknown_opnamedatum"
 
 /** What the energieprestatie is based on, following the WWS beleid. */
-export type EnergieGrondslag =
+type EnergieGrondslag =
   | { type: "label"; energielabel: string }
   | { type: "index"; energieindex: number }
   | { type: "bouwjaar"; reason: BouwjaarReason }

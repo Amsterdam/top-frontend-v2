@@ -227,5 +227,3 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
     </>
   )
 }
-
-export default StepWoninggegevens

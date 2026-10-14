@@ -12,7 +12,7 @@ import { emptyVoorzieningen } from "./StepBinnenruimtes/binnenruimteConfig"
  * address's most recent one stays chosen. The woz_waarde is set here though, so each scenario
  * keeps its own WOZ-waarde whatever address it's loaded on.
  */
-export type DummyData = Omit<GebruikersinvoerFormValues, "woz_peildatum_jaar">
+type DummyData = Omit<GebruikersinvoerFormValues, "woz_peildatum_jaar">
 
 const binnenruimte = (
   type: BinnenruimteType,
@@ -241,7 +241,7 @@ export const DUMMY_DATA = {
   },
 } satisfies Record<string, DummyData>
 
-export type DummyDataNaam = keyof typeof DUMMY_DATA
+type DummyDataNaam = keyof typeof DUMMY_DATA
 
 export const isDummyDataNaam = (naam: string | null): naam is DummyDataNaam =>
   naam != null && Object.hasOwn(DUMMY_DATA, naam)

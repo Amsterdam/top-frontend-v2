@@ -5,6 +5,13 @@
   line-height: 1;
 }
 
+/* The maximale huurprijs: large like the puntentotaal, but smaller, so the punten lead. */
+.bedrag {
+  font-size: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  font-weight: var(--ams-typography-body-text-bold-font-weight);
+  line-height: 1;
+}
+
 /* The huursegment bar: three segments with a 2px gap, and a marker at the score. */
 .segmentBar {
   position: relative;
@@ -86,7 +93,13 @@
   inline-size: 0.75rem;
 }
 
-/* The punten column of the berekening: "− 422,5" stays on one line; the label wraps instead. */
+/* The punten and euro columns: "− 422,5" stays on one line, the label wraps instead; the
+   digits line up under each other. */
 .punten {
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.fullWidth {
+  inline-size: 100%;
 }

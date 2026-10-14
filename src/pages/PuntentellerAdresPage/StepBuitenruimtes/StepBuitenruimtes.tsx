@@ -134,5 +134,3 @@ export function StepBuitenruimtes({ onNextStep }: Props) {
     </>
   )
 }
-
-export default StepBuitenruimtes

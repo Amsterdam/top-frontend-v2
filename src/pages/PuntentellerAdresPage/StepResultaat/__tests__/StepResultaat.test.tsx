@@ -1,7 +1,6 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react"
+import { cleanup, render, screen } from "@testing-library/react"
 import { FormProvider, useForm } from "react-hook-form"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { mapFormValuesToPayload } from "../../helpers/mapFormValuesToPayload"
 import { StepResultaat } from "../StepResultaat"
 
 const VALUES = {
@@ -24,15 +23,15 @@ const RESULTAAT: PuntentellerResultaat = {
 
 const RESUBMIT = "Wijzigingen opslaan en herberekenen"
 
-function Harness({ savedPayload }: { savedPayload: string }) {
+function Harness({
+  resultaat = RESULTAAT,
+}: {
+  resultaat?: PuntentellerResultaat | null
+}) {
   const form = useForm<GebruikersinvoerFormValues>({ defaultValues: VALUES })
   return (
     <FormProvider {...form}>
-      <StepResultaat
-        resultaat={RESULTAAT}
-        savedPayload={savedPayload}
-        onPreviousStep={vi.fn()}
-      />
+      <StepResultaat resultaat={resultaat ?? undefined} onGoToField={vi.fn()} />
     </FormProvider>
   )
 }
@@ -40,34 +39,26 @@ function Harness({ savedPayload }: { savedPayload: string }) {
 describe("StepResultaat", () => {
   afterEach(cleanup)
 
-  it("says there's no berekening yet and how to get one, while nothing is saved", () => {
-    const onPreviousStep = vi.fn()
-    render(<StepResultaat onPreviousStep={onPreviousStep} />)
+  it("says there's no berekening yet and offers to make one, while nothing is saved", () => {
+    render(<Harness resultaat={null} />)
 
     expect(
       screen.getByRole("heading", { name: "Nog geen berekening" }),
     ).toBeDefined()
     expect(screen.queryByRole("heading", { name: "Puntentelling" })).toBeNull()
+    expect(
+      screen.getByRole("button", { name: "Sla op en bereken" }),
+    ).toBeDefined()
     expect(screen.queryByRole("button", { name: RESUBMIT })).toBeNull()
-
-    fireEvent.click(
-      screen.getByRole("button", { name: "Terug naar overzicht" }),
-    )
-
-    expect(onPreviousStep).toHaveBeenCalled()
   })
 
-  it("offers to save again once the form differs from the last save", () => {
-    render(<Harness savedPayload="{}" />)
+  it("lists the required fields still missing", () => {
+    render(<Harness />)
 
-    expect(screen.getByRole("button", { name: RESUBMIT })).toBeDefined()
-  })
-
-  it("doesn't offer to save again while the form is as it was saved", () => {
-    render(
-      <Harness savedPayload={JSON.stringify(mapFormValuesToPayload(VALUES))} />,
-    )
-
-    expect(screen.queryByRole("button", { name: RESUBMIT })).toBeNull()
+    expect(
+      screen.getByRole("heading", {
+        name: "Verbeter de fouten voor u verder gaat",
+      }),
+    ).toBeDefined()
   })
 })
