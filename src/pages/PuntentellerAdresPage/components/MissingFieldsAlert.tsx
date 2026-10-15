@@ -1,10 +1,7 @@
 import type { MouseEvent, Ref } from "react"
 import { Grid, InvalidFormAlert } from "@amsterdam/design-system-react"
-import { useFormContext, useWatch } from "react-hook-form"
-import {
-  findMissingFields,
-  type MissingField,
-} from "../helpers/findMissingFields"
+import type { MissingField } from "../helpers/findMissingFields"
+import { useMissingFields } from "../helpers/useMissingFields"
 
 type Props = {
   invoerwaarden?: PuntentellerInvoerwaarden
@@ -19,9 +16,7 @@ type Props = {
  * resultaat-stap. Nothing once everything required is filled in.
  */
 export function MissingFieldsAlert({ invoerwaarden, onGoToField, ref }: Props) {
-  const { control } = useFormContext<GebruikersinvoerFormValues>()
-  const values = useWatch({ control }) as GebruikersinvoerFormValues
-  const missingFields = findMissingFields(values, invoerwaarden)
+  const missingFields = useMissingFields(invoerwaarden)
 
   if (missingFields.length === 0) return null
 

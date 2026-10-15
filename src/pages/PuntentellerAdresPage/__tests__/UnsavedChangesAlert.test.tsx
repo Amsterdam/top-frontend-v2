@@ -1,8 +1,15 @@
 import { cleanup, render, screen } from "@testing-library/react"
 import { FormProvider, useForm } from "react-hook-form"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { UnsavedChangesAlert } from "../components/UnsavedChangesAlert"
 import { mapFormValuesToPayload } from "../helpers/mapFormValuesToPayload"
+
+const mockFindMissingFields = vi.fn()
+
+// VALUES lacks most required fields; findMissingFields has its own tests.
+vi.mock("../helpers/findMissingFields", () => ({
+  findMissingFields: (...args: unknown[]) => mockFindMissingFields(...args),
+}))
 
 const VALUES = {
   binnenruimtes: [],
@@ -22,6 +29,7 @@ function Harness({ savedPayload }: { savedPayload?: string }) {
 }
 
 describe("UnsavedChangesAlert", () => {
+  beforeEach(() => mockFindMissingFields.mockReturnValue([]))
   afterEach(cleanup)
 
   it("warns and offers to save again once the form differs from the last save", () => {
@@ -31,6 +39,15 @@ describe("UnsavedChangesAlert", () => {
       screen.getByRole("heading", { name: "Dit resultaat is niet actueel" }),
     ).toBeDefined()
     expect(screen.getByRole("button", { name: RESUBMIT })).toBeDefined()
+  })
+
+  it("shows nothing while required fields are missing", () => {
+    mockFindMissingFields.mockReturnValue([
+      { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
+    ])
+    render(<Harness savedPayload="{}" />)
+
+    expect(screen.queryByRole("button", { name: RESUBMIT })).toBeNull()
   })
 
   it("shows nothing while the form is as it was saved", () => {
