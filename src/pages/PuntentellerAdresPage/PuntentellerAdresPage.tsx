@@ -168,6 +168,7 @@ export default function PuntentellerAdresPage() {
           <UnsavedChangesAlert
             savedPayload={savedPayload}
             isSubmitting={isSubmitting}
+            invoerwaarden={invoerwaarden}
           />
         )}
 

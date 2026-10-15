@@ -363,6 +363,22 @@ describe("PuntentellerAdresPage", () => {
       ).toBeDefined()
     })
 
+    it("doesn't warn on the resultaat-stap when required fields are still missing", async () => {
+      render(<PuntentellerAdresPage />)
+      await save()
+      await screen.findByText("Stap resultaat")
+
+      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+      changeBouwjaar(1990)
+      mockFindMissingFields.mockReturnValue([
+        { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
+      ])
+      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
+
+      expect(await screen.findByText("Stap resultaat")).toBeDefined()
+      expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+    })
+
     it("saves and shows the resultaat-stap again when submitting from the resultaat-stap", async () => {
       render(<PuntentellerAdresPage />)
       await save()
@@ -380,27 +396,6 @@ describe("PuntentellerAdresPage", () => {
       expect(await screen.findByText("Stap resultaat")).toBeDefined()
       expect(mockMutate).toHaveBeenCalledTimes(2)
       expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
-    })
-
-    it("stays on the resultaat-stap when saving from it is blocked by missing fields", async () => {
-      render(<PuntentellerAdresPage />)
-      await save()
-      await screen.findByText("Stap resultaat")
-
-      fireEvent.click(screen.getByRole("link", { name: "Woning" }))
-      changeBouwjaar(1990)
-      mockFindMissingFields.mockReturnValue([
-        { step: 0, name: "woz_waarde", message: "WOZ-waarde is verplicht" },
-      ])
-      fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
-      fireEvent.click(
-        await screen.findByRole("button", {
-          name: "Wijzigingen opslaan en herberekenen",
-        }),
-      )
-
-      expect(await screen.findByText("Stap resultaat")).toBeDefined()
-      expect(mockMutate).toHaveBeenCalledTimes(1)
     })
 
     it("stops warning once the changes are saved", async () => {
