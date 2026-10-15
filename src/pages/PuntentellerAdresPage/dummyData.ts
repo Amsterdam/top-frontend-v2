@@ -3,10 +3,10 @@ import { emptyVoorzieningen } from "./StepBinnenruimtes/binnenruimteConfig"
 
 /**
  * Example puntentellingen to fill the wizard with outside PROD, via ?dummydata=<naam> (see
- * useInitialValues), e.g. /puntenteller/0363010000758545?dummydata=sociale-huur.
+ * useInitialValues), e.g. /puntenteller/0363010000758545?dummydata=socialehuur.
  *
  * With a non-existent bagId, the address's invoerwaarden come from the fixtures instead, e.g.
- * /puntenteller/1234?dummydata=sociale-huur.
+ * /puntenteller/1234?dummydata=socialehuur.
  *
  * Everything but the woz_peildatum_jaar: the peildata come from the address itself, so the
  * address's most recent one stays chosen. The woz_waarde is set here though, so each scenario
@@ -71,7 +71,7 @@ export const DUMMY_DATA = {
    * - Geen buitenruimte
    * - Gemeentelijk monument en zorgwoning
    */
-  "sociale-huur": {
+  socialehuur: {
     bouwjaar: 1928,
     energie_type: "label",
     energielabel_klasse: "F",
@@ -182,7 +182,7 @@ export const DUMMY_DATA = {
    * - Voortuin (10 m²) en achtertuin (40 m²)
    * - Opgeleverd in 2015 tot en met 2019
    */
-  "vrije-sector": {
+  vrijesector: {
     bouwjaar: 2016,
     energie_type: "label",
     energielabel_klasse: "A+",
