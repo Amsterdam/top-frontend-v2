@@ -14,6 +14,9 @@ import {
   sortWozWaardenByPeildatum,
 } from "../helpers/mapInvoerwaardenToFormValues"
 import { EnergielabelSummary } from "./EnergielabelSummary"
+import { toNumber } from "../helpers/oppervlakte"
+
+const DEFAULT_SPAN = { narrow: 4, medium: 4, wide: 4 }
 
 const ENERGIELABEL_OPTIONS = [
   { label: "Maak een keuze", value: "" },
@@ -37,6 +40,7 @@ const FIELD_NAMES = [
   "energie_index",
   "bouwjaar",
   "type_woning",
+  "huidige_huurprijs",
 ] as const
 
 const formatEuro = (value: number) =>
@@ -97,7 +101,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
       <StepInvalidFormAlert fieldNames={FIELD_NAMES} />
 
       <Grid.Cell span="all">
-        <Grid gapVertical="large" className="align-items-end grid-in-cell">
+        <Grid gapVertical="large"  className="align-items-end grid-in-cell ams-mb-m">
           <Grid.Cell span="all" appearance="transparent">
             <Heading level={2}>Over de woning</Heading>
           </Grid.Cell>
@@ -107,7 +111,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
           </Grid.Cell>
           {wozPeildatumOptions.length > 0 && (
             <Grid.Cell
-              span={{ narrow: 4, medium: 4, wide: 4 }}
+              span={DEFAULT_SPAN}
               appearance="transparent"
             >
               <SelectControl<GebruikersinvoerFormValues>
@@ -123,7 +127,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
             </Grid.Cell>
           )}
           <Grid.Cell
-            span={{ narrow: 4, medium: 4, wide: 4 }}
+            span={DEFAULT_SPAN}
             appearance="transparent"
           >
             <TextInputControl<GebruikersinvoerFormValues>
@@ -156,7 +160,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
           </Grid.Cell>
           {/* Only the field for the chosen energie_type is shown (and validated). */}
           <Grid.Cell
-            span={{ narrow: 4, medium: 4, wide: 4 }}
+            span={DEFAULT_SPAN}
             appearance="transparent"
           >
             {energieType === "label" && (
@@ -198,7 +202,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
             )}
           </Grid.Cell>
 
-          <Grid.Cell span="all" appearance="transparent">
+          <Grid.Cell span={{ narrow: 4, medium: 8, wide: 9 }} appearance="transparent">
             <RadioControl<GebruikersinvoerFormValues>
               label="Wat voor type woning betreft het?"
               description="Een eengezinswoning heeft een eigen voordeur aan de straat of tuin, zoals een rijtjeshuis, hoekwoning, twee-onder-een-kapwoning of vrijstaand huis. Een meergezinswoning maakt onderdeel uit van een gebouw met meerdere woningen, zoals een appartement, flat, etagewoning, maisonette of portiekwoning."
@@ -215,6 +219,24 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
               ]}
               registerOptions={{
                 required: REQUIRED_MESSAGES.type_woning,
+              }}
+            />
+          </Grid.Cell>
+          <Grid.Cell
+            span={DEFAULT_SPAN}
+            appearance="transparent"
+          >
+            <TextInputControl<GebruikersinvoerFormValues>
+              label="Huidige huurprijs (€)"
+              description="Vul de kale huur per maand in, zonder servicekosten."
+              name="huidige_huurprijs"
+              attributes={{ type: "number", min: 0, step: 0.01 }}
+              registerOptions={{
+                validate: (value) =>
+                  value == null ||
+                  value === "" ||
+                  (toNumber(value) !== null && Number(value) >= 0) ||
+                  "Vul een geldige huurprijs van 0 euro of meer in.",
               }}
             />
           </Grid.Cell>

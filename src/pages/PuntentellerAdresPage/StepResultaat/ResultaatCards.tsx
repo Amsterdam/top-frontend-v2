@@ -7,6 +7,7 @@ import {
   Table,
 } from "@amsterdam/design-system-react"
 import { formatDate } from "@/shared/dateFormatters"
+import { toNumber } from "../helpers/oppervlakte"
 import { HUURSEGMENTEN, huursegment, type Huursegment } from "./berekening"
 import styles from "./StepResultaat.module.css"
 
@@ -102,34 +103,100 @@ export function ScoreCard({ resultaat }: Props) {
 /**
  * The maximale huurprijs, large like the puntentotaal, and the huurprijstabel it comes from.
  * With huurprijsopslagen, a table below adds it up: the basishuurprijs plus each opslag in
- * euro's. Nothing when no huurprijstabel applies.
+ * euro's. Includes the current rent and its difference from the maximum.
  */
-export function HuurprijsCard({ resultaat }: Props) {
+export function HuurprijsCard({
+  resultaat,
+  huidigeHuurprijs,
+}: Props & {
+  huidigeHuurprijs?: GebruikersinvoerFormValues["huidige_huurprijs"]
+}) {
   const { maximale_huurprijs: huurprijs, huurprijsopslagen } = resultaat
-  if (!huurprijs) return null
+  const huidige = toNumber(huidigeHuurprijs)
+  const verschil =
+    huidige !== null && huurprijs ? huurprijs.met_opslagen - huidige : null
+  const richting = verschil !== null && verschil < 0 ? "boven" : "onder"
 
   // The backend only gives the total in euro's; split it over the opslagen by their procent,
   // so the regels add up to it exactly.
-  const opslagBedrag = huurprijs.met_opslagen - huurprijs.bedrag
+  const opslagBedrag = huurprijs ? huurprijs.met_opslagen - huurprijs.bedrag : 0
   const opslagProcent = huurprijsopslagen.reduce((sum, o) => sum + o.procent, 0)
 
   return (
     <Column gap="large">
-      <Column gap="small">
-        <Heading level={2}>Maximale huurprijs</Heading>
-        <Paragraph>
-          <span className={styles.bedrag}>
-            {formatEuro(huurprijs.met_opslagen)}
-          </span>{" "}
-          per maand
-        </Paragraph>
-        <Paragraph size="small">
-          Volgens de huurprijstabel van{" "}
-          {formatDate(huurprijs.prijspeil, "D MMMM YYYY")}.
-        </Paragraph>
-      </Column>
+      <div className={styles.huurprijsColumns}>
+        <Column gap="small">
+          <Heading level={2}>Maximale huurprijs</Heading>
+          {huurprijs ? (
+            <>
+              <Paragraph>
+                <span className={styles.bedrag}>
+                  {formatEuro(huurprijs.met_opslagen)}
+                </span>{" "}
+                per maand
+              </Paragraph>
+              <Paragraph>
+                Volgens de huurprijstabel van{" "}
+                {formatDate(huurprijs.prijspeil, "D MMMM YYYY")}.
+              </Paragraph>
+            </>
+          ) : (
+            <Paragraph>
+              Er is geen maximale huurprijs beschikbaar. Een vergelijking is
+              niet mogelijk.
+            </Paragraph>
+          )}
+        </Column>
 
-      {huurprijsopslagen.length > 0 && (
+        <Column gap="small">
+          {huidige !== null && huidige !== 0 && (
+            <>
+              <Heading level={2}>Huidige huurprijs</Heading>
+              {huidige < 0 ? (
+                <Paragraph>
+                  Vul bij Woning een geldige huurprijs van 0 euro of meer in.
+                </Paragraph>
+              ) : (
+                <>
+                  <Paragraph>
+                    <span className={styles.bedrag}>{formatEuro(huidige)}</span>{" "}
+                    per maand
+                  </Paragraph>
+                  {huurprijs && verschil !== null && (
+                    <>
+                      <Paragraph>
+                        {verschil === 0
+                          ? "Huidige huur is gelijk aan de maximale huurprijs."
+                          : `Huidige huur ligt ${formatEuro(Math.abs(verschil))} ${richting} de maximale huurprijs.`}
+                        {huurprijs.met_opslagen > 0 && verschil !== 0 && (
+                          <>
+                            {" "}
+                            {new Intl.NumberFormat("nl-NL", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).format(
+                              (Math.abs(verschil) / huurprijs.met_opslagen) * 100,
+                            )}
+                            % {richting}{" "}maximum.
+                          </>
+                        )}
+                      </Paragraph>
+                      {huurprijs.met_opslagen === 0 && (
+                        <Paragraph>
+                          Het verschil in percentage kan niet worden berekend
+                          bij een maximale huurprijs van 0 euro.
+                        </Paragraph>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </Column>
+      </div>
+
+      {huurprijs && huurprijsopslagen.length > 0 && (
         <Table className={styles.fullWidth}>
           <Table.Caption className="ams-visually-hidden">
             Opbouw maximale huurprijs

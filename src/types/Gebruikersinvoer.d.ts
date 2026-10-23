@@ -117,6 +117,8 @@ type GebruikersinvoerFormValues = {
   woz_waarde: number
   woz_peildatum_jaar: number
   type_woning: string | null
+  /** Optional current rent; TextInputControl supplies typed values as strings. */
+  huidige_huurprijs?: number | string | null
 
   // Bijzonderheden
   monument: boolean
