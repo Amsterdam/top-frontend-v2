@@ -313,6 +313,22 @@ describe("mapFormValuesToPayload", () => {
   })
 
   describe("woning en bijzonderheden", () => {
+    it.each([
+      [750, "750"],
+      ["750.50", "750.5"],
+      [0, "0"],
+      ["0", "0"],
+      ["", null],
+      [null, null],
+      [undefined, null],
+    ])("maps huidige_huurprijs %s to %s", (huurprijs, expected) => {
+      const payload = mapFormValuesToPayload(
+        formValues({ huidige_huurprijs: huurprijs }),
+      )
+
+      expect(payload.huidige_huurprijs).toBe(expected)
+    })
+
     it("maps the woninggegevens and ja/nee-vragen", () => {
       const payload = mapFormValuesToPayload(
         formValues({

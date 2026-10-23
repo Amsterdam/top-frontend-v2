@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react"
 import dayjs from "dayjs"
 import "dayjs/locale/nl"
+import styles from "../StepResultaat.module.css"
 import { afterEach, describe, expect, it } from "vitest"
 import {
   BerekeningCard,
@@ -103,10 +104,109 @@ describe("HuurprijsCard", () => {
     expect(screen.queryByRole("table")).toBeNull()
   })
 
-  it("shows nothing when no huurprijstabel applies", () => {
-    const { container } = render(<HuurprijsCard resultaat={RESULTAAT} />)
+  it("explains when no huurprijstabel applies", () => {
+    render(<HuurprijsCard resultaat={RESULTAAT} />)
 
-    expect(container.innerHTML).toBe("")
+    expect(
+      screen.getByText(/Er is geen maximale huurprijs beschikbaar/),
+    ).toBeDefined()
+    expect(screen.queryByRole("table")).toBeNull()
+  })
+})
+
+describe("HuurprijsCard comparison", () => {
+  afterEach(cleanup)
+
+  const resultaat: PuntentellerResultaat = {
+    ...RESULTAAT,
+    maximale_huurprijs: {
+      bedrag: 600,
+      met_opslagen: 660,
+      prijspeil: "2025-07-01",
+    },
+  }
+
+  it.each([
+    ["726", "€ 726,00", "€ 66,00", "10,00%", "boven"],
+    [594, "€ 594,00", "€ 66,00", "10,00%", "onder"],
+    [660, "€ 660,00", "€ 0,00", "0,00%", "gelijk aan"],
+    ["726.25", "€ 726,25", "€ 66,25", "10,04%", "boven"],
+  ])(
+    "compares current rent %s to the maximum including opslagen",
+    (huidige, bedrag, verschil, percentage, richting) => {
+      render(<HuurprijsCard resultaat={resultaat} huidigeHuurprijs={huidige} />)
+
+      expect(
+        screen.getAllByText(bedrag, { selector: "span" }).length,
+      ).toBeGreaterThan(0)
+      expect(puntenOf("Totaal per maand")).toBe("€ 660,00")
+      expect(
+        screen.getByText(
+          richting === "gelijk aan"
+            ? "Huidige huur is gelijk aan de maximale huurprijs."
+            : `Huidige huur ligt ${verschil} ${richting} de maximale huurprijs. ${percentage} ${richting} maximum.`,
+        ),
+      ).toBeDefined()
+    },
+  )
+
+  it.each([undefined, null, "", 0, "0", "0.00"])(
+    "leaves the right column empty for missing or zero current rent (%s)",
+    (huidige) => {
+      const { container } = render(
+        <HuurprijsCard resultaat={resultaat} huidigeHuurprijs={huidige} />,
+      )
+
+      expect(
+        container.querySelector(`.${styles.huurprijsColumns}`)?.lastElementChild
+          ?.textContent,
+      ).toBe("")
+      expect(
+        screen.queryByRole("heading", { name: "Huidige huurprijs" }),
+      ).toBeNull()
+      expect(screen.queryByText(/^Huidige huur (ligt|is)/)).toBeNull()
+    },
+  )
+
+  it("explains when no maximum is available", () => {
+    render(<HuurprijsCard resultaat={RESULTAAT} huidigeHuurprijs={700} />)
+
+    expect(screen.getByText("€ 700,00")).toBeDefined()
+    expect(
+      screen.getByText(/Er is geen maximale huurprijs beschikbaar/),
+    ).toBeDefined()
+    expect(screen.queryByText(/^Huidige huur (ligt|is)/)).toBeNull()
+  })
+
+  it("does not compare a negative current rent", () => {
+    render(<HuurprijsCard resultaat={resultaat} huidigeHuurprijs={-1} />)
+
+    expect(
+      screen.getByText(/Vul bij Woning een geldige huurprijs/),
+    ).toBeDefined()
+    expect(screen.queryByText(/^Huidige huur (ligt|is)/)).toBeNull()
+  })
+
+  it("shows the euro difference without dividing by a zero maximum", () => {
+    render(
+      <HuurprijsCard
+        resultaat={{
+          ...resultaat,
+          maximale_huurprijs: {
+            bedrag: 0,
+            met_opslagen: 0,
+            prijspeil: "2025-07-01",
+          },
+        }}
+        huidigeHuurprijs={100}
+      />,
+    )
+
+    expect(
+      screen.getByText(
+        "Huidige huur ligt € 100,00 boven de maximale huurprijs.",
+      ),
+    ).toBeDefined()
   })
 })
 

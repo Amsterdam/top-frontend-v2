@@ -25,10 +25,14 @@ const RESUBMIT = "Wijzigingen opslaan en herberekenen"
 
 function Harness({
   resultaat = RESULTAAT,
+  huidigeHuurprijs,
 }: {
   resultaat?: PuntentellerResultaat | null
+  huidigeHuurprijs?: string
 }) {
-  const form = useForm<GebruikersinvoerFormValues>({ defaultValues: VALUES })
+  const form = useForm<GebruikersinvoerFormValues>({
+    defaultValues: { ...VALUES, huidige_huurprijs: huidigeHuurprijs },
+  })
   return (
     <FormProvider {...form}>
       <StepResultaat resultaat={resultaat ?? undefined} onGoToField={vi.fn()} />
@@ -59,6 +63,33 @@ describe("StepResultaat", () => {
       screen.getByRole("heading", {
         name: "Verbeter de fouten voor u verder gaat",
       }),
+    ).toBeDefined()
+  })
+
+  it("uses the optional form value in the huurprijs card", () => {
+    render(
+      <Harness
+        huidigeHuurprijs="750"
+        resultaat={{
+          ...RESULTAAT,
+          maximale_huurprijs: {
+            bedrag: 600,
+            met_opslagen: 600,
+            prijspeil: "2025-07-01",
+          },
+        }}
+      />,
+    )
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Maximale huurprijs",
+      }),
+    ).toBeDefined()
+    expect(
+      screen.getByText(
+        "Huidige huur ligt € 150,00 boven de maximale huurprijs. 25,00% boven maximum.",
+      ),
     ).toBeDefined()
   })
 })

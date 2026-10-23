@@ -128,6 +128,41 @@ describe("StepWoninggegevens", () => {
     const volgendeStap = () =>
       fireEvent.click(screen.getByRole("button", { name: "Volgende stap" }))
 
+    it.each(["", "0", "725.50"])(
+      "accepts optional current rent '%s'",
+      async (huurprijs) => {
+        const onNextStep = vi.fn()
+        render(<Harness values={complete} onNextStep={onNextStep} />)
+        const input = screen.getByRole("textbox", {
+          name: /Huidige huurprijs/,
+        })
+        expect(input.hasAttribute("required")).toBe(false)
+        fireEvent.change(input, { target: { value: huurprijs } })
+
+        volgendeStap()
+
+        await waitFor(() => expect(onNextStep).toHaveBeenCalledTimes(1))
+      },
+    )
+
+    it("rejects a negative current rent and lists the error", async () => {
+      const onNextStep = vi.fn()
+      render(<Harness values={complete} onNextStep={onNextStep} />)
+      fireEvent.change(
+        screen.getByRole("textbox", { name: /Huidige huurprijs/ }),
+        { target: { value: "-1" } },
+      )
+
+      volgendeStap()
+
+      expect(
+        await screen.findByRole("link", {
+          name: "Vul een geldige huurprijs van 0 euro of meer in.",
+        }),
+      ).toBeDefined()
+      expect(onNextStep).not.toHaveBeenCalled()
+    })
+
     it("goes to the next step when the required fields are filled in", async () => {
       const onNextStep = vi.fn()
       render(<Harness values={complete} onNextStep={onNextStep} />)
