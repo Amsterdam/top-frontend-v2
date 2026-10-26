@@ -68,6 +68,7 @@ function StepSituation({ onNextStep }: Props) {
           { label: "Niemand aanwezig", value: "nobody_present" },
           { label: "Geen medewerking", value: "no_cooperation" },
           { label: "Toegang verleend", value: "access_granted" },
+          { label: "Neemt contact_op", value: "awaiting_response" },
         ]}
         registerOptions={{
           required: "Situatie is verplicht",
