@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
-import { Grid, GridColumnNumbers, Heading } from "@amsterdam/design-system-react"
+import { Grid, Heading, type GridColumnNumbers } from "@amsterdam/design-system-react"
 import {
   RadioControl,
   SelectControl,
