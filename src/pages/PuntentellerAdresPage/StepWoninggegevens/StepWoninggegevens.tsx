@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
-import { Grid, Heading } from "@amsterdam/design-system-react"
+import { Grid, GridColumnNumbers, Heading } from "@amsterdam/design-system-react"
 import {
   RadioControl,
   SelectControl,
@@ -16,7 +16,7 @@ import {
 import { EnergielabelSummary } from "./EnergielabelSummary"
 import { toNumber } from "../helpers/oppervlakte"
 
-const DEFAULT_SPAN = { narrow: 4, medium: 4, wide: 4 }
+const DEFAULT_SPAN: GridColumnNumbers = { narrow: 4, medium: 4, wide: 4 }
 
 const ENERGIELABEL_OPTIONS = [
   { label: "Maak een keuze", value: "" },
