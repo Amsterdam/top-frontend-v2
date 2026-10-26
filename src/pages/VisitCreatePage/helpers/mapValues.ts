@@ -25,7 +25,7 @@ export function mapValues(values: FormValuesVisit): VisitPayload {
     ? dayjs().format("YYYY-M-D") + "T" + time
     : null
 
-  if (values.situation === "access_granted") {
+  if (values.situation === "access_granted" || values.situation === "awaiting_response") {
     nullify(mappedValues, [
       "can_next_visit_go_ahead",
       "can_next_visit_go_ahead_description_yes",

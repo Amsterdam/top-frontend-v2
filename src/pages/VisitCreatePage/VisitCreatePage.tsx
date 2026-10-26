@@ -128,7 +128,7 @@ export default function CreateVisitPage() {
 
   const steps = [
     <StepSituation
-      onNextStep={() => setCurrentStep(situation === "access_granted" ? 4 : 1)}
+      onNextStep={() => setCurrentStep( (situation === "access_granted" || situation === "awaiting_response") ? 4 : 1)}
       key="step-0"
     />,
     <StepObservations

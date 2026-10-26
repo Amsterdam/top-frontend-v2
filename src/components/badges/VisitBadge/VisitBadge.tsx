@@ -16,7 +16,7 @@ export function VisitBadge({ situation }: { situation?: string | null }) {
   let variant: StatusBadgeVariant = "info"
   let svg
 
-  if (situation === "access_granted") {
+  if (situation === "access_granted" || situation === "awaiting_response") {
     variant = "success"
     svg = SuccessIcon
   } else if (situation === "nobody_present") {

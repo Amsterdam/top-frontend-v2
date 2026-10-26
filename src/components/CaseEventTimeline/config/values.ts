@@ -16,6 +16,7 @@ export const debriefViolationMap = {
 
 export const visitEventValuesMap = {
   access_granted: "Toegang verleend",
+  awaiting_response: "Neemt contact_op",
   condensation_on_windows: "Condensvorming op ramen",
   contacted_neighbour: "Buren gesproken",
   daytime: "Overdag",
