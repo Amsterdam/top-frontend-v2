@@ -17,10 +17,12 @@ type Form = UseFormReturn<GebruikersinvoerFormValues>
 
 function Harness({
   values,
+  invoerwaarden,
   onForm,
   onNextStep = vi.fn(),
 }: {
   values: Partial<GebruikersinvoerFormValues>
+  invoerwaarden?: PuntentellerInvoerwaarden
   /** Hands the form to the test, e.g. to trigger validation. */
   onForm?: (form: Form) => void
   onNextStep?: () => void
@@ -31,7 +33,10 @@ function Harness({
   }, [form, onForm])
   return (
     <FormProvider form={form} onSubmit={vi.fn()}>
-      <StepWoninggegevens onNextStep={onNextStep} />
+      <StepWoninggegevens
+        invoerwaarden={invoerwaarden}
+        onNextStep={onNextStep}
+      />
     </FormProvider>
   )
 }
@@ -58,6 +63,26 @@ describe("StepWoninggegevens", () => {
     const select = energielabelSelect()!
     expect(select.value).toBe("")
     expect(select.selectedOptions[0].textContent).toBe("Maak een keuze")
+  })
+
+  it("allows entering the WOZ-peildatum when no automatic peildata are available", () => {
+    render(
+      <Harness
+        values={{ woz_peildatum_jaar: 2024 }}
+        invoerwaarden={{
+          straat: null,
+          huisnummer: null,
+          gebruiksoppervlakte: null,
+          woz_waarden: null,
+          wozobjectnummer: null,
+          energie: null,
+        }}
+      />,
+    )
+
+    expect(
+      screen.getByRole("textbox", { name: /WOZ-peildatum \(jaar\)/ }),
+    ).toHaveProperty("value", "2024")
   })
 
   it("shows only the field of the chosen energie_type", () => {
@@ -120,6 +145,7 @@ describe("StepWoninggegevens", () => {
 
   describe("Volgende stap", () => {
     const complete: Partial<GebruikersinvoerFormValues> = {
+      woz_peildatum_jaar: 2025,
       woz_waarde: 374000,
       energie_type: "bouwjaar",
       bouwjaar: 1977,
