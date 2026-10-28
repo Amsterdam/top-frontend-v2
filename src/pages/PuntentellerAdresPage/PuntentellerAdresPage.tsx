@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import {
+  Alert,
   Breadcrumb,
   Grid,
   Heading,
@@ -131,10 +132,17 @@ export default function PuntentellerAdresPage() {
 
         {isError && (
           <Grid.Cell span="all">
-            <Paragraph>
-              Er is iets misgegaan bij het ophalen van de gegevens voor dit
-              adres.
-            </Paragraph>
+            <Alert
+              heading="Woninggegevens niet automatisch opgehaald"
+              headingLevel={2}
+              severity="warning"
+            >
+              <Paragraph>
+                De gegevens voor dit adres konden niet worden opgehaald. Je
+                kunt de puntentelling wel maken door de ontbrekende gegevens
+                zelf in te vullen.
+              </Paragraph>
+            </Alert>
           </Grid.Cell>
         )}
 
@@ -164,7 +172,7 @@ export default function PuntentellerAdresPage() {
 
         {/* Only where the punten are shown; the bijzonderheden-stap says it in its submit
             button. */}
-        {!isError && currentStep === RESULTAAT_STEP && (
+        {currentStep === RESULTAAT_STEP && (
           <UnsavedChangesAlert
             savedPayload={savedPayload}
             isSubmitting={isSubmitting}
@@ -172,7 +180,7 @@ export default function PuntentellerAdresPage() {
           />
         )}
 
-        {!isError && steps[currentStep]}
+        {steps[currentStep]}
       </Grid>
     </FormProvider>
   )

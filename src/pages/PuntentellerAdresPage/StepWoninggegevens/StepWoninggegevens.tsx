@@ -109,7 +109,7 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
           <Grid.Cell span="all" appearance="transparent">
             <Heading level={3}>WOZ-waarde gegevens</Heading>
           </Grid.Cell>
-          {wozPeildatumOptions.length > 0 && (
+          {wozPeildatumOptions.length > 0 ? (
             <Grid.Cell
               span={DEFAULT_SPAN}
               appearance="transparent"
@@ -122,6 +122,19 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
                   required: REQUIRED_MESSAGES.woz_peildatum_jaar,
                 }}
                 style={{ width: "100%" }}
+                inFieldSet
+              />
+            </Grid.Cell>
+          ) : (
+            <Grid.Cell span={DEFAULT_SPAN} appearance="transparent">
+              <TextInputControl<GebruikersinvoerFormValues>
+                label="WOZ-peildatum (jaar)"
+                name="woz_peildatum_jaar"
+                attributes={{ type: "number", min: 1900, step: 1 }}
+                registerOptions={{
+                  valueAsNumber: true,
+                  min: 1900,
+                }}
                 inFieldSet
               />
             </Grid.Cell>

@@ -132,6 +132,23 @@ export default function VeelgesteldeVragenPage() {
           </Accordion>
         </Column>
       </Grid.Cell>
+
+      <Grid.Cell span="all">
+        <Heading level={2} className="ams-mb-s">
+          Puntenteller
+        </Heading>
+        <Column>
+          <Accordion headingLevel={3}>
+            <Accordion.Section label="Wat doe ik als woninggegevens niet automatisch worden opgehaald?">
+              <Paragraph>
+                Je kunt de puntentelling nog steeds maken. Vul de ontbrekende
+                gegevens zelf in bij Woning, waaronder de WOZ-peildatum en
+                WOZ-waarde en de energiegegevens.
+              </Paragraph>
+            </Accordion.Section>
+          </Accordion>
+        </Column>
+      </Grid.Cell>
     </Grid>
   )
 }
