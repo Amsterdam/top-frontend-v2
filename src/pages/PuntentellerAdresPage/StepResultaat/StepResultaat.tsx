@@ -7,6 +7,7 @@ import {
   type GridColumnNumbers,
 } from "@amsterdam/design-system-react"
 import type { Ref } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
 import { SaveIcon } from "@amsterdam/design-system-react-icons"
 import { MissingFieldsAlert } from "../components/MissingFieldsAlert"
 import { SUBMIT_LABEL } from "../components/StepActions"
@@ -43,6 +44,9 @@ export function StepResultaat({
   onGoToField,
   invalidFormAlertRef,
 }: Props) {
+  const { control } = useFormContext<GebruikersinvoerFormValues>()
+  const huidigeHuurprijs = useWatch({ control, name: "huidige_huurprijs" })
+
   return (
     <>
       <MissingFieldsAlert
@@ -60,11 +64,12 @@ export function StepResultaat({
               <div className="ams-grid__cell">
                 <ScoreCard resultaat={resultaat} />
               </div>
-              {resultaat.maximale_huurprijs && (
-                <div className="ams-grid__cell">
-                  <HuurprijsCard resultaat={resultaat} />
-                </div>
-              )}
+              <div className="ams-grid__cell">
+                <HuurprijsCard
+                  resultaat={resultaat}
+                  huidigeHuurprijs={huidigeHuurprijs}
+                />
+              </div>
               <div className="ams-grid__cell">
                 <PuntenopbouwCard resultaat={resultaat} />
               </div>

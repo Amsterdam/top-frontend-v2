@@ -306,6 +306,10 @@ export function mapFormValuesToPayload(
     buitenruimten,
     parkeerruimten,
     completed: true,
+    huidige_huurprijs:
+      toNumber(values.huidige_huurprijs) === null
+        ? null
+        : decimal(values.huidige_huurprijs),
     gebruiksoppervlakte: count(values.gebruiksoppervlakte),
     woz_waarde: count(values.woz_waarde),
     woz_peildatum_jaar: count(values.woz_peildatum_jaar),

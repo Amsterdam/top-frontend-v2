@@ -129,6 +129,7 @@ type GebruikersinvoerPayload = {
   buitenruimten: PayloadBuitenruimte[]
   parkeerruimten: PayloadParkeerruimte[]
   completed: boolean
+  huidige_huurprijs: string | null
   gebruiksoppervlakte: number
   woz_waarde: number
   woz_peildatum_jaar: number
