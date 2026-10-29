@@ -131,7 +131,7 @@ export default function PuntentellerAdresPage() {
         </Grid.Cell>
 
         {isError && (
-          <Grid.Cell span="all">
+          <Grid.Cell span="all" appearance="transparent">
             <Alert
               heading="Woninggegevens niet automatisch opgehaald"
               headingLevel={2}
