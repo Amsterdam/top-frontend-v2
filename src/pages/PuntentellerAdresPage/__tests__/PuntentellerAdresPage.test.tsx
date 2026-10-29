@@ -20,6 +20,7 @@ const mockMutate = vi.fn()
 const mockShowToast = vi.fn()
 const mockFindMissingFields = vi.fn()
 const mockUseBagPdokAddress = vi.fn()
+const mockUseAddressInvoerwaarden = vi.fn()
 const mockUseInitialValues = vi.fn()
 
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
@@ -52,11 +53,7 @@ vi.mock("react-router", async (importOriginal) => {
 })
 
 vi.mock("@/api/hooks", () => ({
-  useAddressInvoerwaarden: () => ({
-    data: DUMMY_INVOERWAARDEN,
-    isPending: false,
-    isError: false,
-  }),
+  useAddressInvoerwaarden: () => mockUseAddressInvoerwaarden(),
   useBagPdokAddress: (bagId?: string) => mockUseBagPdokAddress(bagId),
   useSaveGebruikersinvoer: () => ({
     mutate: mockMutate,
@@ -155,6 +152,11 @@ vi.mock("../StepResultaat/StepResultaat", () => ({
 describe("PuntentellerAdresPage", () => {
   beforeEach(() => {
     vi.resetAllMocks()
+    mockUseAddressInvoerwaarden.mockReturnValue({
+      data: DUMMY_INVOERWAARDEN,
+      isPending: false,
+      isError: false,
+    })
     mockFindMissingFields.mockReturnValue([])
     mockUseBagPdokAddress.mockReturnValue({ data: undefined })
     mockUseInitialValues.mockReturnValue({ isPending: false })
@@ -219,6 +221,23 @@ describe("PuntentellerAdresPage", () => {
 
     expect(screen.getByText("Laden...")).toBeDefined()
     expect(screen.queryByText("Stap woninggegevens")).toBeNull()
+  })
+
+  it("keeps the form available when the address data request fails", async () => {
+    mockUseAddressInvoerwaarden.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isError: true,
+    })
+    render(<PuntentellerAdresPage />)
+
+    expect(
+      await screen.findByText(
+        "De gegevens voor dit adres konden niet worden opgehaald. Je kunt de puntentelling wel maken door de ontbrekende gegevens zelf in te vullen.",
+      ),
+    ).toBeDefined()
+    expect(screen.getByText("Stap woninggegevens")).toBeDefined()
+    expect(screen.getByRole("link", { name: "Binnenruimtes" })).toBeDefined()
   })
 
   it("walks through the steps and submits on the bijzonderheden-stap", async () => {

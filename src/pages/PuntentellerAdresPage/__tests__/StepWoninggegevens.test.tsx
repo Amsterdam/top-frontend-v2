@@ -17,10 +17,12 @@ type Form = UseFormReturn<GebruikersinvoerFormValues>
 
 function Harness({
   values,
+  invoerwaarden,
   onForm,
   onNextStep = vi.fn(),
 }: {
   values: Partial<GebruikersinvoerFormValues>
+  invoerwaarden?: PuntentellerInvoerwaarden
   /** Hands the form to the test, e.g. to trigger validation. */
   onForm?: (form: Form) => void
   onNextStep?: () => void
@@ -31,7 +33,10 @@ function Harness({
   }, [form, onForm])
   return (
     <FormProvider form={form} onSubmit={vi.fn()}>
-      <StepWoninggegevens onNextStep={onNextStep} />
+      <StepWoninggegevens
+        invoerwaarden={invoerwaarden}
+        onNextStep={onNextStep}
+      />
     </FormProvider>
   )
 }
@@ -48,7 +53,10 @@ const bouwjaarInput = () =>
   })
 
 describe("StepWoninggegevens", () => {
-  afterEach(cleanup)
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
 
   it("asks for a choice when there's no energielabel, instead of showing the first label", () => {
     render(
@@ -59,6 +67,50 @@ describe("StepWoninggegevens", () => {
     expect(select.value).toBe("")
     expect(select.selectedOptions[0].textContent).toBe("Maak een keuze")
   })
+
+  it.each([undefined, null, []])(
+    "offers the current and previous two years when WOZ values are %j",
+    (wozWaarden) => {
+      vi.useFakeTimers({ toFake: ["Date"] })
+      vi.setSystemTime(new Date(2027, 0, 1))
+      render(
+        <Harness
+          values={{ woz_peildatum_jaar: 2027, woz_waarde: 374000 }}
+          invoerwaarden={
+            wozWaarden === undefined
+              ? undefined
+              : {
+                  straat: null,
+                  huisnummer: null,
+                  gebruiksoppervlakte: null,
+                  woz_waarden: wozWaarden,
+                  wozobjectnummer: null,
+                  energie: null,
+                }
+          }
+        />,
+      )
+
+      const select = screen.getByRole<HTMLSelectElement>("combobox", {
+        name: "WOZ-peildatum",
+      })
+      expect(
+        Array.from(select.options, ({ label, value }) => ({ label, value })),
+      ).toEqual([
+        { label: "2027", value: "2027" },
+        { label: "2026", value: "2026" },
+        { label: "2025", value: "2025" },
+      ])
+      expect(select.value).toBe("2027")
+
+      fireEvent.change(select, { target: { value: "2026" } })
+
+      expect(select.value).toBe("2026")
+      expect(
+        screen.getByRole("textbox", { name: /WOZ-waarde/ }),
+      ).toHaveProperty("value", "374000")
+    },
+  )
 
   it("shows only the field of the chosen energie_type", () => {
     const values = {
@@ -120,6 +172,7 @@ describe("StepWoninggegevens", () => {
 
   describe("Volgende stap", () => {
     const complete: Partial<GebruikersinvoerFormValues> = {
+      woz_peildatum_jaar: 2025,
       woz_waarde: 374000,
       energie_type: "bouwjaar",
       bouwjaar: 1977,

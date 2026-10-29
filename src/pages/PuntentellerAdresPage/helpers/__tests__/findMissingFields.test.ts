@@ -82,6 +82,7 @@ describe("findMissingFields", () => {
     } as PuntentellerInvoerwaarden
 
     expect(findMissingFields(values)).toEqual([])
+    expect(findMissingFields(values, { ...invoerwaarden, woz_waarden: [] })).toEqual([])
     expect(
       findMissingFields(values, invoerwaarden).map(({ name }) => name),
     ).toEqual(["woz_peildatum_jaar"])

@@ -30,6 +30,7 @@ function Harness({
 const COMPLETE_VALUES: Partial<GebruikersinvoerFormValues> = {
   binnenruimtes: [],
   buitenruimtes: [],
+  woz_peildatum_jaar: 2025,
   woz_waarde: 374000,
   energie_type: "bouwjaar",
   bouwjaar: 1977,
