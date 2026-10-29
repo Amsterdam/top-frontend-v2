@@ -53,7 +53,10 @@ const bouwjaarInput = () =>
   })
 
 describe("StepWoninggegevens", () => {
-  afterEach(cleanup)
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
 
   it("asks for a choice when there's no energielabel, instead of showing the first label", () => {
     render(
@@ -65,25 +68,49 @@ describe("StepWoninggegevens", () => {
     expect(select.selectedOptions[0].textContent).toBe("Maak een keuze")
   })
 
-  it("allows entering the WOZ-peildatum when no automatic peildata are available", () => {
-    render(
-      <Harness
-        values={{ woz_peildatum_jaar: 2024 }}
-        invoerwaarden={{
-          straat: null,
-          huisnummer: null,
-          gebruiksoppervlakte: null,
-          woz_waarden: null,
-          wozobjectnummer: null,
-          energie: null,
-        }}
-      />,
-    )
+  it.each([undefined, null, []])(
+    "offers the current and previous two years when WOZ values are %j",
+    (wozWaarden) => {
+      vi.useFakeTimers({ toFake: ["Date"] })
+      vi.setSystemTime(new Date(2027, 0, 1))
+      render(
+        <Harness
+          values={{ woz_peildatum_jaar: 2027, woz_waarde: 374000 }}
+          invoerwaarden={
+            wozWaarden === undefined
+              ? undefined
+              : {
+                  straat: null,
+                  huisnummer: null,
+                  gebruiksoppervlakte: null,
+                  woz_waarden: wozWaarden,
+                  wozobjectnummer: null,
+                  energie: null,
+                }
+          }
+        />,
+      )
 
-    expect(
-      screen.getByRole("textbox", { name: /WOZ-peildatum \(jaar\)/ }),
-    ).toHaveProperty("value", "2024")
-  })
+      const select = screen.getByRole<HTMLSelectElement>("combobox", {
+        name: "WOZ-peildatum",
+      })
+      expect(
+        Array.from(select.options, ({ label, value }) => ({ label, value })),
+      ).toEqual([
+        { label: "2027", value: "2027" },
+        { label: "2026", value: "2026" },
+        { label: "2025", value: "2025" },
+      ])
+      expect(select.value).toBe("2027")
+
+      fireEvent.change(select, { target: { value: "2026" } })
+
+      expect(select.value).toBe("2026")
+      expect(
+        screen.getByRole("textbox", { name: /WOZ-waarde/ }),
+      ).toHaveProperty("value", "374000")
+    },
+  )
 
   it("shows only the field of the chosen energie_type", () => {
     const values = {

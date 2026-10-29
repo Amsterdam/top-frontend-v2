@@ -68,10 +68,17 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
     ? sortWozWaardenByPeildatum(invoerwaarden.woz_waarden)
     : []
 
-  const wozPeildatumOptions = wozWaarden.map((w) => ({
-    label: `${formatPeildatum(w.peildatum)} — ${formatEuro(w.vastgestelde_waarde)}`,
-    value: String(peildatumToJaar(w.peildatum)),
-  }))
+  const currentYear = new Date().getFullYear()
+  const wozPeildatumOptions =
+    wozWaarden.length > 0
+      ? wozWaarden.map((w) => ({
+          label: `${formatPeildatum(w.peildatum)} — ${formatEuro(w.vastgestelde_waarde)}`,
+          value: String(peildatumToJaar(w.peildatum)),
+        }))
+      : Array.from({ length: 3 }, (_, index) => ({
+          label: String(currentYear - index),
+          value: String(currentYear - index),
+        }))
 
   const energieType = useWatch({ control, name: "energie_type" })
 
@@ -109,36 +116,18 @@ export function StepWoninggegevens({ invoerwaarden, onNextStep }: Props) {
           <Grid.Cell span="all" appearance="transparent">
             <Heading level={3}>WOZ-waarde gegevens</Heading>
           </Grid.Cell>
-          {wozPeildatumOptions.length > 0 ? (
-            <Grid.Cell
-              span={DEFAULT_SPAN}
-              appearance="transparent"
-            >
-              <SelectControl<GebruikersinvoerFormValues>
-                label="WOZ-peildatum"
-                name="woz_peildatum_jaar"
-                options={wozPeildatumOptions}
-                registerOptions={{
-                  required: REQUIRED_MESSAGES.woz_peildatum_jaar,
-                }}
-                style={{ width: "100%" }}
-                inFieldSet
-              />
-            </Grid.Cell>
-          ) : (
-            <Grid.Cell span={DEFAULT_SPAN} appearance="transparent">
-              <TextInputControl<GebruikersinvoerFormValues>
-                label="WOZ-peildatum (jaar)"
-                name="woz_peildatum_jaar"
-                attributes={{ type: "number", min: 1900, step: 1 }}
-                registerOptions={{
-                  valueAsNumber: true,
-                  min: 1900,
-                }}
-                inFieldSet
-              />
-            </Grid.Cell>
-          )}
+          <Grid.Cell span={DEFAULT_SPAN} appearance="transparent">
+            <SelectControl<GebruikersinvoerFormValues>
+              label="WOZ-peildatum"
+              name="woz_peildatum_jaar"
+              options={wozPeildatumOptions}
+              registerOptions={{
+                required: REQUIRED_MESSAGES.woz_peildatum_jaar,
+              }}
+              style={{ width: "100%" }}
+              inFieldSet
+            />
+          </Grid.Cell>
           <Grid.Cell
             span={DEFAULT_SPAN}
             appearance="transparent"
