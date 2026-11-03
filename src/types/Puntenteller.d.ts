@@ -26,6 +26,9 @@ type PuntentellerInvoerwaarden = {
   woz_waarden: WozWaarde[] | null
   wozobjectnummer: number | null
   energie: PuntentellerEnergie | null
+  /** From the monumentenregister; also false when it couldn't be fetched. */
+  monument: boolean
+  monument_soort: "rijksmonument" | "gemeentelijk_monument" | null
 }
 
 type PuntentellerRegel = {

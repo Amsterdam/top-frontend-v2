@@ -86,6 +86,8 @@ describe("StepWoninggegevens", () => {
                   woz_waarden: wozWaarden,
                   wozobjectnummer: null,
                   energie: null,
+                  monument: false,
+                  monument_soort: null,
                 }
           }
         />,
