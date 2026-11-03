@@ -1,3 +1,4 @@
+import { GEEN_MONUMENT } from "../fieldDefinitions"
 import { parseEnergieIndex, selectEnergieGrondslag } from "./energieGrondslag"
 
 /** Sorts woz_waarden descending by peildatum (most recent first); none when there are none. */
@@ -21,6 +22,21 @@ export function peildatumToJaar(peildatum: string): number {
 }
 
 /**
+ * The monument_soort option for the monumentenregister's status. The contractdatum of a
+ * rijksmonument isn't known, so it defaults to a contract after 1 July 2024; the user can
+ * still change it.
+ */
+function selectMonumentSoort(invoerwaarden: PuntentellerInvoerwaarden): string {
+  if (invoerwaarden.monument_soort === "rijksmonument") {
+    return "rijksmonument_contract_na_1_juli_2024"
+  }
+  if (invoerwaarden.monument_soort === "gemeentelijk_monument") {
+    return "gemeentelijk_of_provinciaal_monument"
+  }
+  return GEEN_MONUMENT
+}
+
+/**
  * Maps the prefilled invoerwaarden (step 0) onto the overlapping subset of
  * GebruikersinvoerFormValues fields, so form.reset()/setValue() can seed the wizard once the
  * invoerwaarden query resolves. Of the multiple WOZ-waarden (per peildatum), the most recent
@@ -40,6 +56,7 @@ export function mapInvoerwaardenToFormValues(
   | "energie_type"
   | "energielabel_klasse"
   | "energie_index"
+  | "monument_soort"
 > {
   const wozWaarde = selectDefaultWozWaarde(invoerwaarden.woz_waarden)
 
@@ -53,5 +70,6 @@ export function mapInvoerwaardenToFormValues(
     energie_type: selectEnergieGrondslag(invoerwaarden.energie, today).type,
     energielabel_klasse: invoerwaarden.energie?.energielabel ?? "",
     energie_index: parseEnergieIndex(invoerwaarden.energie?.energieindex),
+    monument_soort: selectMonumentSoort(invoerwaarden),
   }
 }

@@ -23,6 +23,8 @@ const invoerwaarden: PuntentellerInvoerwaarden = {
     opnamedatum: "2021-03-01",
     meting_geldig_tot: "2031-03-01",
   },
+  monument: false,
+  monument_soort: null,
 }
 
 const TODAY = "2025-06-15"
@@ -56,7 +58,25 @@ describe("mapInvoerwaardenToFormValues", () => {
       energie_type: "label",
       energielabel_klasse: "C",
       energie_index: null,
+      monument_soort: "geen_monument",
     })
+  })
+
+  it("maps the monument from the monumentenregister", () => {
+    const monumentSoort = (
+      monument_soort: PuntentellerInvoerwaarden["monument_soort"],
+    ) =>
+      mapInvoerwaardenToFormValues(
+        { ...invoerwaarden, monument: true, monument_soort },
+        TODAY,
+      ).monument_soort
+
+    expect(monumentSoort("gemeentelijk_monument")).toBe(
+      "gemeentelijk_of_provinciaal_monument",
+    )
+    expect(monumentSoort("rijksmonument")).toBe(
+      "rijksmonument_contract_na_1_juli_2024",
+    )
   })
 
   it("picks the energie_type from selectEnergieGrondslag, but still fills in the EP-Online label and index", () => {
