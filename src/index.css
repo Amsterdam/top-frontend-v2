@@ -4,8 +4,8 @@
 @import "@amsterdam/design-system-tokens/dist/compact.css";
 @import "./styles/animations.css";
 @import "./styles/design-system-overrides.css";
-/*@import "./styles/global.css";*/
-/*@import "./styles/spacing.css";*/
+@import "./styles/global.css";
+@import "./styles/spacing.css";
 
 /* * {
   outline: 1px solid red;

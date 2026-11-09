@@ -151,16 +151,16 @@ describe("HuurprijsCard comparison", () => {
   )
 
   it.each([undefined, null, "", 0, "0", "0.00"])(
-    "leaves the right column empty for missing or zero current rent (%s)",
+    "shows only the maximale huurprijs column for missing or zero current rent (%s)",
     (huidige) => {
       const { container } = render(
         <HuurprijsCard resultaat={resultaat} huidigeHuurprijs={huidige} />,
       )
 
       expect(
-        container.querySelector(`.${styles.huurprijsColumns}`)?.lastElementChild
-          ?.textContent,
-      ).toBe("")
+        container.querySelector(`.${styles.huurprijsColumns}`)
+          ?.childElementCount,
+      ).toBe(1)
       expect(
         screen.queryByRole("heading", { name: "Huidige huurprijs" }),
       ).toBeNull()

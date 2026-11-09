@@ -25,8 +25,8 @@ type Props = {
   onCancel: () => void
 }
 
-/** The oppervlakte calculator, verwarmd/verkoeld and aantal adressen questions for one added
- * binnenruimte, followed by its type's voorzieningen. */
+/** The oppervlakte calculator and verwarmd/verkoeld questions for one added binnenruimte,
+ * its type's voorzieningen, and last the aantal adressen. */
 export function BinnenruimteFields({
   index,
   label,
@@ -119,20 +119,6 @@ export function BinnenruimteFields({
         hasVerwarmd={hasVerwarmd}
       />
 
-      <Grid.Cell span="all" appearance="transparent">
-        <Heading level={3}>Gebruik van de binnenruimte</Heading>
-        <Paragraph>
-          Vul in hoeveel adressen deze binnenruimte gebruiken. Bij een
-          privéruimte: vul 1 in. Dit gaat om adressen, niet om bewoners.
-        </Paragraph>
-      </Grid.Cell>
-      <Grid.Cell span="all" appearance="transparent">
-        <AantalAdressenField
-          name={`binnenruimtes.${index}.aantal_adressen`}
-          label="Aantal adressen"
-        />
-      </Grid.Cell>
-
       {extra?.map((section) => (
         <Fragment key={section.heading}>
           <Grid.Cell span="all" appearance="transparent">
@@ -147,8 +133,23 @@ export function BinnenruimteFields({
         </Fragment>
       ))}
 
+      {/* Last: the punten of the whole room, voorzieningen included, are divided by it. */}
       <Grid.Cell span="all" appearance="transparent">
-        <ActionGroup>
+        <Heading level={3}>Gebruik van de binnenruimte</Heading>
+        <Paragraph>
+          Vul in hoeveel adressen deze binnenruimte gebruiken. Bij een
+          privéruimte: vul 1 in. Dit gaat om adressen, niet om bewoners.
+        </Paragraph>
+      </Grid.Cell>
+      <Grid.Cell span="all" appearance="transparent">
+        <AantalAdressenField
+          name={`binnenruimtes.${index}.aantal_adressen`}
+          label="Aantal adressen"
+        />
+      </Grid.Cell>
+
+      <Grid.Cell span="all" appearance="transparent">
+        <ActionGroup className="mt-3">
           <Button
             type="button"
             icon={SaveIcon}
