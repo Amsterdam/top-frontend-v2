@@ -148,52 +148,50 @@ export function HuurprijsCard({
           )}
         </Column>
 
-        <Column gap="small">
-          {huidige !== null && huidige !== 0 && (
-            <>
-              <Heading level={2}>Huidige huurprijs</Heading>
-              {huidige < 0 ? (
+        {huidige !== null && huidige !== 0 && (
+          <Column gap="small">
+            <Heading level={2}>Huidige huurprijs</Heading>
+            {huidige < 0 ? (
+              <Paragraph>
+                Vul bij Woning een geldige huurprijs van 0 euro of meer in.
+              </Paragraph>
+            ) : (
+              <>
                 <Paragraph>
-                  Vul bij Woning een geldige huurprijs van 0 euro of meer in.
+                  <span className={styles.bedrag}>{formatEuro(huidige)}</span>{" "}
+                  per maand
                 </Paragraph>
-              ) : (
-                <>
-                  <Paragraph>
-                    <span className={styles.bedrag}>{formatEuro(huidige)}</span>{" "}
-                    per maand
-                  </Paragraph>
-                  {huurprijs && verschil !== null && (
-                    <>
-                      <Paragraph>
-                        {verschil === 0
-                          ? "Huidige huur is gelijk aan de maximale huurprijs."
-                          : `Huidige huur ligt ${formatEuro(Math.abs(verschil))} ${richting} de maximale huurprijs.`}
-                        {huurprijs.met_opslagen > 0 && verschil !== 0 && (
-                          <>
-                            {" "}
-                            {new Intl.NumberFormat("nl-NL", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).format(
-                              (Math.abs(verschil) / huurprijs.met_opslagen) * 100,
-                            )}
-                            % {richting}{" "}maximum.
-                          </>
-                        )}
-                      </Paragraph>
-                      {huurprijs.met_opslagen === 0 && (
-                        <Paragraph>
-                          Het verschil in percentage kan niet worden berekend
-                          bij een maximale huurprijs van 0 euro.
-                        </Paragraph>
+                {huurprijs && verschil !== null && (
+                  <>
+                    <Paragraph>
+                      {verschil === 0
+                        ? "Huidige huur is gelijk aan de maximale huurprijs."
+                        : `Huidige huur ligt ${formatEuro(Math.abs(verschil))} ${richting} de maximale huurprijs.`}
+                      {huurprijs.met_opslagen > 0 && verschil !== 0 && (
+                        <>
+                          {" "}
+                          {new Intl.NumberFormat("nl-NL", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(
+                            (Math.abs(verschil) / huurprijs.met_opslagen) * 100,
+                          )}
+                          % {richting} maximum.
+                        </>
                       )}
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </Column>
+                    </Paragraph>
+                    {huurprijs.met_opslagen === 0 && (
+                      <Paragraph>
+                        Het verschil in percentage kan niet worden berekend bij
+                        een maximale huurprijs van 0 euro.
+                      </Paragraph>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </Column>
+        )}
       </div>
 
       {huurprijs && huurprijsopslagen.length > 0 && (

@@ -5,17 +5,39 @@
   line-height: 1;
 }
 
-/* The maximale huurprijs: large like the puntentotaal, but smaller, so the punten lead. */
+/* The maximale huurprijs: large like the puntentotaal, but smaller, so the punten lead.
+   An amount never breaks over two lines. */
 .bedrag {
   font-size: clamp(2rem, 1.5rem + 2.5vw, 3rem);
   font-weight: var(--ams-typography-body-text-bold-font-weight);
   line-height: 1;
+  white-space: nowrap;
 }
 
+/* The maximale and huidige huurprijs side by side while both amounts fit; otherwise below
+   each other. The card's own width decides, not the viewport: the card sits in a grid column,
+   so it can be narrow on a wide screen. A column is never narrower than its amount (min-width
+   auto, with the amount on one line), so the second one wraps before an amount would.
+   Without a huidige huurprijs, the maximale takes the full width. */
 .huurprijsColumns {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--ams-space-m);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ams-space-l) var(--ams-space-m);
+}
+
+.huurprijsColumns > * {
+  flex: 1 1 16rem;
+}
+
+/* On a small screen always one column, even if both amounts would fit. */
+@media (max-width: 699px) {
+  .huurprijsColumns {
+    flex-direction: column;
+  }
+
+  .huurprijsColumns > * {
+    flex-basis: auto;
+  }
 }
 
 .huidigeBedrag {
