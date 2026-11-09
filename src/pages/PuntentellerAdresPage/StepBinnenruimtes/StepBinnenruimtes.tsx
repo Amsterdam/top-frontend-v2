@@ -10,6 +10,7 @@ import { RuimteTable } from "../components/RuimteTable"
 import { RuimteTypeButtons } from "../components/RuimteTypeButtons"
 import { StepActions } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
+import { emptyVlak } from "../helpers/oppervlakte"
 import { useFocusOpenRoom } from "../helpers/useFocusOpenRoom"
 import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BinnenruimteFields } from "./BinnenruimteFields"
@@ -46,8 +47,7 @@ const KEUKEN_BAD_ANDERE_RUIMTE_TYPES: BinnenruimteType[] = [
 
 const emptyBinnenruimte = (type: BinnenruimteType): Binnenruimte => ({
   type,
-  lengte: null,
-  breedte: null,
+  vlakken: [emptyVlak()],
   oppervlakte: null,
   verwarmd: null,
   verkoeld: null,
@@ -154,7 +154,11 @@ export function StepBinnenruimtes({ onNextStep }: Props) {
           <Heading level={2} className="ams-mb-m">
             {roomLabels[openIndex]}
           </Heading>
+          {/* Keyed by the room, so choosing another type for a new room (which replaces the
+              draft by a new room at the same index) starts these fields over: the nested
+              useFieldArray of the oppervlakte rows would otherwise keep the old rows. */}
           <BinnenruimteFields
+            key={fields[openIndex].id}
             index={openIndex}
             label={roomLabels[openIndex]}
             type={fields[openIndex].type}

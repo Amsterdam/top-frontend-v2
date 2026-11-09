@@ -1,4 +1,5 @@
 import { GEEN_MONUMENT } from "./fieldDefinitions"
+import { emptyVlak, multiply } from "./helpers/oppervlakte"
 import { emptyVoorzieningen } from "./StepBinnenruimtes/binnenruimteConfig"
 
 /**
@@ -24,12 +25,8 @@ const binnenruimte = (
   ...emptyVoorzieningen(type),
   ...voorzieningen,
   type,
-  lengte,
-  breedte,
-  oppervlakte:
-    lengte != null && breedte != null
-      ? Math.round(lengte * breedte * 100) / 100
-      : null,
+  vlakken: [{ lengte, breedte, oppervlakte: multiply(lengte, breedte) }],
+  oppervlakte: multiply(lengte, breedte),
   verwarmd: "true",
   verkoeld,
   aantal_adressen: 1,
@@ -41,9 +38,8 @@ const buitenruimte = (
   breedte: number,
 ): Buitenruimte => ({
   type,
-  lengte,
-  breedte,
-  oppervlakte: Math.round(lengte * breedte * 100) / 100,
+  vlakken: [{ lengte, breedte, oppervlakte: multiply(lengte, breedte) }],
+  oppervlakte: multiply(lengte, breedte),
   aantal_adressen: 1,
 })
 
@@ -152,8 +148,7 @@ export const DUMMY_DATA = {
       buitenruimte("Balkon", 4, 1.5),
       {
         type: "Parkeerruimte",
-        lengte: null,
-        breedte: null,
+        vlakken: [emptyVlak()],
         oppervlakte: null,
         aantal_adressen: 30,
         parkeerplekken_afgesloten_parkeergarage: "20",

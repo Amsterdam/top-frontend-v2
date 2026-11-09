@@ -32,8 +32,7 @@ const binnenruimte = (
   overrides: Partial<Binnenruimte> = {},
 ): Binnenruimte => ({
   type,
-  lengte: null,
-  breedte: null,
+  vlakken: [],
   oppervlakte: 12,
   verwarmd: "true",
   verkoeld: "false",
@@ -46,8 +45,7 @@ const buitenruimte = (
   overrides: Partial<Buitenruimte> = {},
 ): Buitenruimte => ({
   type,
-  lengte: null,
-  breedte: null,
+  vlakken: [],
   oppervlakte: 8,
   aantal_adressen: 1,
   ...overrides,
@@ -82,7 +80,9 @@ describe("findMissingFields", () => {
     } as PuntentellerInvoerwaarden
 
     expect(findMissingFields(values)).toEqual([])
-    expect(findMissingFields(values, { ...invoerwaarden, woz_waarden: [] })).toEqual([])
+    expect(
+      findMissingFields(values, { ...invoerwaarden, woz_waarden: [] }),
+    ).toEqual([])
     expect(
       findMissingFields(values, invoerwaarden).map(({ name }) => name),
     ).toEqual(["woz_peildatum_jaar"])
@@ -186,6 +186,24 @@ describe("findMissingFields", () => {
         message: "Balkon: Vul de oppervlakte in.",
       },
     ])
+  })
+
+  it("lists each oppervlakte row without an oppervlakte, linked to that row", () => {
+    expect(
+      names(
+        complete({
+          binnenruimtes: [
+            binnenruimte("Woonkamer", {
+              vlakken: [
+                { lengte: 5, breedte: 4, oppervlakte: 20 },
+                { lengte: null, breedte: null, oppervlakte: null },
+              ],
+              oppervlakte: 20,
+            }),
+          ],
+        }),
+      ),
+    ).toEqual(["binnenruimtes.0.vlakken.1.oppervlakte"])
   })
 
   it("requires at least one parkeerplek for a parkeerruimte", () => {

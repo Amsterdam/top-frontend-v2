@@ -27,8 +27,7 @@ function Harness({
 
 const balkon = (oppervlakte: number | null): Buitenruimte => ({
   type: "Balkon",
-  lengte: null,
-  breedte: null,
+  vlakken: [{ lengte: null, breedte: null, oppervlakte }],
   oppervlakte,
   aantal_adressen: 1,
 })
@@ -61,13 +60,56 @@ describe("StepBuitenruimtes", () => {
     expect(form!.getValues("buitenruimtes")).toEqual([])
   })
 
+  it("starts the oppervlakte rows over when another type is chosen for a new buitenruimte", () => {
+    let form: Form | undefined
+    render(
+      <Harness
+        values={{ buitenruimtes: [] }}
+        onForm={(f) => {
+          form = f
+        }}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "Balkon" }))
+    fireEvent.click(
+      screen.getByRole("button", { name: "Oppervlakte toevoegen" }),
+    )
+    fireEvent.change(screen.getByLabelText("Oppervlakte 2 (m²)"), {
+      target: { value: "13" },
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Dakterras" }))
+
+    // One empty row, as the form values of the new room have it.
+    expect(screen.queryByLabelText("Oppervlakte 2 (m²)")).toBeNull()
+    expect(oppervlakteInput().value).toBe("")
+    expect(form!.getValues("buitenruimtes.0.vlakken")).toEqual([
+      { lengte: null, breedte: null, oppervlakte: null },
+    ])
+  })
+
+  it("shows the total oppervlakte of the added buitenruimtes in the heading", () => {
+    render(
+      <Harness
+        values={{ buitenruimtes: [balkon(8), balkon(4.5), balkon(null)] }}
+        onForm={vi.fn()}
+      />,
+    )
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Toegevoegde buitenruimtes (12,5 m²)",
+      }),
+    ).toBeDefined()
+  })
+
   it("focuses the oppervlakte of a buitenruimte once it's opened for editing", () => {
     render(<Harness values={{ buitenruimtes: [balkon(8)] }} onForm={vi.fn()} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Wijzigen" }))
 
     expect(document.activeElement?.getAttribute("name")).toBe(
-      "buitenruimtes.0.oppervlakte",
+      "buitenruimtes.0.vlakken.0.oppervlakte",
     )
   })
 
@@ -93,9 +135,9 @@ describe("StepBuitenruimtes", () => {
 
     expect(form!.getValues("buitenruimtes.0.oppervlakte")).toBe(8)
     expect(screen.getByText("Balkon (8 m²)")).toBeDefined()
-    expect(form!.getFieldState("buitenruimtes.0.oppervlakte").error).toBe(
-      undefined,
-    )
+    expect(
+      form!.getFieldState("buitenruimtes.0.vlakken.0.oppervlakte").error,
+    ).toBe(undefined)
 
     // Opening it again shows the saved values, without the old error.
     fireEvent.click(screen.getByRole("button", { name: "Wijzigen" }))

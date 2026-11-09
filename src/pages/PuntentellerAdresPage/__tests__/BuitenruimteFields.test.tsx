@@ -18,8 +18,7 @@ function Harness({ children }: { children: ReactNode }) {
       buitenruimtes: [
         {
           type: "Parkeerruimte",
-          lengte: null,
-          breedte: null,
+          vlakken: [],
           oppervlakte: null,
           aantal_adressen: 1,
           parkeerplekken_afgesloten_parkeergarage: "0",

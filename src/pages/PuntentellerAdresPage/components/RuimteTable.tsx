@@ -10,6 +10,7 @@ import {
 import { DeleteIcon, PencilIcon } from "@amsterdam/design-system-react-icons"
 import { ConfirmDialog } from "@/components"
 import { useMediaQuery, BREAKPOINTS } from "@/hooks"
+import { formatM2, toNumber } from "../helpers/oppervlakte"
 
 type Props = {
   /** "Binnenruimte" or "Buitenruimte", used in the heading and the delete dialog. */
@@ -34,13 +35,23 @@ export function RuimteTable({
 
   if (!rooms.some((_, index) => index !== openIndex)) return null
 
+  // The total of the listed rooms, so without the one open for editing. Rooms without an
+  // oppervlakte (an overloop, a parkeerruimte) don't count.
+  const oppervlaktes = rooms
+    .filter((_, index) => index !== openIndex)
+    .map((room) => toNumber(room.oppervlakte))
+    .filter((oppervlakte) => oppervlakte !== null)
+  const total =
+    oppervlaktes.length > 0
+      ? Math.round(oppervlaktes.reduce((sum, m2) => sum + m2, 0) * 100) / 100
+      : null
+  const heading = `Toegevoegde ${soort.toLowerCase()}s${total === null ? "" : ` (${formatM2(total)})`}`
+
   return (
     <Column gap="small">
-      <Heading level={3}>Toegevoegde {soort.toLowerCase()}s</Heading>
+      <Heading level={3}>{heading}</Heading>
       <Table className="table--borderless">
-        <Table.Caption className="ams-visually-hidden">
-          Toegevoegde {soort.toLowerCase()}s
-        </Table.Caption>
+        <Table.Caption className="ams-visually-hidden">{heading}</Table.Caption>
         <Table.Body>
           {rooms.map((room, index) => {
             if (index === openIndex) return null

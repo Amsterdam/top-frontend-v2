@@ -7,8 +7,7 @@ import { emptyVoorzieningen } from "../StepBinnenruimtes/binnenruimteConfig"
 
 const badkamer = (voorzieningen: BinnenruimteVoorzieningen): Binnenruimte => ({
   type: "Badkamer",
-  lengte: null,
-  breedte: null,
+  vlakken: [{ lengte: null, breedte: null, oppervlakte: 6 }],
   oppervlakte: 6,
   verwarmd: "true",
   verkoeld: "false",
