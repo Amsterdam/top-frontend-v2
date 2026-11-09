@@ -50,6 +50,21 @@ installed as a PWA.
 - When the browser is offline, the page header menu shows `WiFiIcon` with the
   label `Offline`.
 
+## Puntenteller dummy data
+
+On acceptance and locally (never in production), the puntenteller wizard can be
+prefilled with an example puntentelling via the `dummydata` query parameter:
+
+```
+/puntenteller/<bagId>?dummydata=<name>
+```
+
+- Available names: `socialehuur`, `middenhuur`, `vrijesector`. See
+  `src/pages/PuntentellerAdresPage/dummyData.ts` for the scenarios.
+- With an existing bagId (e.g. `0363010000758545`) the address data comes from
+  the backend. With a non-existent bagId (e.g. `1234`) the fixtures are used.
+- An unknown name is ignored and the wizard starts empty.
+
 ## Deploying
 
 The `main` branch is automatically deployed to [acceptance](https://acc.top.amsterdam.nl/).
