@@ -182,7 +182,7 @@ export function BuitenruimteFields({
       )}
 
       <Grid.Cell span="all" appearance="transparent">
-        <ActionGroup>
+        <ActionGroup className="mt-3">
           <Button
             type="button"
             icon={SaveIcon}

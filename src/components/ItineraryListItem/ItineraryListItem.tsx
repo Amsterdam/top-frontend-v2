@@ -105,7 +105,7 @@ export function ItineraryListItem({
       </Row>
       <div>
         <Column>
-          <Row wrap className="mt-1 ">
+          <Row wrap>
             <StatusBadge statusName={statusName} />
             <PriorityBadge priority={priority} />
             {caseData?.tags?.map((tag) => (

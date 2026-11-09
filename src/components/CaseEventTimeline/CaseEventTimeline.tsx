@@ -95,11 +95,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                 heading={title}
                 status={groupIndex === 0 ? "current" : "completed"}
               >
-                <Description
-                  data={descriptionData}
-                  termsWidth="medium"
-                  className="mt-4"
-                />
+                <Description data={descriptionData} termsWidth="medium" />
               </ProgressList.Step>
             )
           }
@@ -132,11 +128,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
                         </Heading>
                       )}
 
-                      <Description
-                        data={rest}
-                        termsWidth="medium"
-                        className="mt-4"
-                      />
+                      <Description data={rest} termsWidth="medium" />
                     </ProgressList.Substep>
                   )
                 })}
@@ -146,7 +138,7 @@ export function CaseEventTimeline({ data }: { data?: CaseEvent[] }) {
         })}
       </ProgressList>
 
-      <Row align="center" className="mt-3">
+      <Row align="center">
         {events.length > 1 && (
           <Button
             variant="secondary"
