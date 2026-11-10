@@ -40,7 +40,7 @@ const COMPLETE_VALUES: Partial<GebruikersinvoerFormValues> = {
 describe("StepBijzonderheden", () => {
   afterEach(cleanup)
 
-  it("shows the missing answers in an InvalidFormAlert on Sla op en bereken, which gets focus", async () => {
+  it("shows the missing answers in an InvalidFormAlert on Sla op als concept en bereken, which gets focus", async () => {
     const onSubmit = vi.fn()
     render(
       <Harness
@@ -49,7 +49,9 @@ describe("StepBijzonderheden", () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "Sla op en bereken" }))
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sla op als concept en bereken" }),
+    )
 
     const alert = (
       await screen.findByRole("heading", {
@@ -70,7 +72,9 @@ describe("StepBijzonderheden", () => {
     const onSubmit = vi.fn()
     render(<Harness values={COMPLETE_VALUES} onSubmit={onSubmit} />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Sla op en bereken" }))
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sla op als concept en bereken" }),
+    )
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalled())
   })

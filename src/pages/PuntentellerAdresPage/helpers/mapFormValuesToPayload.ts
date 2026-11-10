@@ -47,40 +47,33 @@ const badkamerVoorzieningen = (
 })
 
 /**
- * The form asks for a mengkraan "met kookfunctie" separately; the backend counts that as the
- * mengkraan plus a kokendwaterfunctie.
+ * A mengkraan "met kookfunctie" is sent as is; the backend counts it as the mengkraan plus a
+ * kokendwaterfunctie, so a saved puntentelling still shows what was filled in.
  */
 const keukenVoorzieningen = (
   ruimte: Binnenruimte,
-): PayloadKeukenVoorzieningen => {
-  const eenhandsKookfunctie = count(ruimte.eenhandsmengkraan_kookfunctie)
-  const thermostatischKookfunctie = count(
+): PayloadKeukenVoorzieningen => ({
+  aanrechtlengte_meters:
+    AANRECHTLENGTE_METERS[ruimte.aanrechtlengte ?? ""] ?? null,
+  inbouw_afzuiginstallatie: count(ruimte.inbouw_afzuiginstallatie),
+  inbouw_kookplaat_inductie: count(ruimte.inbouw_kookplaat_inductie),
+  inbouw_kookplaat_keramisch: count(ruimte.inbouw_kookplaat_keramisch),
+  inbouw_kookplaat_gas: count(ruimte.inbouw_kookplaat_gas),
+  inbouw_koelkast: count(ruimte.inbouw_koelkast),
+  inbouw_vrieskast: count(ruimte.inbouw_vrieskast),
+  inbouw_oven_elektrisch: count(ruimte.inbouw_oven_elektrisch),
+  inbouw_oven_gas: count(ruimte.inbouw_oven_gas),
+  inbouw_magnetron: count(ruimte.inbouw_magnetron),
+  inbouw_vaatwasmachine: count(ruimte.inbouw_vaatwasmachine),
+  extra_kastruimte: count(ruimte.extra_kastruimte),
+  eenhandsmengkraan: count(ruimte.eenhandsmengkraan),
+  thermostatische_mengkraan: count(ruimte.thermostatische_mengkraan),
+  eenhandsmengkraan_kookfunctie: count(ruimte.eenhandsmengkraan_kookfunctie),
+  thermostatische_mengkraan_kookfunctie: count(
     ruimte.thermostatische_mengkraan_kookfunctie,
-  )
-
-  return {
-    aanrechtlengte_meters:
-      AANRECHTLENGTE_METERS[ruimte.aanrechtlengte ?? ""] ?? null,
-    inbouw_afzuiginstallatie: count(ruimte.inbouw_afzuiginstallatie),
-    inbouw_kookplaat_inductie: count(ruimte.inbouw_kookplaat_inductie),
-    inbouw_kookplaat_keramisch: count(ruimte.inbouw_kookplaat_keramisch),
-    inbouw_kookplaat_gas: count(ruimte.inbouw_kookplaat_gas),
-    inbouw_koelkast: count(ruimte.inbouw_koelkast),
-    inbouw_vrieskast: count(ruimte.inbouw_vrieskast),
-    inbouw_oven_elektrisch: count(ruimte.inbouw_oven_elektrisch),
-    inbouw_oven_gas: count(ruimte.inbouw_oven_gas),
-    inbouw_magnetron: count(ruimte.inbouw_magnetron),
-    inbouw_vaatwasmachine: count(ruimte.inbouw_vaatwasmachine),
-    extra_kastruimte: count(ruimte.extra_kastruimte),
-    eenhandsmengkraan: count(ruimte.eenhandsmengkraan) + eenhandsKookfunctie,
-    thermostatische_mengkraan:
-      count(ruimte.thermostatische_mengkraan) + thermostatischKookfunctie,
-    kokendwaterfunctie:
-      count(ruimte.kokendwaterfunctie) +
-      eenhandsKookfunctie +
-      thermostatischKookfunctie,
-  }
-}
+  ),
+  kokendwaterfunctie: count(ruimte.kokendwaterfunctie),
+})
 
 type Ruimten = Pick<
   GebruikersinvoerPayload,
@@ -91,6 +84,8 @@ type Ruimten = Pick<
  * Sorts the binnenruimtes into the backend's vertrekken, overige ruimten and verkeersruimten.
  * The backend picks the kind of room by `naam`: only a "badkamer" gets its badkamer fields
  * read and only a "keuken" its keuken fields, so each type maps onto the naam that fits.
+ * Several types share a naam, so the type itself goes along as `weergavenaam`, to reopen the
+ * puntentelling with (see mapPuntentellingToFormValues).
  */
 function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
   const ruimten: Ruimten = {
@@ -105,6 +100,7 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
     // The form forces verwarmd to "ja" for types that don't ask it (the "... in andere ruimte"
     // types). Those only carry voorzieningen, so they must not add a verwarmde ruimte.
     const overig = {
+      weergavenaam: ruimte.type,
       ruimte_m2: hasOppervlakte ? decimal(ruimte.oppervlakte) : "0",
       verwarmd: hasVerwarmd && isJa(ruimte.verwarmd),
       aantal_adressen_met_toegang_en_gebruiksrecht:
@@ -173,6 +169,7 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
       case "Overloop":
         ruimten.verkeersruimten.push({
           naam: "verkeersruimte",
+          weergavenaam: overig.weergavenaam,
           ruimte_m2: overig.ruimte_m2,
           verwarmd: overig.verwarmd,
           aantal_adressen_met_toegang_en_gebruiksrecht:
@@ -191,20 +188,20 @@ function mapBinnenruimtes(values: GebruikersinvoerFormValues): Ruimten {
 
 /**
  * The buitenruimtes, split into the backend's buitenruimten and parkeerruimten. A Parkeerruimte
- * is sent as is, with its plekken per type and laadpalen. The backend doesn't accept more
- * laadpalen than plekken, so any left over count as losse laadpalen.
+ * is sent as is, with its plekken per type and laadpalen (no more than plekken, see
+ * BuitenruimteFields). The type goes along as `weergavenaam`, as for the binnenruimtes.
  */
 function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
   const buitenruimten: PayloadBuitenruimte[] = []
   const parkeerruimten: PayloadParkeerruimte[] = []
-  let losseLaadpalen = 0
 
   for (const ruimte of values.buitenruimtes ?? []) {
     const aantalAdressen = count(ruimte.aantal_adressen) || 1
 
     if (ruimte.type === "Parkeerruimte") {
-      const parkeerruimte = {
+      parkeerruimten.push({
         naam: "buitenruimte_parkeerplaats",
+        weergavenaam: ruimte.type,
         aantal_gesloten_garage_bij_complex: count(
           ruimte.parkeerplekken_afgesloten_parkeergarage,
         ),
@@ -215,17 +212,8 @@ function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
           ruimte.parkeerplekken_buiten_zonder_dak,
         ),
         aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
-      } as const
-      const plekken =
-        parkeerruimte.aantal_gesloten_garage_bij_complex +
-        parkeerruimte.aantal_buiten_bij_complex_met_dak +
-        parkeerruimte.aantal_buiten_bij_complex_zonder_dak
-      const laadpalen = count(ruimte.laadpaal)
-      parkeerruimten.push({
-        ...parkeerruimte,
-        aantal_laadpalen: Math.min(laadpalen, plekken),
+        aantal_laadpalen: count(ruimte.laadpaal),
       })
-      losseLaadpalen += Math.max(laadpalen - plekken, 0)
       continue
     }
 
@@ -233,17 +221,19 @@ function mapBuitenruimtes(values: GebruikersinvoerFormValues) {
       aantalAdressen > 1
         ? {
             naam: "gemeenschappelijke_buitenruimte",
+            weergavenaam: ruimte.type,
             ruimte_m2: decimal(ruimte.oppervlakte),
             aantal_adressen_met_toegang_en_gebruiksrecht: aantalAdressen,
           }
         : {
             naam: "prive_buitenruimte",
+            weergavenaam: ruimte.type,
             ruimte_m2: decimal(ruimte.oppervlakte),
           },
     )
   }
 
-  return { buitenruimten, parkeerruimten, losseLaadpalen }
+  return { buitenruimten, parkeerruimten }
 }
 
 /**
@@ -289,12 +279,14 @@ const energie = (values: GebruikersinvoerFormValues): PayloadEnergie => {
   }
 }
 
-/** Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/. */
+/**
+ * Maps the wizard's form values onto the request body of POST /puntenteller/adressen/:bagId/
+ * and PATCH /puntenteller/puntentellingen/:id/.
+ */
 export function mapFormValuesToPayload(
   values: GebruikersinvoerFormValues,
 ): GebruikersinvoerPayload {
-  const { buitenruimten, parkeerruimten, losseLaadpalen } =
-    mapBuitenruimtes(values)
+  const { buitenruimten, parkeerruimten } = mapBuitenruimtes(values)
   const monumentSoort = values.monument_soort ?? ""
 
   return {
@@ -305,7 +297,9 @@ export function mapFormValuesToPayload(
     ...mapBinnenruimtes(values),
     buitenruimten,
     parkeerruimten,
-    completed: true,
+    // Saving keeps it a concept: the toezichthouder is still working on it. Also a saved change
+    // to a finished puntentelling makes it a concept again, as its punten have changed.
+    completed: false,
     huidige_huurprijs:
       toNumber(values.huidige_huurprijs) === null
         ? null
@@ -334,6 +328,8 @@ export function mapFormValuesToPayload(
     bijzondere_voorziening_intercom_met_beeld: isJa(
       values.bijzondere_voorziening_intercom_met_beeld,
     ),
-    bijzondere_voorziening_laadpalen: losseLaadpalen,
+    // Losse laadpalen (beleidsboek 2.12.3) aren't asked. Sent anyway, so a PATCH clears what
+    // an older puntentelling had there.
+    bijzondere_voorziening_laadpalen: 0,
   }
 }

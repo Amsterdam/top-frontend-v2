@@ -21,7 +21,7 @@ const RESULTAAT: PuntentellerResultaat = {
   maximale_huurprijs: null,
 }
 
-const RESUBMIT = "Wijzigingen opslaan en herberekenen"
+const RESUBMIT = "Opslaan als concept en herberekenen"
 
 function Harness({
   resultaat = RESULTAAT,
@@ -51,7 +51,7 @@ describe("StepResultaat", () => {
     ).toBeDefined()
     expect(screen.queryByRole("heading", { name: "Puntentelling" })).toBeNull()
     expect(
-      screen.getByRole("button", { name: "Sla op en bereken" }),
+      screen.getByRole("button", { name: "Sla op als concept en bereken" }),
     ).toBeDefined()
     expect(screen.queryByRole("button", { name: RESUBMIT })).toBeNull()
   })

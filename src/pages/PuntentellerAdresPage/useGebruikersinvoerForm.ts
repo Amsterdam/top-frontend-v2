@@ -1,6 +1,11 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useAddressInvoerwaarden, useSaveGebruikersinvoer } from "@/api/hooks"
+import { useNavigate } from "react-router"
+import {
+  useAddressInvoerwaarden,
+  useMaakPuntentellingDefinitief,
+  useSavePuntentelling,
+} from "@/api/hooks"
 import { useToast } from "@/components/toasts/useToast"
 import { findMissingFields } from "./helpers/findMissingFields"
 import { mapFormValuesToPayload } from "./helpers/mapFormValuesToPayload"
@@ -51,7 +56,9 @@ export function useGebruikersinvoerForm(
   } = useAddressInvoerwaarden(bagId)
   const initialValues = useInitialValues()
   const isPending = isInvoerwaardenPending || initialValues.isPending
-  const saveGebruikersinvoer = useSaveGebruikersinvoer({ bagId })
+  const savePuntentelling = useSavePuntentelling(bagId)
+  const maakDefinitief = useMaakPuntentellingDefinitief(bagId)
+  const navigate = useNavigate()
   const { showToast } = useToast()
   // The last successful save: its payload (as JSON) to tell whether the form has changed
   // since, and its resultaat, which stays when saving again fails.
@@ -59,6 +66,14 @@ export function useGebruikersinvoerForm(
     payload: string
     resultaat: PuntentellerResultaat
   }>()
+  // The puntentelling the form saves to: the reopened one, or the one the first save made. Each
+  // save after that changes it rather than adding another.
+  const [savedId, setSavedId] = useState<number>()
+  const puntentellingId = savedId ?? initialValues.puntentelling?.id
+  // Whether the saved puntentelling is definitief, as the backend last returned it: saving
+  // makes it a concept, "Maak definitief" definitief. None until there's a saved one.
+  const [savedCompleted, setSavedCompleted] = useState<boolean>()
+  const completed = savedCompleted ?? initialValues.puntentelling?.completed
 
   const form = useForm<GebruikersinvoerFormValues>({
     mode: "onChange",
@@ -67,19 +82,38 @@ export function useGebruikersinvoerForm(
 
   // Fills the form once per address, as soon as everything it starts from has loaded. Each
   // layer wins over the one before: the defaults, the prefilled invoerwaarden (step 0), the
-  // initial values (dummydata, later a saved puntentelling). Only once, so a refetch of the
-  // invoerwaarden doesn't undo what the user has filled in since.
+  // initial values (dummydata or a saved puntentelling). Only once, so a refetch of the
+  // invoerwaarden doesn't undo what the user has filled in since, nor does the url changing
+  // to the puntentelling after its first save.
+  const startValues = useMemo(
+    () => ({
+      ...defaultValues,
+      ...(invoerwaarden && mapInvoerwaardenToFormValues(invoerwaarden)),
+      ...initialValues.values,
+    }),
+    [invoerwaarden, initialValues.values],
+  )
   const filledInForBagId = useRef<string>(undefined)
   useEffect(() => {
     if (isPending || filledInForBagId.current === bagId) return
     filledInForBagId.current = bagId
 
-    form.reset({
-      ...defaultValues,
-      ...(invoerwaarden && mapInvoerwaardenToFormValues(invoerwaarden)),
-      ...initialValues.values,
-    })
-  }, [bagId, isPending, invoerwaarden, initialValues.values, form])
+    form.reset(startValues)
+  }, [bagId, isPending, startValues, form])
+
+  // A reopened puntentelling starts out saved as it stands, berekening and all, until it's
+  // saved again. Its payload is taken from the values the form starts from, so what doesn't
+  // make it through the round trip doesn't count as a change.
+  const { puntentelling } = initialValues
+  const reopenedSave = useMemo(
+    () =>
+      puntentelling && {
+        payload: JSON.stringify(mapFormValuesToPayload(startValues)),
+        resultaat: puntentelling.punten_resultaat,
+      },
+    [puntentelling, startValues],
+  )
+  const currentSave = lastSave ?? reopenedSave
 
   const onSubmit = (values: GebruikersinvoerFormValues) => {
     // handleSubmit only validates the fields of the current step (the resultaat has none).
@@ -89,24 +123,59 @@ export function useGebruikersinvoerForm(
     }
 
     const payload = mapFormValuesToPayload(values)
-    saveGebruikersinvoer.mutate(payload, {
-      onSuccess: (puntentelling) => {
-        setLastSave({
-          payload: JSON.stringify(payload),
-          resultaat: puntentelling.punten_resultaat,
-        })
+    savePuntentelling.mutate(
+      { id: puntentellingId, payload },
+      {
+        onSuccess: (puntentelling) => {
+          setLastSave({
+            payload: JSON.stringify(payload),
+            resultaat: puntentelling.punten_resultaat,
+          })
+          setSavedCompleted(puntentelling.completed)
+          if (puntentellingId === undefined) {
+            setSavedId(puntentelling.id)
+            // The url now names the new puntentelling, so reloading reopens it. `replace`, so
+            // going back doesn't land on an empty new one.
+            navigate(`/puntenteller/${bagId}/${puntentelling.id}`, {
+              replace: true,
+            })
+          }
+          showToast({
+            title: "Puntenteller opgeslagen!",
+            description: "De invoer is opgeslagen en de punten zijn berekend.",
+            severity: "success",
+          })
+          onCalculated?.()
+        },
+        onError: () => {
+          showToast({
+            title: "Opslaan mislukt",
+            description:
+              "Er is iets misgegaan bij het opslaan en berekenen. Probeer het opnieuw.",
+            severity: "error",
+          })
+        },
+      },
+    )
+  }
+
+  const onMaakDefinitief = () => {
+    if (puntentellingId === undefined) return
+
+    maakDefinitief.mutate(puntentellingId, {
+      onSuccess: ({ completed }) => {
+        setSavedCompleted(completed)
         showToast({
-          title: "Puntenteller opgeslagen!",
-          description: "De invoer is opgeslagen en de punten zijn berekend.",
+          title: "Puntentelling definitief gemaakt",
+          description: "De puntentelling is niet langer een concept.",
           severity: "success",
         })
-        onCalculated?.()
       },
       onError: () => {
         showToast({
-          title: "Opslaan mislukt",
+          title: "Definitief maken mislukt",
           description:
-            "Er is iets misgegaan bij het opslaan en berekenen. Probeer het opnieuw.",
+            "Er is iets misgegaan bij het definitief maken. Probeer het opnieuw.",
           severity: "error",
         })
       },
@@ -118,9 +187,17 @@ export function useGebruikersinvoerForm(
     invoerwaarden,
     isPending,
     isError,
+    /** Whether the saved puntentelling in the url couldn't be fetched. */
+    isPuntentellingError: Boolean(initialValues.isError),
+    /** The saved puntentelling the form changes; none for a new one until it's saved. */
+    puntentellingId,
+    /** Whether the saved puntentelling is definitief; none for a new one until it's saved. */
+    completed,
     onSubmit,
-    isSubmitting: saveGebruikersinvoer.isPending,
-    resultaat: lastSave?.resultaat,
-    savedPayload: lastSave?.payload,
+    isSubmitting: savePuntentelling.isPending,
+    onMaakDefinitief,
+    isMakingDefinitief: maakDefinitief.isPending,
+    resultaat: currentSave?.resultaat,
+    savedPayload: currentSave?.payload,
   }
 }

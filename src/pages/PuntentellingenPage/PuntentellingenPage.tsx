@@ -17,13 +17,19 @@ import { formatDate } from "@/shared/dateFormatters"
 import { formatPunten } from "@/shared/formatPunten"
 import { useDialog } from "@/hooks/useDialog"
 import { DeletePuntentellingButton } from "./DeletePuntentellingButton"
+import { EditPuntentellingButton } from "./EditPuntentellingButton"
 import {
   DELETE_PUNTENTELLING_DIALOG_ID,
   DeletePuntentellingDialog,
 } from "./DeletePuntentellingDialog"
 import styles from "./PuntentellingenPage.module.css"
 
-const getColumns = (onDelete: (puntentelling: Puntentelling) => void) =>
+type RowActions = {
+  onEdit: (puntentelling: Puntentelling) => void
+  onDelete: (puntentelling: Puntentelling) => void
+}
+
+const getColumns = ({ onEdit, onDelete }: RowActions) =>
   [
     {
       title: "Punten",
@@ -41,7 +47,7 @@ const getColumns = (onDelete: (puntentelling: Puntentelling) => void) =>
       },
     },
     {
-      title: "Aangemaakt door",
+      title: "Opsteller",
       dataIndex: "author.full_name",
       render: (fullName: unknown) =>
         (fullName as string | undefined) || "Onbekend",
@@ -64,7 +70,10 @@ const getColumns = (onDelete: (puntentelling: Puntentelling) => void) =>
       title: "",
       dataIndex: "id",
       render: (_id: unknown, puntentelling: Puntentelling) => (
-        <DeletePuntentellingButton onClick={() => onDelete(puntentelling)} />
+        <Row gap="small" align="end">
+          <EditPuntentellingButton onClick={() => onEdit(puntentelling)} />
+          <DeletePuntentellingButton onClick={() => onDelete(puntentelling)} />
+        </Row>
       ),
     },
   ] as const
@@ -149,7 +158,10 @@ export default function PuntentellingenPage() {
         <Grid.Cell span="all">
           <Table
             className={styles.table}
-            columns={getColumns(onDelete)}
+            columns={getColumns({
+              onEdit: ({ id }) => navigate(`/puntenteller/${bagId}/${id}`),
+              onDelete,
+            })}
             data={puntentellingen}
           />
           <DeletePuntentellingDialog

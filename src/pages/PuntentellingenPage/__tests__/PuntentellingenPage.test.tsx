@@ -66,15 +66,6 @@ vi.mock("@/components", async (importOriginal) => {
   }
 })
 
-const resultaat = (totaal_punten: number): PuntentellerResultaat => ({
-  totaal_punten,
-  rubrieken: [],
-  opslagen: [],
-  huurprijsopslagen: [],
-  huurprijsopslag_procent: 0,
-  maximale_huurprijs: null,
-})
-
 const AUTHOR: PuntentellingAuthor = {
   id: "c0ffee",
   email: "t.toezicht@amsterdam.nl",
@@ -92,7 +83,6 @@ const PUNTENTELLINGEN: Puntentelling[] = [
     created: "2026-03-04T09:30:00",
     updated: "2026-03-05T14:05:00",
     punten: 151.25,
-    punten_resultaat: resultaat(151.25),
   },
   {
     id: 1,
@@ -101,7 +91,6 @@ const PUNTENTELLINGEN: Puntentelling[] = [
     created: "2026-01-15T10:00:00",
     updated: "2026-01-15T10:00:00",
     punten: 142,
-    punten_resultaat: resultaat(142),
   },
 ]
 
@@ -178,6 +167,15 @@ describe("PuntentellingenPage", () => {
     expect(within(concept).getByText("Concept")).toBeDefined()
     expect(within(afgerond).queryByText("Concept")).toBeNull()
     expect(screen.queryByText("Afgerond")).toBeNull()
+  })
+
+  it("opens the puntentelling of the row in the wizard to change it", () => {
+    render(<PuntentellingenPage />)
+
+    const row = screen.getAllByRole("row").slice(1)[1]
+    fireEvent.click(within(row).getByRole("button", { name: "Bewerken" }))
+
+    expect(mockNavigate).toHaveBeenCalledWith("/puntenteller/abc123/1")
   })
 
   describe("verwijderen", () => {

@@ -1,5 +1,6 @@
 /**
- * Request body of POST /puntenteller/adressen/:bagId/ (GebruikersinvoerRequestSerializer in
+ * Request body of POST /puntenteller/adressen/:bagId/ and PATCH
+ * /puntenteller/puntentellingen/:id/ (GebruikersinvoerRequestSerializer in
  * zaken-backend). Built from GebruikersinvoerFormValues by mapFormValuesToPayload. Decimals
  * (ruimte_m2, aanrechtlengte_meters) are strings, as DRF's DecimalField expects.
  */
@@ -19,6 +20,8 @@ type PayloadSanitair = {
 }
 
 type PayloadRuimte = {
+  /** The form's BinnenruimteType; several share a naam. Only to reopen the puntentelling. */
+  weergavenaam: BinnenruimteType
   ruimte_m2: string
   verwarmd: boolean
   /** The ruimte's punten are divided by it; 1 (the default) is privé. */
@@ -67,6 +70,10 @@ type PayloadKeukenVoorzieningen = {
   extra_kastruimte: number
   eenhandsmengkraan: number
   thermostatische_mengkraan: number
+  /** Counted by the backend as an eenhandsmengkraan plus a kokendwaterfunctie. */
+  eenhandsmengkraan_kookfunctie: number
+  /** Counted by the backend as a thermostatische mengkraan plus a kokendwaterfunctie. */
+  thermostatische_mengkraan_kookfunctie: number
   kokendwaterfunctie: number
 }
 
@@ -102,9 +109,14 @@ type PayloadVerkeersruimte = PayloadRuimte & {
 }
 
 type PayloadBuitenruimte =
-  | { naam: "prive_buitenruimte"; ruimte_m2: string }
+  | {
+      naam: "prive_buitenruimte"
+      weergavenaam: BuitenruimteType
+      ruimte_m2: string
+    }
   | {
       naam: "gemeenschappelijke_buitenruimte"
+      weergavenaam: BuitenruimteType
       ruimte_m2: string
       aantal_adressen_met_toegang_en_gebruiksrecht: number
     }
@@ -113,6 +125,7 @@ type PayloadBuitenruimte =
  * plek, and no more laadpalen than plekken. */
 type PayloadParkeerruimte = {
   naam: "buitenruimte_parkeerplaats"
+  weergavenaam: BuitenruimteType
   aantal_gesloten_garage_bij_complex: number
   aantal_buiten_bij_complex_met_dak: number
   aantal_buiten_bij_complex_zonder_dak: number
