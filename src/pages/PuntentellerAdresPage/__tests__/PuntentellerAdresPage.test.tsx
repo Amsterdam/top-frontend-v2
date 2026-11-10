@@ -21,6 +21,7 @@ const mockShowToast = vi.fn()
 const mockFindMissingFields = vi.fn()
 const mockUseBagPdokAddress = vi.fn()
 const mockUseAddressInvoerwaarden = vi.fn()
+const mockUseAddressPuntentellingen = vi.fn()
 const mockUseInitialValues = vi.fn()
 
 const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
@@ -44,6 +45,23 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   monument_soort: null,
 }
 
+const DUMMY_PUNTENTELLING: Puntentelling = {
+  id: 1,
+  author: null,
+  completed: true,
+  created: "2026-01-15T10:00:00Z",
+  updated: "2026-01-15T10:00:00Z",
+  punten: 142,
+  punten_resultaat: {
+    totaal_punten: 142,
+    rubrieken: [],
+    opslagen: [],
+    huurprijsopslagen: [],
+    huurprijsopslag_procent: 0,
+    maximale_huurprijs: null,
+  },
+}
+
 vi.mock("react-router", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-router")>()
 
@@ -56,6 +74,7 @@ vi.mock("react-router", async (importOriginal) => {
 
 vi.mock("@/api/hooks", () => ({
   useAddressInvoerwaarden: () => mockUseAddressInvoerwaarden(),
+  useAddressPuntentellingen: () => mockUseAddressPuntentellingen(),
   useBagPdokAddress: (bagId?: string) => mockUseBagPdokAddress(bagId),
   useSaveGebruikersinvoer: () => ({
     mutate: mockMutate,
@@ -148,7 +167,12 @@ vi.mock("../StepBijzonderheden/StepBijzonderheden", () => ({
   StepBijzonderheden: stepPlaceholder("Stap bijzonderheden", true),
 }))
 vi.mock("../StepResultaat/StepResultaat", () => ({
-  StepResultaat: () => <p>Stap resultaat</p>,
+  StepResultaat: ({ resultaat }: { resultaat?: PuntentellerResultaat }) => (
+    <>
+      <p>Stap resultaat</p>
+      {resultaat && <p>{resultaat.totaal_punten} punten</p>}
+    </>
+  ),
 }))
 
 describe("PuntentellerAdresPage", () => {
@@ -161,6 +185,7 @@ describe("PuntentellerAdresPage", () => {
     })
     mockFindMissingFields.mockReturnValue([])
     mockUseBagPdokAddress.mockReturnValue({ data: undefined })
+    mockUseAddressPuntentellingen.mockReturnValue({ data: [] })
     mockUseInitialValues.mockReturnValue({ isPending: false })
   })
 
@@ -188,6 +213,30 @@ describe("PuntentellerAdresPage", () => {
       }),
     ).toBeDefined()
     expect(mockUseBagPdokAddress).toHaveBeenCalledWith("abc123")
+  })
+
+  it("links back to the puntentellingen of the address in the kruimelpad", async () => {
+    mockUseBagPdokAddress.mockReturnValue({
+      data: { weergavenaam: "Tjasker 59-H, 1035CS Amsterdam" },
+    })
+    mockUseAddressPuntentellingen.mockReturnValue({
+      data: [DUMMY_PUNTENTELLING],
+    })
+    render(<PuntentellerAdresPage />)
+
+    fireEvent.click(await screen.findByRole("link", { name: "Tjasker 59-H" }))
+
+    expect(mockNavigate).toHaveBeenCalledWith("/puntenteller/abc123")
+  })
+
+  it("doesn't link to the address without puntentellingen, which would send straight back", async () => {
+    mockUseBagPdokAddress.mockReturnValue({
+      data: { weergavenaam: "Tjasker 59-H, 1035CS Amsterdam" },
+    })
+    render(<PuntentellerAdresPage />)
+
+    await screen.findByText("Stap woninggegevens")
+    expect(screen.queryByRole("link", { name: "Tjasker 59-H" })).toBeNull()
   })
 
   it("fills the form with the invoerwaarden, with the initial values winning", async () => {
@@ -280,8 +329,10 @@ describe("PuntentellerAdresPage", () => {
 
   it("shows the resultaat-stap once the berekening has succeeded", async () => {
     mockMutate.mockImplementation(
-      (_values: unknown, { onSuccess }: { onSuccess: () => void }) =>
-        onSuccess(),
+      (
+        _values: unknown,
+        { onSuccess }: { onSuccess: (data: Puntentelling) => void },
+      ) => onSuccess(DUMMY_PUNTENTELLING),
     )
     render(<PuntentellerAdresPage />)
 
@@ -290,7 +341,9 @@ describe("PuntentellerAdresPage", () => {
       await screen.findByRole("button", { name: "Sla op en bereken" }),
     )
 
+    // The resultaat-stap gets the punten_resultaat of the saved puntentelling.
     expect(await screen.findByText("Stap resultaat")).toBeDefined()
+    expect(screen.getByText("142 punten")).toBeDefined()
     expect(mockShowToast).toHaveBeenCalledWith(
       expect.objectContaining({ severity: "success" }),
     )
@@ -312,8 +365,10 @@ describe("PuntentellerAdresPage", () => {
 
     beforeEach(() => {
       mockMutate.mockImplementation(
-        (_values: unknown, { onSuccess }: { onSuccess: () => void }) =>
-          onSuccess(),
+        (
+          _values: unknown,
+          { onSuccess }: { onSuccess: (data: Puntentelling) => void },
+        ) => onSuccess(DUMMY_PUNTENTELLING),
       )
     })
 

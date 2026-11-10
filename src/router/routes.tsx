@@ -16,6 +16,7 @@ import DaySettingsPage from "@/pages/DaySettingsPage/DaySettingsPage"
 import ChooseListPage from "@/pages/ChooseListPage/ChooseListPage"
 import PuntentellerPage from "@/pages/PuntentellerPage/PuntentellerPage"
 import PuntentellerAdresPage from "@/pages/PuntentellerAdresPage/PuntentellerAdresPage"
+import PuntentellingenPage from "@/pages/PuntentellingenPage/PuntentellingenPage"
 import VeelgesteldeVragenPage from "@/pages/VeelgesteldeVragenPage/VeelgesteldeVragenPage"
 import RequirePermissions from "./RequirePermissions"
 import { APP_PERMISSIONS } from "@/shared/permissions"
@@ -62,7 +63,11 @@ export const routes = [
       ...(isAcceptanceOrLocalEnvironment()
         ? [
             { path: "puntenteller", element: <PuntentellerPage /> },
-            { path: "puntenteller/:bagId", element: <PuntentellerAdresPage /> },
+            { path: "puntenteller/:bagId", element: <PuntentellingenPage /> },
+            {
+              path: "puntenteller/:bagId/nieuw",
+              element: <PuntentellerAdresPage />,
+            },
           ]
         : []),
       {

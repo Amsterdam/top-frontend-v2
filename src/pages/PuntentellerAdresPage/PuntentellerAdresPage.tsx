@@ -17,7 +17,7 @@ import {
 } from "@amsterdam/design-system-react-icons"
 import { useNavigate, useParams } from "react-router"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
-import { useBagPdokAddress } from "@/api/hooks"
+import { useAddressPuntentellingen, useBagPdokAddress } from "@/api/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
 import type { MissingField } from "./helpers/findMissingFields"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
@@ -46,6 +46,10 @@ export default function PuntentellerAdresPage() {
   const invalidFormAlertRef = useRef<HTMLDivElement>(null)
   // Not waited for: the page works without it, see adres below.
   const { data: pdokAddress } = useBagPdokAddress(bagId)
+  // Without puntentellingen the address's page sends straight back here, emptying the form, so
+  // it's only linked once there are some (also after saving: the save refetches the list).
+  const { data: puntentellingen } = useAddressPuntentellingen(bagId)
+  const hasPuntentellingen = Boolean(puntentellingen?.length)
   const {
     form,
     invoerwaarden,
@@ -122,8 +126,19 @@ export default function PuntentellerAdresPage() {
             >
               Puntenteller
             </Breadcrumb.Link>
+            {hasPuntentellingen && (
+              <Breadcrumb.Link
+                href={`/puntenteller/${bagId}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(`/puntenteller/${bagId}`)
+                }}
+              >
+                {adres || "Puntentellingen"}
+              </Breadcrumb.Link>
+            )}
             <Breadcrumb.Link aria-current="location">
-              {adres || "Gegevens woning"}
+              Nieuwe puntentelling
             </Breadcrumb.Link>
           </Breadcrumb>
 

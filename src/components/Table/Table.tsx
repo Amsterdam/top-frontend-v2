@@ -19,12 +19,15 @@ type TableProps<T extends Record<string, unknown>> = {
   columns: readonly Column<T>[]
   data: readonly T[]
   expandable?: Expandable<T>
+  /** Added to the table's own class, e.g. to align the cells of one table differently. */
+  className?: string
 }
 
 export function Table<T extends Record<string, unknown>>({
   columns,
   data,
   expandable,
+  className,
 }: TableProps<T>) {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
 
@@ -40,7 +43,7 @@ export function Table<T extends Record<string, unknown>>({
   const hasExpandable = Boolean(expandable)
 
   return (
-    <ADSTable className={styles.table}>
+    <ADSTable className={[styles.table, className].filter(Boolean).join(" ")}>
       <ADSTable.Header>
         <ADSTable.Row>
           {columns.map((column, index) => (

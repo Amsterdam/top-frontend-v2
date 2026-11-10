@@ -1,0 +1,5 @@
+/* The delete button and the Concept badge make some cells taller than a line of text; the
+   design system aligns cells to the top, so the text would sit above the button. */
+.table td {
+  vertical-align: middle;
+}

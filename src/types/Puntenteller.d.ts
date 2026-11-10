@@ -47,7 +47,7 @@ type PuntentellerRubriek = {
   regels: PuntentellerRegel[]
 }
 
-/** Response of POST /puntenteller/adressen/:bagId/ (PuntentellerResultaatSerializer). */
+/** The berekening of a puntentelling (PuntentellerResultaatSerializer): its punten_resultaat. */
 type PuntentellerResultaat = {
   /** Sum of the punten of all rubrieken and opslagen. */
   totaal_punten: number
@@ -63,4 +63,35 @@ type PuntentellerResultaat = {
     /** ISO date of the huurprijstabel used. */
     prijspeil: string
   } | null
+}
+
+/** The toezichthouder who made a puntentelling (UserSerializer). */
+type PuntentellingAuthor = {
+  id: string
+  email: string
+  username: string
+  first_name: string
+  last_name: string
+  /** E.g. "T. Toezicht". */
+  full_name: string
+}
+
+/**
+ * A saved puntentelling with its berekening (GebruikersinvoerResponseSerializer): an item of
+ * GET /puntenteller/adressen/:bagId/ and the response of POST on the same url. Only the fields
+ * the frontend reads are typed; the rest is the saved GebruikersinvoerPayload.
+ */
+type Puntentelling = {
+  id: number
+  /** Null once that user no longer exists. */
+  author: PuntentellingAuthor | null
+  /** Whether the author is done with it; it can still be changed either way. */
+  completed: boolean
+  /** ISO datetime it was made. */
+  created: string
+  /** ISO datetime it was last saved. */
+  updated: string
+  /** The same as punten_resultaat.totaal_punten. */
+  punten: number
+  punten_resultaat: PuntentellerResultaat
 }

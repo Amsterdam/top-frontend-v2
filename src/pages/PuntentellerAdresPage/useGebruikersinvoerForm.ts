@@ -90,8 +90,11 @@ export function useGebruikersinvoerForm(
 
     const payload = mapFormValuesToPayload(values)
     saveGebruikersinvoer.mutate(payload, {
-      onSuccess: (resultaat) => {
-        setLastSave({ payload: JSON.stringify(payload), resultaat })
+      onSuccess: (puntentelling) => {
+        setLastSave({
+          payload: JSON.stringify(payload),
+          resultaat: puntentelling.punten_resultaat,
+        })
         showToast({
           title: "Puntenteller opgeslagen!",
           description: "De invoer is opgeslagen en de punten zijn berekend.",
