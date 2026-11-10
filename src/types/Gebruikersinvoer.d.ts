@@ -31,14 +31,21 @@ type BuitenruimteType =
   | "Loggia"
   | "Parkeerruimte"
 
-type Buitenruimte = {
-  type: BuitenruimteType
+/** One lengte x breedte = oppervlakte row of a ruimte; the rows' oppervlaktes add up to the
+ * ruimte's oppervlakte. Form only: the backend gets just that total. */
+type Vlak = {
   lengte: number | null
   breedte: number | null
   oppervlakte: number | null
+}
+
+type Buitenruimte = {
+  type: BuitenruimteType
+  vlakken: Vlak[]
+  oppervlakte: number | null
   /** How many addresses use this buitenruimte; 1 means it's privé. */
   aantal_adressen: number | null
-  // Parkeerruimte only (instead of lengte/breedte/oppervlakte): parkeerplekken "0".."50",
+  // Parkeerruimte only (instead of vlakken/oppervlakte): parkeerplekken "0".."50",
   // laadpaal "0".."5"
   parkeerplekken_afgesloten_parkeergarage?: string
   parkeerplekken_buiten_met_dak?: string
@@ -91,8 +98,7 @@ type BinnenruimteVoorzieningen = {
 
 type Binnenruimte = BinnenruimteVoorzieningen & {
   type: BinnenruimteType
-  lengte: number | null
-  breedte: number | null
+  vlakken: Vlak[]
   oppervlakte: number | null
   verwarmd: string | null
   verkoeld: string | null

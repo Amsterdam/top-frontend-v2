@@ -30,6 +30,28 @@ const isEmpty = (value: unknown) =>
   (typeof value === "number" && Number.isNaN(value))
 
 /**
+ * A ruimte's oppervlakte: required on each row (see OppervlakteFields), linked to that row's
+ * input. A ruimte without rows falls back to its own oppervlakte.
+ */
+function oppervlakte(
+  ruimte: { vlakken?: Vlak[]; oppervlakte: number | null },
+  room: (field: string, value: unknown, message: string) => void,
+) {
+  const vlakken = ruimte.vlakken ?? []
+  if (vlakken.length === 0) {
+    room("oppervlakte", ruimte.oppervlakte, REQUIRED_MESSAGES.oppervlakte)
+    return
+  }
+  vlakken.forEach((vlak, vlakIndex) =>
+    room(
+      `vlakken.${vlakIndex}.oppervlakte`,
+      vlak.oppervlakte,
+      REQUIRED_MESSAGES.oppervlakte,
+    ),
+  )
+}
+
+/**
  * The required fields of the whole wizard that are still empty. The steps only validate the
  * fields they render, and only the current step is rendered, so this checks the values
  * themselves. It follows the registerOptions of the fields, including the ones that are only
@@ -81,9 +103,7 @@ export function findMissingFields(
         `${binnenLabels[index]}: ${message}`,
       )
 
-    if (hasOppervlakte) {
-      room("oppervlakte", ruimte.oppervlakte, REQUIRED_MESSAGES.oppervlakte)
-    }
+    if (hasOppervlakte) oppervlakte(ruimte, room)
     if (hasVerwarmd) {
       room("verwarmd", ruimte.verwarmd, REQUIRED_MESSAGES.verwarmd)
     }
@@ -107,9 +127,7 @@ export function findMissingFields(
         `${buitenLabels[index]}: ${message}`,
       )
 
-    if (ruimte.type !== "Parkeerruimte") {
-      room("oppervlakte", ruimte.oppervlakte, REQUIRED_MESSAGES.oppervlakte)
-    }
+    if (ruimte.type !== "Parkeerruimte") oppervlakte(ruimte, room)
     // At least one parkeerplek; linked to the first type's checkbox (see BuitenruimteFields).
     if (ruimte.type === "Parkeerruimte" && !hasParkeerplek(ruimte)) {
       room(PARKEERPLEK_FIELDS[0].name, "", REQUIRED_MESSAGES.parkeerplekken)

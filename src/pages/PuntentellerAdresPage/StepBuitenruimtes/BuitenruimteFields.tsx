@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 import {
   ActionGroup,
   Button,
@@ -13,6 +13,10 @@ import { SaveIcon } from "@amsterdam/design-system-react-icons"
 import { mapErrorsToAlert } from "@amsterdam/ee-ads-rhf"
 import { AantalAdressenField } from "../components/AantalAdressenField"
 import { OppervlakteFields } from "../components/OppervlakteFields"
+import {
+  vlakOppervlakteErrors,
+  vlakOppervlakteNames,
+} from "../helpers/oppervlakte"
 import { QuantityCheckboxList } from "../components/QuantityCheckbox"
 import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
 import {
@@ -46,14 +50,19 @@ export function BuitenruimteFields({
 }: Props) {
   const isParkeerruimte = type === "Parkeerruimte"
   const {
+    control,
     trigger,
     formState: { errors },
   } = useFormContext<GebruikersinvoerFormValues>()
+  const vlakken = useWatch({
+    control,
+    name: `buitenruimtes.${index}.vlakken`,
+  })
 
-  // The required fields: oppervlakte (see the registerOptions in OppervlakteFields), or for a
+  // The required fields: the oppervlakte of each row (see the registerOptions in
+  // OppervlakteFields), or for a
   // parkeerruimte at least one parkeerplek. The aantal_adressen is a stepper, which can't hold
   // an invalid value.
-  const oppervlakteName = `buitenruimtes.${index}.oppervlakte` as const
   const aantalAdressenName = `buitenruimtes.${index}.aantal_adressen` as const
   // The "at least one parkeerplek" rule sits on the first type's checkbox; the other types
   // revalidate it when they change (deps).
@@ -67,16 +76,14 @@ export function BuitenruimteFields({
   const roomErrors = errors.buitenruimtes?.[index]
   const parkeerplekkenError = roomErrors?.[PARKEERPLEK_FIELDS[0].name]
   const alertErrors = mapErrorsToAlert({
-    ...(roomErrors?.oppervlakte && {
-      [oppervlakteName]: roomErrors.oppervlakte,
-    }),
+    ...vlakOppervlakteErrors("buitenruimtes", index, roomErrors?.vlakken),
     ...(parkeerplekkenError && { [parkeerplekkenName]: parkeerplekkenError }),
   })
 
   const handleSaveClick = async () => {
     const requiredFieldNames = isParkeerruimte
       ? [parkeerplekkenName]
-      : [oppervlakteName]
+      : vlakOppervlakteNames("buitenruimtes", index, vlakken)
     if (await trigger(requiredFieldNames)) onSave()
   }
 

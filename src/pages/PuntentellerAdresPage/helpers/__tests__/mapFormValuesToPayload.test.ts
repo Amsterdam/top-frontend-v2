@@ -14,8 +14,7 @@ const binnenruimte = (
   overrides: Partial<Binnenruimte> = {},
 ): Binnenruimte => ({
   type,
-  lengte: null,
-  breedte: null,
+  vlakken: [],
   oppervlakte: 10,
   verwarmd: "true",
   verkoeld: "false",
@@ -28,8 +27,7 @@ const buitenruimte = (
   overrides: Partial<Buitenruimte> = {},
 ): Buitenruimte => ({
   type,
-  lengte: null,
-  breedte: null,
+  vlakken: [],
   oppervlakte: 8,
   aantal_adressen: 1,
   ...overrides,

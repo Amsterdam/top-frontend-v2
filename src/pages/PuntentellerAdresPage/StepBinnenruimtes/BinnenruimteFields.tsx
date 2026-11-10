@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import { useFormContext, type FieldError } from "react-hook-form"
+import { useFormContext, useWatch, type FieldError } from "react-hook-form"
 import {
   ActionGroup,
   Button,
@@ -13,6 +13,10 @@ import { AantalAdressenField } from "../components/AantalAdressenField"
 import { SectionFields } from "../components/SectionFields"
 import { BINNENRUIMTE_CONFIG } from "./binnenruimteConfig"
 import { OppervlakteFields } from "../components/OppervlakteFields"
+import {
+  vlakOppervlakteErrors,
+  vlakOppervlakteNames,
+} from "../helpers/oppervlakte"
 import { VerwarmdVerkoeldFields } from "./VerwarmdVerkoeldFields"
 import { mapErrorsToAlert } from "@amsterdam/ee-ads-rhf"
 
@@ -35,9 +39,14 @@ export function BinnenruimteFields({
   onCancel,
 }: Props) {
   const {
+    control,
     trigger,
     formState: { errors },
   } = useFormContext<GebruikersinvoerFormValues>()
+  const vlakken = useWatch({
+    control,
+    name: `binnenruimtes.${index}.vlakken`,
+  })
   const {
     hasVerwarmd = true,
     hasVerkoeld = true,
@@ -45,9 +54,9 @@ export function BinnenruimteFields({
     extra,
   } = BINNENRUIMTE_CONFIG[type]
 
-  // Mirrors the registerOptions in OppervlakteFields/VerwarmdVerkoeldFields: oppervlakte,
-  // verwarmd and verkoeld are the required fields for a room, lengte/breedte stay optional
-  // since oppervlakte can be filled directly. Verwarmd and verkoeld are always forced to a
+  // Mirrors the registerOptions in OppervlakteFields/VerwarmdVerkoeldFields: the oppervlakte of
+  // each row, verwarmd and verkoeld are the required fields for a room, lengte/breedte stay
+  // optional since oppervlakte can be filled directly. Verwarmd and verkoeld are always forced to a
   // value (see VerwarmdVerkoeldFields), even for types without the question, so this list
   // needs no extra case for hasVerwarmd/hasVerkoeld. Oppervlakte isn't asked at all for types
   // with hasOppervlakte: false (e.g. overloop), so it's skipped there too. Required
@@ -61,7 +70,9 @@ export function BinnenruimteFields({
   )
 
   const requiredFieldNames = [
-    ...(hasOppervlakte ? [`binnenruimtes.${index}.oppervlakte` as const] : []),
+    ...(hasOppervlakte
+      ? vlakOppervlakteNames("binnenruimtes", index, vlakken)
+      : []),
     `binnenruimtes.${index}.verwarmd` as const,
     `binnenruimtes.${index}.verkoeld` as const,
     ...requiredExtraFieldNames,
@@ -72,9 +83,7 @@ export function BinnenruimteFields({
   const roomErrors = errors.binnenruimtes?.[index] as
     Record<string, FieldError | undefined> | undefined
   const alertErrors = mapErrorsToAlert({
-    ...(roomErrors?.oppervlakte && {
-      [`binnenruimtes.${index}.oppervlakte`]: roomErrors.oppervlakte,
-    }),
+    ...vlakOppervlakteErrors("binnenruimtes", index, roomErrors?.vlakken),
     ...(roomErrors?.verwarmd && {
       [`binnenruimtes.${index}.verwarmd`]: roomErrors.verwarmd,
     }),
