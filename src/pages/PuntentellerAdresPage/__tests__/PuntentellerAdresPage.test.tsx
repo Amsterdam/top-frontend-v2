@@ -40,6 +40,8 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
     opnamedatum: null,
     meting_geldig_tot: null,
   },
+  monument: false,
+  monument_soort: null,
 }
 
 vi.mock("react-router", async (importOriginal) => {
