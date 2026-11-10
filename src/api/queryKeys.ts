@@ -52,7 +52,7 @@ export const queryKeys = {
 
   puntenteller: {
     all: ["puntenteller"] as const,
-    /** GET puntenteller/adressen/:bagId/ — the saved gebruikersinvoer of an address. */
+    /** GET puntenteller/adressen/:bagId/ — the puntentellingen of an address. */
     adres: (bagId: string) => ["puntenteller", "adressen", bagId] as const,
     /** GET puntenteller/adressen/:bagId/invoerwaarden/ */
     invoerwaarden: (bagId: string) =>

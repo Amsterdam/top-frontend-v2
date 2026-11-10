@@ -17,13 +17,26 @@ export const useAddressInvoerwaarden = (bagId?: string) => {
   })
 }
 
+/** GET /puntenteller/adressen/:bagId/: the puntentellingen of the address, newest first. */
+export const useAddressPuntentellingen = (bagId?: string) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
+    queryFn: () =>
+      fetch<Puntentelling[]>(makeApiUrl("puntenteller", "adressen", bagId)),
+    enabled: Boolean(bagId),
+  })
+}
+
 type SaveGebruikersinvoerOptions = {
   bagId?: string
 }
 
 /**
- * Saves the gebruikersinvoer; the backend calculates the punten in the same request and only
- * returns the resultaat ("Sla op en bereken" in the bijzonderheden- or resultaat-stap).
+ * Saves the gebruikersinvoer as a new puntentelling; the backend calculates the punten in the
+ * same request and returns the whole puntentelling ("Sla op en bereken" in the bijzonderheden-
+ * or resultaat-stap).
  */
 export const useSaveGebruikersinvoer = ({
   bagId,
@@ -33,13 +46,31 @@ export const useSaveGebruikersinvoer = ({
 
   return useMutation({
     mutationFn: (payload: GebruikersinvoerPayload) =>
-      fetch<PuntentellerResultaat>(
-        makeApiUrl("puntenteller", "adressen", bagId),
-        { method: "POST", data: payload },
-      ),
-    // The response is only the berekening (the resultaat-stap reads it from the mutation), so
-    // the address's list of gebruikersinvoer is refetched to include the new one. `exact`
+      fetch<Puntentelling>(makeApiUrl("puntenteller", "adressen", bagId), {
+        method: "POST",
+        data: payload,
+      }),
+    // The address's list of puntentellingen is refetched to include the new one. `exact`
     // leaves the invoerwaarden, which sit under the same address key, alone.
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
+        exact: true,
+      }),
+  })
+}
+
+/** DELETE /puntenteller/puntentellingen/:id/ */
+export const useDeletePuntentelling = (bagId?: string) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      fetch<void>(makeApiUrl("puntenteller", "puntentellingen", id), {
+        method: "DELETE",
+      }),
+    // `exact` leaves the invoerwaarden, which sit under the same address key, alone.
     onSuccess: () =>
       queryClient.invalidateQueries({
         queryKey: queryKeys.puntenteller.adres(bagId ?? ""),

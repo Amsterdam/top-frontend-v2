@@ -4,10 +4,11 @@ import { emptyVoorzieningen } from "./StepBinnenruimtes/binnenruimteConfig"
 
 /**
  * Example puntentellingen to fill the wizard with outside PROD, via ?dummydata=<naam> (see
- * useInitialValues), e.g. /puntenteller/0363010000758545?dummydata=socialehuur.
+ * useInitialValues), e.g. /puntenteller/0363010000758545/nieuw?dummydata=socialehuur. The
+ * address's page of puntentellingen passes the query on to the wizard.
  *
  * With a non-existent bagId, the address's invoerwaarden come from the fixtures instead, e.g.
- * /puntenteller/1234?dummydata=socialehuur.
+ * /puntenteller/1234/nieuw?dummydata=socialehuur.
  *
  * Everything but the woz_peildatum_jaar: the peildata come from the address itself, so the
  * address's most recent one stays chosen. The woz_waarde is set here though, so each scenario

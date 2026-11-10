@@ -1,6 +1,7 @@
 export * from "./AddToItinerary"
 export * from "./dateFormatters"
 export * from "./formatAddress"
+export * from "./formatPunten"
 export * from "./getSchedulePriority"
 export * from "./getTopPosition"
 export * from "./getWorkflowName"
