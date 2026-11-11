@@ -9,19 +9,11 @@ import { RuimteTable } from "../components/RuimteTable"
 import { RuimteTypeButtons } from "../components/RuimteTypeButtons"
 import { StepActions } from "../components/StepActions"
 import { getRoomLabels } from "../helpers/getRoomLabels"
+import { BUITENRUIMTE_TYPES } from "../fieldDefinitions"
 import { emptyVlak } from "../helpers/oppervlakte"
 import { useFocusOpenRoom } from "../helpers/useFocusOpenRoom"
 import { useOpenRoom } from "../helpers/useOpenRoom"
 import { BuitenruimteFields } from "./BuitenruimteFields"
-
-const BUITENRUIMTE_TYPES: BuitenruimteType[] = [
-  "Balkon",
-  "Dakterras",
-  "Voortuin / zijtuin",
-  "Achtertuin",
-  "Loggia",
-  "Parkeerruimte",
-]
 
 const emptyBuitenruimte = (type: BuitenruimteType): Buitenruimte => ({
   type,

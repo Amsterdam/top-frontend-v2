@@ -206,6 +206,30 @@ describe("findMissingFields", () => {
     ).toEqual(["binnenruimtes.0.vlakken.1.oppervlakte"])
   })
 
+  it("lists a parkeerruimte with more laadpalen than parkeerplekken", () => {
+    const parkeerruimte = (laadpaal: string) =>
+      buitenruimte("Parkeerruimte", {
+        oppervlakte: null,
+        parkeerplekken_afgesloten_parkeergarage: "1",
+        parkeerplekken_buiten_zonder_dak: "1",
+        laadpaal,
+      })
+
+    expect(
+      findMissingFields(complete({ buitenruimtes: [parkeerruimte("3")] })),
+    ).toEqual([
+      {
+        step: 2,
+        name: "buitenruimtes.0.laadpaal",
+        message:
+          "Parkeerruimte: Vul niet meer laadpalen in dan er parkeerplekken zijn.",
+      },
+    ])
+    expect(
+      findMissingFields(complete({ buitenruimtes: [parkeerruimte("2")] })),
+    ).toEqual([])
+  })
+
   it("requires at least one parkeerplek for a parkeerruimte", () => {
     expect(
       findMissingFields(

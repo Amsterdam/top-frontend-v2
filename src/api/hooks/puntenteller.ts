@@ -29,34 +29,87 @@ export const useAddressPuntentellingen = (bagId?: string) => {
   })
 }
 
-type SaveGebruikersinvoerOptions = {
-  bagId?: string
+/** GET /puntenteller/puntentellingen/:id/: a whole puntentelling, to reopen it in the wizard. */
+export const usePuntentelling = (id?: number) => {
+  const fetch = useApiFetch()
+
+  return useQuery({
+    queryKey: queryKeys.puntenteller.puntentelling(id ?? 0),
+    queryFn: () =>
+      fetch<PuntentellingDetail>(
+        makeApiUrl("puntenteller", "puntentellingen", id),
+      ),
+    enabled: id !== undefined,
+  })
+}
+
+type SavePuntentellingVariables = {
+  /** The puntentelling to change; none to make a new one. */
+  id?: number
+  payload: GebruikersinvoerPayload
 }
 
 /**
- * Saves the gebruikersinvoer as a new puntentelling; the backend calculates the punten in the
- * same request and returns the whole puntentelling ("Sla op en bereken" in the bijzonderheden-
- * or resultaat-stap).
+ * Saves the gebruikersinvoer: a new puntentelling (POST), or changes to an existing one
+ * (PATCH). The backend calculates the punten in the same request and returns the whole
+ * puntentelling ("Sla op als concept en bereken" in the bijzonderheden- or resultaat-stap).
  */
-export const useSaveGebruikersinvoer = ({
-  bagId,
-}: SaveGebruikersinvoerOptions) => {
+export const useSavePuntentelling = (bagId?: string) => {
   const fetch = useApiFetch()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: GebruikersinvoerPayload) =>
-      fetch<Puntentelling>(makeApiUrl("puntenteller", "adressen", bagId), {
-        method: "POST",
-        data: payload,
-      }),
-    // The address's list of puntentellingen is refetched to include the new one. `exact`
-    // leaves the invoerwaarden, which sit under the same address key, alone.
-    onSuccess: () =>
-      queryClient.invalidateQueries({
+    mutationFn: ({ id, payload }: SavePuntentellingVariables) =>
+      id === undefined
+        ? fetch<PuntentellingDetail>(
+            makeApiUrl("puntenteller", "adressen", bagId),
+            { method: "POST", data: payload },
+          )
+        : fetch<PuntentellingDetail>(
+            makeApiUrl("puntenteller", "puntentellingen", id),
+            { method: "PATCH", data: payload },
+          ),
+    onSuccess: (puntentelling) => {
+      // Reopening it shows what was just saved, without waiting for a refetch.
+      queryClient.setQueryData(
+        queryKeys.puntenteller.puntentelling(puntentelling.id),
+        puntentelling,
+      )
+      // The address's list of puntentellingen is refetched to include it. `exact` leaves the
+      // invoerwaarden, which sit under the same address key, alone.
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
         exact: true,
-      }),
+      })
+    },
+  })
+}
+
+/**
+ * Makes a puntentelling definitief: PATCH /puntenteller/puntentellingen/:id/ with only
+ * `completed`, so its invoer and berekening stay as they were saved.
+ */
+export const useMaakPuntentellingDefinitief = (bagId?: string) => {
+  const fetch = useApiFetch()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      fetch<PuntentellingDetail>(
+        makeApiUrl("puntenteller", "puntentellingen", id),
+        { method: "PATCH", data: { completed: true } },
+      ),
+    onSuccess: (puntentelling) => {
+      queryClient.setQueryData(
+        queryKeys.puntenteller.puntentelling(puntentelling.id),
+        puntentelling,
+      )
+      // The overview drops its Concept badge. `exact` leaves the invoerwaarden alone.
+      return queryClient.invalidateQueries({
+        queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
+        exact: true,
+      })
+    },
   })
 }
 
@@ -70,11 +123,15 @@ export const useDeletePuntentelling = (bagId?: string) => {
       fetch<void>(makeApiUrl("puntenteller", "puntentellingen", id), {
         method: "DELETE",
       }),
-    // `exact` leaves the invoerwaarden, which sit under the same address key, alone.
-    onSuccess: () =>
-      queryClient.invalidateQueries({
+    onSuccess: (_, id) => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.puntenteller.puntentelling(id),
+      })
+      // `exact` leaves the invoerwaarden, which sit under the same address key, alone.
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.puntenteller.adres(bagId ?? ""),
         exact: true,
-      }),
+      })
+    },
   })
 }

@@ -17,6 +17,7 @@ import PuntentellerAdresPage from "../PuntentellerAdresPage"
 const mockParams = { bagId: "abc123" }
 const mockNavigate = vi.fn()
 const mockMutate = vi.fn()
+const mockMaakDefinitief = vi.fn()
 const mockShowToast = vi.fn()
 const mockFindMissingFields = vi.fn()
 const mockUseBagPdokAddress = vi.fn()
@@ -45,10 +46,13 @@ const DUMMY_INVOERWAARDEN: PuntentellerInvoerwaarden = {
   monument_soort: null,
 }
 
-const DUMMY_PUNTENTELLING: Puntentelling = {
+// Only what the page reads of a saved puntentelling; its invoer goes through the (mocked)
+// useInitialValues.
+const DUMMY_PUNTENTELLING = {
   id: 1,
   author: null,
-  completed: true,
+  // Saving always makes a concept.
+  completed: false,
   created: "2026-01-15T10:00:00Z",
   updated: "2026-01-15T10:00:00Z",
   punten: 142,
@@ -60,7 +64,7 @@ const DUMMY_PUNTENTELLING: Puntentelling = {
     huurprijsopslag_procent: 0,
     maximale_huurprijs: null,
   },
-}
+} as unknown as PuntentellingDetail
 
 vi.mock("react-router", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-router")>()
@@ -76,8 +80,12 @@ vi.mock("@/api/hooks", () => ({
   useAddressInvoerwaarden: () => mockUseAddressInvoerwaarden(),
   useAddressPuntentellingen: () => mockUseAddressPuntentellingen(),
   useBagPdokAddress: (bagId?: string) => mockUseBagPdokAddress(bagId),
-  useSaveGebruikersinvoer: () => ({
+  useSavePuntentelling: () => ({
     mutate: mockMutate,
+    isPending: false,
+  }),
+  useMaakPuntentellingDefinitief: () => ({
+    mutate: mockMaakDefinitief,
     isPending: false,
   }),
 }))
@@ -143,7 +151,7 @@ const { stepPlaceholder } = vi.hoisted(() => ({
             </button>
           ))}
           {isLastStep ? (
-            <button type="submit">Sla op en bereken</button>
+            <button type="submit">Sla op als concept en bereken</button>
           ) : (
             <button type="button" onClick={onNextStep}>
               Volgende stap
@@ -197,7 +205,9 @@ describe("PuntentellerAdresPage", () => {
     render(<PuntentellerAdresPage />)
 
     expect(
-      await screen.findByRole("heading", { name: "Puntenteller (Tjasker 59)" }),
+      await screen.findByRole("heading", {
+        name: "Puntentelling (Tjasker 59)",
+      }),
     ).toBeDefined()
   })
 
@@ -209,7 +219,7 @@ describe("PuntentellerAdresPage", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: "Puntenteller (Tjasker 59-H)",
+        name: "Puntentelling (Tjasker 59-H)",
       }),
     ).toBeDefined()
     expect(mockUseBagPdokAddress).toHaveBeenCalledWith("abc123")
@@ -248,7 +258,9 @@ describe("PuntentellerAdresPage", () => {
 
     fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
-      await screen.findByRole("button", { name: "Sla op en bereken" }),
+      await screen.findByRole("button", {
+        name: "Sla op als concept en bereken",
+      }),
     )
 
     await waitFor(() => {
@@ -305,7 +317,9 @@ describe("PuntentellerAdresPage", () => {
       expect(await screen.findByText(label)).toBeDefined()
     }
 
-    fireEvent.click(screen.getByRole("button", { name: "Sla op en bereken" }))
+    fireEvent.click(
+      screen.getByRole("button", { name: "Sla op als concept en bereken" }),
+    )
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledTimes(1)
@@ -320,7 +334,9 @@ describe("PuntentellerAdresPage", () => {
 
     fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
-      await screen.findByRole("button", { name: "Sla op en bereken" }),
+      await screen.findByRole("button", {
+        name: "Sla op als concept en bereken",
+      }),
     )
 
     expect(await screen.findByText("Stap resultaat")).toBeDefined()
@@ -331,14 +347,16 @@ describe("PuntentellerAdresPage", () => {
     mockMutate.mockImplementation(
       (
         _values: unknown,
-        { onSuccess }: { onSuccess: (data: Puntentelling) => void },
+        { onSuccess }: { onSuccess: (data: PuntentellingDetail) => void },
       ) => onSuccess(DUMMY_PUNTENTELLING),
     )
     render(<PuntentellerAdresPage />)
 
     fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
-      await screen.findByRole("button", { name: "Sla op en bereken" }),
+      await screen.findByRole("button", {
+        name: "Sla op als concept en bereken",
+      }),
     )
 
     // The resultaat-stap gets the punten_resultaat of the saved puntentelling.
@@ -355,7 +373,9 @@ describe("PuntentellerAdresPage", () => {
         await screen.findByRole("link", { name: "Bijzonderheden" }),
       )
       fireEvent.click(
-        await screen.findByRole("button", { name: "Sla op en bereken" }),
+        await screen.findByRole("button", {
+          name: "Sla op als concept en bereken",
+        }),
       )
     }
     const changeBouwjaar = (bouwjaar: number) =>
@@ -367,7 +387,7 @@ describe("PuntentellerAdresPage", () => {
       mockMutate.mockImplementation(
         (
           _values: unknown,
-          { onSuccess }: { onSuccess: (data: Puntentelling) => void },
+          { onSuccess }: { onSuccess: (data: PuntentellingDetail) => void },
         ) => onSuccess(DUMMY_PUNTENTELLING),
       )
     })
@@ -465,7 +485,7 @@ describe("PuntentellerAdresPage", () => {
       fireEvent.click(screen.getByRole("link", { name: /^Resultaat/ }))
       fireEvent.click(
         await screen.findByRole("button", {
-          name: "Wijzigingen opslaan en herberekenen",
+          name: "Opslaan als concept en herberekenen",
         }),
       )
 
@@ -488,6 +508,210 @@ describe("PuntentellerAdresPage", () => {
     })
   })
 
+  describe("opslaan", () => {
+    const save = async () => {
+      fireEvent.click(
+        await screen.findByRole("link", { name: "Bijzonderheden" }),
+      )
+      fireEvent.click(
+        await screen.findByRole("button", {
+          name: "Sla op als concept en bereken",
+        }),
+      )
+    }
+
+    beforeEach(() => {
+      mockMutate.mockImplementation(
+        (
+          _variables: unknown,
+          { onSuccess }: { onSuccess: (data: PuntentellingDetail) => void },
+        ) => onSuccess(DUMMY_PUNTENTELLING),
+      )
+    })
+
+    it("makes a new puntentelling on the first save and changes it on the next", async () => {
+      render(<PuntentellerAdresPage />)
+
+      await save()
+      await screen.findByText("Stap resultaat")
+      expect(mockMutate).toHaveBeenLastCalledWith(
+        { id: undefined, payload: expect.any(Object) },
+        expect.any(Object),
+      )
+      // The url names the new puntentelling, so reloading reopens it.
+      expect(mockNavigate).toHaveBeenCalledWith("/puntenteller/abc123/1", {
+        replace: true,
+      })
+
+      await save()
+      await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(2))
+      expect(mockMutate).toHaveBeenLastCalledWith(
+        { id: 1, payload: expect.any(Object) },
+        expect.any(Object),
+      )
+      expect(mockNavigate).toHaveBeenCalledTimes(1)
+    })
+
+    describe("een opgeslagen puntentelling", () => {
+      beforeEach(() => {
+        mockUseAddressPuntentellingen.mockReturnValue({
+          data: [DUMMY_PUNTENTELLING],
+        })
+        mockUseInitialValues.mockReturnValue({
+          values: { woz_waarde: 215000 },
+          puntentelling: DUMMY_PUNTENTELLING,
+          isPending: false,
+          isError: false,
+        })
+      })
+
+      it("says it's being changed in the kruimelpad", async () => {
+        render(<PuntentellerAdresPage />)
+
+        expect(await screen.findByText("Puntentelling bewerken")).toBeDefined()
+        expect(screen.queryByText("Nieuwe puntentelling")).toBeNull()
+      })
+
+      it("shows its resultaat right away, as up to date", async () => {
+        render(<PuntentellerAdresPage />)
+
+        fireEvent.click(await screen.findByRole("link", { name: "Resultaat" }))
+
+        expect(await screen.findByText("142 punten")).toBeDefined()
+        expect(screen.queryByText("Dit resultaat is niet actueel")).toBeNull()
+      })
+
+      it("saves the changes to it", async () => {
+        render(<PuntentellerAdresPage />)
+
+        await save()
+
+        await waitFor(() => {
+          expect(mockMutate).toHaveBeenCalledWith(
+            {
+              id: 1,
+              payload: expect.objectContaining({ woz_waarde: 215000 }),
+            },
+            expect.any(Object),
+          )
+        })
+        expect(mockNavigate).not.toHaveBeenCalled()
+      })
+    })
+
+    describe("concept en definitief", () => {
+      const DEFINITIEF = { ...DUMMY_PUNTENTELLING, completed: true }
+      const maakDefinitiefButton = () =>
+        screen.queryByRole("button", { name: "Maak definitief" })
+
+      it("shows no status for a new puntentelling until it's saved", async () => {
+        render(<PuntentellerAdresPage />)
+
+        await screen.findByText("Stap woninggegevens")
+        expect(screen.queryByText("Concept")).toBeNull()
+        expect(maakDefinitiefButton()).toBeNull()
+
+        await save()
+
+        expect(await screen.findByText("Concept")).toBeDefined()
+        expect(maakDefinitiefButton()).not.toBeNull()
+      })
+
+      it("only offers Maak definitief while the form is as it was saved", async () => {
+        render(<PuntentellerAdresPage />)
+        await save()
+        await screen.findByText("Stap resultaat")
+
+        fireEvent.click(screen.getByRole("link", { name: "Woning" }))
+        fireEvent.click(screen.getByRole("button", { name: "Bouwjaar 1990" }))
+
+        await waitFor(() => expect(maakDefinitiefButton()).toBeNull())
+        expect(screen.getByText("Concept")).toBeDefined()
+      })
+
+      it("makes the concept definitief", async () => {
+        mockMaakDefinitief.mockImplementation(
+          (
+            _id: number,
+            { onSuccess }: { onSuccess: (data: PuntentellingDetail) => void },
+          ) => onSuccess(DEFINITIEF),
+        )
+        render(<PuntentellerAdresPage />)
+        await save()
+
+        fireEvent.click(
+          await screen.findByRole("button", { name: "Maak definitief" }),
+        )
+
+        expect(mockMaakDefinitief).toHaveBeenCalledWith(1, expect.any(Object))
+        await waitFor(() => expect(screen.queryByText("Concept")).toBeNull())
+        expect(maakDefinitiefButton()).toBeNull()
+        expect(mockShowToast).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            title: "Puntentelling definitief gemaakt",
+            severity: "success",
+          }),
+        )
+      })
+
+      it("stays a concept when making it definitief fails", async () => {
+        mockMaakDefinitief.mockImplementation(
+          (_id: number, { onError }: { onError: () => void }) => onError(),
+        )
+        render(<PuntentellerAdresPage />)
+        await save()
+
+        fireEvent.click(
+          await screen.findByRole("button", { name: "Maak definitief" }),
+        )
+
+        expect(mockShowToast).toHaveBeenLastCalledWith(
+          expect.objectContaining({ severity: "error" }),
+        )
+        expect(screen.getByText("Concept")).toBeDefined()
+        expect(maakDefinitiefButton()).not.toBeNull()
+      })
+
+      it("makes a reopened definitieve puntentelling a concept again once it's saved", async () => {
+        mockUseInitialValues.mockReturnValue({
+          values: {},
+          puntentelling: DEFINITIEF,
+          isPending: false,
+          isError: false,
+        })
+        render(<PuntentellerAdresPage />)
+
+        await screen.findByText("Stap woninggegevens")
+        expect(screen.queryByText("Concept")).toBeNull()
+        expect(maakDefinitiefButton()).toBeNull()
+
+        await save()
+
+        expect(await screen.findByText("Concept")).toBeDefined()
+        expect(maakDefinitiefButton()).not.toBeNull()
+      })
+    })
+
+    it("says so when the puntentelling in the url can't be fetched", async () => {
+      mockUseInitialValues.mockReturnValue({ isPending: false, isError: true })
+      render(<PuntentellerAdresPage />)
+
+      expect(
+        await screen.findByRole("heading", {
+          name: "Puntentelling niet gevonden",
+        }),
+      ).toBeDefined()
+      expect(screen.queryByText("Stap woninggegevens")).toBeNull()
+
+      fireEvent.click(
+        screen.getByRole("link", {
+          name: "Naar de puntentellingen van dit adres",
+        }),
+      )
+      expect(mockNavigate).toHaveBeenCalledWith("/puntenteller/abc123")
+    })
+  })
+
   it("shows an error toast and stays on the bijzonderheden-stap when the berekening fails", async () => {
     mockMutate.mockImplementation(
       (_values: unknown, { onError }: { onError: () => void }) => onError(),
@@ -496,7 +720,9 @@ describe("PuntentellerAdresPage", () => {
 
     fireEvent.click(await screen.findByRole("link", { name: "Bijzonderheden" }))
     fireEvent.click(
-      await screen.findByRole("button", { name: "Sla op en bereken" }),
+      await screen.findByRole("button", {
+        name: "Sla op als concept en bereken",
+      }),
     )
 
     await waitFor(() => {

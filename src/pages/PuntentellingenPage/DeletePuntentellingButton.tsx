@@ -9,7 +9,7 @@ type Props = {
 
 /** A row's delete action: a button on wide screens, an icon on mobile. */
 export function DeletePuntentellingButton({ onClick }: Props) {
-  const isMobile = useMediaQuery(BREAKPOINTS.sm)
+  const isMobile = useMediaQuery(BREAKPOINTS.md)
 
   return isMobile ? (
     <IconButton label="Verwijderen" svg={DeleteIcon} onClick={onClick} />

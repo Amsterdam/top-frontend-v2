@@ -77,9 +77,8 @@ type PuntentellingAuthor = {
 }
 
 /**
- * A saved puntentelling with its berekening (GebruikersinvoerResponseSerializer): an item of
- * GET /puntenteller/adressen/:bagId/ and the response of POST on the same url. Only the fields
- * the frontend reads are typed; the rest is the saved GebruikersinvoerPayload.
+ * A puntentelling in the list of an address (GET /puntenteller/adressen/:bagId/,
+ * PuntentellingLijstSerializer): only what the overview shows.
  */
 type Puntentelling = {
   id: number
@@ -91,7 +90,70 @@ type Puntentelling = {
   created: string
   /** ISO datetime it was last saved. */
   updated: string
-  /** The same as punten_resultaat.totaal_punten. */
   punten: number
+}
+
+/**
+ * A ruimte as the backend saved it: its naam, ruimte_m2 and whichever voorzieningen (counts)
+ * and flags its kind of ruimte has. Ruimtes saved before weergavenaam and the kookfunctie
+ * fields existed lack those.
+ */
+type SavedRuimte = {
+  naam: string
+  /** The form's BinnenruimteType or BuitenruimteType; missing or null on older ones. */
+  weergavenaam?: string | null
+  /** A decimal string, e.g. "12.50"; missing on a parkeerruimte. */
+  ruimte_m2?: string
+  verwarmd?: boolean
+  gekoeld?: boolean
+  aantal_adressen_met_toegang_en_gebruiksrecht?: number
+  /** Zolder only. */
+  heeft_vaste_trap?: boolean
+  /** Keuken only; a decimal string. */
+  aanrechtlengte_meters?: string | null
+  // Parkeerruimte only.
+  aantal_gesloten_garage_bij_complex?: number
+  aantal_buiten_bij_complex_met_dak?: number
+  aantal_buiten_bij_complex_zonder_dak?: number
+  aantal_laadpalen?: number
+  /** The voorzieningen, e.g. wastafel or inbouw_koelkast: counts. */
+  [voorziening: string]: unknown
+}
+
+/**
+ * A whole puntentelling with its saved invoer and berekening (GebruikersinvoerResponseSerializer):
+ * GET and PATCH /puntenteller/puntentellingen/:id/ and POST /puntenteller/adressen/:bagId/.
+ */
+type PuntentellingDetail = Puntentelling & {
+  /** The same as punten. */
   punten_resultaat: PuntentellerResultaat
+  /** Only the chosen grondslag; null when is_eengezinswoning isn't known. */
+  energie: {
+    type: EnergieType
+    /** The energielabel, the energie-index or the bouwjaar. */
+    waarde: string | number | null
+    heeft_energieprestatievergoeding: boolean
+  } | null
+  is_eengezinswoning: boolean | null
+  vertrekken: SavedRuimte[]
+  overige_ruimten: SavedRuimte[]
+  verkeersruimten: SavedRuimte[]
+  buitenruimten: SavedRuimte[]
+  parkeerruimten: SavedRuimte[]
+  huidige_huurprijs: number | null
+  gebruiksoppervlakte: number
+  woz_waarde: number
+  woz_peildatum_jaar: number
+  woz_kleine_nieuwbouwwoning: boolean
+  woz_nieuwbouw_2015_2019: boolean
+  woonvoorziening_handicap: boolean
+  woonvoorziening_handicap_netto_investering: number | null
+  monument: boolean
+  monument_soort: GebruikersinvoerPayload["monument_soort"]
+  /** ISO date. */
+  huurovereenkomst_afgesloten_op: string | null
+  zorgwoning: boolean
+  nieuwbouw: boolean
+  bijzondere_voorziening_intercom_met_beeld: boolean
+  bijzondere_voorziening_laadpalen: number
 }

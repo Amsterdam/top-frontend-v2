@@ -4,7 +4,7 @@ import {
   Alert,
   Breadcrumb,
   Grid,
-  Heading,
+  Link,
   Paragraph,
   TabNavigation,
 } from "@amsterdam/design-system-react"
@@ -21,6 +21,7 @@ import { useAddressPuntentellingen, useBagPdokAddress } from "@/api/hooks"
 import { AmsterdamCrossSpinner } from "@/components"
 import type { MissingField } from "./helpers/findMissingFields"
 import { useGebruikersinvoerForm } from "./useGebruikersinvoerForm"
+import { PuntentellingHeading } from "./components/PuntentellingHeading"
 import { UnsavedChangesAlert } from "./components/UnsavedChangesAlert"
 import { UnsavedChangesMarker } from "./components/UnsavedChangesMarker"
 import { StepWoninggegevens } from "./StepWoninggegevens/StepWoninggegevens"
@@ -55,8 +56,13 @@ export default function PuntentellerAdresPage() {
     invoerwaarden,
     isPending,
     isError,
+    isPuntentellingError,
+    puntentellingId,
+    completed,
     onSubmit,
     isSubmitting,
+    onMaakDefinitief,
+    isMakingDefinitief,
     resultaat,
     savedPayload,
   } = useGebruikersinvoerForm(bagId, {
@@ -79,6 +85,34 @@ export default function PuntentellerAdresPage() {
   }
 
   if (isPending) return <AmsterdamCrossSpinner />
+
+  if (isPuntentellingError) {
+    return (
+      <Grid paddingBottom="x-large" paddingTop="large">
+        <Grid.Cell span="all" appearance="transparent">
+          <Alert
+            heading="Puntentelling niet gevonden"
+            headingLevel={1}
+            severity="error"
+          >
+            <Paragraph>
+              Deze puntentelling kon niet worden opgehaald. Misschien is hij
+              verwijderd.{" "}
+              <Link
+                href={`/puntenteller/${bagId}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(`/puntenteller/${bagId}`)
+                }}
+              >
+                Naar de puntentellingen van dit adres
+              </Link>
+            </Paragraph>
+          </Alert>
+        </Grid.Cell>
+      </Grid>
+    )
+  }
 
   // "Aalsmeerplein 1-H": the part of PDOK's weergavenaam before the postcode, as in the search.
   // Until PDOK has answered (or when it fails) the backend's "Aalsmeerplein 1", which lacks
@@ -138,11 +172,19 @@ export default function PuntentellerAdresPage() {
               </Breadcrumb.Link>
             )}
             <Breadcrumb.Link aria-current="location">
-              Nieuwe puntentelling
+              {puntentellingId === undefined
+                ? "Nieuwe puntentelling"
+                : "Puntentelling bewerken"}
             </Breadcrumb.Link>
           </Breadcrumb>
 
-          <Heading level={1}>Puntenteller {adres && `(${adres})`}</Heading>
+          <PuntentellingHeading
+            adres={adres}
+            completed={completed}
+            savedPayload={savedPayload}
+            onMaakDefinitief={onMaakDefinitief}
+            isMakingDefinitief={isMakingDefinitief}
+          />
         </Grid.Cell>
 
         {isError && (
@@ -153,9 +195,9 @@ export default function PuntentellerAdresPage() {
               severity="warning"
             >
               <Paragraph>
-                De gegevens voor dit adres konden niet worden opgehaald. Je
-                kunt de puntentelling wel maken door de ontbrekende gegevens
-                zelf in te vullen.
+                De gegevens voor dit adres konden niet worden opgehaald. Je kunt
+                de puntentelling wel maken door de ontbrekende gegevens zelf in
+                te vullen.
               </Paragraph>
             </Alert>
           </Grid.Cell>

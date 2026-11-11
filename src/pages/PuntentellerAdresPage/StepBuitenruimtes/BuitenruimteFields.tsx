@@ -21,8 +21,10 @@ import { QuantityCheckboxList } from "../components/QuantityCheckbox"
 import { QuantityCheckboxField } from "../components/QuantityCheckboxField"
 import {
   hasParkeerplek,
+  hasTeVeelLaadpalen,
   PARKEERPLEK_FIELDS,
   REQUIRED_MESSAGES,
+  TE_VEEL_LAADPALEN_MESSAGE,
 } from "../fieldDefinitions"
 
 const MAX_PARKEERPLEKKEN = 999
@@ -65,24 +67,28 @@ export function BuitenruimteFields({
   // an invalid value.
   const aantalAdressenName = `buitenruimtes.${index}.aantal_adressen` as const
   // The "at least one parkeerplek" rule sits on the first type's checkbox; the other types
-  // revalidate it when they change (deps).
+  // revalidate it when they change (deps). They also revalidate the laadpalen, which can't
+  // outnumber the plekken.
   const parkeerplekNames = PARKEERPLEK_FIELDS.map(
     ({ name }) => `buitenruimtes.${index}.${name}` as const,
   )
   const [parkeerplekkenName] = parkeerplekNames
+  const laadpaalName = `buitenruimtes.${index}.laadpaal` as const
 
   // mapErrorsToAlert only reads the top-level keys of the errors object, so the nested
   // buitenruimtes.<index>.* errors need to be flattened to their input `name` first.
   const roomErrors = errors.buitenruimtes?.[index]
   const parkeerplekkenError = roomErrors?.[PARKEERPLEK_FIELDS[0].name]
+  const laadpaalError = roomErrors?.laadpaal
   const alertErrors = mapErrorsToAlert({
     ...vlakOppervlakteErrors("buitenruimtes", index, roomErrors?.vlakken),
     ...(parkeerplekkenError && { [parkeerplekkenName]: parkeerplekkenError }),
+    ...(laadpaalError && { [laadpaalName]: laadpaalError }),
   })
 
   const handleSaveClick = async () => {
     const requiredFieldNames = isParkeerruimte
-      ? [parkeerplekkenName]
+      ? [parkeerplekkenName, laadpaalName]
       : vlakOppervlakteNames("buitenruimtes", index, vlakken)
     if (await trigger(requiredFieldNames)) onSave()
   }
@@ -160,8 +166,9 @@ export function BuitenruimteFields({
                             validate: (_, values) =>
                               hasParkeerplek(values.buitenruimtes?.[index]) ||
                               REQUIRED_MESSAGES.parkeerplekken,
+                            deps: [laadpaalName],
                           }
-                        : { deps: [parkeerplekkenName] }
+                        : { deps: [parkeerplekkenName, laadpaalName] }
                     }
                   />
                 ))}
@@ -177,13 +184,23 @@ export function BuitenruimteFields({
               Zijn er laadpalen bij deze parkeerplekken? Vul het totale aantal
               laadpalen in, ongeacht bij welk type parkeerplek ze staan.
             </Paragraph>
-            <QuantityCheckboxList>
-              <QuantityCheckboxField
-                name={`buitenruimtes.${index}.laadpaal`}
-                label="Laadpaal"
-                max={MAX_PARKEERPLEKKEN}
-              />
-            </QuantityCheckboxList>
+            <Field invalid={!!laadpaalError}>
+              {laadpaalError && (
+                <ErrorMessage>{laadpaalError.message}</ErrorMessage>
+              )}
+              <QuantityCheckboxList>
+                <QuantityCheckboxField
+                  name={laadpaalName}
+                  label="Laadpaal"
+                  max={MAX_PARKEERPLEKKEN}
+                  rules={{
+                    validate: (_, values) =>
+                      !hasTeVeelLaadpalen(values.buitenruimtes?.[index]) ||
+                      TE_VEEL_LAADPALEN_MESSAGE,
+                  }}
+                />
+              </QuantityCheckboxList>
+            </Field>
           </Grid.Cell>
         </>
       )}

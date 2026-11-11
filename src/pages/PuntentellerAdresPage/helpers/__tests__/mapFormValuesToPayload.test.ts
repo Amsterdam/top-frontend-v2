@@ -65,10 +65,37 @@ describe("mapFormValuesToPayload", () => {
       expect(payload.verkeersruimten).toEqual([
         {
           naam: "verkeersruimte",
+          weergavenaam: "Overloop",
           ruimte_m2: "0",
           verwarmd: true,
           aantal_adressen_met_toegang_en_gebruiksrecht: 1,
         },
+      ])
+    })
+
+    it("sends each room's type as weergavenaam, also where types share a naam", () => {
+      const payload = mapFormValuesToPayload(
+        formValues({
+          binnenruimtes: [
+            binnenruimte("Woonkamer met open keuken"),
+            binnenruimte("Keuken"),
+            binnenruimte("Kleine kamer (kleiner dan 4 m²)"),
+          ],
+        }),
+      )
+
+      expect(payload.vertrekken).toEqual([
+        expect.objectContaining({
+          naam: "keuken",
+          weergavenaam: "Woonkamer met open keuken",
+        }),
+        expect.objectContaining({ naam: "keuken", weergavenaam: "Keuken" }),
+      ])
+      expect(payload.overige_ruimten).toEqual([
+        expect.objectContaining({
+          naam: "berging",
+          weergavenaam: "Kleine kamer (kleiner dan 4 m²)",
+        }),
       ])
     })
 
@@ -191,7 +218,7 @@ describe("mapFormValuesToPayload", () => {
       ])
     })
 
-    it("maps the keuken's aanrechtlengte and kranen met kookfunctie", () => {
+    it("maps the keuken's aanrechtlengte and sends the kranen met kookfunctie as they are", () => {
       const payload = mapFormValuesToPayload(
         formValues({
           binnenruimtes: [
@@ -204,13 +231,16 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
+      // The backend counts a kraan met kookfunctie as the mengkraan plus a kokendwaterfunctie.
       expect(payload.vertrekken[0]).toEqual(
         expect.objectContaining({
           naam: "keuken",
           aanrechtlengte_meters: "1.5",
           eenhandsmengkraan: 1,
-          thermostatische_mengkraan: 1,
-          kokendwaterfunctie: 1,
+          eenhandsmengkraan_kookfunctie: 0,
+          thermostatische_mengkraan: 0,
+          thermostatische_mengkraan_kookfunctie: 1,
+          kokendwaterfunctie: 0,
         }),
       )
     })
@@ -251,9 +281,10 @@ describe("mapFormValuesToPayload", () => {
       )
 
       expect(payload.buitenruimten).toEqual([
-        { naam: "prive_buitenruimte", ruimte_m2: "8" },
+        { naam: "prive_buitenruimte", weergavenaam: "Balkon", ruimte_m2: "8" },
         {
           naam: "gemeenschappelijke_buitenruimte",
+          weergavenaam: "Achtertuin",
           ruimte_m2: "40",
           aantal_adressen_met_toegang_en_gebruiksrecht: 4,
         },
@@ -279,6 +310,7 @@ describe("mapFormValuesToPayload", () => {
       expect(payload.parkeerruimten).toEqual([
         {
           naam: "buitenruimte_parkeerplaats",
+          weergavenaam: "Parkeerruimte",
           aantal_gesloten_garage_bij_complex: 1,
           aantal_buiten_bij_complex_met_dak: 0,
           aantal_buiten_bij_complex_zonder_dak: 2,
@@ -289,7 +321,7 @@ describe("mapFormValuesToPayload", () => {
       expect(payload.bijzondere_voorziening_laadpalen).toBe(0)
     })
 
-    it("counts laadpalen beyond the number of plekken as losse laadpalen", () => {
+    it("sends the laadpalen as they are, and no losse laadpalen", () => {
       const payload = mapFormValuesToPayload(
         formValues({
           buitenruimtes: [
@@ -303,10 +335,11 @@ describe("mapFormValuesToPayload", () => {
         }),
       )
 
+      // More laadpalen than plekken isn't valid (see BuitenruimteFields); the backend refuses it.
       expect(payload.parkeerruimten).toEqual([
-        expect.objectContaining({ aantal_laadpalen: 1 }),
+        expect.objectContaining({ aantal_laadpalen: 3 }),
       ])
-      expect(payload.bijzondere_voorziening_laadpalen).toBe(2)
+      expect(payload.bijzondere_voorziening_laadpalen).toBe(0)
     })
   })
 
@@ -353,7 +386,7 @@ describe("mapFormValuesToPayload", () => {
         expect.objectContaining({
           energie: { type: "label", waarde: "C" },
           is_eengezinswoning: true,
-          completed: true,
+          completed: false,
           gebruiksoppervlakte: 90,
           woz_waarde: 374000,
           woz_peildatum_jaar: 2025,

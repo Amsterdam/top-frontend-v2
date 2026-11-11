@@ -6,9 +6,9 @@ import {
   SaveIcon,
 } from "@amsterdam/design-system-react-icons"
 
-export const SUBMIT_LABEL = "Sla op en bereken"
+export const SUBMIT_LABEL = "Sla op als concept en bereken"
 /** The submit label once the form has changed since the last save. */
-export const RESUBMIT_LABEL = "Wijzigingen opslaan en herberekenen"
+export const RESUBMIT_LABEL = "Opslaan als concept en herberekenen"
 
 type Props = {
   onNextStep?: () => void

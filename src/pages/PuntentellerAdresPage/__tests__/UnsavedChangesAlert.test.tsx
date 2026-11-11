@@ -17,7 +17,7 @@ const VALUES = {
   bouwjaar: 1977,
 } as unknown as GebruikersinvoerFormValues
 
-const RESUBMIT = "Wijzigingen opslaan en herberekenen"
+const RESUBMIT = "Opslaan als concept en herberekenen"
 
 function Harness({ savedPayload }: { savedPayload?: string }) {
   const form = useForm<GebruikersinvoerFormValues>({ defaultValues: VALUES })

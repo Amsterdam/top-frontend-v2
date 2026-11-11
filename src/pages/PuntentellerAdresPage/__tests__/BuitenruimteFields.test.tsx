@@ -11,7 +11,13 @@ import { useForm } from "react-hook-form"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { BuitenruimteFields } from "../StepBuitenruimtes/BuitenruimteFields"
 
-function Harness({ children }: { children: ReactNode }) {
+function Harness({
+  children,
+  parkeerruimte,
+}: {
+  children: ReactNode
+  parkeerruimte?: Partial<Buitenruimte>
+}) {
   const form = useForm<GebruikersinvoerFormValues>({
     mode: "onChange",
     defaultValues: {
@@ -25,6 +31,7 @@ function Harness({ children }: { children: ReactNode }) {
           parkeerplekken_buiten_met_dak: "0",
           parkeerplekken_buiten_zonder_dak: "0",
           laadpaal: "0",
+          ...parkeerruimte,
         },
       ],
     },
@@ -36,9 +43,13 @@ function Harness({ children }: { children: ReactNode }) {
   )
 }
 
-function renderFields(type: BuitenruimteType, onSave: () => void = vi.fn()) {
+function renderFields(
+  type: BuitenruimteType,
+  onSave: () => void = vi.fn(),
+  parkeerruimte?: Partial<Buitenruimte>,
+) {
   render(
-    <Harness>
+    <Harness parkeerruimte={parkeerruimte}>
       <BuitenruimteFields
         index={0}
         label={type}
@@ -121,6 +132,38 @@ describe("BuitenruimteFields", () => {
     await waitFor(() =>
       expect(
         screen.queryAllByText("Kies minimaal 1 type parkeerplek."),
+      ).toHaveLength(0),
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: /opslaan/ }))
+    await waitFor(() => expect(onSave).toHaveBeenCalled())
+  })
+
+  it("doesn't allow more laadpalen than parkeerplekken", async () => {
+    const onSave = vi.fn()
+    renderFields("Parkeerruimte", onSave, {
+      parkeerplekken_buiten_met_dak: "1",
+      laadpaal: "2",
+    })
+
+    fireEvent.click(screen.getByRole("button", { name: /opslaan/ }))
+    // Shown both above the laadpalen and in the InvalidFormAlert.
+    expect(
+      await screen.findAllByText(
+        "Vul niet meer laadpalen in dan er parkeerplekken zijn.",
+      ),
+    ).toHaveLength(2)
+    expect(onSave).not.toHaveBeenCalled()
+
+    // Another plek revalidates the laadpalen.
+    fireEvent.click(
+      screen.getByLabelText("Buiten zonder dak behorend tot het complex"),
+    )
+    await waitFor(() =>
+      expect(
+        screen.queryAllByText(
+          "Vul niet meer laadpalen in dan er parkeerplekken zijn.",
+        ),
       ).toHaveLength(0),
     )
 

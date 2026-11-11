@@ -1,8 +1,10 @@
 import {
   BIJZONDERHEDEN_FIELDS,
   hasParkeerplek,
+  hasTeVeelLaadpalen,
   PARKEERPLEK_FIELDS,
   REQUIRED_MESSAGES,
+  TE_VEEL_LAADPALEN_MESSAGE,
 } from "../fieldDefinitions"
 import { BINNENRUIMTE_CONFIG } from "../StepBinnenruimtes/binnenruimteConfig"
 import { getRoomLabels } from "./getRoomLabels"
@@ -131,6 +133,10 @@ export function findMissingFields(
     // At least one parkeerplek; linked to the first type's checkbox (see BuitenruimteFields).
     if (ruimte.type === "Parkeerruimte" && !hasParkeerplek(ruimte)) {
       room(PARKEERPLEK_FIELDS[0].name, "", REQUIRED_MESSAGES.parkeerplekken)
+    }
+    // Not empty but invalid, which the backend refuses all the same, so it's listed too.
+    if (ruimte.type === "Parkeerruimte" && hasTeVeelLaadpalen(ruimte)) {
+      room("laadpaal", "", TE_VEEL_LAADPALEN_MESSAGE)
     }
   })
 

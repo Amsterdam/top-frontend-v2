@@ -312,6 +312,16 @@ export const KEUKEN_SECTIONS = [
   },
 ] as const satisfies readonly FieldSection[]
 
+/** The buitenruimtes that can be added, in the order of their buttons. */
+export const BUITENRUIMTE_TYPES: BuitenruimteType[] = [
+  "Balkon",
+  "Dakterras",
+  "Voortuin / zijtuin",
+  "Achtertuin",
+  "Loggia",
+  "Parkeerruimte",
+]
+
 /** The parkeerplekken per soort asked for a Parkeerruimte buitenruimte. */
 export const PARKEERPLEK_FIELDS = [
   {
@@ -331,6 +341,20 @@ export const PARKEERPLEK_FIELDS = [
 /** A parkeerruimte needs at least one parkeerplek, of any of the PARKEERPLEK_FIELDS types. */
 export const hasParkeerplek = (ruimte?: Partial<Buitenruimte>) =>
   PARKEERPLEK_FIELDS.some(({ name }) => Number(ruimte?.[name]) > 0)
+
+export const TE_VEEL_LAADPALEN_MESSAGE =
+  "Vul niet meer laadpalen in dan er parkeerplekken zijn."
+
+/**
+ * Whether a parkeerruimte has more laadpalen than parkeerplekken (all PARKEERPLEK_FIELDS types
+ * together), which the backend refuses.
+ */
+export const hasTeVeelLaadpalen = (ruimte?: Partial<Buitenruimte>) =>
+  (Number(ruimte?.laadpaal) || 0) >
+  PARKEERPLEK_FIELDS.reduce(
+    (plekken, { name }) => plekken + (Number(ruimte?.[name]) || 0),
+    0,
+  )
 
 export const GEEN_MONUMENT = "geen_monument"
 

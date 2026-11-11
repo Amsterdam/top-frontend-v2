@@ -68,6 +68,10 @@ export const routes = [
               path: "puntenteller/:bagId/nieuw",
               element: <PuntentellerAdresPage />,
             },
+            {
+              path: "puntenteller/:bagId/:puntentellingId",
+              element: <PuntentellerAdresPage />,
+            },
           ]
         : []),
       {
