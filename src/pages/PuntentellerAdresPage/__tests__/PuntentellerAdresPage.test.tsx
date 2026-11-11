@@ -5,7 +5,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react"
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 import {
   FormProvider as RhfFormProvider,
   useFormContext,
@@ -134,10 +134,14 @@ vi.mock("@amsterdam/ee-ads-rhf", async (importOriginal) => {
   }
 })
 
-const { stepPlaceholder } = vi.hoisted(() => ({
+const { stepPlaceholder, mockStepMounted } = vi.hoisted(() => ({
+  // Called with the form's values when a step mounts.
+  mockStepMounted: vi.fn(),
   stepPlaceholder: (label: string, isLastStep = false) =>
     function StepPlaceholder({ onNextStep }: { onNextStep?: () => void }) {
-      const { setValue } = useFormContext<GebruikersinvoerFormValues>()
+      const { setValue, getValues } =
+        useFormContext<GebruikersinvoerFormValues>()
+      useState(() => mockStepMounted(getValues()))
       return (
         <div>
           <p>{label}</p>
@@ -562,6 +566,49 @@ describe("PuntentellerAdresPage", () => {
           puntentelling: DUMMY_PUNTENTELLING,
           isPending: false,
           isError: false,
+        })
+      })
+
+      it("only shows the steps once the form holds the saved values", async () => {
+        // StepWoninggegevens takes a change of the WOZ-peildatum for the user's, and then
+        // fills in the invoerwaarden's WOZ-waarde for it.
+        mockUseInitialValues.mockReturnValue({
+          values: { woz_waarde: 215000, woz_peildatum_jaar: 2024 },
+          puntentelling: DUMMY_PUNTENTELLING,
+          isPending: false,
+          isError: false,
+        })
+        render(<PuntentellerAdresPage />)
+
+        await screen.findByText("Stap woninggegevens")
+
+        expect(mockStepMounted).toHaveBeenCalledTimes(1)
+        expect(mockStepMounted).toHaveBeenCalledWith(
+          expect.objectContaining({
+            woz_waarde: 215000,
+            woz_peildatum_jaar: 2024,
+          }),
+        )
+      })
+
+      it("isn't prefilled with the invoerwaarden", async () => {
+        render(<PuntentellerAdresPage />)
+
+        await save()
+
+        await waitFor(() => {
+          expect(mockMutate).toHaveBeenCalledWith(
+            {
+              id: 1,
+              payload: expect.objectContaining({
+                woz_waarde: 215000,
+                // The defaults, instead of the invoerwaarden's 90 and 2025.
+                gebruiksoppervlakte: 0,
+                woz_peildatum_jaar: new Date().getFullYear(),
+              }),
+            },
+            expect.any(Object),
+          )
         })
       })
 
