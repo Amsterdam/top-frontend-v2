@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
 import {
@@ -82,29 +82,34 @@ export function useGebruikersinvoerForm(
 
   // Fills the form once per address, as soon as everything it starts from has loaded. Each
   // layer wins over the one before: the defaults, the prefilled invoerwaarden (step 0), the
-  // initial values (dummydata or a saved puntentelling). Only once, so a refetch of the
-  // invoerwaarden doesn't undo what the user has filled in since, nor does the url changing
-  // to the puntentelling after its first save.
+  // initial values (dummydata or a saved puntentelling). A saved puntentelling skips the
+  // invoerwaarden: it starts from what was saved, not from what the address's data says now.
+  // Only once, so a refetch of the invoerwaarden doesn't undo what the user has filled in
+  // since, nor does the url changing to the puntentelling after its first save.
+  const { puntentelling } = initialValues
   const startValues = useMemo(
     () => ({
       ...defaultValues,
-      ...(invoerwaarden && mapInvoerwaardenToFormValues(invoerwaarden)),
+      ...(invoerwaarden &&
+        !puntentelling &&
+        mapInvoerwaardenToFormValues(invoerwaarden)),
       ...initialValues.values,
     }),
-    [invoerwaarden, initialValues.values],
+    [invoerwaarden, puntentelling, initialValues.values],
   )
-  const filledInForBagId = useRef<string>(undefined)
-  useEffect(() => {
-    if (isPending || filledInForBagId.current === bagId) return
-    filledInForBagId.current = bagId
-
+  // During render rather than in an effect, so the steps never render with the defaults:
+  // StepWoninggegevens would take the reset's WOZ-peildatum for one the user picked, and
+  // overwrite the (saved) WOZ-waarde with the invoerwaarden's.
+  const [filledInForBagId, setFilledInForBagId] = useState<string>()
+  const isFilledIn = filledInForBagId === bagId
+  if (!isPending && !isFilledIn) {
+    setFilledInForBagId(bagId)
     form.reset(startValues)
-  }, [bagId, isPending, startValues, form])
+  }
 
   // A reopened puntentelling starts out saved as it stands, berekening and all, until it's
   // saved again. Its payload is taken from the values the form starts from, so what doesn't
   // make it through the round trip doesn't count as a change.
-  const { puntentelling } = initialValues
   const reopenedSave = useMemo(
     () =>
       puntentelling && {
@@ -185,7 +190,8 @@ export function useGebruikersinvoerForm(
   return {
     form,
     invoerwaarden,
-    isPending,
+    /** Whether the form is still waiting for its start values. */
+    isPending: isPending || !isFilledIn,
     isError,
     /** Whether the saved puntentelling in the url couldn't be fetched. */
     isPuntentellingError: Boolean(initialValues.isError),

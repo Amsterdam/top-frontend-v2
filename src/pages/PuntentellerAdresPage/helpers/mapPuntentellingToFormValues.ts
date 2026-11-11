@@ -141,8 +141,8 @@ const toParkeerruimte = (ruimte: SavedRuimte): Buitenruimte => ({
 })
 
 /**
- * Only the chosen grondslag is saved, so only that field is set: the others keep what the
- * address's invoerwaarden filled in.
+ * Only the chosen grondslag is saved, so only that field is set: the others keep their
+ * defaults (a saved puntentelling isn't prefilled with the address's invoerwaarden).
  */
 function energie(
   energie: PuntentellingDetail["energie"],
