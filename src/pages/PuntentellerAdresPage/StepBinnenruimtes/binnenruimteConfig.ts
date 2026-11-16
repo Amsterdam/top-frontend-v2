@@ -1,4 +1,5 @@
 import {
+  ANDERE_RUIMTE_SANITAIR_SECTIONS,
   BADKAMER_SECTIONS,
   KEUKEN_SECTIONS,
   SLAAPKAMER_SANITAIR_SECTIONS,
@@ -49,7 +50,7 @@ export const BINNENRUIMTE_CONFIG: Record<BinnenruimteType, BinnenruimteConfig> =
       hasOppervlakte: false,
       hasVerwarmd: false,
       hasVerkoeld: false,
-      extra: BADKAMER_SECTIONS,
+      extra: ANDERE_RUIMTE_SANITAIR_SECTIONS,
     },
     "Keuken in andere ruimte": {
       hasOppervlakte: false,
@@ -61,7 +62,7 @@ export const BINNENRUIMTE_CONFIG: Record<BinnenruimteType, BinnenruimteConfig> =
 
 /**
  * The starting values of a new room's voorzieningen: "0" for the counts and "" (unanswered)
- * for the fields with options. Those are required (douche/bad, aanrechtlengte), and "0"
+ * for the fields with options. Those are mostly required (douche/bad, aanrechtlengte), and "0"
  * isn't one of their options, so it would pass the required check without a choice.
  */
 export function emptyVoorzieningen(
