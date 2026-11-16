@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react"
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react"
 import { FormProvider } from "@amsterdam/ee-ads-rhf"
 import { useForm, useWatch } from "react-hook-form"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -91,6 +97,52 @@ describe("BinnenruimteFields", () => {
       screen.getByTestId("binnenruimtes").textContent ?? "[]",
     ) as Binnenruimte[]
     expect(badkamer2.aantal_adressen).toBe(2)
+  })
+})
+
+describe("BinnenruimteFields for a voorziening in andere ruimte", () => {
+  afterEach(cleanup)
+
+  const type = "Bad, douche of wastafel in andere ruimte"
+
+  function AndereRuimteHarness({ onSave }: { onSave: () => void }) {
+    const form = useForm<GebruikersinvoerFormValues>({
+      defaultValues: {
+        binnenruimtes: [
+          {
+            type,
+            vlakken: [],
+            oppervlakte: null,
+            verwarmd: "true",
+            verkoeld: "false",
+            aantal_adressen: 1,
+            ...emptyVoorzieningen(type),
+          },
+        ],
+      },
+    })
+    return (
+      <FormProvider form={form} onSubmit={vi.fn()}>
+        <BinnenruimteFields
+          index={0}
+          label="Wastafel"
+          type={type}
+          onSave={onSave}
+          onCancel={vi.fn()}
+        />
+      </FormProvider>
+    )
+  }
+
+  it("saves just a wastafel, without a douche or bad", async () => {
+    const onSave = vi.fn()
+    render(<AndereRuimteHarness onSave={onSave} />)
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "Wastafel" }))
+    fireEvent.click(screen.getByRole("button", { name: "Wastafel opslaan" }))
+
+    await waitFor(() => expect(onSave).toHaveBeenCalled())
+    expect(screen.queryByText("Een douche of bad is verplicht")).toBeNull()
   })
 })
 

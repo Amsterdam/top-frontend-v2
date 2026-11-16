@@ -91,9 +91,29 @@ const MEERPERSOONS_WASTAFEL_FIELD = {
   label: "Meerpersoons wastafel (min. 70 cm en 2 kranen)",
 } as const satisfies FieldDefinition
 
-/** The sections shown for a Badkamer binnenruimte in the wizard. */
-export const BADKAMER_SECTIONS = [
-  DOUCHE_BAD_SECTION,
+/**
+ * Optional variant for a voorziening in another room: that can be just a wastafel, so "no
+ * douche or bad" is a valid answer. Its value "" maps to no douche/bad in the payload.
+ */
+const OPTIONAL_DOUCHE_BAD_SECTION = {
+  heading: "Douche, bad of combinatie",
+  fields: [
+    {
+      name: "douche_bad",
+      label: "Is er een douche, een bad of een combinatie van beide?",
+      options: [
+        { label: "Geen douche of bad", value: "" },
+        { label: "Douche", value: "douche" },
+        { label: "Bad (met handdouche)", value: "bad" },
+        { label: "Bad en aparte douche", value: "baddouche" },
+      ],
+      inFieldSet: true,
+    },
+  ],
+} as const satisfies FieldSection
+
+/** The Badkamer sections below the douche/bad question. */
+const BADKAMER_VOORZIENINGEN_SECTIONS = [
   {
     heading: "Toiletvoorzieningen in de badkamer",
     fields: [
@@ -156,6 +176,18 @@ export const BADKAMER_SECTIONS = [
       },
     ],
   },
+] as const satisfies readonly FieldSection[]
+
+/** The sections shown for a Badkamer binnenruimte in the wizard. */
+export const BADKAMER_SECTIONS = [
+  DOUCHE_BAD_SECTION,
+  ...BADKAMER_VOORZIENINGEN_SECTIONS,
+] as const satisfies readonly FieldSection[]
+
+/** BADKAMER_SECTIONS for "Bad, douche of wastafel in andere ruimte", with douche/bad optional. */
+export const ANDERE_RUIMTE_SANITAIR_SECTIONS = [
+  OPTIONAL_DOUCHE_BAD_SECTION,
+  ...BADKAMER_VOORZIENINGEN_SECTIONS,
 ] as const satisfies readonly FieldSection[]
 
 /** Subset of BADKAMER_SECTIONS shown for a "Slaapkamer met wastafel, douche of bad" binnenruimte. */
