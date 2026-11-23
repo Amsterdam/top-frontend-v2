@@ -11,6 +11,7 @@ import { renderStatusBadge } from "@/shared"
 import { formatDate } from "@/shared/dateFormatters"
 
 import { dummyMeldingenResponse } from "./data/dummyMeldingenResponse"
+import { getNightsPerYear } from "./getNightsPerYear"
 import dayjs from "dayjs"
 
 type Props = {
@@ -118,27 +119,24 @@ export default function MeldingenCard({
     [meldingenSource],
   )
 
-  const totalNights = meldingenToUse.reduce(
-    (total, { nachten }) => total + nachten,
-    0,
-  )
+  const nightsPerYear = getNightsPerYear(meldingenToUse, startDate)
 
   return (
     <Card
-      title={loading ? "Meldingen" : `Meldingen (${meldingenToUse.length})`}
+      title="Meldingen"
       icon={NotificationIcon}
       loading={loading}
       loadingLabel="Meldingen"
       loadingBody={<CardTableSkeleton rows={4} columns={3} />}
       error={isError ? "Meldingen konden niet worden opgehaald." : undefined}
     >
-      {meldingenToUse.length > 0 && (
-        <div className="mb-2">
-          <Paragraph size="small">
-            {totalNights} nachten sinds {formatDate(startDate, "D MMM YYYY")}
+      <div className="mb-2">
+        {nightsPerYear.map(([year, nights]) => (
+          <Paragraph key={year} size="small">
+            {year}: {nights} {nights === 1 ? "nacht" : "nachten"}
           </Paragraph>
-        </div>
-      )}
+        ))}
+      </div>
       {meldingenToUse.length === 0 ? (
         <Paragraph>Geen meldingen gevonden.</Paragraph>
       ) : (
