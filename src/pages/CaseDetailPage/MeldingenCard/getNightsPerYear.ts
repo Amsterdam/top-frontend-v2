@@ -1,4 +1,5 @@
 import dayjs from "dayjs"
+import type { Melding } from "../types"
 
 export function getNightsPerYear(
   meldingen: Melding[],
@@ -17,28 +18,25 @@ export function getNightsPerYear(
   }
 
   for (const melding of meldingen) {
-    const start = dayjs(melding.startDatum).startOf("day")
-    const end = dayjs(melding.eindDatum).startOf("day")
-    if (!start.isValid() || !end.isValid() || end.isBefore(start)) {
-      throw new Error("Ongeldige verblijfsperiode voor de nachtentelling.")
+    if (melding.isVerwijderd) {
+      continue
     }
 
-    for (const year of nightsPerYear.keys()) {
-      const yearStart = dayjs(`${year}-01-01`)
-      const yearEnd = yearStart.add(1, "year")
-      const rangeStart = queryStart.isAfter(yearStart) ? queryStart : yearStart
-      const overlapStart = start.isAfter(rangeStart) ? start : rangeStart
-      const overlapEnd = end.isBefore(yearEnd) ? end : yearEnd
+    const start = dayjs(melding.startDatum).startOf("day")
+    if (!start.isValid()) {
+      throw new Error("Ongeldige begindatum voor de nachtentelling.")
+    }
 
-      if (overlapEnd.isAfter(overlapStart)) {
-        nightsPerYear.set(
-          year,
-          (nightsPerYear.get(year) ?? 0) +
-          overlapEnd.diff(overlapStart, "day"),
-        )
+    for (let night = 0; night < melding.nachten; night += 1) {
+      const nightDate = start.add(night, "day")
+      if (nightDate.isBefore(queryStart)) {
+        continue
       }
+
+      const year = nightDate.year()
+      nightsPerYear.set(year, (nightsPerYear.get(year) ?? 0) + 1)
     }
   }
 
-  return [...nightsPerYear]
+  return [...nightsPerYear].sort(([yearA], [yearB]) => yearB - yearA)
 }
