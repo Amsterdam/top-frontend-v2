@@ -1,5 +1,4 @@
 import dayjs from "dayjs"
-import type { Melding } from "../types"
 
 export function getNightsPerYear(
   meldingen: Melding[],
