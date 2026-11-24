@@ -23,12 +23,12 @@ describe("getNightsPerYear", () => {
 
   it("includes empty query years, oldest first, even without meldingen", () => {
     expect(getNightsPerYear([])).toEqual([
-      [2025, 0],
       [2026, 0],
+      [2025, 0],
     ])
     expect(getNightsPerYear([], "2025-01-01")).toEqual([
-      [2025, 0],
       [2026, 0],
+      [2025, 0],
     ])
     expect(getNightsPerYear([], "2026-01-01")).toEqual([
       [2026, 0],
@@ -46,8 +46,8 @@ describe("getNightsPerYear", () => {
         "2025-01-01",
       ),
     ).toEqual([
-      [2025, 0],
       [2026, 9],
+      [2025, 0],
     ])
   })
 
@@ -55,8 +55,8 @@ describe("getNightsPerYear", () => {
     expect(
       getNightsPerYear([melding("2025-12-30", "2026-01-03")], "2025-01-01"),
     ).toEqual([
-      [2025, 2],
       [2026, 2],
+      [2025, 2],
     ])
   })
 
@@ -64,8 +64,8 @@ describe("getNightsPerYear", () => {
     expect(
       getNightsPerYear([melding("2025-12-30", "2026-01-01")], "2025-01-01"),
     ).toEqual([
-      [2025, 2],
       [2026, 0],
+      [2025, 2],
     ])
   })
 
@@ -73,10 +73,10 @@ describe("getNightsPerYear", () => {
     expect(
       getNightsPerYear([melding("2023-12-31", "2026-01-02")], "2023-01-01"),
     ).toEqual([
-      [2023, 1],
-      [2024, 366],
-      [2025, 365],
       [2026, 1],
+      [2025, 365],
+      [2024, 366],
+      [2023, 1],
     ])
   })
 
@@ -90,8 +90,8 @@ describe("getNightsPerYear", () => {
         "2025-01-02",
       ),
     ).toEqual([
-      [2025, 2],
       [2026, 0],
+      [2025, 2],
     ])
   })
 
@@ -99,8 +99,8 @@ describe("getNightsPerYear", () => {
     expect(
       getNightsPerYear([melding("2028-12-30", "2029-01-01")], "2025-01-01"),
     ).toEqual([
-      [2025, 0],
       [2026, 0],
+      [2025, 0],
     ])
   })
 

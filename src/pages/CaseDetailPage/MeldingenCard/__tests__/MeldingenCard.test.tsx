@@ -17,8 +17,8 @@ describe("MeldingenCard", () => {
     render(<MeldingenCard startDate="2025-01-01" />)
 
     expect(screen.getByRole("heading", { name: "Meldingen" })).toBeDefined()
-    expect(screen.getByText("2026: 0 nachten")).toBeDefined()
-    expect(screen.getByText("2025: 0 nachten")).toBeDefined()
+    expect(screen.getByText("0 nachten in 2026")).toBeDefined()
+    expect(screen.getByText("0 nachten in 2025")).toBeDefined()
     expect(screen.getByText("Geen meldingen gevonden.")).toBeDefined()
   })
 
@@ -41,8 +41,8 @@ describe("MeldingenCard", () => {
     )
 
     expect(screen.getByRole("heading", { name: "Meldingen" })).toBeDefined()
-    expect(screen.getByText("2026: 2 nachten")).toBeDefined()
-    expect(screen.getByText("2025: 2 nachten")).toBeDefined()
+    expect(screen.getByText("2 nachten in 2026")).toBeDefined()
+    expect(screen.getByText("2 nachten in 2025")).toBeDefined()
     expect(screen.getByRole("table")).toBeDefined()
     expect(screen.getAllByText("Verwijderd")).toHaveLength(2)
   })
@@ -51,11 +51,11 @@ describe("MeldingenCard", () => {
     const { rerender } = render(
       <MeldingenCard startDate="2025-01-01" loading />,
     )
-    expect(screen.queryByText("2026: 0 nachten")).toBeNull()
+    expect(screen.queryByText("0 nachten in 2026")).toBeNull()
     expect(screen.getByRole("status")).toBeDefined()
 
     rerender(<MeldingenCard startDate="2025-01-01" isError />)
-    expect(screen.queryByText("2026: 0 nachten")).toBeNull()
+    expect(screen.queryByText("0 nachten in 2026")).toBeNull()
     expect(
       screen.getByText("Meldingen konden niet worden opgehaald."),
     ).toBeDefined()
