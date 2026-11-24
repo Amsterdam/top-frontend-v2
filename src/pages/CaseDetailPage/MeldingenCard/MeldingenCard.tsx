@@ -133,7 +133,7 @@ export default function MeldingenCard({
       <div className="mb-2">
         {nightsPerYear.map(([year, nights]) => (
           <Paragraph key={year} size="small">
-            {year}: {nights} {nights === 1 ? "nacht" : "nachten"}
+            {nights} {nights === 1 ? "nacht" : "nachten"} in {year}
           </Paragraph>
         ))}
       </div>

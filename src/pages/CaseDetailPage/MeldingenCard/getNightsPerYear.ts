@@ -12,7 +12,7 @@ export function getNightsPerYear(
   const lastYear = dayjs().year()
   const nightsPerYear = new Map<number, number>()
 
-  for (let year = firstYear; year <= lastYear; year += 1) {
+  for (let year = lastYear; year >= firstYear; year -= 1) {
     nightsPerYear.set(year, 0)
   }
 
