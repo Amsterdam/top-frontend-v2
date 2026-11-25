@@ -136,9 +136,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1923-04-12",
-              langFormaat: "12 april 1923",
+              type: "JaarDatum",
+              jaar: 1923,
+              langFormaat: "1923",
             },
           },
           ouderAanduiding: "2",
@@ -153,9 +153,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
           aangaanHuwelijkPartnerschap: {
@@ -206,9 +206,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
       burgerservicenummer: "999996915",
       geboorte: {
         datum: {
-          type: "Datum",
-          datum: "1974-07-07",
-          langFormaat: "7 juli 1974",
+          type: "JaarDatum",
+          jaar: 1974,
+          langFormaat: "1974",
         },
       },
       geslacht: {
@@ -312,9 +312,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1923-04-12",
-              langFormaat: "12 april 1923",
+              type: "JaarDatum",
+              jaar: 1923,
+              langFormaat: "1923",
             },
           },
           ouderAanduiding: "2",
@@ -411,9 +411,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
           ouderAanduiding: "2",
@@ -488,9 +488,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
           ouderAanduiding: "2",
@@ -565,9 +565,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
           ouderAanduiding: "2",
@@ -581,9 +581,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
       burgerservicenummer: "999996964",
       geboorte: {
         datum: {
-          type: "Datum",
-          datum: "1923-04-12",
-          langFormaat: "12 april 1923",
+          type: "JaarDatum",
+          jaar: 1923,
+          langFormaat: "1923",
         },
       },
       geslacht: {
@@ -627,9 +627,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
         },
@@ -725,9 +725,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1974-07-07",
-              langFormaat: "7 juli 1974",
+              type: "JaarDatum",
+              jaar: 1974,
+              langFormaat: "1974",
             },
           },
         },
@@ -755,9 +755,9 @@ export const dummyResidentsResponse: ResidentsResponse = {
           },
           geboorte: {
             datum: {
-              type: "Datum",
-              datum: "1923-04-12",
-              langFormaat: "12 april 1923",
+              type: "JaarDatum",
+              jaar: 1923,
+              langFormaat: "1923",
             },
           },
           aangaanHuwelijkPartnerschap: {

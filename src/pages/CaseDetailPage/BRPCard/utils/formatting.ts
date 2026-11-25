@@ -1,26 +1,25 @@
 import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
 import type { ResidentNaam } from "../types"
 
-dayjs.extend(relativeTime)
-
-const timeMapper: Record<string, string> = {
-  hours: "uur",
-  "a day": "één dag",
-  days: "dagen",
-  "a month": "één maand",
-  months: "maanden",
-  "a year": "één jaar",
-  years: "jaar",
-}
-
-export const getTimeFromNow = (date?: string | number) => {
+/**
+ * De tijd tussen nu en de datum in hele jaren, maanden of dagen: "24 jaar",
+ * "3 maanden". Telt naar beneden, zoals een leeftijd: wie over twee weken
+ * 25 wordt, is nog 24. (`fromNow` van dayjs rondt af en klopt daarom niet.)
+ */
+export const getTimeFromNow = (date?: string) => {
   if (!date) return ""
-  const fromNow = dayjs(date).fromNow(true)
-  return fromNow.replace(
-    /\b(?:hours|a day|days|a month|months|a year|years)\b/gi,
-    (m) => timeMapper[m],
-  )
+  const parsed = dayjs(date)
+  if (!parsed.isValid()) return ""
+
+  const now = dayjs()
+  const [from, to] = parsed.isBefore(now) ? [parsed, now] : [now, parsed]
+
+  const years = to.diff(from, "year")
+  if (years >= 1) return `${years} jaar`
+  const months = to.diff(from, "month")
+  if (months >= 1) return months === 1 ? "één maand" : `${months} maanden`
+  const days = to.diff(from, "day")
+  return days === 1 ? "één dag" : `${days} dagen`
 }
 
 export const formatName = (naam?: ResidentNaam, useFirstName?: boolean) => {

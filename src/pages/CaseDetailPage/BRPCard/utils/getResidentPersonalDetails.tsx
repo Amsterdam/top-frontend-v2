@@ -1,14 +1,19 @@
-import { formatDate } from "@/shared"
 import { getTimeFromNow, capitalizeFirstLetter } from "./formatting"
-import type { Resident } from "../types"
+import { formatResidentDatum, toIsoDate } from "./residentDatum"
+import type { Resident, ResidentDatum } from "../types"
+
+/** "04-03-2001 (25 jaar)", "2001 (25 jaar)"; undefined als de datum onbekend is. */
+const formatDateWithAge = (datum?: ResidentDatum, suffix = "") => {
+  const formatted = formatResidentDatum(datum)
+  if (!formatted) return undefined
+  return `${formatted} (${getTimeFromNow(toIsoDate(datum))}${suffix})`
+}
 
 export function getResidentPersonalDetails(resident: Resident) {
   const geboorte = resident?.geboorte
-  const geboorteDatum = geboorte?.datum?.datum
   const geboorteplaats = geboorte?.plaats?.omschrijving
   const geboorteland = geboorte?.land?.omschrijving
-  const overlijdenDatum = resident?.overlijden?.datum?.langFormaat
-  const datumVan = resident?.verblijfplaats?.datumVan?.datum
+  const overlijden = resident?.overlijden
 
   return [
     {
@@ -21,7 +26,7 @@ export function getResidentPersonalDetails(resident: Resident) {
     },
     {
       label: "Geboren",
-      value: `${formatDate(geboorteDatum)} (${getTimeFromNow(geboorteDatum)})`,
+      value: formatDateWithAge(geboorte?.datum),
     },
     {
       label: "Geboorteplaats",
@@ -30,21 +35,23 @@ export function getResidentPersonalDetails(resident: Resident) {
     },
     {
       label: "Nationaliteit",
-      value: resident?.nationaliteiten
-        ?.map((n) => n?.nationaliteit?.omschrijving)
-        .join(", "),
+      // Zonder omschrijving geen lege plek in de lijst, en zonder enige
+      // omschrijving geen lege regel.
+      value:
+        resident?.nationaliteiten
+          ?.map((n) => n?.nationaliteit?.omschrijving)
+          .filter(Boolean)
+          .join(", ") || undefined,
     },
     {
       label: "Overleden †",
-      value: overlijdenDatum
-        ? `${capitalizeFirstLetter(overlijdenDatum)} (${getTimeFromNow(overlijdenDatum)} geleden)`
+      value: overlijden
+        ? (formatDateWithAge(overlijden.datum, " geleden") ?? "Datum onbekend")
         : undefined,
     },
     {
       label: "Ingeschreven sinds",
-      value: datumVan
-        ? `${formatDate(datumVan)} (${getTimeFromNow(datumVan)})`
-        : undefined,
+      value: formatDateWithAge(resident?.verblijfplaats?.datumVan),
     },
   ].filter((item) => item.value !== undefined)
 }

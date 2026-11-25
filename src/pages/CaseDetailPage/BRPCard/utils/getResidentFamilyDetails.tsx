@@ -4,10 +4,10 @@ import {
   PersonIcon,
 } from "@amsterdam/design-system-react-icons"
 import { Icon, Row } from "@amsterdam/design-system-react"
-import { formatDate } from "@/shared"
 import { BabyIcon } from "@/icons"
 import { MobileOnlyWrapper } from "@/components"
 import { formatName, getTimeFromNow } from "./formatting"
+import { toIsoDate } from "./residentDatum"
 import type { Resident, ResidentDatum, ResidentNaam } from "../types"
 
 const getFamilyNames = (
@@ -21,8 +21,11 @@ const getFamilyNames = (
       {family
         .map((member, index) => {
           const name = formatName(member?.naam)
-          const birthDate =
-            member?.geboorte?.datum?.datum || member?.geboorte?.datum?.jaar
+          // Kinderen met hun leeftijd, ouders met hun geboortejaar.
+          const birthDate = toIsoDate(member?.geboorte?.datum)
+          const birthText =
+            birthDate &&
+            (isChild ? getTimeFromNow(birthDate) : birthDate.slice(0, 4))
 
           if (!name) return null
 
@@ -32,8 +35,7 @@ const getFamilyNames = (
                 {isChild ? <BabyIcon size={16} /> : <Icon svg={PersonIcon} />}
               </MobileOnlyWrapper>
               {name}
-              {birthDate &&
-                ` (${isChild ? getTimeFromNow(birthDate) : formatDate(birthDate, "YYYY")})`}
+              {birthText && ` (${birthText})`}
             </Row>
           )
         })
@@ -60,9 +62,8 @@ const getPartners = (
         if (!name) return null
 
         const verbintenis = partner?.soortVerbintenis?.omschrijving
-        const isEx = Boolean(
-          partner?.ontbindingHuwelijkPartnerschap?.datum?.datum,
-        )
+        // Ook een ontbinding met een onbekende datum is een ontbinding.
+        const isEx = Boolean(partner?.ontbindingHuwelijkPartnerschap)
 
         return (
           <Row key={index} gap="small">

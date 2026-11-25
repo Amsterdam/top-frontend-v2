@@ -9,7 +9,7 @@ export function PersonHeader({ resident }: { resident: Resident }) {
   const avatarColor =
     genderCode === "M" ? "azure" : genderCode === "V" ? "magenta" : "green"
 
-  const isDeceased = Boolean(resident?.overlijden?.datum?.langFormaat)
+  const isDeceased = Boolean(resident?.overlijden)
 
   const isMailAddress =
     resident?.verblijfplaats?.functieAdres?.omschrijving === "briefadres"
