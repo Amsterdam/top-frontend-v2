@@ -22,7 +22,7 @@ describe("MeldingenCard", () => {
     expect(screen.getByText("Geen meldingen gevonden.")).toBeDefined()
   })
 
-  it("shows yearly totals alongside the existing melding table", () => {
+  it("excludes deleted meldingen from yearly totals but keeps them in the table", () => {
     render(
       <MeldingenCard
         startDate="2025-01-01"
@@ -41,10 +41,34 @@ describe("MeldingenCard", () => {
     )
 
     expect(screen.getByRole("heading", { name: "Meldingen" })).toBeDefined()
-    expect(screen.getByText("2 nachten in 2026")).toBeDefined()
-    expect(screen.getByText("2 nachten in 2025")).toBeDefined()
+    expect(screen.getByText("0 nachten in 2026")).toBeDefined()
+    expect(screen.getByText("0 nachten in 2025")).toBeDefined()
     expect(screen.getByRole("table")).toBeDefined()
     expect(screen.getAllByText("Verwijderd")).toHaveLength(2)
+  })
+
+  it("shows future yearly totals based on reported nights", () => {
+    render(
+      <MeldingenCard
+        startDate="2025-01-01"
+        meldingen={[
+          {
+            startDatum: "2026-12-30",
+            eindDatum: "2027-01-10",
+            nachten: 3,
+            gasten: 2,
+            gemaaktOp: "2026-11-01",
+            isAangepast: false,
+            isVerwijderd: false,
+          },
+        ]}
+      />,
+    )
+
+    expect(screen.getByText("1 nacht in 2027")).toBeDefined()
+    expect(screen.getByText("2 nachten in 2026")).toBeDefined()
+    expect(screen.getByText("0 nachten in 2025")).toBeDefined()
+    expect(screen.getByRole("table")).toBeDefined()
   })
 
   it("does not show zero totals while loading or when fetching fails", () => {
