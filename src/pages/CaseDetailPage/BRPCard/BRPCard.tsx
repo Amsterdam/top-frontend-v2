@@ -8,6 +8,7 @@ import { dummyResidentsResponse } from "./data/dummyResidentsResponse"
 import { ResidentDetails } from "./components/ResidentDetails/ResidentDetails"
 import { isAcceptanceOrLocalEnvironment } from "@/config/isAcceptanceOrLocalEnvironment"
 import { getVisibleResidentsSortedByAge } from "./utils/getVisibleResidentsSortedByAge"
+import { getAge } from "./utils/getAge"
 
 type Props = {
   data?: Case
@@ -21,7 +22,12 @@ const columns = [
       <PersonHeader resident={resident} />
     ),
   },
-  { title: "Leeftijd", dataIndex: "leeftijd", hideOnMobile: true },
+  {
+    title: "Leeftijd",
+    dataIndex: "leeftijd",
+    render: (_: unknown, resident: Resident) => getAge(resident),
+    hideOnMobile: true,
+  },
 ] as const
 
 export function BRPCard({ data, loading = false }: Props) {

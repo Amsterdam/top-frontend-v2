@@ -6,11 +6,14 @@ export type ResidentNaam = {
   voorvoegsel?: string
 }
 
+/** Een BRP-datum: Datum, JaarMaandDatum, JaarDatum of DatumOnbekend. Lees hem met `utils/residentDatum`. */
 export type ResidentDatum = {
+  type?: "Datum" | "JaarMaandDatum" | "JaarDatum" | "DatumOnbekend"
   datum?: string
-  langFormaat?: string
   jaar?: number
-  type?: string
+  maand?: number
+  onbekend?: boolean
+  langFormaat?: string
 }
 
 export type Resident = {
@@ -50,11 +53,7 @@ export type Resident = {
   }
   verblijfplaats?: {
     type?: string
-    datumVan?: {
-      type?: string
-      datum?: string
-      langFormaat?: string
-    }
+    datumVan?: ResidentDatum
     functieAdres?: {
       code?: string
       omschrijving?: string

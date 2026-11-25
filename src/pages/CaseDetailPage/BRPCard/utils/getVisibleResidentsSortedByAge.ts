@@ -1,12 +1,13 @@
 import type { Resident } from "../types"
 import { filterDeceasedResidents } from "./filterDeceasedResidents"
+import { getAge } from "./getAge"
 
 export const getVisibleResidentsSortedByAge = (
   residents?: Resident[],
-): Resident[] => {
-  return filterDeceasedResidents(residents).sort((a, b) => {
-    const ageA = a?.leeftijd
-    const ageB = b?.leeftijd
+): Resident[] =>
+  filterDeceasedResidents(residents).sort((a, b) => {
+    const ageA = getAge(a)
+    const ageB = getAge(b)
 
     if (ageA == null && ageB == null) return 0
     if (ageA == null) return 1
@@ -14,4 +15,3 @@ export const getVisibleResidentsSortedByAge = (
 
     return ageB - ageA // Oldest first, so sort descending by age
   })
-}
